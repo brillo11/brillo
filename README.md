@@ -1,3 +1,11 @@
+# BONFIRE
+
+- Turborepo
+- React.js 19
+- Next.js 15
+- Tailwindcss v4
+- Shadcn/ui
+
 # shadcn/ui monorepo template
 
 This template is for creating a monorepo with shadcn/ui.
