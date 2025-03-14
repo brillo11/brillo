@@ -126,7 +126,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/user/workspace/genius/packages/database/generated/client",
+      "value": "/Users/user/workspace/bonfire/packages/database/generated/client",
       "fromEnvVar": null
     },
     "config": {
@@ -140,7 +140,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/user/workspace/genius/packages/database/prisma/schema.prisma",
+    "sourceFilePath": "/Users/user/workspace/bonfire/packages/database/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
