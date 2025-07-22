@@ -18,8 +18,10 @@
     "studio": "prisma studio"
   },
   "dependencies": {
+    "@prisma/client": "latest",
     "@repo/ui": "workspace:*",
-    "@prisma/client": "latest"
+    "@types/bcryptjs": "^3.0.0",
+    "bcryptjs": "^3.0.2"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:^",

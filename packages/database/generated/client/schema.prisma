@@ -1,20 +1,214 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-datasource db {
-  provider     = "postgresql"
-  url          = env("DATABASE_URL")
-  relationMode = "foreignKeys"
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../generated/client"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
-generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/client"
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
+  id            BigInt      @id @default(autoincrement())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  accountId     String
+  nickname      String      @unique
+  password      String      @default("")
+  name          String      @default("")
+  mobile        String      @default("")
+  email         String      @default("")
   emailVerified DateTime?
+  role          ROLE        @default(USER)
+  provider      PROVIDER    @default(CREDENTIALS)
+  status        USER_STATUS @default(ACTIVE)
+  isNewUser     Boolean     @default(true)
+  adminMemo     String?
+
+  comments  Comment[]
+  payments  Payment[]
+  posts     Post[]     @relation("AuthoredPosts")
+  postLikes PostLike[]
+
+  @@unique([accountId, provider])
+}
+
+model VerificationToken {
+  userId  BigInt
+  token   String
+  expires DateTime
+
+  @@unique([userId, token])
+}
+
+model Board {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String   @default("")
+  slug      String   @unique
+  misc      Json     @default("{}")
+
+  posts Post[]
+}
+
+model Post {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  thumbnail String   @default("")
+  title     String   @default("")
+  content   String   @default("")
+  slug      String   @unique @default("")
+  views     Int      @default(0)
+  tags      String[] @default([])
+  files     Json     @default("[]")
+  authorId  BigInt
+  boardId   BigInt
+  misc      Json     @default("{}")
+
+  comments Comment[]
+  author   User       @relation("AuthoredPosts", fields: [authorId], references: [id])
+  board    Board      @relation(fields: [boardId], references: [id])
+  likes    PostLike[]
+
+  @@index([authorId])
+  @@index([boardId])
+}
+
+model PostLike {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  postId BigInt
+  userId BigInt
+  post   Post   @relation(fields: [postId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model Comment {
+  id             BigInt    @id @default(autoincrement())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  content        String    @default("")
+  authorId       BigInt
+  postId         BigInt
+  parentId       BigInt?
+  deleted        Boolean   @default(false)
+  deletedContent String    @default("삭제된 댓글입니다.")
+  misc           Json      @default("{}")
+  author         User      @relation(fields: [authorId], references: [id])
+  parent         Comment?  @relation("CommentParent", fields: [parentId], references: [id])
+  replies        Comment[] @relation("CommentParent")
+  post           Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([authorId])
+  @@index([postId])
+  @@index([parentId])
+}
+
+model Log {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  content   Json     @default("{}")
+}
+
+model Payment {
+  id           BigInt         @id @default(autoincrement())
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  amount       Int
+  status       PAYMENT_STATUS
+  method       String
+  isRefunded   Boolean        @default(false)
+  refundedAt   DateTime?
+  refundAmount Int?
+  refundReason String?
+  merchantUid  String?        @unique
+  pgProvider   String?
+  receiptUrl   String?
+  userId       BigInt
+  paymentKey   String?        @unique
+  isTest       Boolean        @default(false)
+  orderName    String         @default("서비스 이용료") // 주문명
+  description  String? // 결제 설명
+
+  user    User     @relation(fields: [userId], references: [id])
+  refunds Refund[]
+
+  @@index([userId])
+  @@index([merchantUid])
+  @@index([paymentKey])
+}
+
+model PaymentSession {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  orderId   String   @unique
+  amount    Int
+  orderName String
+  userId    BigInt?
+  status    String   @default("PENDING")
+
+  @@index([orderId])
+  @@index([expiresAt])
+  @@index([userId])
+}
+
+model Refund {
+  id            BigInt        @id @default(autoincrement())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  amount        Int // 환불 금액
+  reason        String // 환불 사유
+  status        REFUND_STATUS @default(PENDING)
+  refundMethod  String? // 환불 방법 (카드취소, 계좌이체 등)
+  processedAt   DateTime? // 환불 처리 완료 시각
+  tossRefundKey String? // 토스페이먼츠 환불 키
+  paymentId     BigInt // 원본 결제 ID
+  payment       Payment       @relation(fields: [paymentId], references: [id])
+
+  @@index([paymentId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum ROLE {
+  ADMIN
+  USER
+}
+
+enum USER_STATUS {
+  ACTIVE
+  INACTIVE
+}
+
+enum PROVIDER {
+  CREDENTIALS
+  KAKAO
+  GOOGLE
+  APPLE
+  NAVER
+  GITHUB
+  FACEBOOK
+}
+
+enum PAYMENT_STATUS {
+  COMPLETED        @map("결제완료")
+  CANCELED         @map("결제취소")
+  PARTIAL_REFUNDED @map("부분환불")
+  REFUNDED         @map("환불완료")
+  REFUNDING        @map("환불진행중")
+  FAILED           @map("결제실패")
+}
+
+enum REFUND_STATUS {
+  PENDING    @map("환불대기")
+  PROCESSING @map("환불처리중")
+  COMPLETED  @map("환불완료")
+  FAILED     @map("환불실패")
+  CANCELED   @map("환불취소")
 }

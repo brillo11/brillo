@@ -20,12 +20,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.8.2
- * Query Engine version: 2060c79ba17c6bb9f5823312b6f6b7f4a845738e
+ * Prisma Client JS version: 6.12.0
+ * Query Engine version: 8047c96bbd92db98a2abc7c9323ce77c02c89dbc
  */
 Prisma.prismaVersion = {
-  client: "6.8.2",
-  engine: "2060c79ba17c6bb9f5823312b6f6b7f4a845738e"
+  client: "6.12.0",
+  engine: "8047c96bbd92db98a2abc7c9323ce77c02c89dbc"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -122,14 +122,132 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  accountId: 'accountId',
+  nickname: 'nickname',
+  password: 'password',
   name: 'name',
+  mobile: 'mobile',
   email: 'email',
-  emailVerified: 'emailVerified'
+  emailVerified: 'emailVerified',
+  role: 'role',
+  provider: 'provider',
+  status: 'status',
+  isNewUser: 'isNewUser',
+  adminMemo: 'adminMemo'
+};
+
+exports.Prisma.VerificationTokenScalarFieldEnum = {
+  userId: 'userId',
+  token: 'token',
+  expires: 'expires'
+};
+
+exports.Prisma.BoardScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  title: 'title',
+  slug: 'slug',
+  misc: 'misc'
+};
+
+exports.Prisma.PostScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  thumbnail: 'thumbnail',
+  title: 'title',
+  content: 'content',
+  slug: 'slug',
+  views: 'views',
+  tags: 'tags',
+  files: 'files',
+  authorId: 'authorId',
+  boardId: 'boardId',
+  misc: 'misc'
+};
+
+exports.Prisma.PostLikeScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  postId: 'postId',
+  userId: 'userId'
+};
+
+exports.Prisma.CommentScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  content: 'content',
+  authorId: 'authorId',
+  postId: 'postId',
+  parentId: 'parentId',
+  deleted: 'deleted',
+  deletedContent: 'deletedContent',
+  misc: 'misc'
+};
+
+exports.Prisma.LogScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  content: 'content'
+};
+
+exports.Prisma.PaymentScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  amount: 'amount',
+  status: 'status',
+  method: 'method',
+  isRefunded: 'isRefunded',
+  refundedAt: 'refundedAt',
+  refundAmount: 'refundAmount',
+  refundReason: 'refundReason',
+  merchantUid: 'merchantUid',
+  pgProvider: 'pgProvider',
+  receiptUrl: 'receiptUrl',
+  userId: 'userId',
+  paymentKey: 'paymentKey',
+  isTest: 'isTest',
+  orderName: 'orderName',
+  description: 'description'
+};
+
+exports.Prisma.PaymentSessionScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  expiresAt: 'expiresAt',
+  orderId: 'orderId',
+  amount: 'amount',
+  orderName: 'orderName',
+  userId: 'userId',
+  status: 'status'
+};
+
+exports.Prisma.RefundScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  amount: 'amount',
+  reason: 'reason',
+  status: 'status',
+  refundMethod: 'refundMethod',
+  processedAt: 'processedAt',
+  tossRefundKey: 'tossRefundKey',
+  paymentId: 'paymentId'
 };
 
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -142,9 +260,59 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+exports.ROLE = exports.$Enums.ROLE = {
+  ADMIN: 'ADMIN',
+  USER: 'USER'
+};
+
+exports.PROVIDER = exports.$Enums.PROVIDER = {
+  CREDENTIALS: 'CREDENTIALS',
+  KAKAO: 'KAKAO',
+  GOOGLE: 'GOOGLE',
+  APPLE: 'APPLE',
+  NAVER: 'NAVER',
+  GITHUB: 'GITHUB',
+  FACEBOOK: 'FACEBOOK'
+};
+
+exports.USER_STATUS = exports.$Enums.USER_STATUS = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE'
+};
+
+exports.PAYMENT_STATUS = exports.$Enums.PAYMENT_STATUS = {
+  COMPLETED: 'COMPLETED',
+  CANCELED: 'CANCELED',
+  PARTIAL_REFUNDED: 'PARTIAL_REFUNDED',
+  REFUNDED: 'REFUNDED',
+  REFUNDING: 'REFUNDING',
+  FAILED: 'FAILED'
+};
+
+exports.REFUND_STATUS = exports.$Enums.REFUND_STATUS = {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  CANCELED: 'CANCELED'
+};
 
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  VerificationToken: 'VerificationToken',
+  Board: 'Board',
+  Post: 'Post',
+  PostLike: 'PostLike',
+  Comment: 'Comment',
+  Log: 'Log',
+  Payment: 'Payment',
+  PaymentSession: 'PaymentSession',
+  Refund: 'Refund'
 };
 
 /**
