@@ -1,5 +1,5 @@
 import "@repo/ui/globals.css";
-import { Providers } from "@/components/providers";
+import { Providers } from "./providers";
 import { Toaster } from "@repo/ui/components/sonner";
 import { Metadata } from "next";
 import { METADATA } from "@/consts/metadata";
@@ -7,15 +7,6 @@ import { METADATA } from "@/consts/metadata";
 export const metadata: Metadata = {
   title: `${METADATA.DEFAULT.title}`,
   description: `${METADATA.DEFAULT.description}`,
-  // openGraph: {
-  //   images: ["/thumbnail.png"],
-  // },
-  // icons: {
-  //   icon: [
-  //     { url: "/favicon.svg", type: "image/svg+xml" },
-  //     { url: "/favicon.ico" },
-  //   ],
-  // },
 };
 
 export default function RootLayout({
