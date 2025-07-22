@@ -1,19 +1,15 @@
 "use server";
 
 import { prisma, PAYMENT_STATUS } from "@repo/database";
+import { requireAdmin } from "@/lib/auth-guards";
 
 /**
  * 관리자 대시보드 통계 정보를 반환하는 서버 액션
- * - totalUsers: 전체 유저 수
- * - totalCourses: 전체 강의 수
- * - totalReviews: 전체 리뷰 수
- * - totalRevenue: 전체 결제 금액 합계(원)
- * - monthlyGrowth: 이번달 신규 가입자 수 / 전달 신규 가입자 수 비율(%)
- * - activeUsers: 최근 30일 내 가입자 수(로그인 필드 없음)
- * - pendingReviews: 대기중(미승인) 리뷰 수(구현 불가시 0)
- * - newSignups: 이번달 신규 가입자 수
+ * ⚠️ 관리자 권한 필수 - 미들웨어 + 서버 액션 이중 검증
  */
 export async function getAdminDashboardStats() {
+  // 🛡️ 서버 사이드 권한 검증 (2차 방어선)
+  await requireAdmin();
   // 전체 유저 수
   const totalUsers = await prisma.user.count();
 
