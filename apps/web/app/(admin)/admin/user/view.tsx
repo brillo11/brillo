@@ -1,6 +1,6 @@
 "use client";
 
-import { AdminDataTable } from "@/components/admin/datatable/admin-data-table";
+import { AdminDataTable } from "@/app/(admin)/admin/components/datatable/admin-data-table";
 import { PATH } from "@/consts/path";
 import { kdayjs } from "@/lib/utils/dayjs";
 import { getAdminUserList } from "@/serverActions/admin/user.sa";
@@ -8,7 +8,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { AdminLayoutWrapper } from "@/components/admin/layout/admin-layout-wrapper";
+import { AdminLayoutWrapper } from "@/app/(admin)/admin/components/layout/admin-layout-wrapper";
 import { Button } from "@repo/ui/components/button";
 
 export default function AdminUserClientView() {

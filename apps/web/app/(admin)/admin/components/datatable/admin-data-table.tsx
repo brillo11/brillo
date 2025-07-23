@@ -30,7 +30,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/card";
-import Pagination from "@/app/(admin)/admin/(_components)/pagination";
+import Pagination from "@/app/(admin)/admin/components/pagination";
 
 interface AdminDataTableProps {
   columns: ColumnDef<any>[];

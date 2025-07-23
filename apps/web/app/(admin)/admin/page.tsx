@@ -1,9 +1,9 @@
 import { requireAdmin } from "@/lib/auth-guards";
 import { getAdminDashboardStats } from "@/serverActions/admin/dashboard.sa";
-import DashboardHeader from "./(_components)/dashboard-header";
-import AdminManageMenu from "./(_components)/admin-manage-menu";
-import StatusCardList from "./(_components)/status-card-list";
-import QuickActions from "./(_components)/quick-actions";
+import DashboardHeader from "./components/dashboard-header";
+import AdminManageMenu from "./components/admin-manage-menu";
+import StatusCardList from "./components/status-card-list";
+import QuickActions from "./components/quick-actions";
 
 // SSR + Dynamic - 항상 최신 데이터, 캐시 없음
 export const dynamic = "force-dynamic";

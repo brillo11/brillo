@@ -34,7 +34,7 @@ export default function AdminManageMenu({ stats }: AdminManageMenuProps) {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card
           className="cursor-pointer transition-all duration-300 hover:shadow-lg"
-          onClick={() => router.push("/admin/notice")}
+          onClick={() => router.push("/admin/posts")}
         >
           <CardContent className="p-6 text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100">
@@ -44,7 +44,7 @@ export default function AdminManageMenu({ stats }: AdminManageMenuProps) {
               게시글 관리
             </h3>
             <p className="mb-4 text-sm text-gray-600">
-              공지사항 및 게시글 관리
+              모든 게시글 관리 및 모니터링
             </p>
             <Badge className="bg-blue-100 text-blue-700">
               {stats.totalPosts}개 게시글

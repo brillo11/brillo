@@ -33,7 +33,7 @@ import { StatusBadge } from "./get-status-badge";
 import { getRefundInfo } from "@/serverActions/admin/payment.actions";
 import type { Payment } from "@repo/database";
 import dayjs from "dayjs";
-import Pagination from "../../(_components)/pagination";
+import Pagination from "../../components/pagination";
 
 type PaymentWithDetail = Payment & {
   user?: { nickname?: string };

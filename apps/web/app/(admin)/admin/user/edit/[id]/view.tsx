@@ -1,6 +1,6 @@
 "use client";
 
-import { AdminLayoutWrapper } from "@/components/admin/layout/admin-layout-wrapper";
+import { AdminLayoutWrapper } from "@/app/(admin)/admin/components/layout/admin-layout-wrapper";
 import { Button } from "@repo/ui/components/button";
 import {
   Card,

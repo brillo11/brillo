@@ -1,5 +1,5 @@
 import "@repo/ui/globals.css";
-import { Providers } from "@/components/admin/providers";
+import { Providers } from "@/app/(admin)/admin/components/providers";
 import { Toaster } from "@repo/ui/components/sonner";
 
 export default function RootLayout({
