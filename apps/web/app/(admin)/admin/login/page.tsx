@@ -13,7 +13,7 @@ export default function AdminLogin() {
   const router = useRouter();
   const [credentials, setCredentials] = useState({
     username: "",
-    password: ""
+    password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -21,7 +21,7 @@ export default function AdminLogin() {
     const { name, value } = e.target;
     setCredentials((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -47,7 +47,7 @@ export default function AdminLogin() {
         redirect: false,
         username: credentials.username,
         password: credentials.password,
-        callbackUrl: "/admin"
+        callbackUrl: "/admin",
       });
 
       if (result?.error) {

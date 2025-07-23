@@ -171,6 +171,11 @@ export const authConfig: NextAuthConfig = {
   // },
   callbacks: {
     async redirect({ url, baseUrl }) {
+      // 로그인 페이지에서 관리자 페이지로의 리다이렉트 처리
+      if (url.includes("/admin/login")) {
+        return `${baseUrl}/admin`;
+      }
+
       // callbackUrl이 있으면 그곳으로, 없으면 홈으로
       if (url.startsWith(baseUrl)) return url;
       return baseUrl;
