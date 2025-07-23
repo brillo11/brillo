@@ -241,6 +241,23 @@ exports.Prisma.RefundScalarFieldEnum = {
   paymentId: 'paymentId'
 };
 
+exports.Prisma.ProductScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  name: 'name',
+  description: 'description',
+  price: 'price',
+  originalPrice: 'originalPrice',
+  images: 'images',
+  category: 'category',
+  inStock: 'inStock',
+  featured: 'featured',
+  specifications: 'specifications',
+  tags: 'tags',
+  viewCount: 'viewCount'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -312,7 +329,8 @@ exports.Prisma.ModelName = {
   Log: 'Log',
   Payment: 'Payment',
   PaymentSession: 'PaymentSession',
-  Refund: 'Refund'
+  Refund: 'Refund',
+  Product: 'Product'
 };
 
 /**

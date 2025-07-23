@@ -212,3 +212,29 @@ enum REFUND_STATUS {
   FAILED     @map("환불실패")
   CANCELED   @map("환불취소")
 }
+
+model Product {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name          String // 제품명
+  description   String @default("") // 제품 설명
+  price         Int // 판매가격 (원)
+  originalPrice Int? // 원가 (할인 표시용)
+
+  images   Json   @default("[]") // 이미지 URL 배열
+  category String @default("일반") // 카테고리
+
+  inStock  Boolean @default(true) // 재고 여부
+  featured Boolean @default(false) // 추천 제품 여부
+
+  specifications Json     @default("{}") // 제품 규격 (JSON)
+  tags           String[] @default([]) // 태그 배열
+
+  viewCount Int @default(0) // 조회수
+
+  @@index([category])
+  @@index([featured])
+  @@index([inStock])
+}
