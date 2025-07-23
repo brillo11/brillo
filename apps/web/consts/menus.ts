@@ -12,6 +12,8 @@ import {
   Megaphone,
   MessageCircle,
   BarChart3,
+  FileText,
+  ShoppingBag,
 } from "lucide-react";
 
 // 언어 타입 정의
@@ -51,10 +53,22 @@ export const adminMenus: AdminMenuItem[] = [
     icon: BarChart3,
   },
   {
+    id: "products",
+    title: "제품",
+    url: "/admin/products",
+    icon: ShoppingBag,
+  },
+  {
     id: "user",
     title: "유저",
     url: "/admin/user",
     icon: User,
+  },
+  {
+    id: "posts",
+    title: "게시글",
+    url: "/admin/posts",
+    icon: FileText,
   },
   {
     id: "payment",

@@ -8,6 +8,7 @@ import {
   CreditCard,
   Bell,
   Settings,
+  Package,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -85,6 +86,22 @@ export default function AdminManageMenu({ stats }: AdminManageMenuProps) {
             <Badge className="bg-purple-100 text-purple-700">
               {stats.pendingRefunds}건 대기
             </Badge>
+          </CardContent>
+        </Card>
+
+        <Card
+          className="cursor-pointer transition-all duration-300 hover:shadow-lg"
+          onClick={() => router.push("/admin/products")}
+        >
+          <CardContent className="p-6 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-100">
+              <Package className="h-8 w-8 text-emerald-600" />
+            </div>
+            <h3 className="mb-2 text-lg font-semibold text-gray-900">
+              제품 관리
+            </h3>
+            <p className="mb-4 text-sm text-gray-600">제품 등록 및 판매 관리</p>
+            <Badge className="bg-emerald-100 text-emerald-700">신규 기능</Badge>
           </CardContent>
         </Card>
 
