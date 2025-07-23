@@ -8,6 +8,7 @@ import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { verifyAdminCredentials } from "@/serverActions/auth/admin-auth.actions";
 import { ArrowLeft } from "lucide-react";
+import { LoginDebugInfo } from "./debug-info";
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -30,19 +31,7 @@ export default function AdminLogin() {
     setIsLoading(true);
 
     try {
-      // 서버 액션으로 먼저 검증
-      const verification = await verifyAdminCredentials(
-        credentials.username,
-        credentials.password
-      );
-
-      if (!verification.success) {
-        toast.error(verification.message);
-        setIsLoading(false);
-        return;
-      }
-
-      // 검증 성공 시 next-auth로 로그인
+      // NextAuth만 사용 (중복 검증 제거로 성능 개선)
       const result = await signIn("credentials", {
         redirect: false,
         username: credentials.username,
@@ -51,16 +40,24 @@ export default function AdminLogin() {
       });
 
       if (result?.error) {
-        toast.error("로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
-      } else {
+        // NextAuth 에러 메시지를 더 친화적으로 변환
+        const errorMessage =
+          result.error === "CredentialsSignin"
+            ? "아이디 또는 비밀번호가 올바르지 않습니다."
+            : "로그인에 실패했습니다. 다시 시도해주세요.";
+        toast.error(errorMessage);
+      } else if (result?.ok) {
         toast.success("관리자 로그인 성공");
-        if (result?.ok) {
-          router.replace("/admin");
-        }
+
+        // 세션 설정 완료 대기 후 리다이렉트
+        setTimeout(() => {
+          window.location.href = "/admin";
+        }, 100);
+        return;
       }
     } catch (error) {
-      toast.error("로그인 중 오류가 발생했습니다.");
       console.error("Login error:", error);
+      toast.error("로그인 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }
@@ -131,6 +128,9 @@ export default function AdminLogin() {
             {isLoading ? "로그인 중..." : "로그인"}
           </Button>
         </form>
+
+        {/* 배포 환경 디버깅 도구 */}
+        <LoginDebugInfo />
       </div>
     </div>
   );

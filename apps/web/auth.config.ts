@@ -108,6 +108,27 @@ async function handleGoogleSignIn(user: User, profile: any) {
 
 export const authConfig: NextAuthConfig = {
   secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-development",
+  session: {
+    strategy: "jwt",
+    maxAge: 24 * 60 * 60, // 24시간
+  },
+  jwt: {
+    maxAge: 24 * 60 * 60, // 24시간
+  },
+  cookies: {
+    sessionToken: {
+      name:
+        process.env.NODE_ENV === "production"
+          ? `__Secure-next-auth.session-token`
+          : `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
+  },
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -116,32 +137,72 @@ export const authConfig: NextAuthConfig = {
         password: { label: "비밀번호", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials) return null;
-        if (
-          typeof credentials.password !== "string" ||
-          typeof credentials.username !== "string"
-        )
-          return null;
-        const user = await prisma.user.findUnique({
-          where: {
-            accountId_provider: {
-              accountId: credentials.username,
-              provider: "CREDENTIALS",
+        try {
+          // 입력값 검증
+          if (!credentials?.username || !credentials?.password) {
+            console.log("🚫 Missing credentials");
+            return null;
+          }
+
+          if (
+            typeof credentials.password !== "string" ||
+            typeof credentials.username !== "string"
+          ) {
+            console.log("🚫 Invalid credential types");
+            return null;
+          }
+
+          console.log(`🔍 Attempting login for: ${credentials.username}`);
+
+          // 사용자 조회
+          const user = await prisma.user.findUnique({
+            where: {
+              accountId_provider: {
+                accountId: credentials.username,
+                provider: "CREDENTIALS",
+              },
             },
-          },
-        });
-        if (!user) return null;
-        const bcrypt = require("bcryptjs");
-        const valid = await bcrypt.compare(credentials.password, user.password);
-        if (!valid) return null;
-        return {
-          id: user.id.toString(),
-          name: user.name,
-          nickname: user.nickname,
-          accountId: user.accountId,
-          provider: user.provider,
-          role: user.role,
-        };
+          });
+
+          if (!user) {
+            console.log(`🚫 User not found: ${credentials.username}`);
+            return null;
+          }
+
+          // 관리자 권한 체크
+          if (user.role !== "ADMIN") {
+            console.log(
+              `🚫 Non-admin user attempted login: ${credentials.username} (role: ${user.role})`
+            );
+            return null;
+          }
+
+          // 비밀번호 검증
+          const bcrypt = require("bcryptjs");
+          const valid = await bcrypt.compare(
+            credentials.password,
+            user.password
+          );
+
+          if (!valid) {
+            console.log(`🚫 Invalid password for: ${credentials.username}`);
+            return null;
+          }
+
+          console.log(`✅ Admin login successful: ${credentials.username}`);
+
+          return {
+            id: user.id.toString(),
+            name: user.name,
+            nickname: user.nickname,
+            accountId: user.accountId,
+            provider: user.provider,
+            role: user.role,
+          };
+        } catch (error) {
+          console.error("🚨 NextAuth authorize error:", error);
+          return null;
+        }
       },
     }),
     KakaoProvider({
@@ -171,13 +232,19 @@ export const authConfig: NextAuthConfig = {
   // },
   callbacks: {
     async redirect({ url, baseUrl }) {
-      // 로그인 페이지에서 관리자 페이지로의 리다이렉트 처리
-      if (url.includes("/admin/login")) {
+      console.log(`🔄 NextAuth redirect: ${url} (base: ${baseUrl})`);
+
+      // 관리자 로그인 성공 시 관리자 대시보드로
+      if (url.includes("/admin") || url === "/admin") {
+        console.log("🎯 Redirecting to admin dashboard");
         return `${baseUrl}/admin`;
       }
 
       // callbackUrl이 있으면 그곳으로, 없으면 홈으로
       if (url.startsWith(baseUrl)) return url;
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+
+      console.log("🏠 Redirecting to home");
       return baseUrl;
     },
     async signIn({ user, account, profile }) {
