@@ -14,6 +14,7 @@ import {
   BarChart3,
   FileText,
   ShoppingBag,
+  MessageSquare,
 } from "lucide-react";
 
 // 언어 타입 정의
@@ -43,6 +44,7 @@ export interface MenuItem {
   };
   href: string;
   subMenus?: MenuItem[];
+  icon?: LucideIcon;
 }
 
 export const adminMenus: AdminMenuItem[] = [
@@ -79,294 +81,70 @@ export const adminMenus: AdminMenuItem[] = [
 ];
 
 // 메인 메뉴
+
 export const mainMenus: MenuItem[] = [
   {
-    id: "about",
+    id: "notice",
     title: {
-      ko: "병원소개",
-      lang2: "",
-      lang3: "",
-      lang4: "",
+      ko: "공지사항",
+      lang2: "Notice",
     },
-    href: "/about/hospital",
-    subMenus: [
-      {
-        id: "hospital",
-        title: {
-          ko: "병원소개",
-          lang2: " Introduction",
-          lang3: "",
-          lang4: "",
-        },
-        href: "/about/hospital",
-      },
-      // {
-      // 	id: 'doctors',
-      // 	title: {
-      // 		ko: '의료진소개',
-      // 		lang2: '',
-      // 		lang3: '',
-      // 		lang4: '',
-      // 	},
-      // 	href: '/about/doctors',
-      // },
-    ],
+    href: "/notice",
+    icon: Megaphone,
   },
   {
-    id: "signature",
+    id: "product",
     title: {
-      ko: "시그니처",
-      lang2: "",
-      lang3: "",
-      lang4: "",
+      ko: "제품",
+      lang2: "Product",
     },
-    href: "/signature/full-depth-lifting",
-    subMenus: [
-      {
-        id: "full-depth-lifting",
-        title: {
-          ko: "풀뎁스리프팅",
-          lang2: "",
-          lang3: "",
-          lang4: "",
-        },
-        href: "/signature/full-depth-lifting",
-      },
-      {
-        id: "shoulder",
-        title: {
-          ko: "직각어깨",
-          lang2: "",
-          lang3: "",
-          lang4: "",
-        },
-        href: "/signature/shoulder",
-      },
-    ],
+    href: "/product",
+    icon: ShoppingBag,
   },
   {
-    id: "volumizing",
+    id: "board",
     title: {
-      ko: "볼류마이징",
-      lang2: "",
-      lang3: "",
-      lang4: "",
+      ko: "게시글",
+      lang2: "Board",
     },
-    href: "/volumizing/sculptra",
-    subMenus: [
-      {
-        id: "sculptra",
-        title: {
-          ko: "스컬트라 / 쥬베룩",
-          lang2: "",
-          lang3: "",
-          lang4: "",
-        },
-        href: "/volumizing/sculptra",
-      },
-      {
-        id: "filler",
-        title: {
-          ko: "필러",
-          lang2: "",
-          lang3: "",
-          lang4: "",
-        },
-        href: "/volumizing/filler",
-      },
-    ],
+    href: "/board/free",
+    icon: MessageSquare,
   },
   {
-    id: "thread-lifting",
+    id: "payment",
     title: {
-      ko: "실리프팅",
-      lang2: "",
-      lang3: "",
-      lang4: "",
+      ko: "결제",
+      lang2: "Payment",
     },
-    href: "/thread-lifting/nasolabial-jawline",
-    subMenus: [
-      {
-        id: "nasolabial-jawline",
-        title: {
-          ko: "팔자 / 턱선",
-          lang2: "",
-          lang3: "",
-          lang4: "",
-        },
-        href: "/thread-lifting/nasolabial-jawline",
-      },
-      {
-        id: "eyebrows",
-        title: {
-          ko: "눈썹 / 폭스아이",
-          lang2: "",
-          lang3: "",
-          lang4: "",
-        },
-        href: "/thread-lifting/eyebrows",
-      },
-    ],
+    href: "/payment",
+    icon: CreditCard,
+  },
+];
+
+export const detailMenus: MenuItem[] = [
+  {
+    id: "intro",
+    title: {
+      ko: "소개",
+      lang2: "Intro",
+    },
+    href: "/detail/#intro",
   },
   {
-    id: "lifting",
+    id: "detail",
     title: {
-      ko: "리프팅",
-      lang2: "",
-      lang3: "",
-      lang4: "",
+      ko: "상세",
+      lang2: "Detail",
     },
-    href: "/lifting/xerf",
-    subMenus: [
-      {
-        id: "xerf",
-        title: {
-          ko: "세르프",
-          lang2: "",
-          lang3: "",
-          lang4: "",
-        },
-        href: "/lifting/xerf",
-      },
-      {
-        id: "ulthera",
-        title: {
-          ko: "울쎄라",
-          lang2: "",
-          lang3: "",
-          lang4: "",
-        },
-        href: "/lifting/ulthera",
-      },
-      {
-        id: "onda",
-        title: {
-          ko: "온다",
-          lang2: "",
-          lang3: "",
-          lang4: "",
-        },
-        href: "/lifting/onda",
-      },
-      {
-        id: "virtue",
-        title: {
-          ko: "버츄",
-          lang2: "",
-          lang3: "",
-          lang4: "",
-        },
-        href: "/lifting/virtue",
-      },
-    ],
+    href: "/detail/#detail",
   },
   {
-    id: "skin-booster",
+    id: "event",
     title: {
-      ko: "스킨 부스터",
-      lang2: "",
-      lang3: "",
-      lang4: "",
+      ko: "이벤트",
+      lang2: "Event",
     },
-    href: "/skin-booster/skin-booster",
-    subMenus: [
-      {
-        id: "skin-booster",
-        title: {
-          ko: "스킨부스터",
-          lang2: "",
-          lang3: "",
-          lang4: "",
-        },
-        href: "/skin-booster/skin-booster",
-      },
-    ],
-  },
-  {
-    id: "muscle-lifting",
-    title: {
-      ko: "근육리프팅",
-      lang2: "",
-      lang3: "",
-      lang4: "",
-    },
-    href: "/muscle-lifting/eve-titan",
-    subMenus: [
-      {
-        id: "eve-titan",
-        title: {
-          ko: "이브타이탄",
-          lang2: "",
-          lang3: "",
-          lang4: "",
-        },
-        href: "/muscle-lifting/eve-titan",
-      },
-    ],
-  },
-  {
-    id: "skin",
-    title: {
-      ko: "피부",
-      lang2: "",
-      lang3: "",
-      lang4: "",
-    },
-    href: "/skin/botox",
-    subMenus: [
-      {
-        id: "botox",
-        title: {
-          ko: "보톡스",
-          lang2: "",
-          lang3: "",
-          lang4: "",
-        },
-        href: "/skin/botox",
-      },
-      {
-        id: "whitening-hair-removal",
-        title: {
-          ko: "화이트닝/제모",
-          lang2: "",
-          lang3: "",
-          lang4: "",
-        },
-        href: "/skin/whitening-hair-removal",
-      },
-    ],
-  },
-  {
-    id: "community",
-    title: {
-      ko: "커뮤니티",
-      lang2: "",
-      lang3: "",
-      lang4: "",
-    },
-    href: "/community/news",
-    subMenus: [
-      {
-        id: "news",
-        title: {
-          ko: "리올소식",
-          lang2: "",
-          lang3: "",
-          lang4: "",
-        },
-        href: "/community/news",
-      },
-      {
-        id: "before-after",
-        title: {
-          ko: "Before & After",
-          lang2: "",
-          lang3: "",
-          lang4: "",
-        },
-        href: "/community/before-after",
-      },
-    ],
+    href: "/detail/#event",
   },
 ];
 
