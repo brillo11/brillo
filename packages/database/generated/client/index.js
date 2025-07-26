@@ -316,7 +316,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/kimseonghyun/Desktop/projects/bonfire/packages/database/generated/client",
+      "value": "C:\\Users\\nabi\\BEBC\\bonfire\\packages\\database\\generated\\client",
       "fromEnvVar": null
     },
     "config": {
@@ -325,7 +325,7 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "darwin-arm64",
+        "value": "windows",
         "native": true
       },
       {
@@ -334,7 +334,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/kimseonghyun/Desktop/projects/bonfire/packages/database/prisma/schema.prisma",
+    "sourceFilePath": "C:\\Users\\nabi\\BEBC\\bonfire\\packages\\database\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -397,8 +397,8 @@ exports.PrismaClient = PrismaClient
 Object.assign(exports, Prisma)
 
 // file annotations for bundling tools to include these files
-path.join(__dirname, "libquery_engine-darwin-arm64.dylib.node");
-path.join(process.cwd(), "generated/client/libquery_engine-darwin-arm64.dylib.node")
+path.join(__dirname, "query_engine-windows.dll.node");
+path.join(process.cwd(), "generated/client/query_engine-windows.dll.node")
 
 // file annotations for bundling tools to include these files
 path.join(__dirname, "libquery_engine-rhel-openssl-3.0.x.so.node");
