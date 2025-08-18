@@ -93,12 +93,21 @@ export const mainMenus: MenuItem[] = [
     icon: Megaphone,
   },
   {
-    id: "product",
+    id: "products",
     title: {
       ko: "제품",
-      lang2: "Product",
+      lang2: "Products",
     },
-    href: "/product",
+    href: "/products",
+    icon: ShoppingBag,
+  },
+  {
+    id: "cart",
+    title: {
+      ko: "장바구니",
+      lang2: "Cart",
+    },
+    href: "/cart",
     icon: ShoppingBag,
   },
   {

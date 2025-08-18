@@ -1,0 +1,16 @@
+<!-- ---
+description: function definition for backend
+alwaysApply: false
+---
+
+## 주요 기능
+- cronjob 등을 통해, 주기적이고 자동화된 코인 거래 수수료 처리 기능 구현
+- 각 거래소, 총판 별로 구분된 수수료 데이터 처리
+- 설정된 요율에 따라 자동으로 사용자에게 코인 페이백 처리
+
+## 타겟 거래소 및 개발 문서 주소
+1. 비트겟(bitget)
+ - https://www.bitget.com/api-doc/affiliate/intro
+ - https://www.bitget.com/api-doc/affiliate/customerInfo/GetDirectCommissions
+ - https://www.bitget.com/api-doc/affiliate/customerInfo/GetCustomerDeposit
+ - https://www.bitget.com/api-doc/affiliate/customerInfo/GetCommissionDetail -->
