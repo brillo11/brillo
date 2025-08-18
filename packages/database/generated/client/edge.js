@@ -315,7 +315,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/kimseonghyun/Desktop/projects/bonfire/packages/database/generated/client",
+      "value": "C:\\Users\\nabi\\BEBC\\bonfire\\packages\\database\\generated\\client",
       "fromEnvVar": null
     },
     "config": {
@@ -324,7 +324,7 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "darwin-arm64",
+        "value": "windows",
         "native": true
       },
       {
@@ -333,7 +333,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/kimseonghyun/Desktop/projects/bonfire/packages/database/prisma/schema.prisma",
+    "sourceFilePath": "C:\\Users\\nabi\\BEBC\\bonfire\\packages\\database\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
