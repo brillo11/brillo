@@ -41,12 +41,12 @@
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
-    "lucide-react": "^0.511.0",
+    "lucide-react": "^0.545.0",
     "next": "^15.3.2",
     "next-themes": "^0.4.6",
-    "react": "^19.1.0",
-    "react-day-picker": "9.11.0",
-    "react-dom": "^19.1.0",
+    "react": "^19.2.0",
+    "react-day-picker": "9.11.1",
+    "react-dom": "^19.2.0",
     "react-hook-form": "^7.62.0",
     "react-resizable-panels": "^3.0.2",
     "recharts": "^2.15.4",
@@ -54,18 +54,18 @@
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.2",
-    "zod": "^4.1.8"
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@tailwindcss/postcss": "^4.1.13",
+    "@tailwindcss/postcss": "^4.1.14",
     "@turbo/gen": "^2.4.2",
-    "@types/node": "^20",
+    "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "tailwindcss": "^4.1.13",
-    "typescript": "^5.7.3"
+    "tailwindcss": "^4.1.14",
+    "typescript": "^5.9.3"
   },
   "exports": {
     "./globals.css": "./src/styles/globals.css",
