@@ -5,7 +5,8 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { SidebarProvider } from "@repo/ui/components/sidebar";
 import { AppSidebar } from "./sppSidebar";
 import { adminMenus } from "@/consts/menus";
-import { SessionProvider } from "next-auth/react";
+// betterAuth는 SessionProvider가 필요 없음
+// import { SessionProvider } from "next-auth/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 
@@ -27,19 +28,17 @@ export function Providers({ children }: { children: React.ReactNode }) {
       enableSystem={false}
       disableTransitionOnChange
     >
-      <SessionProvider>
-        <QueryClientProvider client={queryClient}>
-          {showSidebar ? (
-            <SidebarProvider>
-              <AppSidebar items={adminMenus} />
-              <div className="w-full">{children}</div>
-            </SidebarProvider>
-          ) : (
-            // 로그인 페이지 등에서는 사이드바 없이 콘텐츠만 표시
+      <QueryClientProvider client={queryClient}>
+        {showSidebar ? (
+          <SidebarProvider>
+            <AppSidebar items={adminMenus} />
             <div className="w-full">{children}</div>
-          )}
-        </QueryClientProvider>
-      </SessionProvider>
+          </SidebarProvider>
+        ) : (
+          // 로그인 페이지 등에서는 사이드바 없이 콘텐츠만 표시
+          <div className="w-full">{children}</div>
+        )}
+      </QueryClientProvider>
     </NextThemesProvider>
   );
 }

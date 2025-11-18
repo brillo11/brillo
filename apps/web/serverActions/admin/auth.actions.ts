@@ -4,7 +4,8 @@ import { cookies } from "next/headers";
 import { prisma } from "@repo/database";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
-import { auth, signIn, signOut } from "@/auth";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 // 어드민 로그인 액션
 export async function adminLogin({ id, pw }: { id: string; pw: string }) {
@@ -36,7 +37,10 @@ export async function adminLogin({ id, pw }: { id: string; pw: string }) {
 
 // 현재 세션의 어드민 여부 반환
 export async function getAdminSession() {
-  const session = await auth();
+  const headersList = await headers();
+  const session = await auth.api.getSession({
+    headers: headersList,
+  });
   if (!session?.user) return { role: null };
   return { role: session.user.role };
 }

@@ -1,6 +1,7 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "better-auth/react";
+import { signOut } from "@/auth";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -141,10 +142,12 @@ const Sidebar = ({ isOpen, setIsOpen, status }: SidebarProps) => {
 };
 
 export default function NavigationBar() {
-  const { data: session, status } = useSession();
+  const { data: session, isPending } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const [profile, setProfile] = useState<UserProfile | null>(null);
+
+  const status = isPending ? "loading" : session ? "authenticated" : "unauthenticated";
 
   useEffect(() => {
     const checkUserStatusAndRedirect = async () => {

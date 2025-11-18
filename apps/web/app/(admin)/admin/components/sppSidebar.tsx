@@ -32,7 +32,7 @@ import {
 } from "@repo/ui/components/collapsible";
 import { BUSINESS_INFO } from "@/consts/business";
 import { Button } from "@repo/ui/components/button";
-import { signOut } from "next-auth/react";
+import { signOut } from "@/auth";
 
 interface Props {
   items: AdminMenuItem[];

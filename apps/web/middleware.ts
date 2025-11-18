@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
 
 export async function middleware(request: NextRequest) {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
   const { pathname } = request.nextUrl;
 
   // 관리자 페이지 보호
@@ -10,7 +12,8 @@ export async function middleware(request: NextRequest) {
     // 로그인 페이지는 예외
     if (pathname === "/admin/login") {
       // 이미 로그인된 관리자는 대시보드로 리다이렉트 (더 엄격한 체크)
-      if (session?.user?.role === "ADMIN" && session?.user?.id) {
+      const user = session?.user;
+      if (user && (user as any).role === "ADMIN" && user.id) {
         console.log("🔄 Already logged in admin redirected from login page");
         const redirectUrl = new URL("/admin", request.url);
         const response = NextResponse.redirect(redirectUrl);
@@ -26,7 +29,7 @@ export async function middleware(request: NextRequest) {
     }
 
     // 미인증 사용자 → 로그인 페이지로
-    if (!session) {
+    if (!session || !session.user) {
       console.log("🚫 Unauthenticated user redirected to login");
       const loginUrl = new URL("/admin/login", request.url);
       const response = NextResponse.redirect(loginUrl);
@@ -38,7 +41,8 @@ export async function middleware(request: NextRequest) {
     }
 
     // 권한 없는 사용자 → 메인 페이지로
-    if (session.user?.role !== "ADMIN") {
+    const user = session.user as any;
+    if (user.role !== "ADMIN") {
       console.log("🚫 Non-admin user redirected to home");
       return NextResponse.redirect(new URL("/", request.url));
     }
@@ -49,7 +53,11 @@ export async function middleware(request: NextRequest) {
 
   // API 라우트 보호
   if (pathname.startsWith("/api/admin")) {
-    if (!session || session.user?.role !== "ADMIN") {
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const user = session.user as any;
+    if (user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
   }

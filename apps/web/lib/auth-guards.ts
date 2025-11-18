@@ -1,4 +1,5 @@
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 /**
@@ -6,13 +7,17 @@ import { redirect } from "next/navigation";
  * 미들웨어 통과 후 서버 액션/페이지에서 사용하는 2차 방어선
  */
 export async function requireAdmin() {
-  const session = await auth();
+  const headersList = await headers();
+  const session = await auth.api.getSession({
+    headers: headersList,
+  });
 
-  if (!session || session.user?.role !== "ADMIN") {
+  const user = session?.user as any;
+  if (!session || !user || user.role !== "ADMIN") {
     // 보안 로그 기록
     console.warn(`🚨 Unauthorized admin access attempt:`, {
-      userId: session?.user?.id || "anonymous",
-      userRole: session?.user?.role || "none",
+      userId: user?.id || "anonymous",
+      userRole: user?.role || "none",
       timestamp: new Date().toISOString(),
       userAgent: process.env.NODE_ENV === "development" ? "dev" : "unknown",
     });
@@ -27,9 +32,12 @@ export async function requireAdmin() {
  * 🛡️ 서버 사이드 사용자 인증 검증
  */
 export async function requireAuth() {
-  const session = await auth();
+  const headersList = await headers();
+  const session = await auth.api.getSession({
+    headers: headersList,
+  });
 
-  if (!session) {
+  if (!session || !session.user) {
     redirect("/admin/login");
   }
 
@@ -40,12 +48,16 @@ export async function requireAuth() {
  * 🛡️ 서버 사이드 권한 검증 (특정 권한 확인)
  */
 export async function requireRole(requiredRole: string) {
-  const session = await auth();
+  const headersList = await headers();
+  const session = await auth.api.getSession({
+    headers: headersList,
+  });
 
-  if (!session || session.user?.role !== requiredRole) {
+  const user = session?.user as any;
+  if (!session || !user || user.role !== requiredRole) {
     console.warn(`🚨 Insufficient permissions:`, {
-      userId: session?.user?.id || "anonymous",
-      userRole: session?.user?.role || "none",
+      userId: user?.id || "anonymous",
+      userRole: user?.role || "none",
       requiredRole,
       timestamp: new Date().toISOString(),
     });
@@ -61,14 +73,21 @@ export async function requireRole(requiredRole: string) {
  * 조건부 렌더링에 사용
  */
 export async function checkAdmin() {
-  const session = await auth();
-  return session?.user?.role === "ADMIN";
+  const headersList = await headers();
+  const session = await auth.api.getSession({
+    headers: headersList,
+  });
+  const user = session?.user as any;
+  return user?.role === "ADMIN";
 }
 
 /**
  * 📋 사용자 권한 정보 반환
  */
 export async function getCurrentUser() {
-  const session = await auth();
+  const headersList = await headers();
+  const session = await auth.api.getSession({
+    headers: headersList,
+  });
   return session?.user || null;
 }

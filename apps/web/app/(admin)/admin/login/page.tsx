@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn } from "@/auth";
 import { toast } from "sonner";
 import { verifyAdminCredentials } from "@/serverActions/auth/admin-auth.actions";
 import { ArrowLeft } from "lucide-react";

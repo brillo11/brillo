@@ -1,12 +1,17 @@
 "use server";
 
-import { auth, signIn } from "@/auth";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { prisma } from "@repo/database";
 
 export async function isAdmin() {
-  const session = await auth();
+  const headersList = await headers();
+  const session = await auth.api.getSession({
+    headers: headersList,
+  });
 
-  return session?.user?.role === "ADMIN";
+  const user = session?.user as any;
+  return user?.role === "ADMIN";
 }
 
 /**
@@ -60,7 +65,10 @@ export async function checkNicknameDuplication(
  */
 export async function changeNickname(newNickname: string) {
   // 현재 로그인된 사용자 정보 가져오기
-  const session = await auth();
+  const headersList = await headers();
+  const session = await auth.api.getSession({
+    headers: headersList,
+  });
 
   if (!session?.user?.id) {
     throw new Error("로그인이 필요합니다.");
@@ -78,7 +86,7 @@ export async function changeNickname(newNickname: string) {
   try {
     // 사용자 정보 업데이트
     const updatedUser = await prisma.user.update({
-      where: { id: session.user.id },
+      where: { id: BigInt(session.user.id) },
       data: {
         nickname: newNickname,
         isNewUser: false
@@ -103,7 +111,10 @@ export async function updateUserProfile(userData: {
   bio?: string;
 }) {
   // 현재 로그인된 사용자 정보 가져오기
-  const session = await auth();
+  const headersList = await headers();
+  const session = await auth.api.getSession({
+    headers: headersList,
+  });
 
   if (!session?.user?.id) {
     throw new Error("로그인이 필요합니다.");
@@ -115,8 +126,9 @@ export async function updateUserProfile(userData: {
     validateNickname(userData.nickname);
 
     // 닉네임 중복 검사
+    const user = session.user as any;
     const isDuplicate = await checkNicknameDuplication(userData.nickname);
-    if (isDuplicate && userData.nickname !== session.user.nickname) {
+    if (isDuplicate && userData.nickname !== user.nickname) {
       throw new Error("이미 사용 중인 닉네임입니다.");
     }
   }
@@ -125,7 +137,7 @@ export async function updateUserProfile(userData: {
     // 사용자 정보 업데이트
     const updatedUser = await prisma.user.update({
       where: {
-        id: session.user.id
+        id: BigInt(session.user.id)
       },
       data: {
         ...userData
@@ -176,7 +188,10 @@ export async function getUserProfile(userId: string) {
  * @returns 현재 로그인한 사용자 정보
  */
 export async function getCurrentUserProfile() {
-  const session = await auth();
+  const headersList = await headers();
+  const session = await auth.api.getSession({
+    headers: headersList,
+  });
 
   if (!session?.user?.id) {
     throw new Error("로그인이 필요합니다.");

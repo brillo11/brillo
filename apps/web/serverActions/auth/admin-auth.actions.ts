@@ -1,8 +1,8 @@
 // @ts-nocheck - 버전 호환성 문제로 타입 검사 무시
 "use server";
 
-import { auth } from "@/auth";
-import { authConfig } from "@/auth.config";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { prisma } from "@repo/database";
 import bcrypt from "bcryptjs";
 
@@ -114,13 +114,17 @@ export async function verifyAdminCredentials(
  * 관리자 권한 확인 함수
  */
 export async function checkAdminPermission() {
-  const session = await auth();
+  const headersList = await headers();
+  const session = await auth.api.getSession({
+    headers: headersList,
+  });
 
+  const user = session?.user as any;
   if (!session?.user?.id) {
     return { isAdmin: false, message: "로그인이 필요합니다." };
   }
 
-  if (session.user.role !== "ADMIN") {
+  if (user.role !== "ADMIN") {
     return { isAdmin: false, message: "관리자 권한이 없습니다." };
   }
 
