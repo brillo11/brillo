@@ -4,51 +4,94 @@ import bcrypt from "bcryptjs";
 
 async function main() {
   console.log("🌱 시드 데이터 생성 시작...");
+  console.log("📡 데이터베이스 연결 확인 중...");
 
   try {
-    // 관리자 계정 생성
-    const adminPassword = await bcrypt.hash("admin123", 10);
-    const admin = await prisma.user.upsert({
+    // 데이터베이스 연결 테스트
+    await prisma.$connect();
+    console.log("✅ 데이터베이스 연결 성공");
+
+    // 관리자 계정 생성 (admin/admin)
+    console.log("👤 관리자 계정 생성 중...");
+    const adminPassword = await bcrypt.hash("admin", 10);
+    console.log("🔐 비밀번호 해시 완료");
+
+    // User 생성 또는 조회
+    console.log("📝 User 생성/조회 중...");
+    const adminUser = await prisma.user.upsert({
       where: {
-        accountId_provider: {
-          accountId: "admin",
-          provider: PROVIDER.CREDENTIALS,
-        },
+        email: "admin@admin.com",
       },
-      update: {},
-      create: {
-        accountId: "admin",
-        nickname: "관리자",
+      update: {
         name: "관리자",
-        email: "admin@example.com",
-        password: adminPassword,
         role: ROLE.ADMIN,
-        provider: PROVIDER.CREDENTIALS,
-        isNewUser: false,
+      },
+      create: {
+        email: "admin@admin.com",
+        name: "관리자",
+        role: ROLE.ADMIN,
       },
     });
+
+    // Account 생성 또는 업데이트
+    // 기존 Account가 있으면 삭제 후 재생성
+    await prisma.account.deleteMany({
+      where: {
+        accountId: "admin",
+        providerId: PROVIDER.CREDENTIALS,
+      },
+    });
+
+    console.log("✅ User 생성 완료:", adminUser.id);
+
+    console.log("🔑 Account 생성 중...");
+    const adminAccount = await prisma.account.create({
+      data: {
+        userId: adminUser.id,
+        accountId: "admin",
+        providerId: PROVIDER.CREDENTIALS,
+        password: adminPassword,
+      },
+    });
+    console.log("✅ Account 생성 완료:", adminAccount.id);
+
+    const admin = adminUser;
 
     // 테스트 사용자 생성
     const userPassword = await bcrypt.hash("user123", 10);
-    const user = await prisma.user.upsert({
+
+    // User 생성 또는 조회
+    const testUser = await prisma.user.upsert({
       where: {
-        accountId_provider: {
-          accountId: "user",
-          provider: PROVIDER.CREDENTIALS,
-        },
+        email: "user@example.com",
       },
       update: {},
       create: {
-        accountId: "user",
-        nickname: "테스트사용자",
-        name: "테스트 사용자",
         email: "user@example.com",
-        password: userPassword,
+        name: "테스트 사용자",
         role: ROLE.USER,
-        provider: PROVIDER.CREDENTIALS,
-        isNewUser: false,
       },
     });
+
+    // Account 생성 또는 업데이트
+    // 기존 Account가 있으면 삭제 후 재생성
+    await prisma.account.deleteMany({
+      where: {
+        accountId: "user",
+        providerId: PROVIDER.CREDENTIALS,
+      },
+    });
+
+    await prisma.account.create({
+      data: {
+        userId: testUser.id,
+        accountId: "user",
+        providerId: PROVIDER.CREDENTIALS,
+        password: userPassword,
+      },
+    });
+
+    const user = testUser;
 
     // 게시판 생성
     const noticeBoard = await prisma.board.upsert({
@@ -211,7 +254,7 @@ async function main() {
 
     console.log("✅ 시드 데이터 생성 완료");
     console.log("📋 생성된 계정:");
-    console.log("  🔑 관리자: admin / admin123");
+    console.log("  🔑 관리자: admin / admin");
     console.log("  👤 사용자: user / user123");
     console.log("📝 생성된 게시판: 공지사항, 자유게시판");
     console.log("🛒 생성된 제품: 5개 샘플 제품");
