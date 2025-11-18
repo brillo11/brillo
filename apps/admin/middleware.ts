@@ -24,17 +24,14 @@ export async function middleware(request: NextRequest) {
   ) {
     // 로그인 페이지에서 이미 로그인된 사용자는 관리자 대시보드로 리다이렉트
     if (pathname === PATH.AUTH_LOGIN && session?.user) {
-      const user = session.user as any;
-      if (user.role === "ADMIN" && user.id) {
-        console.log("🔄 Already logged in admin redirected from login page");
-        const redirectUrl = new URL(PATH.ADMIN_ROOT, request.url);
-        const response = NextResponse.redirect(redirectUrl);
-        response.headers.set(
-          "Cache-Control",
-          "no-cache, no-store, max-age=0, must-revalidate"
-        );
-        return response;
-      }
+      console.log("🔄 Already logged in user redirected from login page");
+      const redirectUrl = new URL(PATH.ADMIN_ROOT, request.url);
+      const response = NextResponse.redirect(redirectUrl);
+      response.headers.set(
+        "Cache-Control",
+        "no-cache, no-store, max-age=0, must-revalidate"
+      );
+      return response;
     }
     return NextResponse.next();
   }
@@ -66,7 +63,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 관리자 페이지 보호
+  // 관리자 페이지 보호 - 로그인만 확인 (role 검증 제거)
   if (pathname.startsWith(PATH.ADMIN_ROOT)) {
     // 미인증 사용자 → 로그인 페이지로
     if (!session || !session.user) {
@@ -80,24 +77,13 @@ export async function middleware(request: NextRequest) {
       return response;
     }
 
-    // 권한 없는 사용자 → 메인 페이지로
-    const user = session.user as any;
-    if (user.role !== "ADMIN") {
-      console.log("🚫 Non-admin user redirected to home");
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-
-    // 정상적인 관리자 접근
+    // 로그인된 사용자는 모두 통과
     console.log("✅ Admin access granted:", pathname);
   }
 
-  // API 라우트 보호
+  // API 라우트 보호 - 로그인만 확인 (role 검증 제거)
   if (pathname.startsWith("/api/admin")) {
     if (!session || !session.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    const user = session.user as any;
-    if (user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
   }

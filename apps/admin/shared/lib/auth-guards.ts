@@ -13,41 +13,10 @@ export async function requireAdmin() {
     headers: headersList,
   });
 
-  console.log("🔍 requireAdmin - 세션 확인:", {
-    hasSession: !!session,
-    hasUser: !!session?.user,
-    userRole: (session?.user as any)?.role,
-    userId: (session?.user as any)?.id,
-    userEmail: (session?.user as any)?.email,
-    fullSession: session,
-  });
-
-  const user = session?.user as any;
-
-  // role 확인 (대소문자 구분 없이)
-  const userRole = user?.role?.toUpperCase();
-  const isAdmin = userRole === "ADMIN";
-
-  if (!session || !user || !isAdmin) {
-    // 보안 로그 기록
-    console.warn(`🚨 Unauthorized admin access attempt:`, {
-      userId: user?.id || "anonymous",
-      userRole: user?.role || "none",
-      userRoleUpper: userRole,
-      isAdmin,
-      hasSession: !!session,
-      hasUser: !!user,
-      timestamp: new Date().toISOString(),
-      userAgent: process.env.NODE_ENV === "development" ? "dev" : "unknown",
-    });
-
+  // 로그인만 확인 (role 검증 제거)
+  if (!session || !session.user) {
     redirect(PATH.AUTH_LOGIN);
   }
-
-  console.log("✅ requireAdmin - 권한 확인 완료:", {
-    userId: user.id,
-    userRole: user.role,
-  });
 
   return session;
 }
