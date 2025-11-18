@@ -8,27 +8,27 @@ export async function middleware(request: NextRequest) {
   });
   const { pathname } = request.nextUrl;
 
+  // 로그인 페이지는 예외
+  if (pathname === PATH.AUTH_LOGIN) {
+    // 이미 로그인된 관리자는 대시보드로 리다이렉트 (더 엄격한 체크)
+    const user = session?.user;
+    if (user && (user as any).role === "ADMIN" && user.id) {
+      console.log("🔄 Already logged in admin redirected from login page");
+      const redirectUrl = new URL(PATH.ADMIN_ROOT, request.url);
+      const response = NextResponse.redirect(redirectUrl);
+
+      // 캐시 방지 헤더 추가
+      response.headers.set(
+        "Cache-Control",
+        "no-cache, no-store, max-age=0, must-revalidate"
+      );
+      return response;
+    }
+    return NextResponse.next();
+  }
+
   // 관리자 페이지 보호
   if (pathname.startsWith(PATH.ADMIN_ROOT)) {
-    // 로그인 페이지는 예외
-    if (pathname === PATH.AUTH_LOGIN) {
-      // 이미 로그인된 관리자는 대시보드로 리다이렉트 (더 엄격한 체크)
-      const user = session?.user;
-      if (user && (user as any).role === "ADMIN" && user.id) {
-        console.log("🔄 Already logged in admin redirected from login page");
-        const redirectUrl = new URL(PATH.ADMIN_ROOT, request.url);
-        const response = NextResponse.redirect(redirectUrl);
-
-        // 캐시 방지 헤더 추가
-        response.headers.set(
-          "Cache-Control",
-          "no-cache, no-store, max-age=0, must-revalidate"
-        );
-        return response;
-      }
-      return NextResponse.next();
-    }
-
     // 미인증 사용자 → 로그인 페이지로
     if (!session || !session.user) {
       console.log("🚫 Unauthenticated user redirected to login");
