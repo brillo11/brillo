@@ -13,7 +13,7 @@ export default async function AdminDashboard() {
   const session = await requireAdmin();
 
   // 서버에서 대시보드 데이터 직접 페칭
-  const stats = await getAdminDashboardStats();
+  // const stats = await getAdminDashboardStats();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -22,13 +22,13 @@ export default async function AdminDashboard() {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="space-y-8">
           {/* 주요 통계 카드 */}
-          <StatusCardList stats={stats} />
+          {/* <StatusCardList stats={stats} /> */}
 
           {/* 빠른 작업 */}
-          <QuickActions stats={stats} />
+          {/* <QuickActions stats={stats} /> */}
 
           {/* 관리 메뉴 */}
-          <AdminManageMenu stats={stats} />
+          {/* <AdminManageMenu stats={stats} /> */}
         </div>
 
         {/* 개발 모드 디버깅 정보 */}

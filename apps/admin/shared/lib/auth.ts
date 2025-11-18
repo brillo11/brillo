@@ -117,6 +117,16 @@ export const auth: any = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  callbacks: {
+    async session({ session, user }: { session: any; user: any }) {
+      // 세션에 사용자 role과 status 포함
+      if (user) {
+        (session.user as any).role = (user as any).role;
+        (session.user as any).status = (user as any).status;
+      }
+      return session;
+    },
+  },
   socialProviders: {
     naver: {
       clientId: process.env.NAVER_CLIENT_ID || "",

@@ -9,6 +9,7 @@ import { adminMenus } from "@/shared/consts/menus";
 // import { SessionProvider } from "next-auth/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
+import { PATH } from "@/shared/consts/path";
 
 const queryClient = new QueryClient();
 
@@ -16,7 +17,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   // 로그인 페이지와 어드민 생성 페이지에서는 사이드바를 표시하지 않음
-  const isLoginPage = pathname === "/admin/login";
+  const isLoginPage = pathname === PATH.AUTH_LOGIN;
   const isCreateAdminPage = pathname === "/admin/create-admin";
   const showSidebar = !isLoginPage && !isCreateAdminPage;
 
