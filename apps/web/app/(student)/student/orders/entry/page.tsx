@@ -2,13 +2,15 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { AgGridReact } from "ag-grid-react";
-import { ColDef } from "ag-grid-community";
+import { ColDef, ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import { Button } from "@repo/ui/components/button";
 import { Plus, Trash2, Save } from "lucide-react";
 
-// Import AG Grid CSS - required for the grid to display
-import "ag-grid-community/styles/ag-grid.css";
+// Import AG Grid CSS - only the theme CSS, not the base CSS (to avoid conflict with Theming API)
 import "ag-grid-community/styles/ag-theme-quartz.css";
+
+// Register AG Grid modules
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 // Define the row data interface
 interface OrderRow {
@@ -28,7 +30,7 @@ interface OrderRow {
 // Initial empty row
 const createEmptyRow = (): OrderRow => ({
   id: crypto.randomUUID(),
-  productCode: "정통사주",
+  productCode: "인생사주",
   email: "",
   name: "",
   calendarType: "양력",
@@ -37,17 +39,11 @@ const createEmptyRow = (): OrderRow => ({
   birthDay: 1,
   birthHour: 0,
   birthMinute: 0,
-  gender: "남성",
+  gender: "여성",
 });
 
 export default function OrderEntryPage() {
-  const [rowData, setRowData] = useState<OrderRow[]>([
-    createEmptyRow(),
-    createEmptyRow(),
-    createEmptyRow(),
-    createEmptyRow(),
-    createEmptyRow(),
-  ]);
+  const [rowData, setRowData] = useState<OrderRow[]>([createEmptyRow()]);
 
   // Column Definitions
   const columnDefs = useMemo<ColDef<OrderRow>[]>(
@@ -66,7 +62,7 @@ export default function OrderEntryPage() {
         editable: true,
         cellEditor: "agSelectCellEditor",
         cellEditorParams: {
-          values: ["정통사주", "연애사주", "결혼사주", "직업사주", "재물사주"],
+          values: ["인생사주", "정통사주", "연애사주", "결혼사주", "직업사주", "재물사주"],
         },
         width: 150,
       },
@@ -185,17 +181,26 @@ export default function OrderEntryPage() {
   }, [rowData]);
 
   return (
-    <div className="flex flex-col h-screen bg-[#fbf4ec] p-4 lg:p-6">
-      <div className="max-w-[1600px] mx-auto w-full h-full flex flex-col space-y-4">
+    <div className="flex flex-col bg-[#fbf4ec] min-h-screen p-4 lg:p-6">
+      <div className="max-w-[1600px] mx-auto w-full flex flex-col space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-stone-900">주문 대량 등록</h1>
+            <h1 className="text-2xl font-bold text-stone-900">주문 등록</h1>
             <p className="text-stone-600 text-sm mt-1">
               엑셀처럼 데이터를 입력하여 주문을 일괄 등록할 수 있습니다.
             </p>
           </div>
           <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleAddRow}
+              className="flex items-center space-x-1 bg-white border-stone-300 text-stone-700 hover:bg-stone-50"
+            >
+              <Plus className="w-4 h-4" />
+              <span>행 추가</span>
+            </Button>
             <Button
               variant="outline"
               onClick={handleClearData}
@@ -215,11 +220,8 @@ export default function OrderEntryPage() {
         </div>
 
         {/* Grid Container */}
-        <div className="flex-1 bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
-          <div
-            className="ag-theme-quartz"
-            style={{ width: "100%", height: "100%" }}
-          >
+        <div className="bg-white rounded-xl border border-stone-200 shadow-sm">
+          <div className="ag-theme-quartz" style={{ width: "100%" }}>
             <AgGridReact
               rowData={rowData}
               columnDefs={columnDefs}
@@ -229,23 +231,15 @@ export default function OrderEntryPage() {
               animateRows
               rowHeight={40}
               headerHeight={45}
+              domLayout="autoHeight"
             />
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="flex justify-between items-center py-2">
+        {/* Footer Info */}
+        {rowData.length > 0 && (
           <div className="text-sm text-stone-500">총 {rowData.length}행</div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleAddRow}
-            className="flex items-center space-x-1 bg-white border-stone-300 text-stone-700 hover:bg-stone-50"
-          >
-            <Plus className="w-4 h-4" />
-            <span>행 추가</span>
-          </Button>
-        </div>
+        )}
       </div>
     </div>
   );
