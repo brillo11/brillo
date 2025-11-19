@@ -24,7 +24,7 @@ import {
 } from "@repo/ui/components/sidebar";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { AdminMenuItem } from "@/shared/consts/menus";
+import { MenuItem, adminMenus, studentMenus } from "@/shared/consts/menus";
 import {
   Collapsible,
   CollapsibleContent,
@@ -33,15 +33,14 @@ import {
 import { METADATA } from "@/shared/consts/metadata";
 import { Button } from "@repo/ui/components/button";
 import { signOut } from "@/shared/lib/auth-client";
+import { PATH } from "@/shared/consts/path";
 
-interface Props {
-  items: AdminMenuItem[];
-}
-
-export function AppSidebar({ items }: Props) {
+export function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { state, toggleSidebar } = useSidebar();
+
+  const items = pathname.includes(PATH.ADMIN_ROOT) ? adminMenus : studentMenus;
 
   const handleSignOut = async () => {
     try {
@@ -99,21 +98,24 @@ export function AppSidebar({ items }: Props) {
               {items.map((item) => {
                 const isActive =
                   pathname === item.url ||
-                  (item.url !== "/admin" && pathname.startsWith(item.url));
+                  (![PATH.ADMIN_ROOT, PATH.STUDENT_ROOT].includes(
+                    item.baseUrl
+                  ) &&
+                    pathname.startsWith(item.baseUrl));
 
                 if (item.subMenus) {
                   return (
                     <Collapsible
                       key={item.id}
                       asChild
-                      defaultOpen={item.isActive}
+                      defaultOpen={isActive}
                       className="group/collapsible"
                     >
                       <SidebarMenuItem>
                         <CollapsibleTrigger asChild>
                           <SidebarMenuButton
                             tooltip={item.title}
-                            className={`${item.isActive ? "bg-[#E53935] text-white hover:bg-[#E53935] hover:text-white" : ""}`}
+                            className={`${isActive ? "bg-[#E53935] text-white hover:bg-[#E53935] hover:text-white" : ""}`}
                           >
                             {item.icon && <item.icon />}
                             <span>{item.title}</span>

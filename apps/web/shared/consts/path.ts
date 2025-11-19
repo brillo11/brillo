@@ -5,6 +5,8 @@ export const PATH = {
 
   // 학생
   STUDENT_ROOT: "/student",
+  STUDENT_COMMUNITY: "/student/community",
+  STUDENT_COMMUNITY_ANNOUNCEMENTS: "/student/community/announcements",
 
   // 어드민
   ADMIN_ROOT: "/admin",
