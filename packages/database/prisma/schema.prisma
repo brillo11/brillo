@@ -14,7 +14,7 @@ model User {
   createdAt                   DateTime               @default(now())
   name                        String                 @default("")
   nickname                    String                 @unique @default("")
-  role                        ROLE                   @default(USER)
+  role                        ROLE                   @default(STUDENT)
   status                      USER_STATUS            @default(UNKNOWN)
   bizName                     String                 @default("")
   bizNumber                   String                 @default("")
@@ -229,7 +229,6 @@ enum ROLE {
   SUPER_ADMIN
   ADMIN
   STUDENT
-  USER
 }
 
 enum USER_STATUS {
