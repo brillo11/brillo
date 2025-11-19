@@ -21,6 +21,20 @@ export async function requireAdmin() {
   return session;
 }
 
+export async function requireStudent() {
+  const headersList = await headers();
+  const session = await auth.api.getSession({
+    headers: headersList,
+  });
+
+  return session;
+  if (!session || !session.user) {
+    redirect(PATH.AUTH_LOGIN);
+  }
+
+  return session;
+}
+
 /**
  * 🛡️ 서버 사이드 사용자 인증 검증
  */

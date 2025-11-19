@@ -23,7 +23,7 @@ import {
   useSidebar,
 } from "@repo/ui/components/sidebar";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AdminMenuItem } from "@/shared/consts/menus";
 import {
   Collapsible,
@@ -40,7 +40,19 @@ interface Props {
 
 export function AppSidebar({ items }: Props) {
   const pathname = usePathname();
+  const router = useRouter();
   const { state, toggleSidebar } = useSidebar();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push("/");
+    } catch (error) {
+      console.error("로그아웃 오류:", error);
+      // 오류가 발생해도 홈으로 이동
+      router.push("/");
+    }
+  };
 
   return (
     <Sidebar collapsible="icon" className="border-r bg-white">
@@ -169,7 +181,7 @@ export function AppSidebar({ items }: Props) {
             <SidebarMenuButton
               tooltip="로그아웃"
               className="text-red-600 hover:bg-red-50 hover:text-red-700"
-              onClick={() => signOut()}
+              onClick={handleSignOut}
             >
               <LogOut className="h-4 w-4" />
               <span>로그아웃</span>

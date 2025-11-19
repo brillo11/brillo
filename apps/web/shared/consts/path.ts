@@ -1,7 +1,7 @@
 export const PATH = {
   AUTH_ROOT: "/auth",
-  AUTH_LOGIN: "/auth/login",
-  AUTH_SIGNUP: "/auth/signup",
+  AUTH_LOGIN: "/",
+  // AUTH_SIGNUP: "/auth/signup",
 
   ADMIN_ROOT: "/admin",
   ADMIN_COMMUNITY_NEWS: "/admin/community/news",

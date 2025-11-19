@@ -86,11 +86,18 @@ export async function getAdminUserDetail(userId: string) {
 }
 
 export async function deleteAdminUser(userId: string) {
+  // Account와 User 모두 삭제 (CASCADE로 자동 삭제되지만 명시적으로 처리)
+  await prisma.account.deleteMany({
+    where: {
+      userId: userId,
+    },
+  });
   await prisma.user.delete({
     where: {
       id: userId,
     },
   });
+  revalidatePath("/admin/user");
 }
 
 export async function updateAdminUser(
@@ -98,6 +105,7 @@ export async function updateAdminUser(
   data: {
     nickname?: string;
     role?: "USER" | "ADMIN" | "STUDENT";
+    status?: "PENDING" | "ACTIVE" | "INACTIVE" | "UNKNOWN";
   }
 ) {
   await prisma.user.update({
@@ -107,9 +115,11 @@ export async function updateAdminUser(
     data: {
       nickname: data.nickname,
       role: data.role,
+      status: data.status,
     },
   });
   revalidatePath(`/admin/user/edit/${userId}`);
+  revalidatePath("/admin/user");
 }
 
 export async function updateUserAdminMemo(userId: string, adminMemo: string) {

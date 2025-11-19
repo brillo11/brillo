@@ -44,8 +44,14 @@ function UserActionsCell({
 }) {
   const queryClient = useQueryClient();
   const isAdmin = user.role === "ADMIN";
+  const isStudent = user.role === "STUDENT";
+  const needsApproval =
+    isStudent && (user.status === "UNKNOWN" || user.status === "PENDING");
+
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isApproving, setIsApproving] = useState(false);
+  const [isDeclining, setIsDeclining] = useState(false);
 
   const handleRoleChange = async () => {
     try {
@@ -61,15 +67,45 @@ function UserActionsCell({
     }
   };
 
+  const handleApprove = async () => {
+    try {
+      setIsApproving(true);
+      await updateAdminUser(user.id, { status: "ACTIVE" });
+      toast.success("사용자가 승인되었습니다.");
+      queryClient.invalidateQueries({ queryKey: [queryName] });
+    } catch (error) {
+      console.error("승인 실패:", error);
+      toast.error("승인 처리에 실패했습니다.");
+    } finally {
+      setIsApproving(false);
+    }
+  };
+
+  const handleDecline = async () => {
+    try {
+      setIsDeclining(true);
+      await updateAdminUser(user.id, { status: "INACTIVE" });
+      toast.success("사용자가 거부되었습니다.");
+      queryClient.invalidateQueries({ queryKey: [queryName] });
+    } catch (error) {
+      console.error("거부 실패:", error);
+      toast.error("거부 처리에 실패했습니다.");
+    } finally {
+      setIsDeclining(false);
+    }
+  };
+
   const handleDelete = async () => {
     try {
       setIsDeleting(true);
       await deleteAdminUser(user.id);
-      toast.success("관리자가 삭제되었습니다.");
+      toast.success(
+        isAdmin ? "관리자가 삭제되었습니다." : "사용자가 삭제되었습니다."
+      );
       queryClient.invalidateQueries({ queryKey: [queryName] });
     } catch (error) {
-      console.error("관리자 삭제 실패:", error);
-      toast.error("관리자 삭제에 실패했습니다.");
+      console.error("삭제 실패:", error);
+      toast.error("삭제에 실패했습니다.");
     } finally {
       setIsDeleting(false);
     }
@@ -77,15 +113,152 @@ function UserActionsCell({
 
   return (
     <div className="flex items-center justify-center gap-2">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => {
-          router.push(`${PATH.ADMIN_USER}/edit/${user.id}`);
-        }}
-      >
-        상세보기
-      </Button>
+      {/* STUDENT이고 UNKNOWN 또는 PENDING인 경우 */}
+      {needsApproval && (
+        <>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-green-300 text-green-700 hover:bg-green-50"
+                disabled={isApproving}
+              >
+                Approve
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>사용자 승인</AlertDialogTitle>
+                <AlertDialogDescription>
+                  <div className="space-y-2">
+                    <p>이 사용자를 승인하시겠습니까?</p>
+                    <div className="p-3 bg-gray-50 rounded border-l-4 border-green-500">
+                      <p className="font-medium text-gray-900">
+                        {user.name || user.nickname || user.email}
+                      </p>
+                      <p className="text-sm text-gray-600 mt-1">
+                        현재 상태:{" "}
+                        {user.status === "PENDING" ? "대기" : "알 수 없음"}
+                      </p>
+                    </div>
+                    <p className="text-green-600 font-medium">
+                      승인 시 상태가 <strong>활성</strong>으로 변경됩니다.
+                    </p>
+                  </div>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isApproving}>
+                  취소
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleApprove}
+                  className="bg-green-600 hover:bg-green-700"
+                  disabled={isApproving}
+                >
+                  {isApproving ? "승인 중..." : "승인 확인"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                disabled={isDeclining}
+              >
+                Decline
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>사용자 거부</AlertDialogTitle>
+                <AlertDialogDescription>
+                  <div className="space-y-2">
+                    <p>이 사용자를 거부하시겠습니까?</p>
+                    <div className="p-3 bg-gray-50 rounded border-l-4 border-gray-500">
+                      <p className="font-medium text-gray-900">
+                        {user.name || user.nickname || user.email}
+                      </p>
+                      <p className="text-sm text-gray-600 mt-1">
+                        현재 상태:{" "}
+                        {user.status === "PENDING" ? "대기" : "알 수 없음"}
+                      </p>
+                    </div>
+                    <p className="text-gray-600 font-medium">
+                      거부 시 상태가 <strong>비활성</strong>으로 변경됩니다.
+                    </p>
+                  </div>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isDeclining}>
+                  취소
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDecline}
+                  className="bg-gray-600 hover:bg-gray-700"
+                  disabled={isDeclining}
+                >
+                  {isDeclining ? "거부 중..." : "거부 확인"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-gray-600 hover:text-red-600 hover:bg-red-50"
+                disabled={isDeleting}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>사용자 삭제</AlertDialogTitle>
+                <AlertDialogDescription>
+                  <div className="space-y-2">
+                    <p>정말로 이 사용자를 삭제하시겠습니까?</p>
+                    <div className="p-3 bg-gray-50 rounded border-l-4 border-red-500">
+                      <p className="font-medium text-gray-900">
+                        {user.name || user.nickname || user.email}
+                      </p>
+                      <p className="text-sm text-gray-600 mt-1">
+                        사용자 ID: {user.id}
+                      </p>
+                    </div>
+                    <p className="text-red-600 font-medium">
+                      ⚠️ 삭제된 사용자와 계정 정보는 복구할 수 없습니다.
+                    </p>
+                  </div>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isDeleting}>
+                  취소
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDelete}
+                  className="bg-red-600 hover:bg-red-700"
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? "삭제 중..." : "삭제 확인"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
+      )}
+
+      {/* ADMIN인 경우 */}
       {isAdmin && (
         <>
           <AlertDialog>
@@ -96,7 +269,7 @@ function UserActionsCell({
                 className="border-blue-300 text-blue-700 hover:bg-blue-50"
                 disabled={isUpdating}
               >
-                Student
+                학생으로 변경
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -234,7 +407,7 @@ export default function AdminUserClientView() {
         const role = (row.getValue("role") as string) || "";
         return (
           <div className="text-center">
-            {role === "USER" && (
+            {role === "STUDENT" && (
               <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">
                 학생
               </Badge>
@@ -244,7 +417,7 @@ export default function AdminUserClientView() {
                 관리자
               </Badge>
             )}
-            {!["USER", "ADMIN"].includes(role) && (
+            {!["STUDENT", "ADMIN"].includes(role) && (
               <Badge variant="outline">{role}</Badge>
             )}
           </div>
@@ -455,12 +628,12 @@ export default function AdminUserClientView() {
               </label>
               <div className="flex gap-2">
                 <Button
-                  variant={roleFilter === "USER" ? "default" : "outline"}
+                  variant={roleFilter === "STUDENT" ? "default" : "outline"}
                   className={cn(
                     "flex items-center gap-2",
-                    roleFilter === "USER" && "bg-blue-600 hover:bg-blue-700"
+                    roleFilter === "STUDENT" && "bg-blue-600 hover:bg-blue-700"
                   )}
-                  onClick={() => handleFilterChange("role", "USER")}
+                  onClick={() => handleFilterChange("role", "STUDENT")}
                 >
                   <GraduationCap className="h-4 w-4" />
                   수강생
@@ -549,7 +722,7 @@ export default function AdminUserClientView() {
           </CardContent>
         </Card>
 
-        {/* 데이타테이블 */}
+        {/* 데이터 테이블 */}
         <AdminDataTable
           columns={columns}
           queryName={queryName}
