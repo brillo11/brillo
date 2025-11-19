@@ -15,7 +15,7 @@ model User {
   name                        String                 @default("")
   nickname                    String                 @unique @default("")
   role                        ROLE                   @default(USER)
-  status                      USER_STATUS            @default(PENDING)
+  status                      USER_STATUS            @default(UNKNOWN)
   bizName                     String                 @default("")
   bizNumber                   String                 @default("")
   expiredAt                   DateTime               @default(now())
@@ -39,7 +39,9 @@ model User {
   postLikes                   PostLike[]
   comments                    Comment[]
   payments                    Payment[]
-  classes                     Class[]
+
+  cohortId                    BigInt?
+  cohort                      Cohort?                @relation(fields: [cohortId], references: [id])
 
   @@index([email])
 }
@@ -79,7 +81,7 @@ model Account {
   @@index([userId])
 }
 
-model Class {
+model Cohort {
   id        BigInt   @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -224,11 +226,14 @@ model Refund {
 }
 
 enum ROLE {
+  SUPER_ADMIN
   ADMIN
+  STUDENT
   USER
 }
 
 enum USER_STATUS {
+  UNKNOWN
   PENDING
   ACTIVE
   INACTIVE

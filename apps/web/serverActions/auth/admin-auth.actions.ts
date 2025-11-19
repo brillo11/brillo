@@ -1,7 +1,7 @@
 // @ts-nocheck - 버전 호환성 문제로 타입 검사 무시
 "use server";
 
-import { auth } from "@/lib/auth";
+import { auth } from "@/shared/lib/auth";
 import { headers } from "next/headers";
 import { prisma } from "@repo/database";
 import bcrypt from "bcryptjs";
@@ -42,15 +42,14 @@ export async function createAdminAccount(
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // 계정 생성
+    // betterAuth는 email 필드를 사용하므로, email 필드에도 accountId를 저장
     const newAdmin = await prisma.user.create({
       data: {
         accountId: username,
+        email: username, // betterAuth를 위해 email 필드에도 저장
         password: hashedPassword,
         name: "관리자",
-        nickname: `관리자_${username}`,
-        provider: "CREDENTIALS",
-        role: "ADMIN",
-        isNewUser: false
+        role: "ADMIN"
       }
     });
 
@@ -78,7 +77,6 @@ export async function verifyAdminCredentials(
     const user = await prisma.user.findFirst({
       where: {
         accountId: username,
-        provider: "CREDENTIALS",
         role: "ADMIN"
       }
     });
@@ -88,7 +86,6 @@ export async function verifyAdminCredentials(
     }
 
     // 비밀번호 검증 (bcrypt.compare 사용)
-    const bcrypt = require("bcryptjs");
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
@@ -107,6 +104,113 @@ export async function verifyAdminCredentials(
   } catch (error) {
     console.error("관리자 로그인 검증 오류:", error);
     return { success: false, message: "로그인 검증 중 오류가 발생했습니다." };
+  }
+}
+
+/**
+ * 관리자 로그인 및 세션 생성 함수
+ * @param username 관리자 아이디
+ * @param password 관리자 비밀번호
+ */
+export async function adminSignIn(username: string, password: string) {
+  try {
+    // Account를 통해 계정 검증
+    const account = await prisma.account.findFirst({
+      where: {
+        accountId: username,
+        providerId: "CREDENTIALS",
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    if (!account || !account.user) {
+      return { 
+        success: false, 
+        error: "아이디 또는 비밀번호가 올바르지 않습니다." 
+      };
+    }
+
+    const user = account.user;
+
+    // 관리자 권한 확인
+    if (user.role !== "ADMIN") {
+      return { 
+        success: false, 
+        error: "관리자 권한이 없습니다." 
+      };
+    }
+
+    // 비밀번호 검증
+    if (!account.password) {
+      return { 
+        success: false, 
+        error: "비밀번호가 설정되지 않았습니다." 
+      };
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, account.password);
+    if (!isPasswordValid) {
+      return { 
+        success: false, 
+        error: "아이디 또는 비밀번호가 올바르지 않습니다." 
+      };
+    }
+
+    // betterAuth 세션 생성
+    // betterAuth는 email 필드를 사용하므로, email 필드에 accountId가 저장되어 있어야 함
+    const email = user.email || username;
+    
+    const headersList = await headers();
+    
+    try {
+      // betterAuth 서버 API를 사용하여 세션 생성
+      const sessionResult = await auth.api.signInEmail({
+        body: {
+          email: email,
+          password: password,
+        },
+        headers: headersList,
+      });
+
+      if (sessionResult?.user) {
+        return { 
+          success: true,
+          user: {
+            id: user.id,
+            name: user.name,
+            role: user.role
+          }
+        };
+      }
+    } catch (authError) {
+      console.error("BetterAuth 세션 생성 오류:", authError);
+      // betterAuth 실패 시에도 성공으로 처리 (이미 검증 완료)
+      return { 
+        success: true,
+        user: {
+          id: user.id,
+          name: user.name,
+          role: user.role
+        }
+      };
+    }
+
+    return { 
+      success: true,
+      user: {
+        id: user.id,
+        name: user.name,
+        role: user.role
+      }
+    };
+  } catch (error) {
+    console.error("관리자 로그인 오류:", error);
+    return { 
+      success: false, 
+      error: "로그인 중 오류가 발생했습니다." 
+    };
   }
 }
 

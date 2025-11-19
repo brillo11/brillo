@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@repo/database";
-import { requireAuth, requireAdmin } from "@/lib/auth-guards";
+import { requireAuth, requireAdmin } from "@/shared/lib/auth-guards";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import type { Post, Board, User } from "@repo/database";

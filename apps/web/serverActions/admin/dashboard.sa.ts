@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma, PAYMENT_STATUS } from "@repo/database";
-import { requireAdmin } from "@/lib/auth-guards";
+import { requireAdmin } from "@/shared/lib/auth-guards";
 
 /**
  * 관리자 대시보드 통계 정보를 반환하는 서버 액션

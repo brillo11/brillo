@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { prisma } from "@repo/database";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { auth } from "@/shared/lib/auth";
 import { headers } from "next/headers";
 
 // 어드민 로그인 액션

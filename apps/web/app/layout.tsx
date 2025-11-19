@@ -2,11 +2,11 @@ import "@repo/ui/globals.css";
 import { Providers } from "./providers";
 import { Toaster } from "@repo/ui/components/sonner";
 import { Metadata } from "next";
-import { METADATA } from "@/consts/metadata";
+import { METADATA } from "@/shared/consts/metadata";
 
 export const metadata: Metadata = {
-  title: `${METADATA.DEFAULT.title}`,
-  description: `${METADATA.DEFAULT.description}`,
+  title: `${METADATA.TITLE}`,
+  description: `${METADATA.DESCRIPTION}`,
 };
 
 export default function RootLayout({

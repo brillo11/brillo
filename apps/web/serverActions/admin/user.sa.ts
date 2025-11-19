@@ -7,19 +7,39 @@ export async function getAdminUserList({
   params,
   tableState,
   keyword,
+  role,
+  status,
 }: {
   params: any;
   tableState: any;
-  keyword: string;
+  keyword?: string;
+  role?: string;
+  status?: string;
 }) {
+  const where: any = {};
+
+  // 검색어 필터
+  if (keyword) {
+    where.OR = [
+      { nickname: { contains: keyword } },
+      { name: { contains: keyword } },
+    ];
+  }
+
+  // 역할 필터
+  if (role) {
+    where.role = role;
+  }
+
+  // 상태 필터
+  if (status) {
+    where.status = status;
+  }
+
   const users = await prisma.user.findMany({
     take: params.size,
     skip: (params.page - 1) * params.size,
-    where: keyword
-      ? {
-          OR: [{ nickname: { contains: keyword } }],
-        }
-      : undefined,
+    where: Object.keys(where).length > 0 ? where : undefined,
     orderBy: {
       createdAt: "desc",
     },
@@ -27,14 +47,7 @@ export async function getAdminUserList({
 
   // 전체 검색 결과 수
   const total = await prisma.user.count({
-    where: keyword
-      ? {
-          OR: [
-            { nickname: { contains: keyword } },
-            { accountId: { contains: keyword } },
-          ],
-        }
-      : undefined,
+    where: Object.keys(where).length > 0 ? where : undefined,
   });
   revalidatePath("/admin/user");
   return {
@@ -47,20 +60,25 @@ export async function getAdminUserList({
 export async function getAdminUserDetail(userId: string) {
   const user = await prisma.user.findUnique({
     where: {
-      id: BigInt(userId),
+      id: userId,
     },
     select: {
       id: true,
       createdAt: true,
       updatedAt: true,
-      accountId: true,
       nickname: true,
       name: true,
-      mobile: true,
+      phoneNumber: true,
       role: true,
       status: true,
-      isNewUser: true,
-      adminMemo: true,
+      email: true,
+      memo: true,
+      accounts: {
+        select: {
+          accountId: true,
+          providerId: true,
+        },
+      },
     },
   });
 
@@ -70,7 +88,7 @@ export async function getAdminUserDetail(userId: string) {
 export async function deleteAdminUser(userId: string) {
   await prisma.user.delete({
     where: {
-      id: BigInt(userId),
+      id: userId,
     },
   });
 }
@@ -79,18 +97,16 @@ export async function updateAdminUser(
   userId: string,
   data: {
     nickname?: string;
-    role?: "USER" | "ADMIN";
-    isNewUser?: boolean;
+    role?: "USER" | "ADMIN" | "STUDENT";
   }
 ) {
   await prisma.user.update({
     where: {
-      id: BigInt(userId),
+      id: userId,
     },
     data: {
       nickname: data.nickname,
       role: data.role,
-      isNewUser: data.isNewUser,
     },
   });
   revalidatePath(`/admin/user/edit/${userId}`);
@@ -99,8 +115,8 @@ export async function updateAdminUser(
 export async function updateUserAdminMemo(userId: string, adminMemo: string) {
   try {
     await prisma.user.update({
-      where: { id: BigInt(userId) },
-      data: { adminMemo },
+      where: { id: userId },
+      data: { memo: adminMemo },
     });
 
     revalidatePath(`/admin/user/edit/${userId}`);

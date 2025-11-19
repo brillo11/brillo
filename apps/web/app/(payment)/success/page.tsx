@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { confirmPayment } from "@/serverActions/payment/payment.actions";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/shared/hooks/useSession";
 import { LoadingSpinner } from "@repo/ui/components/loading-spinner";
 import { Card, CardContent } from "@repo/ui/components/card";
 import {

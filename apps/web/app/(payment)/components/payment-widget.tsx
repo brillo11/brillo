@@ -6,7 +6,7 @@ import {
   TossPaymentsWidgets,
   WidgetPaymentMethodWidget
 } from "@tosspayments/tosspayments-sdk";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/shared/hooks/useSession";
 import { createPaymentSession } from "@/serverActions/payment/payment-session.actions";
 
 function generateRandomString() {

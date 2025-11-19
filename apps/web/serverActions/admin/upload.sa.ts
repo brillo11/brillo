@@ -1,6 +1,6 @@
 'use server';
 
-import { auth } from '@/auth';
+import { auth } from '@/shared/lib/auth';
 import { nanoid } from 'nanoid';
 import { uploadFileToS3 } from './community/uploadToS3';
 

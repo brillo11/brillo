@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@repo/database";
-import { requireAuth, requireAdmin } from "@/lib/auth-guards";
+import { requireAuth, requireAdmin } from "@/shared/lib/auth-guards";
 import { revalidatePath } from "next/cache";
 
 // 댓글 목록 조회 (CSR용)
