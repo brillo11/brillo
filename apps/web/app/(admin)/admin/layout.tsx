@@ -8,9 +8,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div
-      className={`mx-auto scroll-smooth font-sans antialiased shadow-sm select-none`}
-    >
+    <div className={`mx-auto scroll-smooth font-sans antialiased shadow-sm`}>
       <Providers>{children}</Providers>
       <Toaster />
     </div>

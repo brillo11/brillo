@@ -27,7 +27,6 @@ export async function requireStudent() {
     headers: headersList,
   });
 
-  return session;
   if (!session || !session.user) {
     redirect(PATH.AUTH_LOGIN);
   }

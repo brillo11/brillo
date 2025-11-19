@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { confirmPayment } from "@/serverActions/payment/payment.actions";
-import { useSession } from "@/shared/hooks/useSession";
+import { useAuth } from "@/shared/hooks/use-auth";
 import { LoadingSpinner } from "@repo/ui/components/loading-spinner";
 import { Card, CardContent } from "@repo/ui/components/card";
 import {
@@ -18,8 +18,8 @@ import { Button } from "@repo/ui/components/button";
 import { Badge } from "@repo/ui/components/badge";
 
 export default function SuccessPage() {
-  const { data: session, status, update } = useSession();
-  if (!session) {
+  const { session, isLoading: isAuthLoading } = useAuth();
+  if (!session && !isAuthLoading) {
     return <div>로그인 후 이용해주세요.</div>;
   }
   const router = useRouter();
@@ -107,9 +107,9 @@ export default function SuccessPage() {
     };
 
     handleConfirmPayment();
-  }, [searchParams, status]);
+  }, [searchParams, isAuthLoading]);
 
-  if (!session || isLoading) {
+  if (!session || isAuthLoading || isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 via-white to-green-50 p-4">
         <Card className="w-full max-w-md border-0 shadow-xl">

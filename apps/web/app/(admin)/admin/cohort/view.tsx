@@ -2,7 +2,7 @@
 
 import { AdminDataTable } from "@/app/(admin)/admin/components/datatable/admin-data-table";
 import { kdayjs } from "@/shared/lib/utils/dayjs";
-import { getAdminClassList } from "@/serverActions/admin/class.sa";
+import { getAdminCohortList } from "@/serverActions/admin/cohort";
 import { ColumnDef } from "@tanstack/react-table";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -10,8 +10,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AdminLayoutWrapper } from "@/app/(admin)/admin/components/layout/admin-layout-wrapper";
 import { Button } from "@repo/ui/components/button";
 import { Badge } from "@repo/ui/components/badge";
+import { PATH } from "@/shared/consts/path";
 
-export default function AdminClassClientView() {
+export default function AdminCohortClientView() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
@@ -97,7 +98,7 @@ export default function AdminClassClientView() {
 
   const queryFn = async () => {
     try {
-      const result = await getAdminClassList({
+      const result = await getAdminCohortList({
         params,
         tableState: {},
         keyword: searchKeyword,
@@ -123,7 +124,7 @@ export default function AdminClassClientView() {
   const options = {
     isCreateAvailable: true,
     onCreateClick: () => {
-      router.push("/admin/class/new");
+      router.push(`${PATH.ADMIN_COHORT}/new`);
     },
     searchBar: {
       placeholder: "기수명 또는 슬러그로 검색 (엔터키 입력)",
@@ -147,4 +148,3 @@ export default function AdminClassClientView() {
     </div>
   );
 }
-

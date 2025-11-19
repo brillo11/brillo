@@ -6,6 +6,7 @@ import {
   BarChart3,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
 } from "lucide-react";
 import {
   Sidebar,
@@ -34,12 +35,20 @@ import { METADATA } from "@/shared/consts/metadata";
 import { Button } from "@repo/ui/components/button";
 import { signOut } from "@/shared/lib/auth-client";
 import { PATH } from "@/shared/consts/path";
+import Image from "next/image";
 
 export function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { state, toggleSidebar } = useSidebar();
 
+  const isAdmin = pathname.includes(PATH.ADMIN_ROOT);
+  const isStudent = pathname.includes(PATH.STUDENT_ROOT);
+  const rootUrl = isAdmin
+    ? PATH.ADMIN_ROOT
+    : isStudent
+      ? PATH.STUDENT_ROOT
+      : "/";
   const items = pathname.includes(PATH.ADMIN_ROOT) ? adminMenus : studentMenus;
 
   const handleSignOut = async () => {
@@ -54,21 +63,31 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r bg-white">
+    <Sidebar collapsible="icon" className="border-none shadow-sm">
       {/* 헤더 섹션 */}
-      <SidebarHeader className="border-b">
+      <SidebarHeader className="bg-white">
         {state === "expanded" ? (
           // 펼쳐진 상태: 기존 헤더
-          <div className="flex items-center justify-between p-4">
-            <Link href="/admin" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#E53935] text-white">
+          <div className="flex items-center justify-between p-2">
+            <Link
+              href={rootUrl}
+              className="flex items-center justify-center w-full"
+            >
+              <Image
+                src="/logo_yhd.png"
+                alt="logo"
+                width={350}
+                height={100}
+                className="h-[40px] w-auto"
+              />
+              {/* <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#E53935] text-white">
                 <BarChart3 className="h-4 w-4" />
               </div>
               <div>
                 <h2 className="text-lg font-semibold">{METADATA.TITLE}</h2>
-              </div>
+              </div> */}
             </Link>
-            <Button
+            {/* <Button
               variant="ghost"
               size="icon"
               onClick={toggleSidebar}
@@ -76,7 +95,7 @@ export function AppSidebar() {
               title="사이드바 접기"
             >
               <ChevronLeft className="h-4 w-4" />
-            </Button>
+            </Button> */}
           </div>
         ) : (
           // 접힌 상태: 전체가 펼치기 버튼
@@ -91,79 +110,135 @@ export function AppSidebar() {
       </SidebarHeader>
 
       {/* 메인 콘텐츠 */}
-      <SidebarContent>
-        <SidebarGroup>
+      <SidebarContent className="bg-white">
+        <SidebarGroup className="p-0">
           <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => {
-                const isActive =
-                  pathname === item.url ||
-                  (![PATH.ADMIN_ROOT, PATH.STUDENT_ROOT].includes(
-                    item.baseUrl
-                  ) &&
-                    pathname.startsWith(item.baseUrl));
+            <nav className="flex-1 px-4 py-6">
+              <ul className="space-y-1">
+                {items.map((item) => {
+                  const isActive =
+                    pathname === item.url ||
+                    (![PATH.ADMIN_ROOT, PATH.STUDENT_ROOT].includes(
+                      item.baseUrl
+                    ) &&
+                      pathname.startsWith(item.baseUrl));
 
-                if (item.subMenus) {
-                  return (
-                    <Collapsible
-                      key={item.id}
-                      asChild
-                      defaultOpen={isActive}
-                      className="group/collapsible"
-                    >
-                      <SidebarMenuItem>
-                        <CollapsibleTrigger asChild>
-                          <SidebarMenuButton
-                            tooltip={item.title}
-                            className={`${isActive ? "bg-[#E53935] text-white hover:bg-[#E53935] hover:text-white" : ""}`}
-                          >
-                            {item.icon && <item.icon />}
-                            <span>{item.title}</span>
-                            {item?.subMenus && (
-                              <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                            )}
-                          </SidebarMenuButton>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent>
-                          <SidebarMenuSub>
-                            {item.subMenus?.map((subMenu) => {
-                              const isSubActive = pathname === subMenu.url;
-                              return (
-                                <SidebarMenuSubItem key={subMenu.title}>
-                                  <SidebarMenuSubButton
-                                    asChild
-                                    className={`${isSubActive ? "bg-[#E53935] text-white hover:bg-[#E53935] hover:text-white" : ""}`}
-                                  >
-                                    <Link href={subMenu.url}>
-                                      <span>{subMenu.title}</span>
-                                    </Link>
-                                  </SidebarMenuSubButton>
-                                </SidebarMenuSubItem>
-                              );
-                            })}
-                          </SidebarMenuSub>
-                        </CollapsibleContent>
-                      </SidebarMenuItem>
-                    </Collapsible>
-                  );
-                } else {
-                  return (
-                    <SidebarMenuItem key={item.id}>
-                      <SidebarMenuButton
+                  if (item.subMenus) {
+                    return (
+                      <Collapsible
+                        key={item.id}
                         asChild
-                        tooltip={item.title}
-                        className={`${isActive ? "bg-[#E53935] text-white hover:bg-[#E53935] hover:text-white" : ""}`}
+                        defaultOpen={isActive}
+                        className="group/collapsible"
                       >
-                        <Link href={item.url}>
-                          {item.icon && <item.icon />}
-                          <span>{item.title}</span>
+                        <li>
+                          <CollapsibleTrigger asChild>
+                            <button
+                              className={`group w-full text-left px-4 py-3 rounded-lg flex items-center justify-between transition-all duration-200 ${
+                                isActive
+                                  ? "bg-slate-800 text-white shadow-sm"
+                                  : "hover:bg-slate-100 text-slate-600 hover:text-slate-800"
+                              }`}
+                            >
+                              <div className="flex items-center space-x-3">
+                                {item.icon && (
+                                  <item.icon
+                                    className={`w-5 h-5 transition-colors ${
+                                      isActive
+                                        ? "text-white"
+                                        : "text-slate-400 group-hover:text-slate-600"
+                                    }`}
+                                  />
+                                )}
+                                <span
+                                  className={`font-medium text-sm lg:text-base transition-colors ${
+                                    isActive
+                                      ? "text-white"
+                                      : "text-slate-600 group-hover:text-slate-800"
+                                  }`}
+                                >
+                                  {item.title}
+                                </span>
+                              </div>
+                              <ChevronDown
+                                className={`w-4 h-4 transition-all duration-200 ${
+                                  isActive
+                                    ? "text-white"
+                                    : "text-slate-300 group-hover:text-slate-500"
+                                } group-data-[state=open]/collapsible:rotate-180`}
+                              />
+                            </button>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            <ul className="mt-1 space-y-1 pl-4">
+                              {item.subMenus?.map((subMenu) => {
+                                const isSubActive = pathname === subMenu.url;
+                                return (
+                                  <li key={subMenu.title}>
+                                    <Link
+                                      href={subMenu.url}
+                                      className={`group w-full text-left px-4 py-3 rounded-lg flex items-center transition-all duration-200 ${
+                                        isSubActive
+                                          ? "bg-slate-800 text-white shadow-sm"
+                                          : "hover:bg-slate-100 text-slate-600 hover:text-slate-800"
+                                      }`}
+                                    >
+                                      <span
+                                        className={`font-medium text-sm lg:text-base transition-colors ${
+                                          isSubActive
+                                            ? "text-white"
+                                            : "text-slate-600 group-hover:text-slate-800"
+                                        }`}
+                                      >
+                                        {subMenu.title}
+                                      </span>
+                                    </Link>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </CollapsibleContent>
+                        </li>
+                      </Collapsible>
+                    );
+                  } else {
+                    return (
+                      <li key={item.id}>
+                        <Link
+                          href={item.url}
+                          className={`group w-full text-left px-4 py-3 rounded-lg flex items-center transition-all duration-200 ${
+                            isActive
+                              ? "bg-slate-800 text-white shadow-sm"
+                              : "hover:bg-slate-100 text-slate-600 hover:text-slate-800"
+                          }`}
+                        >
+                          <div className="flex items-center space-x-3">
+                            {item.icon && (
+                              <item.icon
+                                className={`w-5 h-5 transition-colors ${
+                                  isActive
+                                    ? "text-white"
+                                    : "text-slate-400 group-hover:text-slate-600"
+                                }`}
+                              />
+                            )}
+                            <span
+                              className={`font-medium text-sm lg:text-base transition-colors ${
+                                isActive
+                                  ? "text-white"
+                                  : "text-slate-600 group-hover:text-slate-800"
+                              }`}
+                            >
+                              {item.title}
+                            </span>
+                          </div>
                         </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  );
-                }
-              })}
-            </SidebarMenu>
+                      </li>
+                    );
+                  }
+                })}
+              </ul>
+            </nav>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

@@ -46,7 +46,7 @@ import { PAYMENT_STATUS } from "@repo/database";
 import { PaymentStats } from "./components/payment-stats";
 import { PaymentHistoryTab } from "./components/PaymentHistoryTab";
 import { RefundHistoryTab } from "./components/RefundHistoryTab";
-import { useSession } from "@/shared/hooks/useSession";
+import { useAuth } from "@/shared/hooks/use-auth";
 
 type PaymentWithDetail = Payment & {
   user?: { nickname?: string };
@@ -59,7 +59,7 @@ export default function AdminPaymentClientView({
   payments: PaymentWithDetail[];
 }) {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { session } = useAuth();
   const user = session?.user;
 
   // 상태 관리

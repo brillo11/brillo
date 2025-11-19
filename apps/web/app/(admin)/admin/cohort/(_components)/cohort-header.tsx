@@ -1,11 +1,12 @@
 "use client";
 
+import { PATH } from "@/shared/consts/path";
 import { Button } from "@repo/ui/components/button";
 import { Plus, Settings, GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export default function ClassHeader() {
+export default function CohortHeader() {
   const router = useRouter();
   return (
     <div className="border-b bg-white">
@@ -25,7 +26,7 @@ export default function ClassHeader() {
               <Settings className="mr-2 h-4 w-4" />
               관리자 대시보드
             </Button>
-            <Link href="/admin/class/new">
+            <Link href={`${PATH.ADMIN_COHORT}/new`}>
               <Button className="bg-[#E53935] hover:bg-[#d32f2f]">
                 <Plus className="mr-2 h-4 w-4" />새 기수 추가
               </Button>
@@ -36,4 +37,3 @@ export default function ClassHeader() {
     </div>
   );
 }
-

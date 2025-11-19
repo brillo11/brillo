@@ -38,10 +38,14 @@ model User {
   posts                       Post[] @relation("AuthoredPosts")
   postLikes                   PostLike[]
   comments                    Comment[]
-  payments                    Payment[]
+  pointOrders                 PointOrder[]
+  orders                      Order[]
+  
+  submissions Submission[]
 
   cohortId                    BigInt?
   cohort                      Cohort?                @relation(fields: [cohortId], references: [id])
+
 
   @@index([email])
 }
@@ -81,7 +85,7 @@ model Account {
   @@index([userId])
 }
 
-model Cohort {
+model Class {
   id        BigInt   @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -89,7 +93,64 @@ model Cohort {
   slug      String   @unique
   misc      Json     @default("{}")
 
+  cohorts Cohort[]
+
+  @@index([slug])
+}
+
+model Cohort {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String   @default("")
+  totalWeek Int      @default(0)
+  startDate DateTime
+  endDate   DateTime
+  cohortOrder    Int      @default(0)
+  
+  slug      String   @unique
+  misc      Json     @default("{}")
+
   users User[]
+  missions Mission[]
+
+  classId BigInt
+  class   Class? @relation(fields: [classId], references: [id])
+
+  @@index([slug])
+}
+
+model Mission {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String   @default("")
+  description String   @default("")
+  dueDate   DateTime
+  slug      String   @unique
+  misc      Json     @default("{}")
+  week      Int      @default(0)
+
+  submissions Submission[]
+
+  cohortId BigInt
+  cohort   Cohort? @relation(fields: [cohortId], references: [id])
+}
+
+model Submission {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  content   String   @default("")
+  misc      Json     @default("{}")
+
+  missionId BigInt
+  mission   Mission? @relation(fields: [missionId], references: [id])
+  userId    String
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([missionId])
+  @@index([userId])
 }
 
 model Board {
@@ -165,12 +226,38 @@ model Log {
   content   Json     @default("{}")
 }
 
-model Payment {
+model PointOrder {
   id           BigInt         @id @default(autoincrement())
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   amount       Int
-  status       PAYMENT_STATUS
+  status       ORDER_STATUS
+  method       String
+  isRefunded   Boolean        @default(false)
+  refundedAt   DateTime?
+  refundAmount Int?
+  refundReason String?
+  merchantUid  String?        @unique
+  pgProvider   String?
+  receiptUrl   String?
+  paymentKey   String?        @unique
+  isTest       Boolean        @default(false)
+  orderName    String         @default("서비스 이용료") // 주문명
+  description  String?        // 결제 설명
+  userId       String
+  user    User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([merchantUid])
+  @@index([paymentKey])
+}
+
+model Order {
+  id           BigInt         @id @default(autoincrement())
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  amount       Int
+  status       ORDER_STATUS
   method       String
   isRefunded   Boolean        @default(false)
   refundedAt   DateTime?
@@ -217,10 +304,10 @@ model Refund {
   refundMethod  String?       // 환불 방법 (카드취소, 계좌이체 등)
   processedAt   DateTime?     // 환불 처리 완료 시각
   tossRefundKey String?       // 토스페이먼츠 환불 키
-  paymentId     BigInt        // 원본 결제 ID
-  payment       Payment       @relation(fields: [paymentId], references: [id])
+  orderId     BigInt        // 원본 주문 ID
+  order       Order       @relation(fields: [orderId], references: [id])
 
-  @@index([paymentId])
+  @@index([orderId])
   @@index([status])
   @@index([createdAt])
 }
@@ -248,7 +335,7 @@ enum PROVIDER {
   FACEBOOK
 }
 
-enum PAYMENT_STATUS {
+enum ORDER_STATUS {
   COMPLETED        @map("결제완료")
   CANCELED         @map("결제취소")
   PARTIAL_REFUNDED @map("부분환불")
@@ -269,7 +356,8 @@ model Product {
   id            BigInt   @id @default(autoincrement())
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  
+
+  icon          String   @default("") // 아이콘
   name          String   // 제품명
   description   String   @default("") // 제품 설명
   price         Int      // 판매가격 (원)

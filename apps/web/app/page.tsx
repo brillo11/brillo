@@ -1,13 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@repo/ui/components/button";
-import { Input } from "@repo/ui/components/input";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { ArrowLeft } from "lucide-react";
 import { loginWithEmail, loginWithSocial } from "@/shared/lib/auth-helpers";
-import { PATH } from "@/shared/consts/path";
+import Image from "next/image";
 import { Card, CardContent } from "@repo/ui/components/card";
 
 export default function LoginPage() {
@@ -83,7 +80,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col gap-4 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="flex flex-col gap-4 min-h-screen bg-gradient-to-br from-red-50 to-orange-100 flex items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute inset-0">
         <div className="absolute top-10 left-10 w-20 h-20 bg-blue-200/30 rounded-full animate-bounce"></div>
         <div className="absolute top-32 right-20 w-16 h-16 bg-purple-200/30 rounded-full animate-pulse"></div>
@@ -101,15 +98,24 @@ export default function LoginPage() {
       </Button> */}
 
       <div className="max-w-md w-full space-y-6 sm:space-y-8 relative z-10">
+        <Image
+          src="/logo_yhd.png"
+          alt="logo"
+          width={350}
+          height={100}
+          className="mx-auto w-[175px]"
+        />
         <div className="text-center">
-          <h2 className="text-4xl font-bold text-gray-900">사주 수익화</h2>
-          <p className="mt-2 text-base text-gray-600">계정에 로그인해주세요</p>
+          <h2 className="text-3xl font-bold text-[#D86B6B]">
+            당신의 운명에 연꽃을 피우다
+          </h2>
+          {/* <p className="mt-2 text-base text-gray-600">계정에 로그인해주세요</p> */}
         </div>
 
         <Card className="w-full max-w-md border-none shadow-xl">
           <CardContent>
             {/* 카카오 로그인 */}
-            <div className="space-y-4 p-2">
+            <div className="space-y-4">
               <button
                 onClick={() => handleSocialLogin("kakao")}
                 disabled={isSocialLoading}
@@ -132,7 +138,7 @@ export default function LoginPage() {
                 </svg>
                 {isSocialLoading ? "로그인 중..." : "카카오로 시작하기"}
               </button>
-              <div className="text-center text-gray-500 text-sm">
+              <div className="text-center text-slate-600 text-sm">
                 수강생 여러분은 위 버튼을 클릭해주세요
               </div>
             </div>

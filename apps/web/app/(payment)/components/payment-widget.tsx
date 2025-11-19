@@ -6,7 +6,7 @@ import {
   TossPaymentsWidgets,
   WidgetPaymentMethodWidget
 } from "@tosspayments/tosspayments-sdk";
-import { useSession } from "@/shared/hooks/useSession";
+import { useAuth } from "@/shared/hooks/use-auth";
 import { createPaymentSession } from "@/serverActions/payment/payment-session.actions";
 
 function generateRandomString() {
@@ -64,7 +64,7 @@ export default function PaymentWidget({
     env === "live"
       ? process.env.NEXT_PUBLIC_TOSS_LIVE_CLIENT_KEY || ""
       : process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || "";
-  const { data: session } = useSession();
+  const { session } = useAuth();
   const [amount] = useState({ currency: "KRW", value: propAmount });
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState<TossPaymentsWidgets | null>(null);

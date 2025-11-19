@@ -133,6 +133,18 @@ export async function confirmPayment(
       where: { orderId: data.orderId },
     });
 
+    // 포인트 충전 로직
+    if (isEvent && eventText && eventText.startsWith("POINT_CHARGE:")) {
+      const pointsToAdd = parseInt(eventText.split(":")[1] || "0");
+      if (pointsToAdd > 0 && data.userId) {
+        await prisma.user.update({
+          where: { id: data.userId.toString() },
+          data: { points: { increment: pointsToAdd } },
+        });
+        console.log(`포인트 충전 완료: User ${data.userId} +${pointsToAdd} points`);
+      }
+    }
+
     console.log("결제 승인 완료:", {
       paymentKey: result.paymentKey,
       orderId: result.orderId,

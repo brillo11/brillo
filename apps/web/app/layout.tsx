@@ -16,9 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`mx-auto select-none scroll-smooth font-sans antialiased shadow-sm`}
-      >
+      <body className={`mx-auto scroll-smooth font-sans antialiased shadow-sm`}>
         <Providers>{children}</Providers>
         <Toaster />
       </body>

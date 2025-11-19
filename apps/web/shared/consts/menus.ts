@@ -16,6 +16,12 @@ import {
   ShoppingBag,
   MessageSquare,
   GraduationCap,
+  Users,
+  HelpCircle,
+  ClipboardList,
+  PenLine,
+  History,
+  Target,
 } from "lucide-react";
 import { PATH } from "./path";
 
@@ -66,12 +72,14 @@ export const adminMenus: MenuItem[] = [
     url: PATH.ADMIN_USER,
     icon: User,
   },
-  // {
-  //   id: "class",
-  //   title: "기수관리",
-  //   url: "/admin/class",
-  //   icon: GraduationCap,
-  // },
+  {
+    id: "class",
+    title: "기수관리",
+    baseUrl: PATH.ADMIN_COHORT,
+    url: PATH.ADMIN_COHORT,
+    icon: GraduationCap,
+  },
+
   // {
   //   id: "posts",
   //   title: "게시글",
@@ -88,18 +96,78 @@ export const adminMenus: MenuItem[] = [
 
 export const studentMenus: MenuItem[] = [
   {
-    id: "dashboard",
-    title: "대시보드",
+    id: "home",
+    title: "홈",
     baseUrl: PATH.STUDENT_ROOT,
     url: PATH.STUDENT_ROOT,
     icon: BarChart3,
   },
   {
-    id: "공지사항",
-    title: "공지사항",
-    baseUrl: PATH.STUDENT_ROOT,
-    url: PATH.STUDENT_COMMUNITY_ANNOUNCEMENTS,
-    icon: BarChart3,
+    id: "상품",
+    title: "상품",
+    baseUrl: PATH.STUDENT_PRODUCTS,
+    url: PATH.STUDENT_PRODUCTS,
+    icon: ShoppingBag,
+  },
+  {
+    id: "주문",
+    title: "주문",
+    baseUrl: PATH.STUDENT_ORDERS,
+    url: PATH.STUDENT_ORDERS,
+    icon: ClipboardList,
+    subMenus: [
+      {
+        id: "주문 등록",
+        title: "주문 등록",
+        baseUrl: PATH.STUDENT_ORDERS,
+        url: PATH.STUDENT_ORDERS,
+        icon: PenLine,
+      },
+      {
+        id: "주문 내역",
+        title: "주문 내역",
+        baseUrl: PATH.STUDENT_ORDERS,
+        url: PATH.STUDENT_ORDERS_HISTORY,
+        icon: History,
+      },
+    ],
+  },
+  {
+    id: "수강생 라운지",
+    title: "수강생 라운지",
+    baseUrl: PATH.STUDENT_LOUNGE,
+    url: PATH.STUDENT_LOUNGE_DASHBOARD,
+    icon: Users,
+    subMenus: [
+      {
+        id: "공지사항",
+        title: "공지사항",
+        baseUrl: PATH.STUDENT_LOUNGE,
+        url: PATH.STUDENT_LOUNGE_ANNOUNCEMENTS,
+        icon: Megaphone,
+      },
+      {
+        id: "대시보드",
+        title: "대시보드",
+        baseUrl: PATH.STUDENT_LOUNGE,
+        url: PATH.STUDENT_LOUNGE_DASHBOARD,
+        icon: BarChart3,
+      },
+      {
+        id: "나의 미션",
+        title: "나의 미션",
+        baseUrl: PATH.STUDENT_LOUNGE,
+        url: PATH.STUDENT_LOUNGE_MISSION,
+        icon: Target,
+      },
+      {
+        id: "QnA",
+        title: "QnA",
+        baseUrl: PATH.STUDENT_LOUNGE,
+        url: PATH.STUDENT_LOUNGE_QNA,
+        icon: HelpCircle,
+      },
+    ],
   },
 ];
 

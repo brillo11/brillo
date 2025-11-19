@@ -1,6 +1,6 @@
 import "@repo/ui/globals.css";
-import { Providers } from "@/app/(admin)/admin/components/providers";
 import { Toaster } from "@repo/ui/components/sonner";
+import { StudentProviders } from "@/app/(admin)/admin/components/studentProviders";
 
 export default function RootLayout({
   children,
@@ -8,10 +8,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div
-      className={`mx-auto scroll-smooth font-sans antialiased shadow-sm select-none`}
-    >
-      <Providers>{children}</Providers>
+    <div className={`mx-auto scroll-smooth font-sans antialiased shadow-sm`}>
+      <StudentProviders>{children}</StudentProviders>
       <Toaster />
     </div>
   );
