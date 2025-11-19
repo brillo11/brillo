@@ -350,7 +350,8 @@ enum PROVIDER {
 
 enum ORDER_STATUS {
   PENDING          @map("결제대기")
-  COMPLETED        @map("결제완료")
+  PAID             @map("결제완료")
+  DELIVERED        @map("전송완료")
   CANCELED         @map("결제취소")
   PARTIAL_REFUNDED @map("부분환불")
   REFUNDED         @map("환불완료")

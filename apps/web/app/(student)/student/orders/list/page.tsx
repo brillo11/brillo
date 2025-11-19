@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getPointOrders } from "@/serverActions/pointOrder.actions";
+import { getPointOrders, confirmPointOrders } from "@/serverActions/pointOrder.actions";
 import { kdayjs } from "@/shared/lib/utils/dayjs";
 import { Button } from "@repo/ui/components/button";
 import {
@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from "@repo/ui/components/dialog";
 import { Checkbox } from "@repo/ui/components/checkbox";
+import { toast } from "sonner";
 import Link from "next/link";
 
 interface PointOrder {
@@ -92,11 +93,27 @@ export default function OrderListPage() {
     setConfirmModalOpen(true);
   };
 
-  const handleFinalConfirm = () => {
-    // TODO: Implement actual order confirmation logic
+  const handleFinalConfirm = async () => {
     setConfirmModalOpen(false);
-    alert(`${selectedIds.size}건의 주문이 확정되었습니다.`);
-    setSelectedIds(new Set());
+    
+    try {
+      const orderIds = Array.from(selectedIds);
+      const result = await confirmPointOrders(orderIds);
+      
+      if (result.success) {
+        toast.success(`${result.count}건의 주문이 확정되었습니다.`);
+        setSelectedIds(new Set());
+        
+        // Refresh order list
+        const data = await getPointOrders();
+        setOrders(data as any);
+      } else {
+        toast.error(result.error || "주문 확정에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("Confirmation error:", error);
+      toast.error("주문 확정 중 오류가 발생했습니다.");
+    }
   };
 
   if (loading) {
@@ -237,30 +254,30 @@ export default function OrderListPage() {
           </DialogHeader>
           
           <div className="py-6 space-y-6">
-            <div className="text-center">
+            {/* <div className="text-center">
               <p className="text-stone-600 text-sm mb-2">주문을 확정할 회사</p>
               <p className="text-xl font-bold text-stone-900">"앤유컴퍼니"</p>
-            </div>
+            </div> */}
 
             <div className="space-y-3 border-t border-b border-stone-200 py-4">
               <div className="flex justify-between items-center">
                 <span className="text-stone-600">현재 잔여 복비</span>
                 <span className="text-lg font-bold text-stone-900">
-                  995,000원
+                  995,000냥
                 </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-stone-600">주문 확정 복비</span>
                 <span className="text-lg font-bold text-red-500">
-                  -{totalAmount.toLocaleString()}원
+                  -{totalAmount.toLocaleString()}냥
                 </span>
               </div>
-              <div className="flex justify-between items-center">
+              {/* <div className="flex justify-between items-center">
                 <span className="text-stone-600">실시간 전송 추가요금</span>
                 <span className="text-lg font-bold text-stone-900">
                   +0원
                 </span>
-              </div>
+              </div> */}
             </div>
 
             <p className="text-center text-stone-600 text-sm">

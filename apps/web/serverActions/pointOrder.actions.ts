@@ -115,3 +115,63 @@ export async function getPointOrders() {
 
   return orders;
 }
+
+export async function confirmPointOrders(orderIds: string[]) {
+  const session = await requireStudent();
+  
+  try {
+    // Convert string IDs to BigInt
+    const bigIntIds = orderIds.map(id => BigInt(id));
+    
+    // Update orders to PAID status
+    const result = await prisma.pointOrder.updateMany({
+      where: {
+        id: { in: bigIntIds },
+        userId: session.user.id, // Security: only update user's own orders
+        status: "PENDING", // Only confirm pending orders
+      },
+      data: {
+        status: "PAID",
+        updatedAt: new Date(),
+      },
+    });
+
+    revalidatePath("/student/orders/list");
+    revalidatePath("/student/orders/history");
+
+    return {
+      success: true,
+      count: result.count,
+    };
+  } catch (error) {
+    console.error("Failed to confirm orders:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "주문 확정에 실패했습니다.",
+    };
+  }
+}
+
+export async function getOrderHistory() {
+  const session = await requireStudent();
+  
+  const orders = await prisma.pointOrder.findMany({
+    where: { 
+      userId: session.user.id,
+      status: { in: ["PAID", "DELIVERED", "CANCELED", "REFUNDED"] },
+    },
+    include: {
+      product: {
+        select: {
+          name: true,
+          price: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return orders;
+}
