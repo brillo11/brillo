@@ -9,6 +9,7 @@ export const PATH = {
   STUDENT_COMMUNITY_ANNOUNCEMENTS: "/student/community/announcements",
   STUDENT_PRODUCTS: "/student/products",
   STUDENT_ORDERS: "/student/orders",
+  STUDENT_ORDERS_ENTRY: "/student/orders/entry",
   STUDENT_ORDERS_HISTORY: "/student/orders/history",
   STUDENT_LOUNGE: "/student/studentLounge",
   STUDENT_LOUNGE_DASHBOARD: "/student/studentLounge/dashboard",

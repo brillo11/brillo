@@ -19,16 +19,17 @@
     "auth-gen": "node auth-gen.js"
   },
   "dependencies": {
-    "@prisma/client": "latest"
+    "@prisma/client": "latest",
+    "dotenv": "^17.2.3"
   },
   "devDependencies": {
-    "@types/node": "^22",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@types/node": "^22",
+    "crypto": "latest",
     "prettier": "^3.6.2",
     "turbo": "^2.5.8",
-    "typescript": "5.9.3",
-    "crypto": "latest"
+    "typescript": "5.9.3"
   },
   "packageManager": "pnpm@10.22.0+sha512.bf049efe995b28f527fd2b41ae0474ce29186f7edcb3bf545087bd61fbbebb2bf75362d1307fda09c2d288e1e499787ac12d4fcb617a974718a6051f2eee741c",
   "engines": {

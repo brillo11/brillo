@@ -22,6 +22,7 @@ import {
   PenLine,
   History,
   Target,
+  Coins,
 } from "lucide-react";
 import { PATH } from "./path";
 
@@ -119,15 +120,38 @@ export const studentMenus: MenuItem[] = [
       {
         id: "주문 등록",
         title: "주문 등록",
-        baseUrl: PATH.STUDENT_ORDERS,
-        url: PATH.STUDENT_ORDERS,
+        baseUrl: PATH.STUDENT_ORDERS_ENTRY,
+        url: PATH.STUDENT_ORDERS_ENTRY,
         icon: PenLine,
       },
       {
         id: "주문 내역",
         title: "주문 내역",
-        baseUrl: PATH.STUDENT_ORDERS,
+        baseUrl: PATH.STUDENT_ORDERS_HISTORY,
         url: PATH.STUDENT_ORDERS_HISTORY,
+        icon: History,
+      },
+    ],
+  },
+  {
+    id: "복비",
+    title: "복비",
+    baseUrl: PATH.STUDENT_POINTS,
+    url: PATH.STUDENT_POINTS_CHARGE,
+    icon: Coins,
+    subMenus: [
+      {
+        id: "복비 충전",
+        title: "복비 충전",
+        baseUrl: PATH.STUDENT_POINTS,
+        url: PATH.STUDENT_POINTS_CHARGE,
+        icon: Coins,
+      },
+      {
+        id: "복비 내역",
+        title: "복비 내역",
+        baseUrl: PATH.STUDENT_POINTS,
+        url: PATH.STUDENT_POINTS_HISTORY,
         icon: History,
       },
     ],

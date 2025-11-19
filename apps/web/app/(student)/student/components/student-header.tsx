@@ -10,7 +10,7 @@ import { studentMenus } from "@/shared/consts/menus";
 import { Button } from "@repo/ui/components/button";
 import { signOut } from "@/shared/lib/auth-client";
 
-export function StudentHeader() {
+export function StudentHeader({ points = 0 }: { points?: number }) {
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -141,7 +141,7 @@ export function StudentHeader() {
             {/* 복비(냥) 배지 */}
             <Link href={PATH.STUDENT_POINTS_CHARGE}>
               <div className="bg-gradient-to-r from-[#3BB4C1] to-[#2C8A99] text-white px-4 py-2 rounded-full text-sm font-semibold cursor-pointer hover:opacity-90 transition-opacity">
-                복비(냥) 0
+                복비 {points.toLocaleString()} 냥
               </div>
             </Link>
 

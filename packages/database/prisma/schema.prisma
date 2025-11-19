@@ -33,6 +33,8 @@ model User {
   updatedAt                   DateTime               @default(now()) @updatedAt
   phoneNumber                 String?
 
+  misc                        Json                 @default("{}")
+
   accounts                    Account[]
   sessions                    Session[]
   posts                       Post[] @relation("AuthoredPosts")
@@ -127,7 +129,6 @@ model Mission {
   title     String   @default("")
   description String   @default("")
   dueDate   DateTime
-  slug      String   @unique
   misc      Json     @default("{}")
   week      Int      @default(0)
 

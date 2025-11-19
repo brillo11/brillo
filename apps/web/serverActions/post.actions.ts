@@ -125,8 +125,67 @@ export async function getPost(slug: string): Promise<any> {
   return post;
 }
 
+// 게시글 상세 조회 with 댓글 (클라이언트용)
+export async function getPostWithComments(postId: string): Promise<any> {
+  const post = await prisma.post.findUnique({
+    where: {
+      id: BigInt(postId),
+    },
+    include: {
+      author: {
+        select: {
+          id: true,
+          nickname: true,
+          name: true,
+          role: true,
+        },
+      },
+      board: {
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+        },
+      },
+      comments: {
+        where: {
+          deleted: false,
+        },
+        include: {
+          author: {
+            select: {
+              id: true,
+              nickname: true,
+              name: true,
+              role: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
+      _count: {
+        select: {
+          comments: true,
+          likes: true,
+        },
+      },
+    },
+  });
+
+  if (!post) {
+    throw new Error("게시글을 찾을 수 없습니다.");
+  }
+
+  return post;
+}
+
 // 게시글 작성
-export async function createPost(formData: FormData) {
+export async function createPost(formData: FormData): Promise<{
+  success: boolean;
+  post: Post & { board: Board };
+}> {
   const session = await requireAuth();
 
   const boardSlug = formData.get("boardSlug") as string;
@@ -156,7 +215,7 @@ export async function createPost(formData: FormData) {
       content: content.trim(),
       slug,
       tags,
-      authorId: BigInt(session.user.id),
+      authorId: session.user.id,
       boardId: board.id,
     },
     include: {
@@ -167,7 +226,7 @@ export async function createPost(formData: FormData) {
   revalidateTag("posts");
   revalidatePath(`/board/${boardSlug}`);
 
-  redirect(`/board/${boardSlug}/${post.slug}`);
+  return { success: true, post };
 }
 
 // 게시글 수정
