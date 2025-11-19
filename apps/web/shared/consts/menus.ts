@@ -146,13 +146,7 @@ export const studentMenus: MenuItem[] = [
         url: PATH.STUDENT_LOUNGE_ANNOUNCEMENTS,
         icon: Megaphone,
       },
-      {
-        id: "대시보드",
-        title: "대시보드",
-        baseUrl: PATH.STUDENT_LOUNGE,
-        url: PATH.STUDENT_LOUNGE_DASHBOARD,
-        icon: BarChart3,
-      },
+
       {
         id: "나의 미션",
         title: "나의 미션",

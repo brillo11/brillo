@@ -4,8 +4,9 @@ export default async function MissionPage() {
   await requireStudent();
 
   return (
-    <main className="flex-1 overflow-y-auto bg-slate-50 p-4 lg:p-6">
-      <div className="space-y-4 sm:space-y-6">
+    <main className="flex-1 overflow-y-auto bg-[#fbf4ec]">
+      <div className="w-full max-w-7xl mx-auto px-6 py-6">
+        <div className="space-y-4 sm:space-y-6">
         {/* 헤더 카드 */}
         <div className="mb-8">
           <div className="relative overflow-hidden bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-7 text-white">
@@ -380,6 +381,7 @@ export default async function MissionPage() {
           </div>
         </div>
       </div>
+    </div>
     </main>
   );
 }
