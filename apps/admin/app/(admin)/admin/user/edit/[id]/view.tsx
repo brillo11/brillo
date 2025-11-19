@@ -18,8 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/ui/components/select";
-import { PATH } from "@/consts/path";
-import { kdayjs } from "@/lib/utils/dayjs";
+import { PATH } from "@/shared/consts/path";
+import { kdayjs } from "@/shared/lib/utils/dayjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";

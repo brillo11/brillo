@@ -118,7 +118,7 @@ export function AdminDataTable({
 
   return (
     <div className="mx-auto w-full max-w-[1280px] space-y-4">
-      <Card className="shadow-lg">
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between bg-white">
           <CardTitle>목록 ({data?.data?.length || 0}개)</CardTitle>
           {options.searchBar && (

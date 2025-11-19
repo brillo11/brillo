@@ -7,19 +7,39 @@ export async function getAdminUserList({
   params,
   tableState,
   keyword,
+  role,
+  status,
 }: {
   params: any;
   tableState: any;
-  keyword: string;
+  keyword?: string;
+  role?: string;
+  status?: string;
 }) {
+  const where: any = {};
+
+  // 검색어 필터
+  if (keyword) {
+    where.OR = [
+      { nickname: { contains: keyword } },
+      { name: { contains: keyword } },
+    ];
+  }
+
+  // 역할 필터
+  if (role) {
+    where.role = role;
+  }
+
+  // 상태 필터
+  if (status) {
+    where.status = status;
+  }
+
   const users = await prisma.user.findMany({
     take: params.size,
     skip: (params.page - 1) * params.size,
-    where: keyword
-      ? {
-          OR: [{ nickname: { contains: keyword } }],
-        }
-      : undefined,
+    where: Object.keys(where).length > 0 ? where : undefined,
     orderBy: {
       createdAt: "desc",
     },
@@ -27,14 +47,7 @@ export async function getAdminUserList({
 
   // 전체 검색 결과 수
   const total = await prisma.user.count({
-    where: keyword
-      ? {
-          OR: [
-            { nickname: { contains: keyword } },
-            { accountId: { contains: keyword } },
-          ],
-        }
-      : undefined,
+    where: Object.keys(where).length > 0 ? where : undefined,
   });
   revalidatePath("/admin/user");
   return {

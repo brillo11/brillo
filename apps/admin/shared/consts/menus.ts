@@ -15,6 +15,7 @@ import {
   FileText,
   ShoppingBag,
   MessageSquare,
+  GraduationCap,
 } from "lucide-react";
 
 // 언어 타입 정의
@@ -65,6 +66,12 @@ export const adminMenus: AdminMenuItem[] = [
     title: "유저",
     url: "/admin/user",
     icon: User,
+  },
+  {
+    id: "class",
+    title: "기수관리",
+    url: "/admin/class",
+    icon: GraduationCap,
   },
   // {
   //   id: "posts",
