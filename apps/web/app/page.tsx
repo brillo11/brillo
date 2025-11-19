@@ -16,6 +16,7 @@ export default function LoginPage() {
     email: "",
     password: "",
   });
+  console.log({ credentials });
   const [isLoading, setIsLoading] = useState(false);
   const [isSocialLoading, setIsSocialLoading] = useState(false);
   const [isAdminFormOpen, setIsAdminFormOpen] = useState(false);
@@ -62,10 +63,17 @@ export default function LoginPage() {
       // 로그인 성공
       toast.success("로그인 성공");
 
-      // 세션 설정 완료 대기 후 리다이렉트
-      setTimeout(() => {
-        window.location.href = PATH.ADMIN_ROOT;
-      }, 100);
+      // if (credentials.email === "student.test@gmail.com") {
+      //   // 세션 설정 완료 대기 후 리다이렉트
+      //   setTimeout(() => {
+      //     window.location.href = PATH.STUDENT_ROOT;
+      //   }, 100);
+      // } else {
+      //   // 세션 설정 완료 대기 후 리다이렉트
+      //   setTimeout(() => {
+      //     window.location.href = PATH.ADMIN_ROOT;
+      //   }, 100);
+      // }
     } catch (error) {
       console.error("Login error:", error);
       toast.error("로그인 중 오류가 발생했습니다.");
@@ -192,20 +200,20 @@ export default function LoginPage() {
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
-                        stroke-width="1.5"
+                        strokeWidth="1.5"
                         stroke="currentColor"
                         aria-hidden="true"
                         data-slot="icon"
                         className="w-5 h-5"
                       >
                         <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                           d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
                         ></path>
                         <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                           d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
                         ></path>
                       </svg>

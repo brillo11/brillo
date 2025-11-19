@@ -52,7 +52,10 @@ export async function loginWithEmail(email: string, password: string) {
     const result = await betterSignIn.email({
       email,
       password,
-      callbackURL: PATH.ADMIN_ROOT,
+      callbackURL:
+        email === "student.test@gmail.com"
+          ? PATH.STUDENT_ROOT
+          : PATH.ADMIN_ROOT,
     });
 
     if (result?.error) {
