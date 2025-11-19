@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { ColDef, ModuleRegistry, AllCommunityModule } from "ag-grid-community";
+import type { AgGridReact as AgGridReactType } from "ag-grid-react";
 import { Button } from "@repo/ui/components/button";
 import { Plus, Trash2, Save } from "lucide-react";
 
@@ -43,6 +44,7 @@ const createEmptyRow = (): OrderRow => ({
 });
 
 export default function OrderEntryPage() {
+  const gridRef = useRef<AgGridReactType<OrderRow>>(null);
   const [rowData, setRowData] = useState<OrderRow[]>([createEmptyRow()]);
 
   // Column Definitions
@@ -169,15 +171,21 @@ export default function OrderEntryPage() {
     setRowData((prev) => [...prev, createEmptyRow()]);
   }, []);
 
-  const handleClearData = useCallback(() => {
-    if (confirm("모든 데이터를 초기화하시겠습니까?")) {
-      setRowData([createEmptyRow()]);
+  const handleDeleteSelected = useCallback(() => {
+    const selectedNodes = gridRef.current?.api.getSelectedNodes();
+    if (!selectedNodes || selectedNodes.length === 0) {
+      alert("삭제할 행을 선택해주세요.");
+      return;
     }
+
+    const selectedIds = new Set(selectedNodes.map(node => node.data?.id));
+    setRowData((prev) => prev.filter(row => !selectedIds.has(row.id)));
   }, []);
 
-  const handleSave = useCallback(() => {
-    console.log("Saving data:", rowData);
-    alert(`총 ${rowData.length}건의 주문 데이터를 저장합니다. (콘솔 확인)`);
+  const handleRegisterAll = useCallback(() => {
+    // TODO: 전체 등록 로직 구현 예정
+    console.log("Registering all data:", rowData);
+    alert(`총 ${rowData.length}건의 주문 데이터를 등록합니다.`);
   }, [rowData]);
 
   return (
@@ -190,6 +198,7 @@ export default function OrderEntryPage() {
             <p className="text-stone-600 text-sm mt-1">
               엑셀처럼 데이터를 입력하여 주문을 일괄 등록할 수 있습니다.
             </p>
+            <p className="text-stone-600 text-sm mt-1 font-bold">*셀 선택 - 엔터 - 입력 - 엔터</p>
           </div>
           <div className="flex items-center space-x-2">
             <Button
@@ -203,18 +212,18 @@ export default function OrderEntryPage() {
             </Button>
             <Button
               variant="outline"
-              onClick={handleClearData}
+              onClick={handleDeleteSelected}
               className="flex items-center space-x-1.5 border-stone-300 text-stone-700 hover:bg-stone-100"
             >
               <Trash2 className="w-4 h-4" />
-              <span>초기화</span>
+              <span>선택삭제</span>
             </Button>
             <Button
-              onClick={handleSave}
+              onClick={handleRegisterAll}
               className="flex items-center space-x-1.5 bg-stone-800 text-white hover:bg-stone-700"
             >
               <Save className="w-4 h-4" />
-              <span>저장하기</span>
+              <span>전체등록</span>
             </Button>
           </div>
         </div>
@@ -223,6 +232,7 @@ export default function OrderEntryPage() {
         <div className="bg-white rounded-xl border border-stone-200 shadow-sm">
           <div className="ag-theme-quartz" style={{ width: "100%" }}>
             <AgGridReact
+              ref={gridRef}
               rowData={rowData}
               columnDefs={columnDefs}
               defaultColDef={defaultColDef}
