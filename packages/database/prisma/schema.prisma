@@ -230,27 +230,29 @@ model Log {
 model PointOrder {
   id           BigInt         @id @default(autoincrement())
   createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  updatedAt    DateTime       @updatedAt  
   amount       Int
   status       ORDER_STATUS
-  method       String
-  isRefunded   Boolean        @default(false)
-  refundedAt   DateTime?
-  refundAmount Int?
-  refundReason String?
-  merchantUid  String?        @unique
-  pgProvider   String?
-  receiptUrl   String?
-  paymentKey   String?        @unique
-  isTest       Boolean        @default(false)
-  orderName    String         @default("서비스 이용료") // 주문명
+  orderName    String         @default("") // 주문명
   description  String?        // 결제 설명
+
+  email        String @default("")
+  name         String @default("")
+  calendar     CALENDAR
+  birthYear    Int
+  birthMonth   Int
+  birthDay     Int
+  birthHour    Int
+  birthMinute  Int
+  gender       GENDER
+
   userId       String
   user    User     @relation(fields: [userId], references: [id])
 
+  productId    BigInt
+  product      Product     @relation(fields: [productId], references: [id])
+
   @@index([userId])
-  @@index([merchantUid])
-  @@index([paymentKey])
 }
 
 model Order {
@@ -319,6 +321,16 @@ enum ROLE {
   STUDENT
 }
 
+enum GENDER {
+  MALE
+  FEMALE
+}
+
+enum CALENDAR {
+  SOLAR
+  LUNAR
+}
+
 enum USER_STATUS {
   UNKNOWN
   PENDING
@@ -337,6 +349,7 @@ enum PROVIDER {
 }
 
 enum ORDER_STATUS {
+  PENDING          @map("결제대기")
   COMPLETED        @map("결제완료")
   CANCELED         @map("결제취소")
   PARTIAL_REFUNDED @map("부분환불")
@@ -374,6 +387,8 @@ model Product {
   tags          String[] @default([]) // 태그 배열
   
   viewCount     Int      @default(0) // 조회수
+
+  pointOrders PointOrder[]
   
   @@index([category])
   @@index([featured])

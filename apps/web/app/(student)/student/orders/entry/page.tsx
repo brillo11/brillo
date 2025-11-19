@@ -1,11 +1,22 @@
 "use client";
 
-import { useState, useMemo, useCallback, useRef } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { ColDef, ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import type { AgGridReact as AgGridReactType } from "ag-grid-react";
 import { Button } from "@repo/ui/components/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@repo/ui/components/dialog";
 import { Plus, Trash2, Save } from "lucide-react";
+import { getProductsForList } from "@/serverActions/product.actions";
+import { createBulkPointOrders } from "@/serverActions/pointOrder.actions";
+import { toast } from "sonner";
 
 // Import AG Grid CSS - only the theme CSS, not the base CSS (to avoid conflict with Theming API)
 import "ag-grid-community/styles/ag-theme-quartz.css";
@@ -19,13 +30,13 @@ interface OrderRow {
   productCode: string;
   email: string;
   name: string;
-  calendarType: "양력" | "음력";
+  calendarType: "SOLAR" | "LUNAR";
   birthYear: number;
   birthMonth: number;
   birthDay: number;
   birthHour: number;
   birthMinute: number;
-  gender: "남성" | "여성";
+  gender: "MALE" | "FEMALE";
 }
 
 // Initial empty row
@@ -34,20 +45,44 @@ const createEmptyRow = (): OrderRow => ({
   productCode: "인생사주",
   email: "",
   name: "",
-  calendarType: "양력",
+  calendarType: "SOLAR",
   birthYear: 1990,
   birthMonth: 1,
   birthDay: 1,
   birthHour: 0,
   birthMinute: 0,
-  gender: "여성",
+  gender: "FEMALE",
 });
 
 export default function OrderEntryPage() {
   const gridRef = useRef<AgGridReactType<OrderRow>>(null);
   const [rowData, setRowData] = useState<OrderRow[]>([createEmptyRow()]);
+  const [productNames, setProductNames] = useState<string[]>([]);
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
 
-  // Column Definitions
+  // Fetch product names on mount
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const products = await getProductsForList();
+        const names = products.map(p => p.title);
+        setProductNames(names);
+        
+        // If no products, set a default
+        if (names.length === 0) {
+          setProductNames(["인생사주"]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+        // Fallback to default products
+        setProductNames(["인생사주", "정통사주", "연애사주"]);
+      }
+    };
+    
+    fetchProducts();
+  }, []);
+
+  // Column Definitions - depends on productNames
   const columnDefs = useMemo<ColDef<OrderRow>[]>(
     () => [
       {
@@ -64,7 +99,7 @@ export default function OrderEntryPage() {
         editable: true,
         cellEditor: "agSelectCellEditor",
         cellEditorParams: {
-          values: ["인생사주", "정통사주", "연애사주", "결혼사주", "직업사주", "재물사주"],
+          values: productNames.length > 0 ? productNames : ["인생사주"],
         },
         width: 150,
       },
@@ -86,8 +121,9 @@ export default function OrderEntryPage() {
         editable: true,
         cellEditor: "agSelectCellEditor",
         cellEditorParams: {
-          values: ["양력", "음력"],
+          values: ["SOLAR", "LUNAR"],
         },
+        valueFormatter: (params) => (params.value === "SOLAR" ? "양력" : "음력"),
         width: 100,
       },
       {
@@ -151,12 +187,13 @@ export default function OrderEntryPage() {
         editable: true,
         cellEditor: "agSelectCellEditor",
         cellEditorParams: {
-          values: ["남성", "여성"],
+          values: ["MALE", "FEMALE"],
         },
+        valueFormatter: (params) => (params.value === "MALE" ? "남성" : "여성"),
         width: 100,
       },
     ],
-    []
+    [productNames]
   );
 
   const defaultColDef = useMemo<ColDef>(
@@ -183,9 +220,44 @@ export default function OrderEntryPage() {
   }, []);
 
   const handleRegisterAll = useCallback(() => {
-    // TODO: 전체 등록 로직 구현 예정
-    console.log("Registering all data:", rowData);
-    alert(`총 ${rowData.length}건의 주문 데이터를 등록합니다.`);
+    if (rowData.length === 0) {
+      toast.error("등록할 데이터가 없습니다.");
+      return;
+    }
+    setConfirmModalOpen(true);
+  }, [rowData]);
+
+  const handleConfirmRegister = useCallback(async () => {
+    setConfirmModalOpen(false);
+
+    // Map Korean calendar/gender back to English for API (valueFormatter handles display)
+    const ordersToSubmit = rowData.map(row => ({
+      productCode: row.productCode,
+      email: row.email,
+      name: row.name,
+      calendar: row.calendarType,
+      birthYear: row.birthYear,
+      birthMonth: row.birthMonth,
+      birthDay: row.birthDay,
+      birthHour: row.birthHour,
+      birthMinute: row.birthMinute,
+      gender: row.gender,
+    }));
+
+    try {
+      const result = await createBulkPointOrders(ordersToSubmit);
+      
+      if (result.success) {
+        toast.success(`총 ${result.count}건의 주문이 등록되었습니다.`);
+        // Clear the grid after successful registration
+        setRowData([createEmptyRow()]);
+      } else {
+        toast.error(result.error || "주문 등록에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast.error("주문 등록 중 오류가 발생했습니다.");
+    }
   }, [rowData]);
 
   return (
@@ -251,6 +323,37 @@ export default function OrderEntryPage() {
           <div className="text-sm text-stone-500">총 {rowData.length}행</div>
         )}
       </div>
+
+      {/* Confirmation Modal */}
+      <Dialog open={confirmModalOpen} onOpenChange={setConfirmModalOpen}>
+        <DialogContent className="bg-white">
+          <DialogHeader>
+            <DialogTitle className="text-stone-900">주문 등록 확인</DialogTitle>
+            <DialogDescription className="text-stone-600">
+              총 {rowData.length}건의 주문을 등록하시겠습니까?
+              <br />
+              <span className="text-sm text-stone-500 mt-2 block">
+                등록 후에는 주문 목록에서 확인할 수 있습니다.
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setConfirmModalOpen(false)}
+              className="border-stone-300 text-stone-700 hover:bg-stone-100"
+            >
+              취소
+            </Button>
+            <Button
+              onClick={handleConfirmRegister}
+              className="bg-stone-800 text-white hover:bg-stone-700"
+            >
+              확인
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

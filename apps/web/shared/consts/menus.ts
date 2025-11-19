@@ -125,6 +125,13 @@ export const studentMenus: MenuItem[] = [
         icon: PenLine,
       },
       {
+        id: "주문 목록",
+        title: "주문 목록",
+        baseUrl: PATH.STUDENT_ORDERS_LIST,
+        url: PATH.STUDENT_ORDERS_LIST,
+        icon: ClipboardList,
+      },
+      {
         id: "주문 내역",
         title: "주문 내역",
         baseUrl: PATH.STUDENT_ORDERS_HISTORY,
