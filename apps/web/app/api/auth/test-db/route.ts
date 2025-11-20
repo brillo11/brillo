@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@repo/database";
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     const startTime = Date.now();
 
@@ -14,7 +14,11 @@ export async function POST(request: NextRequest) {
     const adminCount = await prisma.user.count({
       where: {
         role: "ADMIN",
-        provider: "CREDENTIALS",
+        accounts: {
+          some: {
+            providerId: "CREDENTIALS",
+          },
+        },
       },
     });
     const adminCheckTime = Date.now() - adminCheckStart;

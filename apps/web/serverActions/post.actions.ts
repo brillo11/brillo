@@ -252,10 +252,7 @@ export async function updatePost(slug: string, formData: FormData) {
   }
 
   // 작성자 또는 관리자만 수정 가능
-  if (
-    post.authorId !== BigInt(session.user.id) &&
-    session.user.role !== "ADMIN"
-  ) {
+  if (post.authorId !== session.user.id && session.user.role !== "ADMIN") {
     throw new Error("게시글을 수정할 권한이 없습니다.");
   }
 
@@ -293,10 +290,7 @@ export async function deletePost(slug: string) {
   }
 
   // 작성자 또는 관리자만 삭제 가능
-  if (
-    post.authorId !== BigInt(session.user.id) &&
-    session.user.role !== "ADMIN"
-  ) {
+  if (post.authorId !== session.user.id && session.user.role !== "ADMIN") {
     throw new Error("게시글을 삭제할 권한이 없습니다.");
   }
 

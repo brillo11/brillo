@@ -1,14 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { loginWithEmail, loginWithSocial } from "@/shared/lib/auth-helpers";
 import Image from "next/image";
 import { Card, CardContent } from "@repo/ui/components/card";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",

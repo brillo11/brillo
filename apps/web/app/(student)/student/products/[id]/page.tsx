@@ -13,12 +13,13 @@ export const dynamic = "force-dynamic";
 export default async function ProductDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   // 🛡️ 서버에서 권한 검증 (미들웨어 통과 후 2차 검증)
   await requireStudent();
 
-  const product = await getProductDetail(params.id);
+  const resolvedParams = await params;
+  const product = await getProductDetail(resolvedParams.id);
 
   if (!product) {
     notFound();
@@ -97,20 +98,26 @@ export default async function ProductDetailPage({
             {/* 썸네일 이미지들 */}
             {product.images && product.images.length > 1 && (
               <div className="grid grid-cols-2 gap-4">
-                {product.images.slice(0, 2).map((image: string, index: number) => (
-                  <div
-                    key={index}
-                    className="bg-white rounded-xl p-4 shadow-sm border-2 border-transparent hover:border-[#F2779C]/30 transition-all"
-                  >
-                    <div className="relative aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
-                      {index === 0 ? (
-                        <span className="text-xs text-gray-500">표지 이미지</span>
-                      ) : (
-                        <span className="text-xs text-gray-500">속지 이미지</span>
-                      )}
+                {product.images
+                  .slice(0, 2)
+                  .map((image: string, index: number) => (
+                    <div
+                      key={index}
+                      className="bg-white rounded-xl p-4 shadow-sm border-2 border-transparent hover:border-[#F2779C]/30 transition-all"
+                    >
+                      <div className="relative aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
+                        {index === 0 ? (
+                          <span className="text-xs text-gray-500">
+                            표지 이미지
+                          </span>
+                        ) : (
+                          <span className="text-xs text-gray-500">
+                            속지 이미지
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             )}
           </div>
@@ -158,11 +165,12 @@ export default async function ProductDetailPage({
                 )}
               </div>
               <div className="flex items-baseline gap-3">
-                {product.originalPrice && product.originalPrice > product.price && (
-                  <span className="text-lg text-gray-400 line-through">
-                    {product.originalPrice.toLocaleString()}원
-                  </span>
-                )}
+                {product.originalPrice &&
+                  product.originalPrice > product.price && (
+                    <span className="text-lg text-gray-400 line-through">
+                      {product.originalPrice.toLocaleString()}원
+                    </span>
+                  )}
                 <span className="text-3xl font-bold text-[#F2779C]">
                   {product.price.toLocaleString()}원
                 </span>
@@ -189,7 +197,9 @@ export default async function ProductDetailPage({
               <div className="space-y-3">
                 <div>
                   <span className="text-sm text-gray-600">상품설명</span>
-                  <p className="text-sm text-[#2C3E50] mt-1">{product.description}</p>
+                  <p className="text-sm text-[#2C3E50] mt-1">
+                    {product.description}
+                  </p>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">서비스 형태</span>
@@ -235,14 +245,18 @@ export default async function ProductDetailPage({
 
             {/* 등록일/수정일 */}
             <div className="text-xs text-gray-500">
-              <p>등록일: {new Date(product.createdAt).toLocaleDateString("ko-KR")}</p>
-              <p>수정일: {new Date(product.updatedAt).toLocaleDateString("ko-KR")}</p>
+              <p>
+                등록일:{" "}
+                {new Date(product.createdAt).toLocaleDateString("ko-KR")}
+              </p>
+              <p>
+                수정일:{" "}
+                {new Date(product.updatedAt).toLocaleDateString("ko-KR")}
+              </p>
             </div>
 
             {/* 구매 버튼 */}
-            <Button
-              className="w-full bg-gradient-to-r from-[#F2779C] to-[#3BB4C1] text-white hover:opacity-90 py-6 text-lg font-semibold"
-            >
+            <Button className="w-full bg-gradient-to-r from-[#F2779C] to-[#3BB4C1] text-white hover:opacity-90 py-6 text-lg font-semibold">
               상품 주문하기
             </Button>
           </div>
@@ -251,4 +265,3 @@ export default async function ProductDetailPage({
     </div>
   );
 }
-

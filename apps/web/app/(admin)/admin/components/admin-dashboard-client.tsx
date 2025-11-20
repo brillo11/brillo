@@ -38,7 +38,7 @@ export default function AdminDashboardClient({
   activeCohortCount,
 }: AdminDashboardClientProps) {
   const [selectedCohortId, setSelectedCohortId] = useState<number | null>(
-    activeCohorts.length > 0 ? activeCohorts[0].id : null
+    activeCohorts.length > 0 && activeCohorts[0] ? activeCohorts[0].id : null
   );
   const [cohortData, setCohortData] = useState<CohortData | null>(null);
   const [loading, setLoading] = useState(false);

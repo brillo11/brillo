@@ -202,7 +202,7 @@ export default function SuccessPage() {
                   </div>
                   <div className="space-y-2">
                     <p className="font-semibold text-gray-900">
-                      {session.user.nickname || session.user.name}
+                      {session.user.name}
                     </p>
                     <p className="text-sm text-gray-600">
                       {session.user.email}

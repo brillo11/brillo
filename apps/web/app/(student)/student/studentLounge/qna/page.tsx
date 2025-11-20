@@ -1,17 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getPosts, createPost, getPostWithComments } from "@/serverActions/post.actions";
+import {
+  getPosts,
+  createPost,
+  getPostWithComments,
+} from "@/serverActions/post.actions";
 import { kdayjs } from "@/shared/lib/utils/dayjs";
 import { HelpCircle, Search, Eye, Plus, X } from "lucide-react";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@repo/ui/components/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@repo/ui/components/dialog";
 import { Input } from "@repo/ui/components/input";
 import { Textarea } from "@repo/ui/components/textarea";
 import { toast } from "sonner";
@@ -82,7 +81,7 @@ export default function QnAPage() {
   const handlePostClick = async (post: Post) => {
     setSelectedPost(post);
     setIsModalOpen(true);
-    
+
     // Fetch full post details with comments
     try {
       const fullPost = await getPostWithComments(post.id.toString());
@@ -184,7 +183,7 @@ export default function QnAPage() {
                     </p>
                   </div>
                 </div>
-                <Button 
+                <Button
                   onClick={() => setIsWriteModalOpen(true)}
                   className="flex items-center space-x-1.5 px-3 sm:px-4 py-2 bg-stone-800 text-white rounded-lg hover:bg-stone-700 transition-colors text-sm font-medium shadow-sm"
                 >
@@ -288,7 +287,9 @@ export default function QnAPage() {
                                     </span>
                                   </div>
                                   <span className="block sm:hidden flex-shrink-0 text-xs">
-                                    {kdayjs(post.createdAt).format("YYYY년 M월 D일")}
+                                    {kdayjs(post.createdAt).format(
+                                      "YYYY년 M월 D일"
+                                    )}
                                   </span>
                                   <span className="hidden sm:block flex-shrink-0">
                                     {kdayjs(post.createdAt).format(
@@ -345,7 +346,9 @@ export default function QnAPage() {
                     return (
                       <Button
                         key={pageNum}
-                        variant={currentPage === pageNum ? "default" : "outline"}
+                        variant={
+                          currentPage === pageNum ? "default" : "outline"
+                        }
                         size="sm"
                         onClick={() => setCurrentPage(pageNum)}
                         className={`min-w-[40px] ${
@@ -365,7 +368,9 @@ export default function QnAPage() {
                     return (
                       <Button
                         key={pageNum}
-                        variant={currentPage === pageNum ? "default" : "outline"}
+                        variant={
+                          currentPage === pageNum ? "default" : "outline"
+                        }
                         size="sm"
                         onClick={() => setCurrentPage(pageNum)}
                         className={`min-w-[32px] min-h-[32px] px-1.5 py-1.5 text-xs ${
@@ -424,11 +429,12 @@ export default function QnAPage() {
                   <h2 className="text-xl font-bold text-stone-900 flex-1">
                     {selectedPost.title}
                   </h2>
-                  {selectedPost.comments && selectedPost.comments.length > 0 && (
-                    <Badge className="bg-blue-50 text-blue-600 border-blue-100 ml-3">
-                      답변완료
-                    </Badge>
-                  )}
+                  {selectedPost.comments &&
+                    selectedPost.comments.length > 0 && (
+                      <Badge className="bg-blue-50 text-blue-600 border-blue-100 ml-3">
+                        답변완료
+                      </Badge>
+                    )}
                 </div>
 
                 {/* 작성자와 날짜 */}
@@ -474,7 +480,8 @@ export default function QnAPage() {
                             {comment.content}
                           </div>
                           <div className="text-xs text-stone-500">
-                            답변일: {kdayjs(comment.createdAt).format("YYYY. MM. DD.")}
+                            답변일:{" "}
+                            {kdayjs(comment.createdAt).format("YYYY. MM. DD.")}
                           </div>
                         </div>
                       ))}

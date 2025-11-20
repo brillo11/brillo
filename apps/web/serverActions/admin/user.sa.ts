@@ -1,7 +1,8 @@
 "use server";
 
-import { prisma } from "@repo/database";
+import { prisma, ROLE } from "@repo/database";
 import { revalidatePath } from "next/cache";
+import { Prisma } from "@repo/database";
 
 export async function getAdminUserList({
   params,
@@ -15,7 +16,11 @@ export async function getAdminUserList({
   keyword?: string;
   role?: string;
   status?: string;
-}) {
+}): Promise<{
+  data: Prisma.UserGetPayload<{}>[];
+  total: number;
+  totalPages: number;
+}> {
   const where: any = {};
 
   // 검색어 필터
@@ -57,7 +62,7 @@ export async function getAdminUserList({
   };
 }
 
-export async function getAdminStudentDetail(userId: string) {
+export async function getAdminUserDetail(userId: string) {
   const user = await prisma.user.findUnique({
     where: {
       id: userId,
@@ -114,7 +119,7 @@ export async function updateAdminUser(
     },
     data: {
       nickname: data.nickname,
-      role: data.role,
+      role: data.role as ROLE,
       status: data.status,
     },
   });

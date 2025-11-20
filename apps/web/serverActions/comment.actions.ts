@@ -114,7 +114,7 @@ export async function createComment(formData: FormData): Promise<void> {
   await prisma.comment.create({
     data: {
       content: content.trim(),
-      authorId: BigInt(session.user.id),
+      authorId: session.user.id as string,
       postId: BigInt(postId),
       parentId: parentId ? BigInt(parentId) : null,
     },
@@ -150,10 +150,7 @@ export async function updateComment(
   }
 
   // 작성자 또는 관리자만 수정 가능
-  if (
-    comment.authorId !== BigInt(session.user.id) &&
-    session.user.role !== "ADMIN"
-  ) {
+  if (comment.authorId !== session.user.id && session.user.role !== "ADMIN") {
     throw new Error("댓글을 수정할 권한이 없습니다.");
   }
 
@@ -188,10 +185,7 @@ export async function deleteComment(commentId: string): Promise<void> {
   }
 
   // 작성자 또는 관리자만 삭제 가능
-  if (
-    comment.authorId !== BigInt(session.user.id) &&
-    session.user.role !== "ADMIN"
-  ) {
+  if (comment.authorId !== session.user.id && session.user.role !== "ADMIN") {
     throw new Error("댓글을 삭제할 권한이 없습니다.");
   }
 

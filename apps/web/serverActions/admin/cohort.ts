@@ -138,9 +138,7 @@ export async function getAdminCohortList({
 }
 
 // 기수 상세 조회
-export async function getAdminCohortDetail(
-  cohortId: string
-): Promise<{
+export async function getAdminCohortDetail(cohortId: string): Promise<{
   id: bigint;
   createdAt: Date;
   updatedAt: Date;
@@ -162,8 +160,6 @@ export async function getAdminCohortDetail(
     users: number;
   };
 } | null> {
-  
-
   const cohortData = await prisma.cohort.findUnique({
     where: { id: BigInt(cohortId) },
     include: {
@@ -209,12 +205,14 @@ export async function createAdminCohort({
   slug: string;
   misc: any;
 }> {
-  
-
   const cohortData = await prisma.cohort.create({
     data: {
       title,
       slug,
+      startDate: new Date(),
+      endDate: new Date(),
+      cohortOrder: 0,
+      misc: {},
     },
   });
 
@@ -243,7 +241,6 @@ export async function updateAdminCohort({
   slug: string;
   misc: any;
 }> {
-  
   const cohortData = await prisma.cohort.update({
     where: { id: BigInt(id) },
     data: {
@@ -251,15 +248,13 @@ export async function updateAdminCohort({
       slug,
     },
   });
-  
+
   revalidatePath(PATH.ADMIN_COHORT);
   return cohortData;
 }
 
 // 기수별 주차별 제출률 조회
-export async function getCohortWeeklySubmissionRate(
-  cohortId: number
-): Promise<{
+export async function getCohortWeeklySubmissionRate(cohortId: number): Promise<{
   cohort: {
     id: number;
     title: string;
@@ -387,9 +382,7 @@ export async function getCohortWeeklySubmissionRate(
 }
 
 // 기수별 미션 목록 조회
-export async function getCohortMissions(
-  cohortId: number
-): Promise<
+export async function getCohortMissions(cohortId: number): Promise<
   Array<{
     id: number;
     title: string;
@@ -417,10 +410,7 @@ export async function getCohortMissions(
       updatedAt: true,
       misc: true,
     },
-    orderBy: [
-      { week: "asc" },
-      { dueDate: "asc" },
-    ],
+    orderBy: [{ week: "asc" }, { dueDate: "asc" }],
   });
 
   return missions.map((mission) => ({

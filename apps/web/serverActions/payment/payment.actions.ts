@@ -1,11 +1,13 @@
 "use server";
 
-import { prisma, PAYMENT_STATUS, REFUND_STATUS } from "@repo/database";
+import { prisma, ORDER_STATUS, REFUND_STATUS } from "@repo/database";
 import {
   validatePaymentSession,
   completePaymentSession,
 } from "./payment-session.actions";
 import { revalidatePath } from "next/cache";
+import { Order } from "@repo/database";
+import { Refund } from "@repo/database";
 
 interface PaymentRequest {
   amount: number;
@@ -44,10 +46,10 @@ interface TossErrorResponse {
 
 export async function updatePaymentStatus(
   paymentId: bigint,
-  status: PAYMENT_STATUS
+  status: ORDER_STATUS
 ) {
   try {
-    const updatedPayment = await prisma.payment.update({
+    const updatedPayment = await prisma.order.update({
       where: {
         id: paymentId,
       },
@@ -125,8 +127,8 @@ export async function confirmPayment(
     // 3. paymentKey와 orderId 필수 저장 (토스페이먼츠 권장사항)
     const newPayment = await createPaymentRecord(
       result,
-      data.userId,
-      env === "test"
+      data.userId?.toString(),
+      env === ("test" as "test" | "live")
     );
 
     await prisma.paymentSession.delete({
@@ -141,7 +143,9 @@ export async function confirmPayment(
           where: { id: data.userId.toString() },
           data: { points: { increment: pointsToAdd } },
         });
-        console.log(`포인트 충전 완료: User ${data.userId} +${pointsToAdd} points`);
+        console.log(
+          `포인트 충전 완료: User ${data.userId} +${pointsToAdd} points`
+        );
       }
     }
 
@@ -214,22 +218,22 @@ async function handleTossPaymentError(
 
 export async function createPaymentRecord(
   paymentData: TossPaymentResponse,
-  userId: bigint | undefined,
+  userId: string | undefined,
   isTest: boolean = false
 ) {
   try {
     if (!userId) {
       throw new Error("userId가 없습니다");
     }
-    const payment = await prisma.payment.create({
+    const payment = await prisma.order.create({
       data: {
         amount: paymentData.totalAmount,
-        status: PAYMENT_STATUS.COMPLETED,
+        status: ORDER_STATUS.PAID,
         method: paymentData.method,
         merchantUid: paymentData.orderId, // 필수 저장
         pgProvider: "tosspayments",
         receiptUrl: paymentData.receipt?.url,
-        userId: userId || 1n,
+        userId: userId || "1",
         paymentKey: paymentData.paymentKey,
         isTest: isTest,
       },
@@ -250,7 +254,7 @@ export async function createPaymentRecord(
 
 // 환불 내역 생성 함수
 export async function createRefundRecord(
-  paymentId: bigint,
+  orderId: bigint,
   amount: number,
   tossRefundKey: string,
   reason: string
@@ -258,8 +262,8 @@ export async function createRefundRecord(
   try {
     const refund = await prisma.refund.create({
       data: {
-        paymentId,
-        amount,
+        orderId: orderId,
+        amount: amount as number,
         reason,
         tossRefundKey,
         status: REFUND_STATUS.COMPLETED,
@@ -268,7 +272,7 @@ export async function createRefundRecord(
 
     console.log("환불 내역 생성 완료:", {
       refundId: refund.id,
-      paymentId,
+      orderId: orderId,
       amount,
       reason,
     });
@@ -321,14 +325,14 @@ export async function cancelPaymentInDB(
   amount: number | null
 ) {
   try {
-    const updatedPayment = await prisma.payment.update({
+    const updatedPayment = await prisma.order.update({
       where: {
         merchantUid: orderId,
       },
       data: {
         status: isPartial
-          ? PAYMENT_STATUS.PARTIAL_REFUNDED
-          : PAYMENT_STATUS.REFUNDED,
+          ? ORDER_STATUS.PARTIAL_REFUNDED
+          : ORDER_STATUS.PARTIAL_REFUNDED,
         refundReason: cancelReason,
         refundedAt: new Date(),
         isRefunded: true,
@@ -408,9 +412,9 @@ export async function cancelPayment(
   }
 }
 
-export async function getPaymentsWithDetail() {
+export async function getPaymentsWithDetail(): Promise<Order[]> {
   try {
-    const payments = await prisma.payment.findMany({
+    const payments = await prisma.order.findMany({
       orderBy: { createdAt: "desc" },
       include: {
         user: true,
@@ -427,12 +431,12 @@ export async function getPaymentsWithDetail() {
 }
 
 // 환불 내역 조회 함수
-export async function getRefundsWithDetail() {
+export async function getRefundsWithDetail(): Promise<Refund[]> {
   try {
     const refunds = await prisma.refund.findMany({
       orderBy: { createdAt: "desc" },
       include: {
-        payment: {
+        order: {
           include: {
             user: true,
           },
@@ -447,19 +451,13 @@ export async function getRefundsWithDetail() {
 }
 
 // 특정 결제의 환불 내역 조회
-export async function getRefundsByPaymentId(paymentId: bigint) {
+export async function getRefundsByOrderId(orderId: bigint): Promise<Refund[]> {
   try {
-    const refunds = await prisma.refund.findMany({
-      where: { paymentId },
+    const refunds = (await prisma.refund.findMany({
+      where: { orderId: orderId },
       orderBy: { createdAt: "desc" },
-      include: {
-        payment: {
-          include: {
-            user: true,
-          },
-        },
-      },
-    });
+      include: { order: { include: { user: true } } as any },
+    })) as any;
     return refunds;
   } catch (error) {
     console.error("결제별 환불 내역 조회 오류:", error);

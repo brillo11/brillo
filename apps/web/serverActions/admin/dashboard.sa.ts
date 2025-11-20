@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma, PAYMENT_STATUS } from "@repo/database";
+import { prisma, ORDER_STATUS } from "@repo/database";
 import { requireAdmin } from "@/shared/lib/auth-guards";
 
 /**
@@ -20,10 +20,10 @@ export async function getAdminDashboardStats() {
   const totalComments = await prisma.comment.count();
 
   // 전체 결제 금액(원)
-  const totalRevenueResult = await prisma.payment.aggregate({
+  const totalRevenueResult = await prisma.order.aggregate({
     _sum: { amount: true },
     where: {
-      status: PAYMENT_STATUS.COMPLETED,
+      status: ORDER_STATUS.PAID,
       isTest: false,
     },
   });
@@ -62,10 +62,10 @@ export async function getAdminDashboardStats() {
   });
 
   // 이번달 결제 건수
-  const monthlyPayments = await prisma.payment.count({
+  const monthlyPayments = await prisma.order.count({
     where: {
       createdAt: { gte: startOfThisMonth },
-      status: PAYMENT_STATUS.COMPLETED,
+      status: ORDER_STATUS.PAID,
     },
   });
 
