@@ -69,7 +69,7 @@ export const auth: any = betterAuth({
   database: prismaAdapter(prismaWithLogging as any, {
     provider: "postgresql",
   }),
-  baseURL: "http://localhost:3000", // apps/admin 전용 포트
+  baseURL: process.env.BETTER_AUTH_URL, // apps/admin 전용 포트
   basePath: "/api/auth",
   user: {
     modelName: "user",
