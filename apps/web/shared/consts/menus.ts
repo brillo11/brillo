@@ -60,6 +60,13 @@ export const adminMenus: MenuItem[] = [
     url: PATH.ADMIN_ROOT,
     icon: BarChart3,
   },
+  {
+    id: "community",
+    title: "공지사항",
+    baseUrl: PATH.ADMIN_COMMUNITY,
+    url: PATH.ADMIN_COMMUNITY_ANNOUNCEMENTS,
+    icon: Megaphone,
+  },
   // {
   //   id: "products",
   //   title: "제품",

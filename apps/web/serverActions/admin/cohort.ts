@@ -5,6 +5,34 @@ import { requireAdmin } from "@/shared/lib/auth-guards";
 import { revalidatePath } from "next/cache";
 import { PATH } from "@/shared/consts/path";
 
+// Select용 기수 목록 조회
+export async function getCohortsForSelect(): Promise<
+  Array<{
+    id: number;
+    title: string;
+    slug: string;
+  }>
+> {
+  await requireAdmin();
+
+  const cohorts = await prisma.cohort.findMany({
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  // BigInt id를 number로 변환 (클라이언트 전달용)
+  return cohorts.map((cohort) => ({
+    ...cohort,
+    id: Number(cohort.id),
+  }));
+}
+
 // 기수 목록 조회
 export async function getAdminCohortList({
   params,
@@ -98,7 +126,7 @@ export async function getAdminCohortDetail(
     users: number;
   };
 } | null> {
-  await requireAdmin();
+  
 
   const cohortData = await prisma.cohort.findUnique({
     where: { id: BigInt(cohortId) },
@@ -145,7 +173,7 @@ export async function createAdminCohort({
   slug: string;
   misc: any;
 }> {
-  await requireAdmin();
+  
 
   const cohortData = await prisma.cohort.create({
     data: {
@@ -179,8 +207,7 @@ export async function updateAdminCohort({
   slug: string;
   misc: any;
 }> {
-  await requireAdmin();
-
+  
   const cohortData = await prisma.cohort.update({
     where: { id: BigInt(id) },
     data: {
@@ -188,20 +215,7 @@ export async function updateAdminCohort({
       slug,
     },
   });
-
+  
   revalidatePath(PATH.ADMIN_COHORT);
   return cohortData;
-}
-
-// 기수 삭제
-export async function deleteAdminCohort(
-  cohortId: string
-): Promise<void> {
-  await requireAdmin();
-
-  await prisma.cohort.delete({
-    where: { id: BigInt(cohortId) },
-  });
-
-  revalidatePath(PATH.ADMIN_COHORT);
 }

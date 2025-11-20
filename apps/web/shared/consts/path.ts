@@ -23,6 +23,8 @@ export const PATH = {
 
   // 어드민
   ADMIN_ROOT: "/admin",
+  ADMIN_COMMUNITY: "/admin/community",
+  ADMIN_COMMUNITY_ANNOUNCEMENTS: "/admin/community/announcements",
   ADMIN_COMMUNITY_NEWS: "/admin/community/news",
   ADMIN_COMMUNITY_BEFORE_AND_AFTER: "/admin/community/before-after",
   ADMIN_COHORT: "/admin/cohort",
