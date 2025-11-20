@@ -33,6 +33,42 @@ export async function getCohortsForSelect(): Promise<
   }));
 }
 
+// 진행 중인 기수 조회 (endDate가 지나지 않은 기수)
+export async function getActiveCohorts(): Promise<
+  Array<{
+    id: number;
+    title: string;
+    slug: string;
+    endDate: Date;
+  }>
+> {
+  await requireAdmin();
+
+  const now = new Date();
+  const cohorts = await prisma.cohort.findMany({
+    where: {
+      endDate: {
+        gte: now, // endDate가 현재 날짜보다 크거나 같은 경우 (아직 종료되지 않음)
+      },
+    },
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      endDate: true,
+    },
+    orderBy: {
+      cohortOrder: "asc", // 기수 순서대로 정렬
+    },
+  });
+
+  // BigInt id를 number로 변환 (클라이언트 전달용)
+  return cohorts.map((cohort) => ({
+    ...cohort,
+    id: Number(cohort.id),
+  }));
+}
+
 // 기수 목록 조회
 export async function getAdminCohortList({
   params,

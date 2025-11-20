@@ -74,10 +74,10 @@ export const adminMenus: MenuItem[] = [
   //   icon: ShoppingBag,
   // },
   {
-    id: "user",
-    title: "유저",
-    baseUrl: PATH.ADMIN_USER,
-    url: PATH.ADMIN_USER,
+    id: "students",
+    title: "수강생 관리",
+    baseUrl: PATH.ADMIN_STUDENTS,
+    url: PATH.ADMIN_STUDENTS,
     icon: User,
   },
   {

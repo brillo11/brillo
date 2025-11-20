@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/shared/lib/auth-guards";
+import { getActiveCohorts } from "@/serverActions/admin/cohort";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,10 @@ const weeklySubmissionData = [
 export default async function AdminDashboard() {
   await requireAdmin();
 
+  // 진행 중인 기수 조회
+  const activeCohorts = await getActiveCohorts();
+  const activeCohortCount = activeCohorts.length;
+
   return (
     <main className="flex-1 overflow-y-auto bg-slate-50 p-4 lg:p-6">
       <div className="space-y-4 sm:space-y-6 lg:space-y-8">
@@ -42,30 +47,36 @@ export default async function AdminDashboard() {
                 </div>
                 <div className="text-xs text-slate-200 sm:hidden">기수</div>
                 <div className="text-base sm:text-lg font-bold text-white">
-                  2개
+                  {activeCohortCount}개
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-between bg-white/10 backdrop-blur-sm rounded-lg p-2 sm:p-3">
-              <span className="text-xs sm:text-sm font-medium text-white hidden sm:block">
-                진행 기수 설정
-              </span>
-              <span className="text-xs font-medium text-white sm:hidden">
-                기수 설정
-              </span>
-              <div className="flex items-center space-x-1 sm:space-x-2">
-                <button className="flex items-center space-x-1 px-2 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-colors bg-white text-slate-700 shadow-sm">
-                  <span className="text-xs">●</span>
-                  <span className="hidden sm:inline">1기</span>
-                  <span className="sm:hidden">1기</span>
-                </button>
-                <button className="flex items-center space-x-1 px-2 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-colors bg-white/20 text-white hover:bg-white/30">
-                  <span className="text-xs">●</span>
-                  <span className="hidden sm:inline">2기</span>
-                  <span className="sm:hidden">2기</span>
-                </button>
+            {activeCohorts.length > 0 && (
+              <div className="flex items-center justify-between bg-white/10 backdrop-blur-sm rounded-lg p-2 sm:p-3">
+                <span className="text-xs sm:text-sm font-medium text-white hidden sm:block">
+                  진행 기수 설정
+                </span>
+                <span className="text-xs font-medium text-white sm:hidden">
+                  기수 설정
+                </span>
+                <div className="flex items-center space-x-1 sm:space-x-2">
+                  {activeCohorts.map((cohort, index) => (
+                    <button
+                      key={cohort.id}
+                      className={`flex items-center space-x-1 px-2 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                        index === 0
+                          ? "bg-white text-slate-700 shadow-sm"
+                          : "bg-white/20 text-white hover:bg-white/30"
+                      }`}
+                    >
+                      <span className="text-xs">●</span>
+                      <span className="hidden sm:inline">{cohort.title}</span>
+                      <span className="sm:hidden">{cohort.title}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -328,9 +339,7 @@ export default async function AdminDashboard() {
                           <div className="w-12 bg-slate-200 rounded-full h-1.5 overflow-hidden">
                             <div
                               className={`h-1.5 rounded-full ${
-                                data.rate >= 50
-                                  ? "bg-blue-600"
-                                  : "bg-slate-500"
+                                data.rate >= 50 ? "bg-blue-600" : "bg-slate-500"
                               }`}
                               style={{ width: `${data.rate}%` }}
                             ></div>

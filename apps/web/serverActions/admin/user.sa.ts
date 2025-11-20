@@ -49,7 +49,7 @@ export async function getAdminUserList({
   const total = await prisma.user.count({
     where: Object.keys(where).length > 0 ? where : undefined,
   });
-  revalidatePath("/admin/user");
+  revalidatePath("/admin/students");
   return {
     data: users,
     total,
@@ -57,7 +57,7 @@ export async function getAdminUserList({
   };
 }
 
-export async function getAdminUserDetail(userId: string) {
+export async function getAdminStudentDetail(userId: string) {
   const user = await prisma.user.findUnique({
     where: {
       id: userId,

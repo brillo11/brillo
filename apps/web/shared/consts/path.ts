@@ -32,4 +32,5 @@ export const PATH = {
   ADMIN_COURSE: "/admin/course",
   ADMIN_REVIEW: "/admin/review",
   ADMIN_USER: "/admin/user",
+  ADMIN_STUDENTS: "/admin/students",
 };
