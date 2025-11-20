@@ -1,5 +1,5 @@
 import { requireStudent } from "@/shared/lib/auth-guards";
-import { ProductList } from "@/app/features/product/ui/ProductList";
+import { ProductList } from "@/features/product/ui/ProductList";
 import { getProductsForList } from "@/serverActions/product.actions";
 
 // SSR + Dynamic - 항상 최신 데이터, 캐시 없음

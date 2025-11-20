@@ -118,8 +118,8 @@ export const studentMenus: MenuItem[] = [
     icon: ClipboardList,
     subMenus: [
       {
-        id: "주문 등록",
-        title: "주문 등록",
+        id: "주문 대량 등록",
+        title: "주문 대량 등록",
         baseUrl: PATH.STUDENT_ORDERS_ENTRY,
         url: PATH.STUDENT_ORDERS_ENTRY,
         icon: PenLine,
@@ -132,8 +132,8 @@ export const studentMenus: MenuItem[] = [
         icon: ClipboardList,
       },
       {
-        id: "주문 내역",
-        title: "주문 내역",
+        id: "확정 주문",
+        title: "확정 주문",
         baseUrl: PATH.STUDENT_ORDERS_HISTORY,
         url: PATH.STUDENT_ORDERS_HISTORY,
         icon: History,

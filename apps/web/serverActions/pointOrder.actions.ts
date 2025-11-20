@@ -99,7 +99,10 @@ export async function getPointOrders() {
   const session = await requireStudent();
   
   const orders = await prisma.pointOrder.findMany({
-    where: { userId: session.user.id },
+    where: { 
+      userId: session.user.id,
+      status: "PENDING" 
+    },
     include: {
       product: {
         select: {
@@ -174,4 +177,15 @@ export async function getOrderHistory() {
   });
 
   return orders;
+}
+
+export async function getUserPoints() {
+  const session = await requireStudent();
+  
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { points: true },
+  });
+
+  return user?.points || 0;
 }

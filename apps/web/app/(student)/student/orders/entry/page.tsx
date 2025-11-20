@@ -262,11 +262,11 @@ export default function OrderEntryPage() {
 
   return (
     <div className="flex flex-col bg-[#fbf4ec] min-h-screen p-4 lg:p-6">
-      <div className="max-w-[1600px] mx-auto w-full flex flex-col space-y-4">
+      <div className="max-w-screen-xl mx-auto w-full flex flex-col space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-stone-900">주문 등록</h1>
+            <h1 className="text-2xl font-bold text-stone-900">주문 대량 등록</h1>
             <p className="text-stone-600 text-sm mt-1">
               엑셀처럼 데이터를 입력하여 주문을 일괄 등록할 수 있습니다.
             </p>

@@ -65,13 +65,13 @@ export default function OrderHistoryPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#fbf4ec] p-4 lg:p-6">
-      <div className="max-w-[1600px] mx-auto w-full flex flex-col space-y-4">
+      <div className="max-w-screen-xl mx-auto w-full flex flex-col space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-stone-900">주문 내역</h1>
+            <h1 className="text-2xl font-bold text-stone-900">확정 주문</h1>
             <p className="text-stone-600 text-sm mt-1">
-              확정된 주문 내역을 확인할 수 있습니다.
+              주문이 확정되어 고객에게 전송됩니다.
             </p>
           </div>
           <Link href="/student/orders/entry">
