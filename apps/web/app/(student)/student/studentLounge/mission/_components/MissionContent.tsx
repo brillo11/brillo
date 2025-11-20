@@ -11,7 +11,10 @@ interface MissionContentProps {
   missions: MissionWithSubmissions[];
 }
 
-export default function MissionContent({ cohort, missions }: MissionContentProps) {
+export default function MissionContent({
+  cohort,
+  missions,
+}: MissionContentProps) {
   const [selectedWeek, setSelectedWeek] = useState<number | "ALL">("ALL");
 
   useEffect(() => {
@@ -19,7 +22,7 @@ export default function MissionContent({ cohort, missions }: MissionContentProps
       const now = kdayjs();
       const startDate = kdayjs(cohort.startDate);
       const currentWeek = now.diff(startDate, "week") + 1;
-      
+
       // Clamp current week between 1 and totalWeek
       const clampedWeek = Math.max(1, Math.min(currentWeek, cohort.totalWeek));
       setSelectedWeek(clampedWeek);
@@ -43,7 +46,7 @@ export default function MissionContent({ cohort, missions }: MissionContentProps
       : missions.filter((m) => m.week === selectedWeek);
 
   return (
-    <main className="flex-1 overflow-y-auto bg-[#fbf4ec]">
+    <main className="flex-1 overflow-y-auto bg-[#fbf4ec] min-h-screen">
       <div className="w-full max-w-7xl mx-auto px-6 py-6">
         <div className="space-y-4 sm:space-y-6">
           {/* 헤더 카드 */}
@@ -79,7 +82,9 @@ export default function MissionContent({ cohort, missions }: MissionContentProps
                           value={selectedWeek}
                           onChange={(e) => {
                             const val = e.target.value;
-                            setSelectedWeek(val === "ALL" ? "ALL" : Number(val));
+                            setSelectedWeek(
+                              val === "ALL" ? "ALL" : Number(val)
+                            );
                           }}
                           className="w-full transition-all px-2 py-1.5 bg-white/20 border border-white/40 rounded-lg text-white backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/30 duration-200 text-xs min-w-[80px] max-w-[100px] placeholder-white"
                         >
@@ -87,17 +92,18 @@ export default function MissionContent({ cohort, missions }: MissionContentProps
                             전체 보기
                           </option>
                           {cohort &&
-                            Array.from({ length: cohort.totalWeek }, (_, i) => i + 1).map(
-                              (week) => (
-                                <option
-                                  key={week}
-                                  value={week}
-                                  className="text-slate-800"
-                                >
-                                  {week}주차
-                                </option>
-                              )
-                            )}
+                            Array.from(
+                              { length: cohort.totalWeek },
+                              (_, i) => i + 1
+                            ).map((week) => (
+                              <option
+                                key={week}
+                                value={week}
+                                className="text-slate-800"
+                              >
+                                {week}주차
+                              </option>
+                            ))}
                         </select>
                       </div>
                     </div>
@@ -265,20 +271,27 @@ export default function MissionContent({ cohort, missions }: MissionContentProps
                 </div>
               </div>
             </div>
-            
+
             <div className="relative mb-6 sm:mb-8">
               {filteredMissions.length === 0 ? (
                 <div className="text-center py-12 text-slate-500 bg-slate-50 rounded-xl border border-dashed border-slate-200">
                   <p className="text-lg font-medium text-slate-600">
-                    {selectedWeek === "ALL" ? "등록된 미션이 없습니다." : `${selectedWeek}주차에는 미션이 없습니다!`}
+                    {selectedWeek === "ALL"
+                      ? "등록된 미션이 없습니다."
+                      : `${selectedWeek}주차에는 미션이 없습니다!`}
                   </p>
                 </div>
               ) : (
                 <div className="">
                   <div className="absolute top-10 left-16 right-16 h-1 flex">
                     {/* 로드맵 라인 */}
-                    {Array.from({ length: Math.max(filteredMissions.length - 1, 0) }).map((_, i) => (
-                      <div key={i} className="flex-1 h-1 bg-stone-200 rounded-full"></div>
+                    {Array.from({
+                      length: Math.max(filteredMissions.length - 1, 0),
+                    }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="flex-1 h-1 bg-stone-200 rounded-full"
+                      ></div>
                     ))}
                   </div>
                   <div className="flex justify-between px-8 overflow-x-auto gap-4">
@@ -416,9 +429,7 @@ export default function MissionContent({ cohort, missions }: MissionContentProps
                                 </span>
                                 <div
                                   className={`h-4 sm:h-6 w-px ${
-                                    isSubmitted
-                                      ? "bg-blue-200"
-                                      : "bg-stone-200"
+                                    isSubmitted ? "bg-blue-200" : "bg-stone-200"
                                   }`}
                                 ></div>
                               </div>
