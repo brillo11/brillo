@@ -225,7 +225,7 @@ export function ProductList({
               <Link
                 key={product.id}
                 href={product.href}
-                className="bg-white rounded-2xl p-5 text-center shadow-md transition-all hover:-translate-y-1 hover:shadow-lg border-2 border-transparent hover:border-[#F2779C]/30 relative block"
+                className="bg-white rounded-2xl p-5 text-center shadow-md transition-all hover:-translate-y-1 hover:shadow-lg border-2 border-transparent hover:border-[#F2779C]/30 relative block overflow-hidden"
               >
                 {/* 상단 그라데이션 바 */}
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#F2779C] to-[#3BB4C1] rounded-t-2xl" />
