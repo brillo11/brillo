@@ -7,6 +7,12 @@ import { METADATA } from "@/shared/consts/metadata";
 export const metadata: Metadata = {
   title: `${METADATA.TITLE}`,
   description: `${METADATA.DESCRIPTION}`,
+  openGraph: {
+    title: `${METADATA.TITLE}`,
+    description: `${METADATA.DESCRIPTION}`,
+    images: [METADATA.getThumbnailUrl()],
+    type: "website",
+  },
 };
 
 export default function RootLayout({

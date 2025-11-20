@@ -33,7 +33,10 @@ const statusMap: Record<string, { label: string; className: string }> = {
   DELIVERED: { label: "전송완료", className: "bg-blue-100 text-blue-700" },
   CANCELED: { label: "결제취소", className: "bg-gray-100 text-gray-700" },
   REFUNDED: { label: "환불완료", className: "bg-red-100 text-red-700" },
-  PARTIAL_REFUNDED: { label: "부분환불", className: "bg-orange-100 text-orange-700" },
+  PARTIAL_REFUNDED: {
+    label: "부분환불",
+    className: "bg-orange-100 text-orange-700",
+  },
 };
 
 export default function OrderHistoryPage() {
@@ -74,11 +77,6 @@ export default function OrderHistoryPage() {
               주문이 확정되어 고객에게 전송됩니다.
             </p>
           </div>
-          <Link href="/student/orders/entry">
-            <Button className="bg-stone-800 text-white hover:bg-stone-700">
-              + 주문 등록
-            </Button>
-          </Link>
         </div>
 
         {/* Table */}
@@ -109,26 +107,32 @@ export default function OrderHistoryPage() {
                     주문 날짜
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-stone-600 uppercase tracking-wider">
-                    확정 날짜
+                    리포트
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-200">
                 {orders.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-4 py-8 text-center text-stone-500">
+                    <td
+                      colSpan={8}
+                      className="px-4 py-8 text-center text-stone-500"
+                    >
                       확정된 주문이 없습니다.
                     </td>
                   </tr>
                 ) : (
                   orders.map((order) => {
-                    const status = statusMap[order.status] || { 
-                      label: order.status, 
-                      className: "bg-gray-100 text-gray-700" 
+                    const status = statusMap[order.status] || {
+                      label: order.status,
+                      className: "bg-gray-100 text-gray-700",
                     };
-                    
+
                     return (
-                      <tr key={order.id.toString()} className="hover:bg-stone-50 transition-colors">
+                      <tr
+                        key={order.id.toString()}
+                        className="hover:bg-stone-50 transition-colors"
+                      >
                         <td className="px-4 py-3 text-sm text-stone-900">
                           {order.name}
                         </td>
@@ -142,10 +146,14 @@ export default function OrderHistoryPage() {
                           {order.product.price.toLocaleString()}원
                         </td>
                         <td className="px-4 py-3 text-sm text-stone-600">
-                          {order.birthYear}.{String(order.birthMonth).padStart(2, '0')}.{String(order.birthDay).padStart(2, '0')}
+                          {order.birthYear}.
+                          {String(order.birthMonth).padStart(2, "0")}.
+                          {String(order.birthDay).padStart(2, "0")}
                         </td>
                         <td className="px-4 py-3">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${status.className}`}>
+                          <span
+                            className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${status.className}`}
+                          >
                             {status.label}
                           </span>
                         </td>
@@ -153,7 +161,19 @@ export default function OrderHistoryPage() {
                           {kdayjs(order.createdAt).format("YYYY년 MM월 DD일")}
                         </td>
                         <td className="px-4 py-3 text-sm text-stone-500">
-                          {kdayjs(order.updatedAt).format("YYYY년 MM월 DD일 HH:mm")}
+                          {order.status === "DELIVERED" && (
+                            <Link
+                              href={`/student/orders/history/report/${order.id}`}
+                            >
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-xs border-stone-300 text-stone-600 hover:bg-stone-50"
+                              >
+                                리포트 보기
+                              </Button>
+                            </Link>
+                          )}
                         </td>
                       </tr>
                     );

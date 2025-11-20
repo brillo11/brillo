@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getPointOrders, confirmPointOrders, getUserPoints, createBulkPointOrders } from "@/serverActions/pointOrder.actions";
+import {
+  getPointOrders,
+  confirmPointOrders,
+  getUserPoints,
+  createBulkPointOrders,
+} from "@/serverActions/pointOrder.actions";
 import { getProductsForList } from "@/serverActions/product.actions";
 import { kdayjs } from "@/shared/lib/utils/dayjs";
 import { Button } from "@repo/ui/components/button";
@@ -16,6 +21,7 @@ import {
 import { Checkbox } from "@repo/ui/components/checkbox";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface PointOrder {
   id: bigint;
@@ -45,12 +51,13 @@ interface Product {
 }
 
 export default function OrderListPage() {
+  const router = useRouter();
   const [orders, setOrders] = useState<PointOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [userPoints, setUserPoints] = useState(0);
-  
+
   // Registration Modal State
   const [registerModalOpen, setRegisterModalOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
@@ -80,7 +87,7 @@ export default function OrderListPage() {
         setProducts(productsData);
         if (productsData.length > 0) {
           const firstProductTitle = productsData[0]?.title || "";
-          setFormData(prev => ({ ...prev, productCode: firstProductTitle }));
+          setFormData((prev) => ({ ...prev, productCode: firstProductTitle }));
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -94,7 +101,7 @@ export default function OrderListPage() {
 
   const handleToggleAll = (checked: boolean) => {
     if (checked) {
-      const allIds = new Set(orders.map(order => order.id.toString()));
+      const allIds = new Set(orders.map((order) => order.id.toString()));
       setSelectedIds(allIds);
     } else {
       setSelectedIds(new Set());
@@ -111,12 +118,13 @@ export default function OrderListPage() {
     setSelectedIds(newSelected);
   };
 
-  const selectedOrders = orders.filter(order => 
+  const selectedOrders = orders.filter((order) =>
     selectedIds.has(order.id.toString())
   );
 
-  const totalAmount = selectedOrders.reduce((sum, order) => 
-    sum + (order.product.price * order.amount), 0
+  const totalAmount = selectedOrders.reduce(
+    (sum, order) => sum + order.product.price * order.amount,
+    0
   );
 
   const handleConfirmOrders = () => {
@@ -134,15 +142,15 @@ export default function OrderListPage() {
     }
 
     setConfirmModalOpen(false);
-    
+
     try {
       const orderIds = Array.from(selectedIds);
       const result = await confirmPointOrders(orderIds);
-      
+
       if (result.success) {
         toast.success(`${result.count}건의 주문이 확정되었습니다.`);
         setSelectedIds(new Set());
-        
+
         // Refresh data
         const [ordersData, pointsData] = await Promise.all([
           getPointOrders(),
@@ -150,6 +158,9 @@ export default function OrderListPage() {
         ]);
         setOrders(ordersData as any);
         setUserPoints(pointsData);
+
+        // Force refresh server components (Header)
+        router.refresh();
       } else {
         toast.error(result.error || "주문 확정에 실패했습니다.");
       }
@@ -184,7 +195,7 @@ export default function OrderListPage() {
           birthMinute: 0,
           gender: "FEMALE",
         });
-        
+
         // Refresh data
         const ordersData = await getPointOrders();
         setOrders(ordersData as any);
@@ -226,8 +237,8 @@ export default function OrderListPage() {
             >
               주문 확정 ({selectedIds.size})
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="border-stone-300 text-stone-700 hover:bg-stone-100"
               onClick={() => setRegisterModalOpen(true)}
             >
@@ -274,18 +285,27 @@ export default function OrderListPage() {
               <tbody className="divide-y divide-stone-200">
                 {orders.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-4 py-8 text-center text-stone-500">
+                    <td
+                      colSpan={8}
+                      className="px-4 py-8 text-center text-stone-500"
+                    >
                       등록된 주문이 없습니다.
                     </td>
                   </tr>
                 ) : (
                   orders.map((order) => (
-                    <tr key={order.id.toString()} className="hover:bg-stone-50 transition-colors">
+                    <tr
+                      key={order.id.toString()}
+                      className="hover:bg-stone-50 transition-colors"
+                    >
                       <td className="px-4 py-3">
                         <Checkbox
                           checked={selectedIds.has(order.id.toString())}
-                          onCheckedChange={(checked) => 
-                            handleToggleOrder(order.id.toString(), checked as boolean)
+                          onCheckedChange={(checked) =>
+                            handleToggleOrder(
+                              order.id.toString(),
+                              checked as boolean
+                            )
                           }
                         />
                       </td>
@@ -302,21 +322,29 @@ export default function OrderListPage() {
                         {order.product.price.toLocaleString()}원
                       </td>
                       <td className="px-4 py-3 text-sm text-stone-600">
-                        {order.birthYear}.{String(order.birthMonth).padStart(2, '0')}.{String(order.birthDay).padStart(2, '0')}
+                        {order.birthYear}.
+                        {String(order.birthMonth).padStart(2, "0")}.
+                        {String(order.birthDay).padStart(2, "0")}
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          order.status === "PENDING" 
-                            ? "bg-yellow-100 text-yellow-700"
-                            : order.status === "COMPLETED"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-gray-100 text-gray-700"
-                        }`}>
-                          {order.status === "PENDING" ? "결제대기" : order.status}
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            order.status === "PENDING"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : order.status === "COMPLETED"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-gray-100 text-gray-700"
+                          }`}
+                        >
+                          {order.status === "PENDING"
+                            ? "결제대기"
+                            : order.status}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-sm text-stone-500">
-                        {kdayjs(order.createdAt).format("YYYY년 MM월 DD일 오전 HH:mm")}
+                        {kdayjs(order.createdAt).format(
+                          "YYYY년 MM월 DD일 오전 HH:mm"
+                        )}
                       </td>
                     </tr>
                   ))
@@ -335,7 +363,7 @@ export default function OrderListPage() {
               주문 확정
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="py-6 space-y-6">
             <div className="space-y-3 border-t border-b border-stone-200 py-4">
               <div className="flex justify-between items-center">
@@ -386,7 +414,7 @@ export default function OrderListPage() {
               새로운 주문 정보를 입력해주세요.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <label className="text-right text-sm font-medium text-stone-600">
@@ -395,7 +423,9 @@ export default function OrderListPage() {
               <select
                 className="col-span-3 flex h-10 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-950 focus-visible:ring-offset-2"
                 value={formData.productCode}
-                onChange={(e) => setFormData({ ...formData, productCode: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, productCode: e.target.value })
+                }
               >
                 {products.map((product) => (
                   <option key={product.id} value={product.title}>
@@ -411,7 +441,9 @@ export default function OrderListPage() {
               <input
                 className="col-span-3 flex h-10 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-stone-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-950 focus-visible:ring-offset-2"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="이름을 입력하세요"
               />
             </div>
@@ -423,7 +455,9 @@ export default function OrderListPage() {
                 type="email"
                 className="col-span-3 flex h-10 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-stone-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-950 focus-visible:ring-offset-2"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 placeholder="이메일을 입력하세요"
               />
             </div>
@@ -436,7 +470,9 @@ export default function OrderListPage() {
                   <input
                     type="radio"
                     checked={formData.gender === "FEMALE"}
-                    onChange={() => setFormData({ ...formData, gender: "FEMALE" })}
+                    onChange={() =>
+                      setFormData({ ...formData, gender: "FEMALE" })
+                    }
                     className="text-stone-900 focus:ring-stone-900"
                   />
                   <span className="text-sm text-stone-700">여성</span>
@@ -445,7 +481,9 @@ export default function OrderListPage() {
                   <input
                     type="radio"
                     checked={formData.gender === "MALE"}
-                    onChange={() => setFormData({ ...formData, gender: "MALE" })}
+                    onChange={() =>
+                      setFormData({ ...formData, gender: "MALE" })
+                    }
                     className="text-stone-900 focus:ring-stone-900"
                   />
                   <span className="text-sm text-stone-700">남성</span>
@@ -461,7 +499,12 @@ export default function OrderListPage() {
                   <select
                     className="flex-1 h-10 rounded-md border border-stone-300 bg-white px-3 py-2 text-sm"
                     value={formData.calendar}
-                    onChange={(e) => setFormData({ ...formData, calendar: e.target.value as "SOLAR" | "LUNAR" })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        calendar: e.target.value as "SOLAR" | "LUNAR",
+                      })
+                    }
                   >
                     <option value="SOLAR">양력</option>
                     <option value="LUNAR">음력</option>
@@ -470,7 +513,12 @@ export default function OrderListPage() {
                     type="number"
                     className="flex-1 h-10 rounded-md border border-stone-300 bg-white px-3 py-2 text-sm"
                     value={formData.birthYear}
-                    onChange={(e) => setFormData({ ...formData, birthYear: parseInt(e.target.value) })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        birthYear: parseInt(e.target.value),
+                      })
+                    }
                     placeholder="년"
                   />
                 </div>
@@ -479,14 +527,24 @@ export default function OrderListPage() {
                     type="number"
                     className="flex-1 h-10 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm"
                     value={formData.birthMonth}
-                    onChange={(e) => setFormData({ ...formData, birthMonth: parseInt(e.target.value) })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        birthMonth: parseInt(e.target.value),
+                      })
+                    }
                     placeholder="월"
                   />
                   <input
                     type="number"
                     className="flex-1 h-10 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm"
                     value={formData.birthDay}
-                    onChange={(e) => setFormData({ ...formData, birthDay: parseInt(e.target.value) })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        birthDay: parseInt(e.target.value),
+                      })
+                    }
                     placeholder="일"
                   />
                 </div>
@@ -501,14 +559,24 @@ export default function OrderListPage() {
                   type="number"
                   className="flex-1 h-10 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm"
                   value={formData.birthHour}
-                  onChange={(e) => setFormData({ ...formData, birthHour: parseInt(e.target.value) })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      birthHour: parseInt(e.target.value),
+                    })
+                  }
                   placeholder="시 (0-23)"
                 />
                 <input
                   type="number"
                   className="flex-1 h-10 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm"
                   value={formData.birthMinute}
-                  onChange={(e) => setFormData({ ...formData, birthMinute: parseInt(e.target.value) })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      birthMinute: parseInt(e.target.value),
+                    })
+                  }
                   placeholder="분 (0-59)"
                 />
               </div>
