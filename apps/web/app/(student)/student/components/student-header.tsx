@@ -151,7 +151,7 @@ export function StudentHeader({ points = 0 }: { points?: number }) {
                 <User className="h-5 w-5" />
               </div>
               {/* 드롭다운 메뉴 */}
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 overflow-hidden">
                 <div className="py-2">
                   <Link
                     href="/my-account"
