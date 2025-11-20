@@ -67,6 +67,22 @@ export const adminMenus: MenuItem[] = [
     url: PATH.ADMIN_COMMUNITY_ANNOUNCEMENTS,
     icon: Megaphone,
   },
+  {
+    id: "missions",
+    title: "미션",
+    baseUrl: PATH.ADMIN_MISSIONS,
+    url: PATH.ADMIN_MISSIONS_NOTICE,
+    icon: Target,
+    subMenus: [
+      {
+        id: "mission-notice",
+        title: "공지",
+        baseUrl: PATH.ADMIN_MISSIONS,
+        url: PATH.ADMIN_MISSIONS_NOTICE,
+        icon: FileText,
+      },
+    ],
+  },
   // {
   //   id: "products",
   //   title: "제품",
