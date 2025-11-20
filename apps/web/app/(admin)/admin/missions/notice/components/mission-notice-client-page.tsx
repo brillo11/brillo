@@ -21,6 +21,8 @@ import {
   DialogTitle,
 } from "@repo/ui/components/dialog";
 import { getCohortMissions } from "@/serverActions/admin/cohort";
+import { createMission } from "@/serverActions/admin/mission.actions";
+import { toast } from "sonner";
 
 interface Mission {
   id: number;
@@ -143,29 +145,41 @@ export default function MissionNoticeClientPage({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formTitle || !formCohortId || !formDueDate) {
-      alert("필수 항목을 모두 입력해주세요.");
+      toast.error("필수 항목을 모두 입력해주세요.");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      // TODO: 미션 생성 서버 액션 호출
-      console.log("미션 생성:", {
+      await createMission({
         title: formTitle,
         description: formDescription,
         week: formWeek,
-        dueDate: formDueDate,
-        cohortId: formCohortId,
+        dueDate: new Date(formDueDate),
+        cohortId: Number(formCohortId),
       });
+
+      toast.success("미션이 성공적으로 생성되었습니다.");
 
       // 성공 후 모달 닫기 및 목록 새로고침
       setIsModalOpen(false);
-      if (selectedCohortId) {
+
+      // 폼 초기화
+      setFormTitle("");
+      setFormDescription("");
+      setFormWeek(1);
+      setFormDueDate("");
+      setFormCohortId("");
+
+      // 선택된 기수가 생성한 기수와 같으면 목록 새로고침
+      if (selectedCohortId === Number(formCohortId)) {
         handleRefresh();
       }
     } catch (error) {
       console.error("미션 생성 실패:", error);
-      alert("미션 생성에 실패했습니다.");
+      toast.error(
+        error instanceof Error ? error.message : "미션 생성에 실패했습니다."
+      );
     } finally {
       setIsSubmitting(false);
     }
