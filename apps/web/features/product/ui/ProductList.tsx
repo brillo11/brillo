@@ -251,14 +251,14 @@ export function ProductList({
                 </h3>
 
                 {/* 별점 및 리뷰 */}
-                {showRating && (product.rating || product.reviewCount) && (
+                {/* {showRating && (product.rating || product.reviewCount) && (
                   <div className="flex items-center justify-center gap-2 mb-2">
                     {renderStars(product.rating || 0)}
                     <span className="text-[11px] text-[#7f8c8d]">
                       ({product.reviewCount || 0})
                     </span>
                   </div>
-                )}
+                )} */}
 
                 <p className="text-[#7f8c8d] text-xs leading-snug mb-2.5 line-clamp-2">
                   {product.description}
