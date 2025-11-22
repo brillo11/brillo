@@ -40,5 +40,10 @@ declare module "lunar-javascript" {
   export class LunarUtil {
     static WU_XING_GAN: { [key: string]: string };
     static WU_XING_ZHI: { [key: string]: string };
+    static SHI_SHEN: { [key: string]: string };
+    static CHANG_SHENG: string[];
+    static GAN: string[];
+    static ZHI: string[];
+    static ANIMAL: string[];
   }
 }
