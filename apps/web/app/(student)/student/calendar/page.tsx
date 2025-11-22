@@ -18,7 +18,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/ui/components/select";
-import { Solar, LunarUtil } from "lunar-javascript";
+import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
+import { Checkbox } from "@repo/ui/components/checkbox";
+import { Solar, Lunar, LunarUtil } from "lunar-javascript";
 
 // 오행 색상 매핑 (배경색)
 const WUXING_COLORS = {
@@ -321,15 +323,28 @@ const getNobleman = (dayGan: string, zhi: string): string[] => {
 };
 
 export default function CalendarPage() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    year: string;
+    month: string;
+    day: string;
+    hour: string;
+    minute: string;
+    gender: string;
+    calendarType: "solar" | "lunar";
+    isLeapMonth: boolean;
+  }>({
     name: "",
     year: "",
     month: "",
     day: "",
     hour: "",
-    minute: "",
-    gender: "male",
+    minute: "0",
+    gender: "",
+    calendarType: "solar",
+    isLeapMonth: false,
   });
+
   const [sajuResult, setSajuResult] = useState<SajuResult | null>(null);
 
   // 오행 색상 가져오기 헬퍼
@@ -344,14 +359,30 @@ export default function CalendarPage() {
       const { year, month, day, hour, minute, name, gender } = formData;
 
       // Solar 객체 생성 (양력 날짜)
-      const solar = Solar.fromYmdHms(
-        parseInt(year),
-        parseInt(month),
-        parseInt(day),
-        parseInt(hour),
-        parseInt(minute || "0"),
-        0
-      );
+      // Solar 객체 생성 (양력/음력 구분)
+      let solar;
+      if (formData.calendarType === "lunar") {
+        // @ts-ignore
+        const lunar = Lunar.fromYmdHms(
+          parseInt(year),
+          parseInt(month),
+          parseInt(day),
+          parseInt(hour),
+          parseInt(minute || "0"),
+          0,
+          formData.isLeapMonth
+        );
+        solar = lunar.getSolar();
+      } else {
+        solar = Solar.fromYmdHms(
+          parseInt(year),
+          parseInt(month),
+          parseInt(day),
+          parseInt(hour),
+          parseInt(minute || "0"),
+          0
+        );
+      }
 
       // 음력 변환
       const lunar = solar.getLunar();
@@ -433,7 +464,9 @@ export default function CalendarPage() {
       const result: SajuResult = {
         name,
         gender,
-        solarDate: `${year}.${month}.${day} ${hour}:${minute || "00"}`,
+        solarDate: `${solar.getYear()}.${solar.getMonth()}.${solar.getDay()} ${hour}:${
+          minute || "00"
+        }`,
         lunarDate: `${lunar.getYear()}.${lunar.getMonth()}.${lunar.getDay()}`,
         yearPillar: createPillar(
           eightChar.getYearGan(),
@@ -542,9 +575,53 @@ export default function CalendarPage() {
                   />
                 </div>
 
+                {/* 양력/음력 선택 */}
+                <div className="space-y-3">
+                  <Label>달력 종류</Label>
+                  <RadioGroup
+                    defaultValue="solar"
+                    value={formData.calendarType}
+                    onValueChange={(value) =>
+                      handleChange("calendarType", value as "solar" | "lunar")
+                    }
+                    className="flex space-x-4"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="solar" id="solar" />
+                      <Label htmlFor="solar">양력</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="lunar" id="lunar" />
+                      <Label htmlFor="lunar">음력</Label>
+                    </div>
+                  </RadioGroup>
+
+                  {/* 윤달 체크박스 (음력일 때만 표시) */}
+                  {formData.calendarType === "lunar" && (
+                    <div className="flex items-center space-x-2 mt-2">
+                      <Checkbox
+                        id="isLeapMonth"
+                        checked={formData.isLeapMonth}
+                        onCheckedChange={(checked) =>
+                          handleChange("isLeapMonth", checked === true)
+                        }
+                      />
+                      <Label
+                        htmlFor="isLeapMonth"
+                        className="text-sm font-normal cursor-pointer"
+                      >
+                        윤달
+                      </Label>
+                    </div>
+                  )}
+                </div>
+
                 {/* 생년월일 */}
                 <div className="space-y-2">
-                  <Label>생년월일 (양력 기준)</Label>
+                  <Label>
+                    생년월일 (
+                    {formData.calendarType === "solar" ? "양력" : "음력"} 기준)
+                  </Label>
                   <div className="grid grid-cols-3 gap-3">
                     <div>
                       <Input
