@@ -100,6 +100,36 @@ const CHANGSHENG_KOREAN: { [key: string]: string } = {
   养: "양",
 };
 
+// 천간 색상 매핑 (일주 동물용)
+const GAN_COLOR_KR: { [key: string]: string } = {
+  甲: "푸른",
+  乙: "푸른",
+  丙: "붉은",
+  丁: "붉은",
+  戊: "황금",
+  己: "황금",
+  庚: "흰",
+  辛: "흰",
+  壬: "검은",
+  癸: "검은",
+};
+
+// 지지 동물 매핑 (일주 동물용)
+const ZHI_ANIMAL_KR: { [key: string]: string } = {
+  子: "쥐",
+  丑: "소",
+  寅: "호랑이",
+  卯: "토끼",
+  辰: "용",
+  巳: "뱀",
+  午: "말",
+  未: "양",
+  申: "원숭이",
+  酉: "닭",
+  戌: "개",
+  亥: "돼지",
+};
+
 // 십이신살 매핑 (삼합 국 -> 신살)
 // 기준: 인오술(화국), 사유축(금국), 신자진(수국), 해묘미(목국)
 // 순서: 겁살, 재살, 천살, 지살, 년살, 월살, 망신살, 장성살, 반안살, 역마살, 육해살, 화개살
@@ -602,9 +632,9 @@ export default function CalendarPage() {
                       <Checkbox
                         id="isLeapMonth"
                         checked={formData.isLeapMonth}
-                        onCheckedChange={(checked) =>
-                          handleChange("isLeapMonth", checked === true)
-                        }
+                        onCheckedChange={(checked) => {
+                          // handleChange("isLeapMonth", checked === true);
+                        }}
                       />
                       <Label
                         htmlFor="isLeapMonth"
@@ -725,28 +755,48 @@ export default function CalendarPage() {
             {/* 헤더 정보 */}
             <Card className="shadow-lg">
               <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-3xl mb-2">
-                      {sajuResult.name}(
-                      {sajuResult.gender === "male" ? "남성" : "여성"})
-                    </CardTitle>
-                    <div className="space-y-1 text-muted-foreground">
-                      <p className="text-lg">{sajuResult.solarDate} (양력)</p>
-                      <p>음력: {sajuResult.lunarDate}</p>
-                      <p className="font-semibold text-primary">
-                        일주 동물:{" "}
-                        {(LunarUtil.ANIMAL &&
-                          LunarUtil.ANIMAL[
-                            LunarUtil.ZHI.indexOf(sajuResult.dayPillar.zhi)
-                          ]) ||
-                          ""}
-                      </p>
+                <div className="flex items-start gap-6">
+                  {/* 왼쪽: 동물 캐릭터 영역 (나중에 이미지 추가) */}
+                  <div className="flex-shrink-0">
+                    <div className="w-40 h-40 rounded-full bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center shadow-lg">
+                      <div className="text-6xl">
+                        {/* 나중에 동물 캐릭터 이미지로 교체 */}
+                        🐾
+                      </div>
                     </div>
                   </div>
-                  <Button onClick={handleReset} variant="outline">
-                    다시 입력하기
-                  </Button>
+
+                  {/* 오른쪽: 정보 영역 */}
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-2">
+                        <h2 className="text-3xl font-bold">
+                          {sajuResult.name}(
+                          {sajuResult.gender === "male" ? "남성" : "여성"})
+                        </h2>
+                        <p className="text-lg text-muted-foreground">
+                          {sajuResult.solarDate} (양력)
+                        </p>
+                        <div className="pt-2">
+                          <p className="text-xl font-semibold text-slate-800 dark:text-slate-200">
+                            오행: {sajuResult.dayPillar.ganWuxing} | 일주 동물:{" "}
+                            <span className="text-primary">
+                              {GAN_COLOR_KR[sajuResult.dayPillar.gan]}{" "}
+                              {ZHI_ANIMAL_KR[sajuResult.dayPillar.zhi]}
+                            </span>
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1 max-w-md leading-relaxed">
+                            *잠깐!! 여기서 일주 동물이란 우리가 흔히 알고 있는
+                            태어난 연도에 따른 띠가 아닌 나의 일주가 나타내는
+                            동물을 의미합니다.
+                          </p>
+                        </div>
+                      </div>
+                      <Button onClick={handleReset} variant="outline">
+                        다시 입력하기
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </CardHeader>
             </Card>

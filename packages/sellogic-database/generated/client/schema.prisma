@@ -1,0 +1,396 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../generated/client"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                          String      @id @default(uuid())
+  createdAt                   DateTime    @default(now())
+  name                        String      @default("")
+  nickname                    String      @unique @default("")
+  role                        ROLE        @default(STUDENT)
+  status                      USER_STATUS @default(UNKNOWN)
+  bizName                     String      @default("")
+  bizNumber                   String      @default("")
+  expiredAt                   DateTime    @default(now())
+  lastLoginAt                 DateTime    @default(now())
+  lastPaidAt                  DateTime    @default(now())
+  maxProductCount             Int         @default(200)
+  maxUploadProductCount       Int         @default(0)
+  memo                        String      @default("")
+  points                      Int         @default(0)
+  remainingProductCount       Int         @default(200)
+  remainingUploadProductCount Int         @default(0)
+  email                       String?     @unique
+  emailVerified               Boolean     @default(false)
+  image                       String?
+  updatedAt                   DateTime    @default(now()) @updatedAt
+  phoneNumber                 String?
+
+  misc Json @default("{}")
+
+  accounts    Account[]
+  sessions    Session[]
+  posts       Post[]       @relation("AuthoredPosts")
+  postLikes   PostLike[]
+  comments    Comment[]
+  pointOrders PointOrder[]
+  orders      Order[]
+
+  submissions Submission[]
+
+  cohortId BigInt?
+  cohort   Cohort? @relation(fields: [cohortId], references: [id])
+
+  @@index([email])
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+model Account {
+  id                    String    @id @default(uuid())
+  userId                String
+  accountId             String
+  refreshToken          String?
+  accessToken           String?
+  scope                 String?
+  idToken               String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  accessTokenExpiresAt  DateTime?
+  password              String?
+  providerId            String
+  refreshTokenExpiresAt DateTime?
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+}
+
+model Class {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String   @default("")
+  slug      String   @unique
+  misc      Json     @default("{}")
+
+  cohorts Cohort[]
+
+  @@index([slug])
+}
+
+model Cohort {
+  id          BigInt   @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  title       String   @default("")
+  totalWeek   Int      @default(0)
+  startDate   DateTime
+  endDate     DateTime
+  cohortOrder Int      @default(0)
+
+  slug String @unique
+  misc Json   @default("{}")
+
+  users    User[]
+  missions Mission[]
+
+  classId BigInt
+  class   Class? @relation(fields: [classId], references: [id])
+
+  @@index([slug])
+}
+
+model Mission {
+  id          BigInt   @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  title       String   @default("")
+  description String   @default("")
+  dueDate     DateTime
+  misc        Json     @default("{}")
+  week        Int      @default(0)
+
+  submissions Submission[]
+
+  cohortId BigInt
+  cohort   Cohort? @relation(fields: [cohortId], references: [id])
+}
+
+model Submission {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  content   String   @default("")
+  misc      Json     @default("{}")
+
+  missionId BigInt
+  mission   Mission? @relation(fields: [missionId], references: [id])
+  userId    String
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([missionId])
+  @@index([userId])
+}
+
+model Board {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String   @default("")
+  slug      String   @unique
+  misc      Json     @default("{}")
+
+  posts Post[]
+}
+
+model Post {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  thumbnail String   @default("")
+  title     String   @default("")
+  content   String   @default("")
+  slug      String   @unique @default("")
+  views     Int      @default(0)
+  tags      String[] @default([])
+  files     Json     @default("[]")
+  authorId  String
+  boardId   BigInt
+  misc      Json     @default("{}")
+
+  comments Comment[]
+  author   User       @relation("AuthoredPosts", fields: [authorId], references: [id])
+  board    Board      @relation(fields: [boardId], references: [id])
+  likes    PostLike[]
+
+  @@index([authorId])
+  @@index([boardId])
+}
+
+model PostLike {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  postId BigInt
+  userId String
+  post   Post   @relation(fields: [postId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model Comment {
+  id             BigInt    @id @default(autoincrement())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  content        String    @default("")
+  authorId       String
+  postId         BigInt
+  parentId       BigInt?
+  deleted        Boolean   @default(false)
+  deletedContent String    @default("삭제된 댓글입니다.")
+  misc           Json      @default("{}")
+  author         User      @relation(fields: [authorId], references: [id])
+  parent         Comment?  @relation("CommentParent", fields: [parentId], references: [id])
+  replies        Comment[] @relation("CommentParent")
+  post           Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([authorId])
+  @@index([postId])
+  @@index([parentId])
+}
+
+model Log {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  content   Json     @default("{}")
+}
+
+model PointOrder {
+  id          BigInt       @id @default(autoincrement())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  amount      Int
+  status      ORDER_STATUS
+  orderName   String       @default("") // 주문명
+  description String? // 결제 설명
+
+  email       String   @default("")
+  name        String   @default("")
+  calendar    CALENDAR
+  birthYear   Int
+  birthMonth  Int
+  birthDay    Int
+  birthHour   Int
+  birthMinute Int
+  gender      GENDER
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  productId BigInt
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@index([userId])
+}
+
+model Order {
+  id           BigInt       @id @default(autoincrement())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  amount       Int
+  status       ORDER_STATUS
+  method       String
+  isRefunded   Boolean      @default(false)
+  refundedAt   DateTime?
+  refundAmount Int?
+  refundReason String?
+  merchantUid  String?      @unique
+  pgProvider   String?
+  receiptUrl   String?
+  paymentKey   String?      @unique
+  isTest       Boolean      @default(false)
+  orderName    String       @default("서비스 이용료") // 주문명
+  description  String? // 결제 설명
+  userId       String
+  user         User         @relation(fields: [userId], references: [id])
+  refunds      Refund[]
+
+  @@index([userId])
+  @@index([merchantUid])
+  @@index([paymentKey])
+}
+
+model PaymentSession {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  orderId   String   @unique
+  amount    Int
+  orderName String
+  userId    BigInt?
+  status    String   @default("PENDING")
+
+  @@index([orderId])
+  @@index([expiresAt])
+  @@index([userId])
+}
+
+model Refund {
+  id            BigInt        @id @default(autoincrement())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  amount        Int // 환불 금액
+  reason        String // 환불 사유
+  status        REFUND_STATUS @default(PENDING)
+  refundMethod  String? // 환불 방법 (카드취소, 계좌이체 등)
+  processedAt   DateTime? // 환불 처리 완료 시각
+  tossRefundKey String? // 토스페이먼츠 환불 키
+  orderId       BigInt // 원본 주문 ID
+  order         Order         @relation(fields: [orderId], references: [id])
+
+  @@index([orderId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum ROLE {
+  SUPER_ADMIN
+  ADMIN
+  STUDENT
+}
+
+enum GENDER {
+  MALE
+  FEMALE
+}
+
+enum CALENDAR {
+  SOLAR
+  LUNAR
+}
+
+enum USER_STATUS {
+  UNKNOWN
+  PENDING
+  ACTIVE
+  INACTIVE
+}
+
+enum PROVIDER {
+  CREDENTIALS
+  KAKAO
+  GOOGLE
+  APPLE
+  NAVER
+  GITHUB
+  FACEBOOK
+}
+
+enum ORDER_STATUS {
+  PENDING          @map("결제대기")
+  PAID             @map("결제완료")
+  DELIVERED        @map("전송완료")
+  CANCELED         @map("결제취소")
+  PARTIAL_REFUNDED @map("부분환불")
+  REFUNDED         @map("환불완료")
+  REFUNDING        @map("환불진행중")
+  FAILED           @map("결제실패")
+}
+
+enum REFUND_STATUS {
+  PENDING    @map("환불대기")
+  PROCESSING @map("환불처리중")
+  COMPLETED  @map("환불완료")
+  FAILED     @map("환불실패")
+  CANCELED   @map("환불취소")
+}
+
+model Product {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  icon          String @default("") // 아이콘
+  name          String // 제품명
+  description   String @default("") // 제품 설명
+  price         Int // 판매가격 (원)
+  originalPrice Int? // 원가 (할인 표시용)
+
+  images   Json   @default("[]") // 이미지 URL 배열
+  category String @default("일반") // 카테고리
+
+  inStock  Boolean @default(true) // 재고 여부
+  featured Boolean @default(false) // 추천 제품 여부
+
+  specifications Json     @default("{}") // 제품 규격 (JSON)
+  tags           String[] @default([]) // 태그 배열
+
+  viewCount Int @default(0) // 조회수
+
+  pointOrders PointOrder[]
+
+  @@index([category])
+  @@index([featured])
+  @@index([inStock])
+}
