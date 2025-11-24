@@ -105,6 +105,9 @@ importers:
       tailwind-merge:
         specifier: ^3.3.0
         version: 3.3.0
+      youtube-transcript-plus:
+        specifier: ^1.1.1
+        version: 1.1.1
     devDependencies:
       '@repo/database':
         specifier: workspace:*
@@ -5405,6 +5408,10 @@ packages:
   yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+
+  youtube-transcript-plus@1.1.1:
+    resolution: {integrity: sha512-KmAcn7eBPMgSnPJosCaaRp6/eqOAXk9p5f5ExBf+aD0M74Hud5RzbwHVoFpR5wOS++QqrrFaFhq9eiaWqWDlXg==}
+    engines: {node: '>=18.0.0'}
 
   zeptomatch@2.0.2:
     resolution: {integrity: sha512-H33jtSKf8Ijtb5BW6wua3G5DhnFjbFML36eFu+VdOoVY4HD9e7ggjqdM6639B+L87rjnR6Y+XeRzBXZdy52B/g==}
@@ -11087,6 +11094,8 @@ snapshots:
   yn@3.1.1: {}
 
   yocto-queue@0.1.0: {}
+
+  youtube-transcript-plus@1.1.1: {}
 
   zeptomatch@2.0.2:
     dependencies:

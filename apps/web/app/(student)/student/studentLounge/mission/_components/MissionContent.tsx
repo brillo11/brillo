@@ -5,6 +5,7 @@ import { kdayjs } from "@/shared/lib/utils/dayjs";
 import MissionSubmitButton from "./MissionSubmitButton";
 import { Prisma } from "@repo/database";
 import { MissionWithSubmissions } from "@/serverActions/mission.actions";
+import { StandaloneYouTubeExtractor } from "./StandaloneYouTubeExtractor";
 
 interface MissionContentProps {
   cohort: Prisma.CohortGetPayload<{ include: { missions: true } }> | null;
@@ -112,6 +113,9 @@ export default function MissionContent({
               </div>
             </div>
           </div>
+
+          {/* YouTube 자막 추출 도구 */}
+          <StandaloneYouTubeExtractor />
 
           {/* 통계 카드 그리드 */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">

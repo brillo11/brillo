@@ -7,6 +7,7 @@ import {
   ChevronDown,
   User,
   Coins,
+  GraduationCap,
 } from "lucide-react";
 import {
   Sidebar,
@@ -52,36 +53,28 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-none shadow-sm bg-[#F9EBDD]">
+    <Sidebar collapsible="icon" className="border-none shadow-sm bg-slate-50">
       {/* 헤더 섹션 */}
-      <SidebarHeader className="bg-[#F9EBDD] border-b border-[#F2779C]/10">
+      <SidebarHeader className="bg-white border-b border-slate-200">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
               size="lg"
-              className="bg-transparent hover:bg-[#F2779C]/10"
+              className="bg-transparent hover:bg-slate-100"
             >
               <Link
                 href={PATH.STUDENT_ROOT}
                 className="flex items-center gap-3"
               >
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#F2779C] to-[#E85A89] text-white">
-                  <Image
-                    src="/logo_yhd.png"
-                    alt="연화당 로고"
-                    width={32}
-                    height={32}
-                    className="h-6 w-auto"
-                  />
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-white">
+                  <GraduationCap className="h-5 w-5" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold text-[#2C3E50]">
-                    연화당
+                  <span className="truncate font-semibold text-slate-900">
+                    학습 관리 시스템
                   </span>
-                  <span className="truncate text-xs text-[#2C3E50]/70">
-                    수강생
-                  </span>
+                  <span className="truncate text-xs text-slate-500">LMS</span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -90,7 +83,7 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
       </SidebarHeader>
 
       {/* 메인 콘텐츠 */}
-      <SidebarContent className="bg-[#F9EBDD]">
+      <SidebarContent className="bg-slate-50">
         <SidebarGroup className="p-0">
           <SidebarGroupContent>
             <nav className="flex-1 px-4 py-6">
@@ -114,7 +107,7 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
                             <SidebarMenuButton
                               tooltip={item.title}
                               isActive={isActive}
-                              className="w-full justify-between text-[#2C3E50] hover:text-[#F2779C] hover:bg-[#F2779C]/10 data-[active=true]:text-[#F2779C] data-[active=true]:bg-[#F2779C]/10"
+                              className="w-full justify-between text-slate-700 hover:text-blue-600 hover:bg-blue-50 data-[active=true]:text-blue-600 data-[active=true]:bg-blue-50 data-[active=true]:font-medium"
                             >
                               <div className="flex items-center gap-2">
                                 {item.icon && <item.icon className="h-5 w-5" />}
@@ -134,7 +127,7 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
                                     <SidebarMenuSubButton
                                       asChild
                                       isActive={isSubActive}
-                                      className="text-[#2C3E50] hover:text-[#F2779C] hover:bg-[#F2779C]/10 data-[active=true]:text-[#F2779C] data-[active=true]:bg-[#F2779C]/10"
+                                      className="text-slate-600 hover:text-blue-600 hover:bg-blue-50 data-[active=true]:text-blue-600 data-[active=true]:bg-blue-50 data-[active=true]:font-medium"
                                     >
                                       <Link href={subItem.url}>
                                         {subItem.icon && (
@@ -159,7 +152,7 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
                         asChild
                         tooltip={item.title}
                         isActive={isActive}
-                        className="text-[#2C3E50] hover:text-[#F2779C] hover:bg-[#F2779C]/10 data-[active=true]:text-[#F2779C] data-[active=true]:bg-[#F2779C]/10"
+                        className="text-slate-700 hover:text-blue-600 hover:bg-blue-50 data-[active=true]:text-blue-600 data-[active=true]:bg-blue-50 data-[active=true]:font-medium"
                       >
                         <Link href={item.url}>
                           {item.icon && <item.icon className="h-5 w-5" />}
@@ -176,23 +169,23 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
       </SidebarContent>
 
       {/* 푸터 섹션 */}
-      <SidebarFooter className="bg-[#F9EBDD] border-t border-[#F2779C]/10 p-4 space-y-2">
-        {/* 복비 배지 */}
+      <SidebarFooter className="bg-white border-t border-slate-200 p-4 space-y-2">
+        {/* 포인트 배지 */}
         <Link href={PATH.STUDENT_POINTS_CHARGE}>
-          <div className="w-full bg-gradient-to-r from-[#3BB4C1] to-[#2C8A99] text-white px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer hover:opacity-90 transition-opacity flex items-center gap-2">
+          <div className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold cursor-pointer hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center gap-2 shadow-sm">
             <Coins className="h-4 w-4" />
-            <span>복비 {points.toLocaleString()} 냥</span>
+            <span>포인트 {points.toLocaleString()}P</span>
           </div>
         </Link>
 
         {/* 프로필 및 로그아웃 */}
         <div className="flex items-center gap-2">
-          <div className="flex-1 flex items-center gap-2 px-3 py-2 rounded-lg bg-white/50">
-            <div className="w-8 h-8 bg-gradient-to-br from-[#F2779C] to-[#E85A89] rounded-full flex items-center justify-center text-white">
+          <div className="flex-1 flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white shadow-sm">
               <User className="h-4 w-4" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-[#2C3E50] truncate">
+              <p className="text-xs font-medium text-slate-700 truncate">
                 내 정보
               </p>
             </div>
@@ -201,7 +194,7 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
             variant="ghost"
             size="icon"
             onClick={handleSignOut}
-            className="text-[#2C3E50] hover:text-[#F2779C] hover:bg-[#F2779C]/10"
+            className="text-slate-600 hover:text-slate-900 hover:bg-slate-100"
           >
             <LogOut className="h-4 w-4" />
           </Button>
@@ -213,7 +206,7 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
             <SidebarMenuButton
               size="lg"
               onClick={toggleSidebar}
-              className="w-full bg-white/50 hover:bg-white/70 text-[#2C3E50]"
+              className="w-full bg-slate-50 hover:bg-slate-100 text-slate-700"
             >
               {state === "expanded" ? (
                 <>
