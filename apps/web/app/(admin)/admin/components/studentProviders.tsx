@@ -2,11 +2,16 @@
 
 import * as React from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { SidebarProvider } from "@repo/ui/components/sidebar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 
-export function StudentClientProviders({ children }: { children: React.ReactNode }) {
+export function StudentClientProviders({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <NextThemesProvider
       attribute="class"
@@ -16,7 +21,7 @@ export function StudentClientProviders({ children }: { children: React.ReactNode
       disableTransitionOnChange
     >
       <QueryClientProvider client={queryClient}>
-        {children}
+        <SidebarProvider>{children}</SidebarProvider>
       </QueryClientProvider>
     </NextThemesProvider>
   );
