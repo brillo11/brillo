@@ -109,7 +109,7 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
                         defaultOpen={isActive}
                         className="group/collapsible"
                       >
-                        <li>
+                        <SidebarMenuItem>
                           <CollapsibleTrigger asChild>
                             <SidebarMenuButton
                               tooltip={item.title}
@@ -148,27 +148,25 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
                               })}
                             </SidebarMenuSub>
                           </CollapsibleContent>
-                        </li>
+                        </SidebarMenuItem>
                       </Collapsible>
                     );
                   }
 
                   return (
-                    <li key={item.id}>
-                      <SidebarMenuItem>
-                        <SidebarMenuButton
-                          asChild
-                          tooltip={item.title}
-                          isActive={isActive}
-                          className="text-[#2C3E50] hover:text-[#F2779C] hover:bg-[#F2779C]/10 data-[active=true]:text-[#F2779C] data-[active=true]:bg-[#F2779C]/10"
-                        >
-                          <Link href={item.url}>
-                            {item.icon && <item.icon className="h-5 w-5" />}
-                            <span>{item.title}</span>
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    </li>
+                    <SidebarMenuItem key={item.id}>
+                      <SidebarMenuButton
+                        asChild
+                        tooltip={item.title}
+                        isActive={isActive}
+                        className="text-[#2C3E50] hover:text-[#F2779C] hover:bg-[#F2779C]/10 data-[active=true]:text-[#F2779C] data-[active=true]:bg-[#F2779C]/10"
+                      >
+                        <Link href={item.url}>
+                          {item.icon && <item.icon className="h-5 w-5" />}
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                   );
                 })}
               </ul>
