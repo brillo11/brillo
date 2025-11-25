@@ -14,6 +14,8 @@ export function StandaloneYouTubeExtractor() {
   const [transcript, setTranscript] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [kind, setKind] = useState<string | null>(null);
+  const [lang, setLang] = useState<string | null>(null);
 
   const handleExtract = async () => {
     if (!youtubeUrl.trim()) {
@@ -55,7 +57,14 @@ export function StandaloneYouTubeExtractor() {
           .join(" ");
 
         console.log(`[Client] 자막 추출 성공: ${fullTranscript.length}자`);
+        console.log(`[Client] 자막 메타데이터:`, {
+          kind: result.kind,
+          lang: result.lang,
+        });
+
         setTranscript(fullTranscript);
+        setKind(result.kind || null);
+        setLang(result.lang || null);
         toast.success("자막을 성공적으로 추출했습니다.");
       } else {
         console.error("[Client] 자막 데이터 없음:", result);
@@ -88,6 +97,8 @@ export function StandaloneYouTubeExtractor() {
     setTranscript(null);
     setError(null);
     setCopied(false);
+    setKind(null);
+    setLang(null);
   };
 
   const handleCopy = async () => {
@@ -170,9 +181,25 @@ export function StandaloneYouTubeExtractor() {
         {transcript && (
           <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold text-slate-900">
-                추출된 자막
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold text-slate-900">
+                  추출된 자막
+                </p>
+                {(kind || lang) && (
+                  <div className="flex items-center gap-1">
+                    {kind && (
+                      <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-slate-100 text-slate-700">
+                        kind: {kind}
+                      </span>
+                    )}
+                    {lang && (
+                      <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-slate-100 text-slate-700">
+                        lang: {lang}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
               <Button
                 onClick={handleCopy}
                 variant="outline"

@@ -10,8 +10,12 @@ export function extractVideoId(url: string): string | null {
   console.log(`[extractVideoId] 입력 URL:`, url);
 
   const patterns = [
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
-    /youtube\.com\/watch\?.*v=([^&\n?#]+)/,
+    // YouTube Shorts: https://www.youtube.com/shorts/VIDEO_ID (우선순위 1)
+    /youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/,
+    // 일반 YouTube: https://www.youtube.com/watch?v=VIDEO_ID
+    /(?:youtube\.com\/watch\?v=|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/,
+    // 일반 YouTube (다른 형식)
+    /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]+)/,
   ];
 
   for (let i = 0; i < patterns.length; i++) {
