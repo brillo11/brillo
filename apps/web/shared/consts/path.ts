@@ -20,6 +20,7 @@ export const PATH = {
   STUDENT_POINTS: "/student/points",
   STUDENT_POINTS_CHARGE: "/student/points/charge",
   STUDENT_POINTS_HISTORY: "/student/points/history",
+  STUDENT_PROFILE: "/student/profile",
 
   // 어드민
   ADMIN_ROOT: "/admin",
@@ -34,4 +35,8 @@ export const PATH = {
   ADMIN_REVIEW: "/admin/review",
   ADMIN_USER: "/admin/user",
   ADMIN_STUDENTS: "/admin/students",
+  ADMIN_PROFILE: "/admin/profile",
+
+  // 공통 마이페이지
+  MY_PAGE: "/my-page",
 };

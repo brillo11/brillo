@@ -364,7 +364,7 @@ export default function AdminUserClientView() {
   const queryClient = useQueryClient();
 
   // QueryString에서 필터 값 가져오기
-  const roleFilter = searchParams.get("role") || "USER";
+  const roleFilter = searchParams.get("role") || "STUDENT";
   const statusFilter = searchParams.get("status") || "all";
   const searchKeyword = searchParams.get("search") || "";
 
@@ -378,15 +378,6 @@ export default function AdminUserClientView() {
   }, [searchKeyword]);
 
   const columns: ColumnDef<any>[] = [
-    // {
-    //   accessorKey: "id",
-    //   header: "ID",
-    //   cell: ({ row }) => (
-    //     <div className="text-center">
-    //       {(row.getValue("id") as any)?.toString() || ""}
-    //     </div>
-    //   ),
-    // },
     {
       accessorKey: "userinfo",
       header: "유저 정보",
@@ -619,104 +610,140 @@ export default function AdminUserClientView() {
     <div className="min-h-screen bg-gray-50">
       <AdminLayoutWrapper>
         {/* 필터모듈 */}
-        <Card className="mb-6 max-w-screen-xl mx-auto space-y-4 rounded-lg bg-white">
-          <CardContent>
-            {/* 수강생/관리자 구분 */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                사용자 유형
-              </label>
-              <div className="flex gap-2">
-                <Button
-                  variant={roleFilter === "STUDENT" ? "default" : "outline"}
-                  className={cn(
-                    "flex items-center gap-2",
-                    roleFilter === "STUDENT" && "bg-blue-600 hover:bg-blue-700"
-                  )}
-                  onClick={() => handleFilterChange("role", "STUDENT")}
-                >
-                  <GraduationCap className="h-4 w-4" />
-                  수강생
-                </Button>
-                <Button
-                  variant={roleFilter === "ADMIN" ? "default" : "outline"}
-                  className={cn(
-                    "flex items-center gap-2",
-                    roleFilter === "ADMIN" && "bg-red-600 hover:bg-red-700"
-                  )}
-                  onClick={() => handleFilterChange("role", "ADMIN")}
-                >
-                  <ShieldCheck className="h-4 w-4" />
-                  관리자
-                </Button>
-              </div>
-            </div>
-
-            {/* 활성상태 구분 */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">상태</label>
-              <div className="flex gap-2">
-                <Button
-                  variant={statusFilter === "all" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => handleFilterChange("status", "all")}
-                >
-                  전체
-                </Button>
-                <Button
-                  variant={statusFilter === "ACTIVE" ? "default" : "outline"}
-                  size="sm"
-                  className={cn(
-                    statusFilter === "ACTIVE" &&
-                      "bg-green-600 hover:bg-green-700"
-                  )}
-                  onClick={() => handleFilterChange("status", "ACTIVE")}
-                >
-                  활성
-                </Button>
-                <Button
-                  variant={statusFilter === "PENDING" ? "default" : "outline"}
-                  size="sm"
-                  className={cn(
-                    statusFilter === "PENDING" &&
-                      "bg-yellow-600 hover:bg-yellow-700"
-                  )}
-                  onClick={() => handleFilterChange("status", "PENDING")}
-                >
-                  대기
-                </Button>
-                <Button
-                  variant={statusFilter === "INACTIVE" ? "default" : "outline"}
-                  size="sm"
-                  className={cn(
-                    statusFilter === "INACTIVE" &&
-                      "bg-gray-600 hover:bg-gray-700"
-                  )}
-                  onClick={() => handleFilterChange("status", "INACTIVE")}
-                >
-                  비활성
-                </Button>
-              </div>
-            </div>
-
-            {/* 이름/닉네임 검색 */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                이름/닉네임 검색
-              </label>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                  <Input
-                    type="text"
-                    placeholder="이름/닉네임 검색"
-                    value={keyword}
-                    onChange={(e) => setKeyword(e.target.value)}
-                    onKeyDown={handleSearchKeyDown}
-                    className="pl-10"
-                  />
+        <Card className="mb-6 max-w-screen-xl mx-auto rounded-lg bg-white shadow-sm border border-slate-200">
+          <CardContent className="p-6">
+            <div className="space-y-6">
+              {/* 검색 섹션 - 상단 강조 */}
+              <div className="pb-4 border-b border-slate-200">
+                <label className="block text-sm font-semibold text-slate-900 mb-3">
+                  검색
+                </label>
+                <div className="flex gap-3">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <Input
+                      type="text"
+                      placeholder="이름 또는 닉네임으로 검색..."
+                      value={keyword}
+                      onChange={(e) => setKeyword(e.target.value)}
+                      onKeyDown={handleSearchKeyDown}
+                      className="pl-10 h-10 border-slate-300 focus:border-[#3B82F6] focus:ring-[#3B82F6]"
+                    />
+                  </div>
+                  <Button
+                    onClick={handleSearch}
+                    className="bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A] text-white hover:opacity-90 px-6 h-10"
+                  >
+                    검색
+                  </Button>
                 </div>
-                <Button onClick={handleSearch}>검색</Button>
+              </div>
+
+              {/* 필터 섹션 - 그리드 레이아웃 */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* 사용자 유형 */}
+                <div className="space-y-3">
+                  <label className="block text-sm font-semibold text-slate-900">
+                    사용자 유형
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      variant={roleFilter === "STUDENT" ? "default" : "outline"}
+                      size="sm"
+                      className={cn(
+                        "flex items-center gap-2 transition-all",
+                        roleFilter === "STUDENT"
+                          ? "bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A] text-white hover:opacity-90 shadow-sm"
+                          : "border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-[#3B82F6] hover:text-[#3B82F6]"
+                      )}
+                      onClick={() => handleFilterChange("role", "STUDENT")}
+                    >
+                      <GraduationCap className="h-4 w-4" />
+                      수강생
+                    </Button>
+                    <Button
+                      variant={roleFilter === "ADMIN" ? "default" : "outline"}
+                      size="sm"
+                      className={cn(
+                        "flex items-center gap-2 transition-all",
+                        roleFilter === "ADMIN"
+                          ? "bg-gradient-to-r from-red-600 to-red-700 text-white hover:opacity-90 shadow-sm"
+                          : "border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-red-600 hover:text-red-600"
+                      )}
+                      onClick={() => handleFilterChange("role", "ADMIN")}
+                    >
+                      <ShieldCheck className="h-4 w-4" />
+                      관리자
+                    </Button>
+                  </div>
+                </div>
+
+                {/* 상태 필터 */}
+                <div className="space-y-3">
+                  <label className="block text-sm font-semibold text-slate-900">
+                    상태
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      variant={statusFilter === "all" ? "default" : "outline"}
+                      size="sm"
+                      className={cn(
+                        "transition-all",
+                        statusFilter === "all"
+                          ? "bg-slate-700 text-white hover:bg-slate-800 shadow-sm"
+                          : "border-slate-300 text-slate-700 hover:bg-slate-50"
+                      )}
+                      onClick={() => handleFilterChange("status", "all")}
+                    >
+                      전체
+                    </Button>
+                    <Button
+                      variant={
+                        statusFilter === "ACTIVE" ? "default" : "outline"
+                      }
+                      size="sm"
+                      className={cn(
+                        "transition-all",
+                        statusFilter === "ACTIVE"
+                          ? "bg-gradient-to-r from-green-600 to-green-700 text-white hover:opacity-90 shadow-sm"
+                          : "border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-green-600 hover:text-green-600"
+                      )}
+                      onClick={() => handleFilterChange("status", "ACTIVE")}
+                    >
+                      활성
+                    </Button>
+                    <Button
+                      variant={
+                        statusFilter === "PENDING" ? "default" : "outline"
+                      }
+                      size="sm"
+                      className={cn(
+                        "transition-all",
+                        statusFilter === "PENDING"
+                          ? "bg-gradient-to-r from-yellow-500 to-yellow-600 text-white hover:opacity-90 shadow-sm"
+                          : "border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-yellow-500 hover:text-yellow-600"
+                      )}
+                      onClick={() => handleFilterChange("status", "PENDING")}
+                    >
+                      대기
+                    </Button>
+                    <Button
+                      variant={
+                        statusFilter === "INACTIVE" ? "default" : "outline"
+                      }
+                      size="sm"
+                      className={cn(
+                        "transition-all",
+                        statusFilter === "INACTIVE"
+                          ? "bg-gradient-to-r from-slate-600 to-slate-700 text-white hover:opacity-90 shadow-sm"
+                          : "border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-600 hover:text-slate-600"
+                      )}
+                      onClick={() => handleFilterChange("status", "INACTIVE")}
+                    >
+                      비활성
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
           </CardContent>

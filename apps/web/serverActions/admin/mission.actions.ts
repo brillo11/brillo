@@ -12,12 +12,18 @@ export async function createMission({
   week,
   dueDate,
   cohortId,
+  youtubeUrl,
+  youtubeVideoId,
+  autoPersonalize,
 }: {
   title: string;
   description: string;
   week: number;
   dueDate: Date;
   cohortId: number;
+  youtubeUrl?: string;
+  youtubeVideoId?: string;
+  autoPersonalize?: boolean;
 }): Promise<{
   id: number;
   title: string;
@@ -45,6 +51,9 @@ export async function createMission({
       week,
       dueDate: new Date(dueDate),
       cohortId: BigInt(cohortId),
+      youtubeUrl: youtubeUrl || null,
+      youtubeVideoId: youtubeVideoId || null,
+      autoPersonalize: autoPersonalize || false,
     },
   });
 
@@ -63,6 +72,9 @@ export async function updateMission({
   week,
   dueDate,
   cohortId,
+  youtubeUrl,
+  youtubeVideoId,
+  autoPersonalize,
 }: {
   id: number;
   title: string;
@@ -70,6 +82,9 @@ export async function updateMission({
   week: number;
   dueDate: Date;
   cohortId: number;
+  youtubeUrl?: string;
+  youtubeVideoId?: string;
+  autoPersonalize?: boolean;
 }): Promise<{
   id: number;
   title: string;
@@ -107,6 +122,9 @@ export async function updateMission({
       week,
       dueDate: new Date(dueDate),
       cohortId: BigInt(cohortId),
+      youtubeUrl: youtubeUrl !== undefined ? youtubeUrl : null,
+      youtubeVideoId: youtubeVideoId !== undefined ? youtubeVideoId : null,
+      autoPersonalize: autoPersonalize !== undefined ? autoPersonalize : false,
     },
   });
 

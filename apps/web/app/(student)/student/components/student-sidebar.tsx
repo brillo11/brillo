@@ -8,6 +8,8 @@ import {
   User,
   Coins,
   GraduationCap,
+  Settings,
+  Home,
 } from "lucide-react";
 import {
   Sidebar,
@@ -53,46 +55,59 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-none shadow-sm bg-slate-50">
+    <Sidebar collapsible="icon" className="border-none shadow-sm">
       {/* 헤더 섹션 */}
-      <SidebarHeader className="bg-white border-b border-slate-200">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              size="lg"
-              className="bg-transparent hover:bg-slate-100"
+      <SidebarHeader className="bg-white">
+        {state === "expanded" ? (
+          // 펼쳐진 상태: 기존 헤더
+          <div className="flex items-center justify-between p-2">
+            <Link
+              href={PATH.STUDENT_ROOT}
+              className="flex items-center gap-3 w-full px-2"
             >
-              <Link
-                href={PATH.STUDENT_ROOT}
-                className="flex items-center gap-3"
-              >
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-white">
-                  <GraduationCap className="h-5 w-5" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold text-slate-900">
-                    학습 관리 시스템
-                  </span>
-                  <span className="truncate text-xs text-slate-500">LMS</span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#3B82F6] to-[#1E3A8A] text-white shadow-md">
+                <GraduationCap className="h-4 w-4" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h2 className="text-sm font-semibold text-slate-900 truncate">
+                  LearnFlow
+                </h2>
+                <p className="text-xs text-slate-500 truncate">수강생</p>
+              </div>
+            </Link>
+          </div>
+        ) : (
+          // 접힌 상태: 전체가 펼치기 버튼
+          <button
+            onClick={toggleSidebar}
+            className="flex h-16 w-full items-center justify-center transition-colors hover:bg-gray-50"
+            title="사이드바 펼치기"
+          >
+            <ChevronRight className="h-4 w-4 text-gray-600" />
+          </button>
+        )}
       </SidebarHeader>
 
       {/* 메인 콘텐츠 */}
-      <SidebarContent className="bg-slate-50">
+      <SidebarContent className="bg-white">
         <SidebarGroup className="p-0">
           <SidebarGroupContent>
             <nav className="flex-1 px-4 py-6">
               <ul className="space-y-1">
                 {studentMenus.map((item) => {
-                  const isActive =
-                    pathname === item.url ||
-                    (![PATH.STUDENT_ROOT].includes(item.baseUrl) &&
-                      pathname.startsWith(item.baseUrl));
+                  // 부모 메뉴의 active 판단
+                  let isActive = false;
+
+                  // subMenu가 있는 경우, 자식 메뉴 중 하나가 정확히 active인지 확인
+                  if (item.subMenus && item.subMenus.length > 0) {
+                    // 자식 메뉴 중 하나가 정확히 매칭되는지 확인
+                    isActive = item.subMenus.some(
+                      (subItem) => pathname === subItem.url
+                    );
+                  } else {
+                    // subMenu가 없는 경우, 정확한 URL 매칭만 사용
+                    isActive = pathname === item.url;
+                  }
 
                   if (item.subMenus) {
                     return (
@@ -102,65 +117,112 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
                         defaultOpen={isActive}
                         className="group/collapsible"
                       >
-                        <SidebarMenuItem>
+                        <li>
                           <CollapsibleTrigger asChild>
-                            <SidebarMenuButton
-                              tooltip={item.title}
-                              isActive={isActive}
-                              className="w-full justify-between text-slate-700 hover:text-blue-600 hover:bg-blue-50 data-[active=true]:text-blue-600 data-[active=true]:bg-blue-50 data-[active=true]:font-medium"
+                            <button
+                              className={`group w-full text-left px-4 py-3 rounded-lg flex items-center justify-between transition-all duration-200 ${
+                                isActive
+                                  ? "bg-[#3B82F6] text-white shadow-sm"
+                                  : "hover:bg-[#3B82F6]/10 text-slate-600 hover:text-[#3B82F6]"
+                              }`}
                             >
-                              <div className="flex items-center gap-2">
-                                {item.icon && <item.icon className="h-5 w-5" />}
-                                <span>{item.title}</span>
+                              <div className="flex items-center space-x-3">
+                                {item.icon && (
+                                  <item.icon
+                                    className={`w-5 h-5 transition-colors ${
+                                      isActive
+                                        ? "text-white"
+                                        : "text-slate-400 group-hover:text-slate-600"
+                                    }`}
+                                  />
+                                )}
+                                <span
+                                  className={`font-medium text-sm lg:text-base transition-colors ${
+                                    isActive
+                                      ? "text-white"
+                                      : "text-slate-600 group-hover:text-slate-800"
+                                  }`}
+                                >
+                                  {item.title}
+                                </span>
                               </div>
-                              <ChevronDown className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
-                            </SidebarMenuButton>
+                              <ChevronDown
+                                className={`w-4 h-4 transition-all duration-200 ${
+                                  isActive
+                                    ? "text-white"
+                                    : "text-slate-300 group-hover:text-slate-500"
+                                } group-data-[state=open]/collapsible:rotate-180`}
+                              />
+                            </button>
                           </CollapsibleTrigger>
                           <CollapsibleContent>
-                            <SidebarMenuSub>
-                              {item.subMenus.map((subItem) => {
-                                const isSubActive =
-                                  pathname === subItem.url ||
-                                  pathname.startsWith(subItem.baseUrl);
+                            <ul className="mt-1 space-y-1 pl-4">
+                              {item.subMenus?.map((subMenu) => {
+                                // 서브 메뉴의 active 판단: 정확한 URL 매칭만 사용
+                                const isSubActive = pathname === subMenu.url;
                                 return (
-                                  <SidebarMenuSubItem key={subItem.id}>
-                                    <SidebarMenuSubButton
-                                      asChild
-                                      isActive={isSubActive}
-                                      className="text-slate-600 hover:text-blue-600 hover:bg-blue-50 data-[active=true]:text-blue-600 data-[active=true]:bg-blue-50 data-[active=true]:font-medium"
+                                  <li key={subMenu.title}>
+                                    <Link
+                                      href={subMenu.url}
+                                      className={`group w-full text-left px-4 py-3 rounded-lg flex items-center transition-all duration-200 ${
+                                        isSubActive
+                                          ? "bg-[#3B82F6] text-white shadow-sm"
+                                          : "hover:bg-[#3B82F6]/10 text-slate-600 hover:text-[#3B82F6]"
+                                      }`}
                                     >
-                                      <Link href={subItem.url}>
-                                        {subItem.icon && (
-                                          <subItem.icon className="h-4 w-4" />
-                                        )}
-                                        <span>{subItem.title}</span>
-                                      </Link>
-                                    </SidebarMenuSubButton>
-                                  </SidebarMenuSubItem>
+                                      <span
+                                        className={`font-medium text-sm lg:text-base transition-colors ${
+                                          isSubActive
+                                            ? "text-white"
+                                            : "text-slate-600 group-hover:text-slate-800"
+                                        }`}
+                                      >
+                                        {subMenu.title}
+                                      </span>
+                                    </Link>
+                                  </li>
                                 );
                               })}
-                            </SidebarMenuSub>
+                            </ul>
                           </CollapsibleContent>
-                        </SidebarMenuItem>
+                        </li>
                       </Collapsible>
                     );
-                  }
-
-                  return (
-                    <SidebarMenuItem key={item.id}>
-                      <SidebarMenuButton
-                        asChild
-                        tooltip={item.title}
-                        isActive={isActive}
-                        className="text-slate-700 hover:text-blue-600 hover:bg-blue-50 data-[active=true]:text-blue-600 data-[active=true]:bg-blue-50 data-[active=true]:font-medium"
-                      >
-                        <Link href={item.url}>
-                          {item.icon && <item.icon className="h-5 w-5" />}
-                          <span>{item.title}</span>
+                  } else {
+                    return (
+                      <li key={item.id}>
+                        <Link
+                          href={item.url}
+                          className={`group w-full text-left px-4 py-3 rounded-lg flex items-center transition-all duration-200 ${
+                            isActive
+                              ? "bg-[#3B82F6] text-white shadow-sm"
+                              : "hover:bg-[#3B82F6]/10 text-slate-600 hover:text-[#3B82F6]"
+                          }`}
+                        >
+                          <div className="flex items-center space-x-3">
+                            {item.icon && (
+                              <item.icon
+                                className={`w-5 h-5 transition-colors ${
+                                  isActive
+                                    ? "text-white"
+                                    : "text-slate-400 group-hover:text-slate-600"
+                                }`}
+                              />
+                            )}
+                            <span
+                              className={`font-medium text-sm lg:text-base transition-colors ${
+                                isActive
+                                  ? "text-white"
+                                  : "text-slate-600 group-hover:text-slate-800"
+                              }`}
+                            >
+                              {item.title}
+                            </span>
+                          </div>
                         </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  );
+                      </li>
+                    );
+                  }
                 })}
               </ul>
             </nav>
@@ -168,57 +230,38 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* 푸터 섹션 */}
-      <SidebarFooter className="bg-white border-t border-slate-200 p-4 space-y-2">
-        {/* 포인트 배지 */}
-        <Link href={PATH.STUDENT_POINTS_CHARGE}>
-          <div className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold cursor-pointer hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center gap-2 shadow-sm">
-            <Coins className="h-4 w-4" />
-            <span>포인트 {points.toLocaleString()}P</span>
+      {/* 하단 메뉴 */}
+      <SidebarFooter className="border-t">
+        {/* 포인트 배지 (접힌 상태에서는 숨김) */}
+        {state === "expanded" && (
+          <div className="px-4 py-2 border-b border-slate-200">
+            <Link href={PATH.STUDENT_POINTS_CHARGE}>
+              <div className="w-full bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A] text-white px-4 py-2.5 rounded-lg text-sm font-semibold cursor-pointer hover:from-[#2563EB] hover:to-[#1E40AF] transition-all flex items-center gap-2 shadow-md">
+                <Coins className="h-4 w-4" />
+                <span>포인트 {points.toLocaleString()}P</span>
+              </div>
+            </Link>
           </div>
-        </Link>
-
-        {/* 프로필 및 로그아웃 */}
-        <div className="flex items-center gap-2">
-          <div className="flex-1 flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white shadow-sm">
-              <User className="h-4 w-4" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-slate-700 truncate">
-                내 정보
-              </p>
-            </div>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleSignOut}
-            className="text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-          >
-            <LogOut className="h-4 w-4" />
-          </Button>
-        </div>
-
-        {/* 사이드바 토글 버튼 */}
+        )}
         <SidebarMenu>
+          {state === "expanded" && (
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="프로필 설정">
+                <Link href={PATH.STUDENT_PROFILE}>
+                  <User className="h-4 w-4" />
+                  <span>프로필 설정</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
           <SidebarMenuItem>
             <SidebarMenuButton
-              size="lg"
-              onClick={toggleSidebar}
-              className="w-full bg-slate-50 hover:bg-slate-100 text-slate-700"
+              tooltip="로그아웃"
+              className="text-red-600 hover:bg-red-50 hover:text-red-700"
+              onClick={handleSignOut}
             >
-              {state === "expanded" ? (
-                <>
-                  <ChevronLeft className="h-4 w-4" />
-                  <span>접기</span>
-                </>
-              ) : (
-                <>
-                  <ChevronRight className="h-4 w-4" />
-                  <span>펼치기</span>
-                </>
-              )}
+              <LogOut className="h-4 w-4" />
+              <span>로그아웃</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

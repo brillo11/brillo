@@ -3,10 +3,19 @@
 import { useState } from "react";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
-import { Loader2, Download, Youtube, X, Copy, Check } from "lucide-react";
+import {
+  Loader2,
+  Download,
+  Youtube,
+  X,
+  Copy,
+  Check,
+  Sparkles,
+} from "lucide-react";
 import { extractVideoId, isValidYouTubeUrl } from "@/lib/utils/youtube";
 import { toast } from "sonner";
 import { getYouTubeTranscript } from "@/serverActions/youtube/youtube-transcript.actions";
+import { personalizeTranscriptWithGemini } from "@/serverActions/youtube/gemini-personalize.actions";
 
 export function StandaloneYouTubeExtractor() {
   const [youtubeUrl, setYoutubeUrl] = useState("");
@@ -16,6 +25,12 @@ export function StandaloneYouTubeExtractor() {
   const [copied, setCopied] = useState(false);
   const [kind, setKind] = useState<string | null>(null);
   const [lang, setLang] = useState<string | null>(null);
+  const [isPersonalizing, setIsPersonalizing] = useState(false);
+  const [personalizedContent, setPersonalizedContent] = useState<string | null>(
+    null
+  );
+  const [studentLevel, setStudentLevel] = useState("");
+  const [learningGoals, setLearningGoals] = useState("");
 
   const handleExtract = async () => {
     if (!youtubeUrl.trim()) {
@@ -99,6 +114,46 @@ export function StandaloneYouTubeExtractor() {
     setCopied(false);
     setKind(null);
     setLang(null);
+    setPersonalizedContent(null);
+    setStudentLevel("");
+    setLearningGoals("");
+  };
+
+  const handlePersonalize = async () => {
+    if (!transcript) {
+      toast.error("먼저 자막을 추출해주세요.");
+      return;
+    }
+
+    setIsPersonalizing(true);
+    setError(null);
+    setPersonalizedContent(null);
+
+    try {
+      console.log(`[Client] 개인화된 학습 자료 생성 시작`);
+      const result = await personalizeTranscriptWithGemini(
+        transcript,
+        studentLevel || undefined,
+        learningGoals || undefined
+      );
+
+      if (result.success && result.personalizedContent) {
+        setPersonalizedContent(result.personalizedContent);
+        toast.success("개인화된 학습 자료를 생성했습니다.");
+      } else {
+        throw new Error(
+          result.error || "개인화된 학습 자료 생성에 실패했습니다."
+        );
+      }
+    } catch (error: any) {
+      console.error("개인화 오류:", error);
+      const errorMessage =
+        error.message || "개인화된 학습 자료 생성 중 오류가 발생했습니다.";
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setIsPersonalizing(false);
+    }
   };
 
   const handleCopy = async () => {
@@ -179,52 +234,151 @@ export function StandaloneYouTubeExtractor() {
         )}
 
         {transcript && (
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold text-slate-900">
-                  추출된 자막
-                </p>
-                {(kind || lang) && (
-                  <div className="flex items-center gap-1">
-                    {kind && (
-                      <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-slate-100 text-slate-700">
-                        kind: {kind}
-                      </span>
-                    )}
-                    {lang && (
-                      <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-slate-100 text-slate-700">
-                        lang: {lang}
-                      </span>
-                    )}
-                  </div>
-                )}
+          <div className="space-y-4">
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-semibold text-slate-900">
+                    추출된 자막
+                  </p>
+                  {(kind || lang) && (
+                    <div className="flex items-center gap-1">
+                      {kind && (
+                        <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-slate-100 text-slate-700">
+                          kind: {kind}
+                        </span>
+                      )}
+                      {lang && (
+                        <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-slate-100 text-slate-700">
+                          lang: {lang}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <Button
+                  onClick={handleCopy}
+                  variant="outline"
+                  size="sm"
+                  className="h-8"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="h-3 w-3 mr-1" />
+                      복사됨
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3 w-3 mr-1" />
+                      복사
+                    </>
+                  )}
+                </Button>
               </div>
+              <div className="max-h-96 overflow-y-auto text-sm text-slate-700 bg-white rounded p-4 border border-slate-200 whitespace-pre-wrap">
+                {transcript}
+              </div>
+              <div className="text-xs text-slate-500">
+                총 {transcript.split(" ").length}단어, {transcript.length}자
+              </div>
+            </div>
+
+            {/* 개인화된 학습 자료 생성 섹션 */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="h-5 w-5 text-blue-600" />
+                <p className="text-sm font-semibold text-blue-900">
+                  개인화된 학습 자료 생성
+                </p>
+              </div>
+              <p className="text-xs text-blue-700 mb-3">
+                추출한 대본을 바탕으로 당신만의 맞춤 학습 자료를 생성합니다.
+              </p>
+
+              <div className="space-y-2">
+                <div>
+                  <label className="text-xs font-medium text-slate-700 mb-1 block">
+                    학습자 수준 (선택사항)
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="예: 초급, 중급, 고급"
+                    value={studentLevel}
+                    onChange={(e) => setStudentLevel(e.target.value)}
+                    className="text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-slate-700 mb-1 block">
+                    학습 목표 (선택사항)
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="예: 실무 적용, 개념 이해, 시험 준비"
+                    value={learningGoals}
+                    onChange={(e) => setLearningGoals(e.target.value)}
+                    className="text-sm"
+                  />
+                </div>
+              </div>
+
               <Button
-                onClick={handleCopy}
-                variant="outline"
-                size="sm"
-                className="h-8"
+                onClick={handlePersonalize}
+                disabled={isPersonalizing || !transcript}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
               >
-                {copied ? (
+                {isPersonalizing ? (
                   <>
-                    <Check className="h-3 w-3 mr-1" />
-                    복사됨
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    생성 중...
                   </>
                 ) : (
                   <>
-                    <Copy className="h-3 w-3 mr-1" />
-                    복사
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    개인화된 학습 자료 생성
                   </>
                 )}
               </Button>
             </div>
-            <div className="max-h-96 overflow-y-auto text-sm text-slate-700 bg-white rounded p-4 border border-slate-200 whitespace-pre-wrap">
-              {transcript}
-            </div>
-            <div className="text-xs text-slate-500">
-              총 {transcript.split(" ").length}단어, {transcript.length}자
-            </div>
+
+            {/* 개인화된 학습 자료 표시 */}
+            {personalizedContent && (
+              <div className="bg-gradient-to-br from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-purple-600" />
+                    <p className="text-sm font-semibold text-purple-900">
+                      개인화된 학습 자료
+                    </p>
+                  </div>
+                  <Button
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(
+                          personalizedContent
+                        );
+                        toast.success(
+                          "개인화된 학습 자료가 클립보드에 복사되었습니다."
+                        );
+                      } catch (error) {
+                        toast.error("복사에 실패했습니다.");
+                      }
+                    }}
+                    variant="outline"
+                    size="sm"
+                    className="h-8"
+                  >
+                    <Copy className="h-3 w-3 mr-1" />
+                    복사
+                  </Button>
+                </div>
+                <div className="max-h-96 overflow-y-auto text-sm text-slate-800 bg-white rounded p-4 border border-purple-200 prose prose-sm max-w-none">
+                  <div className="whitespace-pre-wrap">
+                    {personalizedContent}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

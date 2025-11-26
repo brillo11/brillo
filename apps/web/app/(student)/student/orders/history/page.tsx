@@ -60,14 +60,14 @@ export default function OrderHistoryPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#fbf4ec]">
+      <div className="flex items-center justify-center min-h-screen bg-slate-50">
         <div className="text-stone-600">로딩 중...</div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#fbf4ec] p-4 lg:p-6">
+    <div className="flex flex-col min-h-screen bg-slate-50 p-4 lg:p-6">
       <div className="max-w-screen-xl mx-auto w-full flex flex-col space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">

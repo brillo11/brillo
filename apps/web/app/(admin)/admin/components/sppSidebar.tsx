@@ -7,6 +7,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
+  GraduationCap,
 } from "lucide-react";
 import {
   Sidebar,
@@ -71,21 +72,17 @@ export function AppSidebar() {
           <div className="flex items-center justify-between p-2">
             <Link
               href={rootUrl}
-              className="flex items-center justify-center w-full"
+              className="flex items-center gap-3 w-full px-2"
             >
-              <Image
-                src="/logo_yhd.png"
-                alt="logo"
-                width={350}
-                height={100}
-                className="h-[40px] w-auto"
-              />
-              {/* <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#E53935] text-white">
-                <BarChart3 className="h-4 w-4" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#3B82F6] to-[#1E3A8A] text-white shadow-md">
+                <GraduationCap className="h-4 w-4" />
               </div>
-              <div>
-                <h2 className="text-lg font-semibold">{METADATA.TITLE}</h2>
-              </div> */}
+              <div className="flex-1 min-w-0">
+                <h2 className="text-sm font-semibold text-slate-900 truncate">
+                  LearnFlow
+                </h2>
+                <p className="text-xs text-slate-500 truncate">관리자</p>
+              </div>
             </Link>
             {/* <Button
               variant="ghost"
@@ -116,12 +113,19 @@ export function AppSidebar() {
             <nav className="flex-1 px-4 py-6">
               <ul className="space-y-1">
                 {items.map((item) => {
-                  const isActive =
-                    pathname === item.url ||
-                    (![PATH.ADMIN_ROOT, PATH.STUDENT_ROOT].includes(
-                      item.baseUrl
-                    ) &&
-                      pathname.startsWith(item.baseUrl));
+                  // 부모 메뉴의 active 판단
+                  let isActive = false;
+
+                  // subMenu가 있는 경우, 자식 메뉴 중 하나가 정확히 active인지 확인
+                  if (item.subMenus && item.subMenus.length > 0) {
+                    // 자식 메뉴 중 하나가 정확히 매칭되는지 확인
+                    isActive = item.subMenus.some(
+                      (subItem) => pathname === subItem.url
+                    );
+                  } else {
+                    // subMenu가 없는 경우, 정확한 URL 매칭만 사용
+                    isActive = pathname === item.url;
+                  }
 
                   if (item.subMenus) {
                     return (
@@ -136,8 +140,8 @@ export function AppSidebar() {
                             <button
                               className={`group w-full text-left px-4 py-3 rounded-lg flex items-center justify-between transition-all duration-200 ${
                                 isActive
-                                  ? "bg-slate-800 text-white shadow-sm"
-                                  : "hover:bg-slate-100 text-slate-600 hover:text-slate-800"
+                                  ? "bg-[#3B82F6] text-white shadow-sm"
+                                  : "hover:bg-[#3B82F6]/10 text-slate-600 hover:text-[#3B82F6]"
                               }`}
                             >
                               <div className="flex items-center space-x-3">
@@ -172,6 +176,7 @@ export function AppSidebar() {
                           <CollapsibleContent>
                             <ul className="mt-1 space-y-1 pl-4">
                               {item.subMenus?.map((subMenu) => {
+                                // 서브 메뉴의 active 판단: 정확한 URL 매칭만 사용
                                 const isSubActive = pathname === subMenu.url;
                                 return (
                                   <li key={subMenu.title}>
@@ -179,8 +184,8 @@ export function AppSidebar() {
                                       href={subMenu.url}
                                       className={`group w-full text-left px-4 py-3 rounded-lg flex items-center transition-all duration-200 ${
                                         isSubActive
-                                          ? "bg-slate-800 text-white shadow-sm"
-                                          : "hover:bg-slate-100 text-slate-600 hover:text-slate-800"
+                                          ? "bg-[#3B82F6] text-white shadow-sm"
+                                          : "hover:bg-[#3B82F6]/10 text-slate-600 hover:text-[#3B82F6]"
                                       }`}
                                     >
                                       <span
@@ -208,8 +213,8 @@ export function AppSidebar() {
                           href={item.url}
                           className={`group w-full text-left px-4 py-3 rounded-lg flex items-center transition-all duration-200 ${
                             isActive
-                              ? "bg-slate-800 text-white shadow-sm"
-                              : "hover:bg-slate-100 text-slate-600 hover:text-slate-800"
+                              ? "bg-[#3B82F6] text-white shadow-sm"
+                              : "hover:bg-[#3B82F6]/10 text-slate-600 hover:text-[#3B82F6]"
                           }`}
                         >
                           <div className="flex items-center space-x-3">

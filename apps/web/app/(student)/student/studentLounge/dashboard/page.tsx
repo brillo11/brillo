@@ -17,7 +17,7 @@ export default async function StudentDashboard() {
   // const stats = await getAdminDashboardStats();
 
   return (
-    <div className="min-h-screen bg-[#fbf4ec]">
+    <div className="min-h-screen bg-slate-50">
       {/* <DashboardHeader /> */}
 
       <div className="w-full max-w-7xl mx-auto px-6 py-6">

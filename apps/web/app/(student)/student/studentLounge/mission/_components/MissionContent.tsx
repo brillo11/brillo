@@ -7,6 +7,7 @@ import { Prisma } from "@repo/database";
 import { MissionWithSubmissions } from "@/serverActions/mission.actions";
 import { StandaloneYouTubeExtractor } from "./StandaloneYouTubeExtractor";
 import { YouTubeChannelAnalyzer } from "./YouTubeChannelAnalyzer";
+import { AutoPersonalizedTranscript } from "./AutoPersonalizedTranscript";
 
 interface MissionContentProps {
   cohort: Prisma.CohortGetPayload<{ include: { missions: true } }> | null;
@@ -48,12 +49,12 @@ export default function MissionContent({
       : missions.filter((m) => m.week === selectedWeek);
 
   return (
-    <main className="flex-1 overflow-y-auto bg-[#fbf4ec] min-h-screen">
+    <main className="flex-1 overflow-y-auto bg-slate-50 min-h-screen">
       <div className="w-full max-w-7xl mx-auto px-6 py-6">
         <div className="space-y-4 sm:space-y-6">
           {/* 헤더 카드 */}
           <div className="mb-8">
-            <div className="relative overflow-hidden bg-gradient-to-br from-orange-400 via-amber-500 to-amber-600 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-7 text-white shadow-lg shadow-orange-200/50">
+            <div className="relative overflow-hidden bg-gradient-to-br from-[#3B82F6] via-[#2563EB] to-[#1E3A8A] rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-7 text-white shadow-lg shadow-blue-200/50">
               <div className="absolute inset-0 opacity-20">
                 <div className="absolute top-4 right-4 w-16 h-16 bg-white/10 rounded-full animate-pulse"></div>
                 <div className="absolute bottom-4 left-4 w-12 h-12 bg-white/10 rounded-full animate-pulse delay-300"></div>
@@ -66,7 +67,7 @@ export default function MissionContent({
                       <h1 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-2 tracking-tight text-white">
                         나의 미션
                       </h1>
-                      <p className="text-orange-50 text-sm sm:text-sm lg:text-base leading-relaxed font-medium">
+                      <p className="text-blue-50 text-sm sm:text-sm lg:text-base leading-relaxed font-medium">
                         {cohort
                           ? `${cohort.title} 과정을 진행중입니다!`
                           : "진행 중인 과정이 없습니다."}
@@ -272,7 +273,7 @@ export default function MissionContent({
               </h3>
               <div className="flex items-center justify-between sm:justify-end">
                 <div className="flex items-center space-x-2 text-xs sm:text-sm text-slate-600">
-                  <div className="w-2 h-2 sm:w-3 sm:h-3 bg-blue-500 rounded-full"></div>
+                  <div className="w-2 h-2 sm:w-3 sm:h-3 bg-[#3B82F6] rounded-full"></div>
                   <span>완료</span>
                   <div className="w-2 h-2 sm:w-3 sm:h-3 bg-slate-400 rounded-full ml-3 sm:ml-4"></div>
                   <span>미제출</span>
@@ -312,8 +313,8 @@ export default function MissionContent({
                         <button
                           className={`relative w-16 h-16 rounded-full border-2 shadow-md hover:shadow-lg transition-all duration-200 flex flex-col items-center justify-center cursor-pointer group mb-3 sm:mb-4 ${
                             mission.submissions.length > 0
-                              ? "bg-blue-100 border-blue-300 text-blue-700"
-                              : "bg-gradient-to-br from-stone-100 to-stone-200 text-stone-600 border-stone-200"
+                              ? "bg-[#3B82F6]/10 border-[#3B82F6]/30 text-[#3B82F6]"
+                              : "bg-gradient-to-br from-slate-100 to-slate-200 text-slate-600 border-slate-200"
                           }`}
                         >
                           <span className="text-sm font-bold">
@@ -362,8 +363,8 @@ export default function MissionContent({
                     <span
                       className={`inline-flex items-center font-medium rounded-sm px-2 py-0.5 text-xs ${
                         isSubmitted
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-red-100 text-red-700"
+                          ? "bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/20"
+                          : "bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20"
                       }`}
                     >
                       {isSubmitted ? "제출 완료" : "미제출"}
@@ -387,13 +388,25 @@ export default function MissionContent({
                     {currentMission.description || "미션 설명이 없습니다."}
                   </p>
                 </div>
+
+                {/* 자동 개인화 대본 표시 */}
+                {currentMission.youtubeUrl &&
+                  currentMission.autoPersonalize && (
+                    <div className="mb-4">
+                      <AutoPersonalizedTranscript
+                        youtubeUrl={currentMission.youtubeUrl}
+                        missionTitle={currentMission.title}
+                      />
+                    </div>
+                  )}
+
                 <div className="flex gap-2 sm:gap-3">
                   <MissionSubmitButton
                     mission={currentMission}
                     className={`flex-1 py-2 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl font-medium text-sm sm:text-base text-white shadow-md hover:shadow-lg transition-all ${
                       isSubmitted
-                        ? "bg-blue-600 hover:bg-blue-700"
-                        : "bg-stone-700 hover:bg-stone-800"
+                        ? "bg-[#3B82F6] hover:bg-[#2563EB]"
+                        : "bg-[#1E3A8A] hover:bg-[#1E40AF]"
                     }`}
                   />
                 </div>
@@ -437,7 +450,7 @@ export default function MissionContent({
                                 </span>
                                 <div
                                   className={`h-4 sm:h-6 w-px ${
-                                    isSubmitted ? "bg-blue-200" : "bg-stone-200"
+                                    isSubmitted ? "bg-[#3B82F6]/20" : "bg-slate-200"
                                   }`}
                                 ></div>
                               </div>
@@ -445,8 +458,8 @@ export default function MissionContent({
                                 <span
                                   className={`inline-flex items-center font-medium rounded-sm px-2 py-0.5 text-xs ${
                                     isSubmitted
-                                      ? "bg-blue-100 text-blue-700"
-                                      : "bg-red-100 text-red-700"
+                                      ? "bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/20"
+                                      : "bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20"
                                   }`}
                                 >
                                   {isSubmitted ? "제출 완료" : "미제출"}
@@ -473,8 +486,8 @@ export default function MissionContent({
                             <span
                               className={`inline-flex items-center font-medium rounded-sm px-2 py-0.5 text-xs ${
                                 isSubmitted
-                                  ? "bg-blue-100 text-blue-700"
-                                  : "bg-red-100 text-red-700"
+                                  ? "bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/20"
+                                  : "bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20"
                               }`}
                             >
                               {isSubmitted ? "제출 완료" : "미제출"}
@@ -486,8 +499,8 @@ export default function MissionContent({
                             mission={mission}
                             className={`inline-flex items-center font-medium rounded-md transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 shadow-sm hover:shadow-md text-white flex-1 sm:flex-initial sm:min-w-[80px] justify-center text-xs px-2 sm:px-3 py-1.5 sm:py-2 ${
                               isSubmitted
-                                ? "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500"
-                                : "bg-stone-700 hover:bg-stone-800 focus:ring-stone-500"
+                                ? "bg-[#3B82F6] hover:bg-[#2563EB] focus:ring-[#3B82F6]"
+                                : "bg-[#1E3A8A] hover:bg-[#1E40AF] focus:ring-[#1E3A8A]"
                             }`}
                           >
                             <span className="mr-2">

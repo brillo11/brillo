@@ -16,7 +16,7 @@ import { Coins } from "lucide-react";
 interface PointOption {
   id: string;
   amount: number;
-  points: number; // 실제 충전되는 냥 (1원 = 1냥 가정, 혹은 보너스 포함)
+  points: number; // 실제 충전되는 포인트 (1원 = 1P 가정, 혹은 보너스 포함)
   bonus?: number;
   label: string;
   description: string;
@@ -28,7 +28,7 @@ const CHARGE_OPTIONS: PointOption[] = [
     id: "nyang_30000",
     amount: 30000,
     points: 30000,
-    label: "30,000냥",
+    label: "30,000P",
     description: "가볍게 시작하기 좋은 기본 충전",
   },
   {
@@ -36,7 +36,7 @@ const CHARGE_OPTIONS: PointOption[] = [
     amount: 50000,
     points: 55000, // 10% 보너스 예시
     bonus: 5000,
-    label: "50,000냥",
+    label: "50,000P",
     description: "가장 많이 선택하는 인기 옵션",
     popular: true,
   },
@@ -45,7 +45,7 @@ const CHARGE_OPTIONS: PointOption[] = [
     amount: 100000,
     points: 120000, // 20% 보너스 예시
     bonus: 20000,
-    label: "100,000냥",
+    label: "100,000P",
     description: "넉넉하게 즐기는 대용량 충전",
   },
 ];
@@ -83,12 +83,12 @@ export function PointsChargeView({ user }: PointsChargeViewProps) {
             key={option.id}
             className={`relative border-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
               option.popular
-                ? "border-[#F2779C] shadow-lg scale-105 md:scale-110 z-10 bg-white"
-                : "border-transparent bg-white/80 backdrop-blur-sm hover:border-[#3BB4C1]/50 hover:bg-white"
+                ? "border-[#3B82F6] shadow-lg scale-105 md:scale-110 z-10 bg-white"
+                : "border-transparent bg-white/80 backdrop-blur-sm hover:border-[#3B82F6]/50 hover:bg-white"
             }`}
           >
             {option.popular && (
-              <div className="absolute -top-4 left-0 right-0 mx-auto w-fit rounded-full bg-gradient-to-r from-[#F2779C] to-[#3BB4C1] px-4 py-1 text-xs font-bold text-white shadow-md animate-bounce-slow">
+              <div className="absolute -top-4 left-0 right-0 mx-auto w-fit rounded-full bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A] px-4 py-1 text-xs font-bold text-white shadow-md animate-bounce-slow">
                 인기 선택
               </div>
             )}
@@ -100,24 +100,24 @@ export function PointsChargeView({ user }: PointsChargeViewProps) {
                 }`}
               >
                 <Coins
-                  className={`h-8 w-8 ${option.popular ? "text-[#F2779C]" : "text-[#3BB4C1]"}`}
+                  className={`h-8 w-8 ${option.popular ? "text-[#3B82F6]" : "text-[#1E3A8A]"}`}
                 />
               </div>
-              <CardTitle className="text-2xl font-bold text-[#2C3E50]">
+              <CardTitle className="text-2xl font-bold text-slate-900">
                 {option.label}
               </CardTitle>
-              <CardDescription className="text-[#7f8c8d]">
+              <CardDescription className="text-slate-600">
                 {option.description}
               </CardDescription>
             </CardHeader>
 
             <CardContent className="text-center pb-6">
-              <div className="text-3xl font-bold text-[#2C3E50]">
+              <div className="text-3xl font-bold text-slate-900">
                 {option.amount.toLocaleString()}원
               </div>
               {option.bonus && (
-                <div className="mt-2 inline-block rounded-lg bg-[#F2779C]/10 px-3 py-1 text-sm font-bold text-[#F2779C]">
-                  + {option.bonus.toLocaleString()}냥 추가 증정!
+                <div className="mt-2 inline-block rounded-lg bg-[#3B82F6]/10 px-3 py-1 text-sm font-bold text-[#3B82F6]">
+                  + {option.bonus.toLocaleString()}P 추가 증정!
                 </div>
               )}
             </CardContent>
@@ -127,8 +127,8 @@ export function PointsChargeView({ user }: PointsChargeViewProps) {
                 onClick={() => handleChargeClick(option)}
                 className={`w-full py-6 text-lg font-bold shadow-md transition-all duration-300 ${
                   option.popular
-                    ? "bg-gradient-to-r from-[#F2779C] to-[#3BB4C1] text-white hover:opacity-90 hover:shadow-lg"
-                    : "bg-white text-[#2C3E50] border-2 border-[#3BB4C1] hover:bg-[#3BB4C1] hover:text-white hover:border-[#3BB4C1]"
+                    ? "bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A] text-white hover:opacity-90 hover:shadow-lg"
+                    : "bg-white text-slate-700 border-2 border-[#3B82F6] hover:bg-[#3B82F6] hover:text-white hover:border-[#3B82F6]"
                 }`}
               >
                 충전하기

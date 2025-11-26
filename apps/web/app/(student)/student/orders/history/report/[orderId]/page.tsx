@@ -52,10 +52,10 @@ export default function ReportPage({
           updatedAt: new Date(),
           email: "example@email.com",
           name: "김연화",
-          orderName: "2024년 종합사주 분석",
+          orderName: "2024년 학습 분석",
           amount: 1,
           product: {
-            name: "종합사주 분석",
+            name: "종합 학습 분석",
             price: 50000,
           },
           calendar: "SOLAR",
@@ -81,7 +81,7 @@ export default function ReportPage({
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#F9EBDD] to-[#FAF0E6]">
+      <div className="flex items-center justify-center min-h-screen bg-slate-50">
         <div className="text-stone-600">로딩 중...</div>
       </div>
     );
@@ -89,7 +89,7 @@ export default function ReportPage({
 
   if (!order) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#F9EBDD] to-[#FAF0E6]">
+      <div className="flex items-center justify-center min-h-screen bg-slate-50">
         <div className="text-stone-600">주문을 찾을 수 없습니다.</div>
       </div>
     );
@@ -99,14 +99,14 @@ export default function ReportPage({
   const genderText = order.gender === "FEMALE" ? "여성" : "남성";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#F9EBDD] to-[#FAF0E6] py-6 px-4">
+    <div className="min-h-screen bg-slate-50 py-6 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Report Header */}
         <div className="bg-white rounded-2xl p-8 mb-6 shadow-lg relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#F2779C] to-[#3BB4C1]" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A]" />
 
           <div className="text-center">
-            <div className="text-5xl mb-4">🪷</div>
+            <div className="text-5xl mb-4">📚</div>
             <h1 className="text-3xl font-bold text-stone-900 mb-2">
               {order.product.name}
             </h1>
@@ -146,7 +146,7 @@ export default function ReportPage({
             {/* Action Buttons */}
             <div className="flex justify-center gap-3 flex-wrap">
               <Button
-                className="bg-gradient-to-r from-[#F2779C] to-[#3BB4C1] text-white hover:opacity-90"
+                className="bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A] text-white hover:opacity-90"
                 onClick={() => alert("PDF 다운로드 기능은 준비중입니다.")}
               >
                 📄 PDF 다운로드
@@ -167,33 +167,33 @@ export default function ReportPage({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Basic Information */}
           <div className="bg-white rounded-2xl p-6 shadow-lg">
-            <h2 className="text-xl font-semibold text-stone-900 mb-4 pb-3 border-b-2 border-[#F2779C]/20">
-              🎯 사주 기본 정보
+            <h2 className="text-xl font-semibold text-slate-900 mb-4 pb-3 border-b-2 border-[#3B82F6]/20">
+              🎯 학습 기본 정보
             </h2>
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gradient-to-br from-[#F2779C]/5 to-[#3BB4C1]/5 rounded-xl p-4 text-center">
+              <div className="bg-gradient-to-br from-[#3B82F6]/5 to-[#1E3A8A]/5 rounded-xl p-4 text-center">
                 <div className="text-3xl mb-2">🐎</div>
                 <div className="text-xs text-stone-500 mb-1">띠</div>
-                <div className="text-sm font-semibold text-[#F2779C]">말띠</div>
+                <div className="text-sm font-semibold text-[#3B82F6]">말띠</div>
               </div>
-              <div className="bg-gradient-to-br from-[#F2779C]/5 to-[#3BB4C1]/5 rounded-xl p-4 text-center">
+              <div className="bg-gradient-to-br from-[#3B82F6]/5 to-[#1E3A8A]/5 rounded-xl p-4 text-center">
                 <div className="text-3xl mb-2">🔥</div>
                 <div className="text-xs text-stone-500 mb-1">오행</div>
-                <div className="text-sm font-semibold text-[#F2779C]">
+                <div className="text-sm font-semibold text-[#3B82F6]">
                   화(火)
                 </div>
               </div>
-              <div className="bg-gradient-to-br from-[#F2779C]/5 to-[#3BB4C1]/5 rounded-xl p-4 text-center">
+              <div className="bg-gradient-to-br from-[#3B82F6]/5 to-[#1E3A8A]/5 rounded-xl p-4 text-center">
                 <div className="text-3xl mb-2">⚡</div>
                 <div className="text-xs text-stone-500 mb-1">체질</div>
-                <div className="text-sm font-semibold text-[#F2779C]">
+                <div className="text-sm font-semibold text-[#3B82F6]">
                   태양인
                 </div>
               </div>
-              <div className="bg-gradient-to-br from-[#F2779C]/5 to-[#3BB4C1]/5 rounded-xl p-4 text-center">
+              <div className="bg-gradient-to-br from-[#3B82F6]/5 to-[#1E3A8A]/5 rounded-xl p-4 text-center">
                 <div className="text-3xl mb-2">💎</div>
                 <div className="text-xs text-stone-500 mb-1">행운의 색</div>
-                <div className="text-sm font-semibold text-[#F2779C]">
+                <div className="text-sm font-semibold text-[#3B82F6]">
                   빨강·주황
                 </div>
               </div>
@@ -202,7 +202,7 @@ export default function ReportPage({
 
           {/* Fortune Scores */}
           <div className="bg-white rounded-2xl p-6 shadow-lg">
-            <h2 className="text-xl font-semibold text-stone-900 mb-4 pb-3 border-b-2 border-[#F2779C]/20">
+            <h2 className="text-xl font-semibold text-slate-900 mb-4 pb-3 border-b-2 border-[#3B82F6]/20">
               ✨ 2024년 운세 총평
             </h2>
             <div className="grid grid-cols-3 gap-3">
@@ -262,11 +262,11 @@ export default function ReportPage({
 
           {/* Key Points */}
           <div className="bg-white rounded-2xl p-6 shadow-lg">
-            <h2 className="text-xl font-semibold text-stone-900 mb-4 pb-3 border-b-2 border-[#F2779C]/20">
+            <h2 className="text-xl font-semibold text-slate-900 mb-4 pb-3 border-b-2 border-[#3B82F6]/20">
               💡 2024년 핵심 포인트
             </h2>
             <div className="space-y-4">
-              <div className="bg-gradient-to-r from-[#F2779C]/10 to-[#3BB4C1]/10 border-l-4 border-[#F2779C] rounded-r-xl p-4">
+              <div className="bg-gradient-to-r from-[#3B82F6]/10 to-[#1E3A8A]/10 border-l-4 border-[#3B82F6] rounded-r-xl p-4">
                 <div className="text-sm font-semibold text-stone-900 mb-2">
                   🎊 길한 운세
                 </div>
@@ -275,7 +275,7 @@ export default function ReportPage({
                   직업운이 매우 좋아 새로운 도전과 투자에 적합한 시기입니다.
                 </div>
               </div>
-              <div className="bg-gradient-to-r from-[#F2779C]/10 to-[#3BB4C1]/10 border-l-4 border-[#F2779C] rounded-r-xl p-4">
+              <div className="bg-gradient-to-r from-[#3B82F6]/10 to-[#1E3A8A]/10 border-l-4 border-[#3B82F6] rounded-r-xl p-4">
                 <div className="text-sm font-semibold text-stone-900 mb-2">
                   ⚠️ 주의사항
                 </div>
@@ -289,11 +289,11 @@ export default function ReportPage({
 
           {/* Advice */}
           <div className="bg-white rounded-2xl p-6 shadow-lg">
-            <h2 className="text-xl font-semibold text-stone-900 mb-4 pb-3 border-b-2 border-[#F2779C]/20">
+            <h2 className="text-xl font-semibold text-slate-900 mb-4 pb-3 border-b-2 border-[#3B82F6]/20">
               🔮 개운법 및 조언
             </h2>
             <div className="space-y-4">
-              <div className="bg-gradient-to-r from-[#F2779C]/10 to-[#3BB4C1]/10 border-l-4 border-[#F2779C] rounded-r-xl p-4">
+              <div className="bg-gradient-to-r from-[#3B82F6]/10 to-[#1E3A8A]/10 border-l-4 border-[#3B82F6] rounded-r-xl p-4">
                 <div className="text-sm font-semibold text-stone-900 mb-2">
                   🌟 일상 개운법
                 </div>
@@ -309,7 +309,7 @@ export default function ReportPage({
                   </div>
                 </div>
               </div>
-              <div className="bg-gradient-to-r from-[#F2779C]/10 to-[#3BB4C1]/10 border-l-4 border-[#F2779C] rounded-r-xl p-4">
+              <div className="bg-gradient-to-r from-[#3B82F6]/10 to-[#1E3A8A]/10 border-l-4 border-[#3B82F6] rounded-r-xl p-4">
                 <div className="text-sm font-semibold text-stone-900 mb-2">
                   🎯 성공 키워드
                 </div>

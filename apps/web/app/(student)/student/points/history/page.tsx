@@ -25,7 +25,7 @@ const mockHistory: PointHistory[] = [
     type: "CHARGE",
     status: "COMPLETED",
     method: "카드결제",
-    description: "복비 충전",
+    description: "포인트 충전",
     balance: 150000,
   },
   {
@@ -34,7 +34,7 @@ const mockHistory: PointHistory[] = [
     amount: -30000,
     type: "USE",
     status: "COMPLETED",
-    description: "종합사주 분석 주문",
+    description: "상품 주문",
     balance: 100000,
   },
   {
@@ -44,7 +44,7 @@ const mockHistory: PointHistory[] = [
     type: "CHARGE",
     status: "COMPLETED",
     method: "카드결제",
-    description: "복비 충전",
+    description: "포인트 충전",
     balance: 130000,
   },
   {
@@ -63,7 +63,7 @@ const mockHistory: PointHistory[] = [
     type: "CHARGE",
     status: "COMPLETED",
     method: "계좌이체",
-    description: "복비 충전",
+    description: "포인트 충전",
     balance: 50000,
   },
   {
@@ -73,7 +73,7 @@ const mockHistory: PointHistory[] = [
     type: "CHARGE",
     status: "PENDING",
     method: "카드결제",
-    description: "복비 충전 (처리중)",
+    description: "포인트 충전 (처리중)",
     balance: 0,
   },
   {
@@ -83,7 +83,7 @@ const mockHistory: PointHistory[] = [
     type: "CHARGE",
     status: "FAILED",
     method: "카드결제",
-    description: "복비 충전 실패",
+    description: "포인트 충전 실패",
     balance: 0,
   },
 ];
@@ -126,19 +126,19 @@ export default function PointsHistoryPage() {
     .reduce((sum, h) => sum + Math.abs(h.amount), 0);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#fbf4ec] p-4 lg:p-6">
+    <div className="flex flex-col min-h-screen bg-slate-50 p-4 lg:p-6">
       <div className="max-w-7xl mx-auto w-full flex flex-col space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-stone-900">복비 내역</h1>
-            <p className="text-stone-600 text-sm mt-1">
-              복비 충전 및 사용 내역을 확인할 수 있습니다.
+            <h1 className="text-2xl font-bold text-slate-900">포인트 내역</h1>
+            <p className="text-slate-600 text-sm mt-1">
+              포인트 충전 및 사용 내역을 확인할 수 있습니다.
             </p>
           </div>
           <Link href="/student/points/charge">
-            <Button className="bg-gradient-to-r from-[#3BB4C1] to-[#2C8A99] text-white hover:opacity-90">
-              💰 복비 충전
+            <Button className="bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A] text-white hover:opacity-90">
+              💰 포인트 충전
             </Button>
           </Link>
         </div>
@@ -150,7 +150,7 @@ export default function PointsHistoryPage() {
               <div>
                 <p className="text-sm text-stone-600 mb-1">총 충전 금액</p>
                 <p className="text-2xl font-bold text-blue-600">
-                  {totalCharged.toLocaleString()}냥
+                  {totalCharged.toLocaleString()}P
                 </p>
               </div>
               <div className="text-4xl">💰</div>
@@ -161,7 +161,7 @@ export default function PointsHistoryPage() {
               <div>
                 <p className="text-sm text-stone-600 mb-1">총 사용 금액</p>
                 <p className="text-2xl font-bold text-orange-600">
-                  {totalUsed.toLocaleString()}냥
+                  {totalUsed.toLocaleString()}P
                 </p>
               </div>
               <div className="text-4xl">📤</div>
@@ -172,7 +172,7 @@ export default function PointsHistoryPage() {
               <div>
                 <p className="text-sm text-stone-600 mb-1">현재 잔액</p>
                 <p className="text-2xl font-bold text-green-600">
-                  {(totalCharged - totalUsed).toLocaleString()}냥
+                  {(totalCharged - totalUsed).toLocaleString()}P
                 </p>
               </div>
               <div className="text-4xl">💎</div>
@@ -294,7 +294,7 @@ export default function PointsHistoryPage() {
                             }
                           >
                             {item.amount > 0 ? "+" : ""}
-                            {item.amount.toLocaleString()}냥
+                            {item.amount.toLocaleString()}P
                           </span>
                         </td>
                         <td className="px-4 py-3">
@@ -306,7 +306,7 @@ export default function PointsHistoryPage() {
                         </td>
                         <td className="px-4 py-3 text-sm font-medium text-stone-900 text-right">
                           {item.status === "COMPLETED"
-                            ? `${item.balance.toLocaleString()}냥`
+                            ? `${item.balance.toLocaleString()}P`
                             : "-"}
                         </td>
                       </tr>

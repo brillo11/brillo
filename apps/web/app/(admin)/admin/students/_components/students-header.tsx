@@ -13,8 +13,8 @@ export default function UserHeader() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="flex items-center gap-2 text-2xl font-bold text-gray-900">
-              <User className="h-6 w-6 text-[#E53935]" />
-              유저 관리
+              <User className="h-6 w-6 text-[#3B82F6]" />
+              수강생 관리
             </h1>
             <p className="text-gray-600">
               유저 정보 수정, 삭제 등의 작업을 할 수 있습니다.

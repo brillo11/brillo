@@ -61,7 +61,7 @@ export default function AnnouncementsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#fbf4ec] py-8">
+      <div className="min-h-screen bg-slate-50 py-8">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="text-center py-12 text-gray-500">로딩 중...</div>
         </div>
@@ -71,7 +71,7 @@ export default function AnnouncementsPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-[#fbf4ec] py-8">
+      <div className="min-h-screen bg-slate-50 py-8">
         <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
           {/* 헤더 */}
           <div className="mb-8">
@@ -225,7 +225,7 @@ export default function AnnouncementsPage() {
                 <div className="flex justify-end">
                   <Button
                     onClick={handleCloseModal}
-                    className="bg-gradient-to-r from-[#F2779C] to-[#3BB4C1] text-white hover:opacity-90 px-6 transition-all"
+                    className="bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A] text-white hover:opacity-90 px-6 transition-all"
                   >
                     닫기
                   </Button>

@@ -8,74 +8,127 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  /* LearnFlow 브랜드 컬러 시스템 */
+  --background: oklch(1 0 0); /* Pure White */
+  --foreground: oklch(0.145 0 0); /* Deep Black */
+  --card: oklch(1 0 0); /* Pure White */
+  --card-foreground: oklch(0.145 0 0); /* Deep Black */
+  --popover: oklch(1 0 0); /* Pure White */
+  --popover-foreground: oklch(0.145 0 0); /* Deep Black */
+
+  /* Primary: LearnFlow Blue (#3B82F6) */
+  --primary: oklch(0.623 0.177 252.18); /* LearnFlow Blue */
+  --primary-foreground: oklch(0.985 0 0); /* Pure White */
+
+  /* Secondary: Light Gray */
+  --secondary: oklch(0.97 0 0); /* Light Gray */
+  --secondary-foreground: oklch(0.145 0 0); /* Deep Black */
+
+  /* Muted: Medium Gray */
+  --muted: oklch(0.97 0 0); /* Light Gray */
+  --muted-foreground: oklch(0.556 0 0); /* Medium Gray */
+
+  /* Accent: YouTube Red (#FF0000) - YouTube 관련 요소에 사용 */
+  --accent: oklch(0.627 0.257 25.331); /* YouTube Red */
+  --accent-foreground: oklch(0.985 0 0); /* Pure White */
+
+  /* Destructive: Error Red */
   --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  --destructive-foreground: oklch(0.985 0 0);
+
+  /* Border & Input */
+  --border: oklch(0.922 0 0); /* Light Gray */
+  --input: oklch(0.922 0 0); /* Light Gray */
+  --ring: oklch(0.623 0.177 252.18); /* LearnFlow Blue */
+
+  /* Chart Colors */
+  --chart-1: oklch(0.623 0.177 252.18); /* LearnFlow Blue */
+  --chart-2: oklch(0.696 0.17 162.48); /* Success Green */
+  --chart-3: oklch(0.627 0.257 25.331); /* YouTube Red */
+  --chart-4: oklch(0.828 0.189 84.429); /* Warning Amber */
+  --chart-5: oklch(0.769 0.188 70.08); /* Info Cyan */
+
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Sidebar */
+  --sidebar: oklch(0.985 0 0); /* Pure White */
+  --sidebar-foreground: oklch(0.145 0 0); /* Deep Black */
+  --sidebar-primary: oklch(0.623 0.177 252.18); /* LearnFlow Blue */
+  --sidebar-primary-foreground: oklch(0.985 0 0); /* Pure White */
+  --sidebar-accent: oklch(0.97 0 0); /* Light Gray */
+  --sidebar-accent-foreground: oklch(0.145 0 0); /* Deep Black */
+  --sidebar-border: oklch(0.922 0 0); /* Light Gray */
+  --sidebar-ring: oklch(0.623 0.177 252.18); /* LearnFlow Blue */
+
+  /* LearnFlow Custom Colors */
+  --learnflow-blue: oklch(0.623 0.177 252.18); /* #3B82F6 */
+  --learnflow-blue-dark: oklch(0.488 0.243 264.376); /* #1E3A8A */
+  --learnflow-blue-light: oklch(0.769 0.188 70.08); /* #60A5FA */
+  --youtube-red: oklch(0.627 0.257 25.331); /* #FF0000 */
+  --success-green: oklch(0.696 0.17 162.48); /* #10B981 */
+  --warning-amber: oklch(0.828 0.189 84.429); /* #F59E0B */
+  --info-cyan: oklch(0.769 0.188 70.08); /* #06B6D4 */
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  /* LearnFlow 다크 모드 컬러 시스템 */
+  --background: oklch(0.145 0 0); /* Deep Learning Navy 변형 */
+  --foreground: oklch(0.985 0 0); /* Pure White */
+  --card: oklch(0.205 0 0); /* Dark Gray */
+  --card-foreground: oklch(0.985 0 0); /* Pure White */
+  --popover: oklch(0.205 0 0); /* Dark Gray */
+  --popover-foreground: oklch(0.985 0 0); /* Pure White */
+
+  /* Primary: LearnFlow Blue (밝기 조정) */
+  --primary: oklch(0.769 0.188 70.08); /* LearnFlow Blue Light */
+  --primary-foreground: oklch(0.145 0 0); /* Deep Black */
+
+  /* Secondary: Medium Dark Gray */
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
+
+  /* Muted: Dark Gray */
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+
+  /* Accent: YouTube Red (밝기 조정) */
+  --accent: oklch(0.637 0.237 25.331); /* YouTube Red (밝게) */
   --accent-foreground: oklch(0.985 0 0);
+
+  /* Destructive: Error Red */
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.637 0.237 25.331);
+
+  /* Border & Input */
   --border: oklch(0.269 0 0);
   --input: oklch(0.269 0 0);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.769 0.188 70.08); /* LearnFlow Blue Light */
+
+  /* Chart Colors (다크 모드용) */
+  --chart-1: oklch(0.488 0.243 264.376); /* LearnFlow Blue Dark */
+  --chart-2: oklch(0.696 0.17 162.48); /* Success Green */
+  --chart-3: oklch(0.637 0.237 25.331); /* YouTube Red */
+  --chart-4: oklch(0.627 0.265 303.9); /* Warning Amber */
+  --chart-5: oklch(0.645 0.246 16.439); /* Info Cyan */
+
+  /* Sidebar */
+  --sidebar: oklch(0.205 0 0); /* Dark Gray */
+  --sidebar-foreground: oklch(0.985 0 0); /* Pure White */
+  --sidebar-primary: oklch(0.488 0.243 264.376); /* LearnFlow Blue Dark */
+  --sidebar-primary-foreground: oklch(0.985 0 0); /* Pure White */
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+
+  /* LearnFlow Custom Colors (다크 모드) */
+  --learnflow-blue: oklch(0.769 0.188 70.08); /* 밝게 조정 */
+  --learnflow-blue-dark: oklch(0.488 0.243 264.376);
+  --learnflow-blue-light: oklch(0.828 0.189 84.429); /* 더 밝게 */
+  --youtube-red: oklch(0.637 0.237 25.331); /* 밝게 조정 */
+  --success-green: oklch(0.696 0.17 162.48);
+  --warning-amber: oklch(0.627 0.265 303.9);
+  --info-cyan: oklch(0.645 0.246 16.439);
 }
 
 @theme inline {
@@ -103,6 +156,13 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-learnflow-blue: var(--learnflow-blue);
+  --color-learnflow-blue-dark: var(--learnflow-blue-dark);
+  --color-learnflow-blue-light: var(--learnflow-blue-light);
+  --color-youtube-red: var(--youtube-red);
+  --color-success-green: var(--success-green);
+  --color-warning-amber: var(--warning-amber);
+  --color-info-cyan: var(--info-cyan);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

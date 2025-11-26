@@ -65,47 +65,48 @@ export async function analyzeYouTubeChannel(channelIdOrUsername: string) {
           title: channelData.items[0]?.snippet?.title,
         });
         channelInfo = channelData.items[0];
-      } else {
-        console.log(
-          `[analyzeYouTubeChannel] forHandle 실패 또는 items 없음, forUsername으로 시도`
-        );
-        // forHandle이 실패하면 forUsername으로 시도 (레거시 지원)
-        const usernameResponse = await fetch(
-          `https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails,statistics&forUsername=${handle}&key=${apiKey}`
-        );
-        console.log(
-          `[analyzeYouTubeChannel] usernameResponse status:`,
-          usernameResponse.status,
-          usernameResponse.ok
-        );
-
-        const usernameData = await usernameResponse.json();
-        console.log(`[analyzeYouTubeChannel] usernameData:`, {
-          items: usernameData.items,
-          itemsLength: usernameData.items?.length,
-          pageInfo: usernameData.pageInfo,
-          error: usernameData.error,
-          fullData: JSON.stringify(usernameData, null, 2),
-        });
-
-        if (
-          !usernameResponse.ok ||
-          !usernameData.items ||
-          usernameData.items.length === 0
-        ) {
-          console.error(`[analyzeYouTubeChannel] forUsername도 실패`);
-          return {
-            success: false,
-            error:
-              "채널을 찾을 수 없습니다. 채널 ID 또는 사용자명을 확인해주세요.",
-            debug: {
-              forHandleResponse: channelData,
-              forUsernameResponse: usernameData,
-            },
-          };
-        }
-        channelInfo = usernameData.items[0];
       }
+      // else {
+      //   console.log(
+      //     `[analyzeYouTubeChannel] forHandle 실패 또는 items 없음, forUsername으로 시도`
+      //   );
+      //   // forHandle이 실패하면 forUsername으로 시도 (레거시 지원)
+      //   const usernameResponse = await fetch(
+      //     `https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails,statistics&forUsername=${handle}&key=${apiKey}`
+      //   );
+      //   console.log(
+      //     `[analyzeYouTubeChannel] usernameResponse status:`,
+      //     usernameResponse.status,
+      //     usernameResponse.ok
+      //   );
+
+      //   const usernameData = await usernameResponse.json();
+      //   console.log(`[analyzeYouTubeChannel] usernameData:`, {
+      //     items: usernameData.items,
+      //     itemsLength: usernameData.items?.length,
+      //     pageInfo: usernameData.pageInfo,
+      //     error: usernameData.error,
+      //     fullData: JSON.stringify(usernameData, null, 2),
+      //   });
+
+      //   if (
+      //     !usernameResponse.ok ||
+      //     !usernameData.items ||
+      //     usernameData.items.length === 0
+      //   ) {
+      //     console.error(`[analyzeYouTubeChannel] forUsername도 실패`);
+      //     return {
+      //       success: false,
+      //       error:
+      //         "채널을 찾을 수 없습니다. 채널 ID 또는 사용자명을 확인해주세요.",
+      //       debug: {
+      //         forHandleResponse: channelData,
+      //         forUsernameResponse: usernameData,
+      //       },
+      //     };
+      //   }
+      //   channelInfo = usernameData.items[0];
+      // }
     } else {
       // 채널 ID로 직접 조회
       const channelResponse = await fetch(
