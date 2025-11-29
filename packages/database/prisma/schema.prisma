@@ -10,44 +10,48 @@ datasource db {
 }
 
 model User {
-  id                          String                 @id @default(uuid())
-  createdAt                   DateTime               @default(now())
-  name                        String                 @default("")
-  nickname                    String                 @unique @default("")
-  role                        ROLE                   @default(STUDENT)
-  status                      USER_STATUS            @default(UNKNOWN)
-  bizName                     String                 @default("")
-  bizNumber                   String                 @default("")
-  expiredAt                   DateTime               @default(now())
-  lastLoginAt                 DateTime               @default(now())
-  lastPaidAt                  DateTime               @default(now())
-  maxProductCount             Int                    @default(200)
-  maxUploadProductCount       Int                    @default(0)
-  memo                        String                 @default("")
-  points                      Int                    @default(0)
-  remainingProductCount       Int                    @default(200)
-  remainingUploadProductCount Int                    @default(0)
-  email                       String?                @unique
-  emailVerified               Boolean                @default(false)
+  id                          String      @id @default(uuid())
+  createdAt                   DateTime    @default(now())
+  name                        String      @default("")
+  nickname                    String      @unique @default("")
+  role                        ROLE        @default(STUDENT)
+  status                      USER_STATUS @default(UNKNOWN)
+  bizName                     String      @default("")
+  bizNumber                   String      @default("")
+  expiredAt                   DateTime    @default(now())
+  lastLoginAt                 DateTime    @default(now())
+  lastPaidAt                  DateTime    @default(now())
+  maxProductCount             Int         @default(200)
+  maxUploadProductCount       Int         @default(0)
+  memo                        String      @default("")
+  points                      Int         @default(0)
+  remainingProductCount       Int         @default(200)
+  remainingUploadProductCount Int         @default(0)
+  email                       String?     @unique
+  emailVerified               Boolean     @default(false)
   image                       String?
-  updatedAt                   DateTime               @default(now()) @updatedAt
+  updatedAt                   DateTime    @default(now()) @updatedAt
   phoneNumber                 String?
 
-  misc                        Json                 @default("{}")
+  // 학습 프로필 필드
+  learningLevel   String? // 초급, 중급, 고급 등
+  learningGoals   String? // 학습 목표 텍스트
+  learningHistory Json?   @default("{}") // 학습 이력
 
-  accounts                    Account[]
-  sessions                    Session[]
-  posts                       Post[] @relation("AuthoredPosts")
-  postLikes                   PostLike[]
-  comments                    Comment[]
-  pointOrders                 PointOrder[]
-  orders                      Order[]
-  
+  misc Json @default("{}")
+
+  accounts    Account[]
+  sessions    Session[]
+  posts       Post[]       @relation("AuthoredPosts")
+  postLikes   PostLike[]
+  comments    Comment[]
+  pointOrders PointOrder[]
+  orders      Order[]
+
   submissions Submission[]
 
-  cohortId                    BigInt?
-  cohort                      Cohort?                @relation(fields: [cohortId], references: [id])
-
+  cohortId BigInt?
+  cohort   Cohort? @relation(fields: [cohortId], references: [id])
 
   @@index([email])
 }
@@ -101,19 +105,19 @@ model Class {
 }
 
 model Cohort {
-  id        BigInt   @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @default("")
-  totalWeek Int      @default(0)
-  startDate DateTime
-  endDate   DateTime
-  cohortOrder    Int      @default(0)
-  
-  slug      String   @unique
-  misc      Json     @default("{}")
+  id          BigInt   @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  title       String   @default("")
+  totalWeek   Int      @default(0)
+  startDate   DateTime
+  endDate     DateTime
+  cohortOrder Int      @default(0)
 
-  users User[]
+  slug String @unique
+  misc Json   @default("{}")
+
+  users    User[]
   missions Mission[]
 
   classId BigInt
@@ -123,14 +127,19 @@ model Cohort {
 }
 
 model Mission {
-  id        BigInt   @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @default("")
+  id          BigInt   @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  title       String   @default("")
   description String   @default("")
-  dueDate   DateTime
-  misc      Json     @default("{}")
-  week      Int      @default(0)
+  dueDate     DateTime
+  misc        Json     @default("{}")
+  week        Int      @default(0)
+
+  // YouTube 연동 필드
+  youtubeUrl      String? // YouTube 영상 URL
+  youtubeVideoId  String? // 추출된 YouTube Video ID
+  autoPersonalize Boolean @default(false) // 자동 개인화 여부
 
   submissions Submission[]
 
@@ -181,8 +190,8 @@ model Post {
   misc      Json     @default("{}")
 
   comments Comment[]
-  author   User      @relation("AuthoredPosts", fields: [authorId], references: [id])
-  board    Board     @relation(fields: [boardId], references: [id])
+  author   User       @relation("AuthoredPosts", fields: [authorId], references: [id])
+  board    Board      @relation(fields: [boardId], references: [id])
   likes    PostLike[]
 
   @@index([authorId])
@@ -228,54 +237,54 @@ model Log {
 }
 
 model PointOrder {
-  id           BigInt         @id @default(autoincrement())
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt  
-  amount       Int
-  status       ORDER_STATUS
-  orderName    String         @default("") // 주문명
-  description  String?        // 결제 설명
+  id          BigInt       @id @default(autoincrement())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  amount      Int
+  status      ORDER_STATUS
+  orderName   String       @default("") // 주문명
+  description String? // 결제 설명
 
-  email        String @default("")
-  name         String @default("")
-  calendar     CALENDAR
-  birthYear    Int
-  birthMonth   Int
-  birthDay     Int
-  birthHour    Int
-  birthMinute  Int
-  gender       GENDER
+  email       String   @default("")
+  name        String   @default("")
+  calendar    CALENDAR
+  birthYear   Int
+  birthMonth  Int
+  birthDay    Int
+  birthHour   Int
+  birthMinute Int
+  gender      GENDER
 
-  userId       String
-  user    User     @relation(fields: [userId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 
-  productId    BigInt
-  product      Product     @relation(fields: [productId], references: [id])
+  productId BigInt
+  product   Product @relation(fields: [productId], references: [id])
 
   @@index([userId])
 }
 
 model Order {
-  id           BigInt         @id @default(autoincrement())
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  id           BigInt       @id @default(autoincrement())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
   amount       Int
   status       ORDER_STATUS
   method       String
-  isRefunded   Boolean        @default(false)
+  isRefunded   Boolean      @default(false)
   refundedAt   DateTime?
   refundAmount Int?
   refundReason String?
-  merchantUid  String?        @unique
+  merchantUid  String?      @unique
   pgProvider   String?
   receiptUrl   String?
-  paymentKey   String?        @unique
-  isTest       Boolean        @default(false)
-  orderName    String         @default("서비스 이용료") // 주문명
-  description  String?        // 결제 설명
+  paymentKey   String?      @unique
+  isTest       Boolean      @default(false)
+  orderName    String       @default("서비스 이용료") // 주문명
+  description  String? // 결제 설명
   userId       String
-  user    User     @relation(fields: [userId], references: [id])
-  refunds Refund[]
+  user         User         @relation(fields: [userId], references: [id])
+  refunds      Refund[]
 
   @@index([userId])
   @@index([merchantUid])
@@ -301,20 +310,64 @@ model Refund {
   id            BigInt        @id @default(autoincrement())
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
-  amount        Int           // 환불 금액
-  reason        String        // 환불 사유
+  amount        Int // 환불 금액
+  reason        String // 환불 사유
   status        REFUND_STATUS @default(PENDING)
-  refundMethod  String?       // 환불 방법 (카드취소, 계좌이체 등)
-  processedAt   DateTime?     // 환불 처리 완료 시각
-  tossRefundKey String?       // 토스페이먼츠 환불 키
-  orderId     BigInt        // 원본 주문 ID
-  order       Order       @relation(fields: [orderId], references: [id])
+  refundMethod  String? // 환불 방법 (카드취소, 계좌이체 등)
+  processedAt   DateTime? // 환불 처리 완료 시각
+  tossRefundKey String? // 토스페이먼츠 환불 키
+  orderId       BigInt // 원본 주문 ID
+  order         Order         @relation(fields: [orderId], references: [id])
 
   @@index([orderId])
   @@index([status])
   @@index([createdAt])
 }
 
+model YoutubeChannel {
+  id              String         @id // YouTube Channel ID (UC...)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  title           String         @default("")
+  thumbnailUrl    String         @default("")
+  regionCode      String?        // 수집 기준 지역 (예: KR)
+  uploadsPlaylist String?        // 업로드 플레이리스트 ID
+  overallAvgView  Float?         // 전체 평균 조회수 (totalViews / videoCount)
+  recentAvgVph    Float?         // 최근 N개 평균 VPH
+  lastCrawledAt   DateTime?
+  misc            Json           @default("{}")
+
+  videos YoutubeVideo[]
+}
+
+model YoutubeVideo {
+  id                 String    @id // YouTube Video ID
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  channelId          String
+  title              String     @default("")
+  description        String     @default("")
+  thumbnailUrl       String     @default("")
+  publishedAt        DateTime?
+  duration           String     @default("")
+  viewCount          Int        @default(0)
+  likeCount          Int?
+  commentCount       Int?
+  viewsPerHour       Float?
+  outlierVph         Float?
+  outlierView        Float?
+  regionCode         String?    // 수집 지역 코드
+  crawledAt          DateTime   @default(now())
+  misc               Json       @default("{}")
+
+  channel YoutubeChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@index([channelId])
+  @@index([regionCode])
+  @@index([outlierVph])
+  @@index([viewsPerHour])
+  @@index([publishedAt])
+}
 enum ROLE {
   SUPER_ADMIN
   ADMIN
@@ -368,29 +421,29 @@ enum REFUND_STATUS {
 }
 
 model Product {
-  id            BigInt   @id @default(autoincrement())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  icon          String   @default("") // 아이콘
-  name          String   // 제품명
-  description   String   @default("") // 제품 설명
-  price         Int      // 판매가격 (원)
-  originalPrice Int?     // 원가 (할인 표시용)
-  
-  images        Json     @default("[]") // 이미지 URL 배열
-  category      String   @default("일반") // 카테고리
-  
-  inStock       Boolean  @default(true) // 재고 여부
-  featured      Boolean  @default(false) // 추천 제품 여부
-  
-  specifications Json    @default("{}") // 제품 규격 (JSON)
-  tags          String[] @default([]) // 태그 배열
-  
-  viewCount     Int      @default(0) // 조회수
+  icon          String @default("") // 아이콘
+  name          String // 제품명
+  description   String @default("") // 제품 설명
+  price         Int // 판매가격 (원)
+  originalPrice Int? // 원가 (할인 표시용)
+
+  images   Json   @default("[]") // 이미지 URL 배열
+  category String @default("일반") // 카테고리
+
+  inStock  Boolean @default(true) // 재고 여부
+  featured Boolean @default(false) // 추천 제품 여부
+
+  specifications Json     @default("{}") // 제품 규격 (JSON)
+  tags           String[] @default([]) // 태그 배열
+
+  viewCount Int @default(0) // 조회수
 
   pointOrders PointOrder[]
-  
+
   @@index([category])
   @@index([featured])
   @@index([inStock])

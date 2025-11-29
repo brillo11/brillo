@@ -15,8 +15,8 @@ export default async function StudentProductsPage() {
   return (
     <ProductList
       products={shopProducts}
-      title="사주 상품"
-      subtitle="도매 특별가로 만나는 전문 사주 분석 서비스"
+      title="학습 상품"
+      subtitle="YouTube 기반 개인화된 학습 자료 서비스"
       showFilters={true}
       showRating={true}
     />

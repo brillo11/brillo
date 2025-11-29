@@ -137,7 +137,7 @@ export default function OrderListPage() {
 
   const handleFinalConfirm = async () => {
     if (userPoints < totalAmount) {
-      toast.error("보유 복비가 부족합니다.");
+      toast.error("보유 포인트가 부족합니다.");
       return;
     }
 
@@ -210,7 +210,7 @@ export default function OrderListPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#fbf4ec]">
+      <div className="flex items-center justify-center min-h-screen bg-slate-50">
         <div className="text-stone-600">로딩 중...</div>
       </div>
     );
@@ -219,7 +219,7 @@ export default function OrderListPage() {
   const allSelected = orders.length > 0 && selectedIds.size === orders.length;
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#fbf4ec] p-4 lg:p-6">
+    <div className="flex flex-col min-h-screen bg-slate-50 p-4 lg:p-6">
       <div className="max-w-7xl mx-auto w-full flex flex-col space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -367,15 +367,15 @@ export default function OrderListPage() {
           <div className="py-6 space-y-6">
             <div className="space-y-3 border-t border-b border-stone-200 py-4">
               <div className="flex justify-between items-center">
-                <span className="text-stone-600">현재 잔여 복비</span>
+                <span className="text-stone-600">현재 잔여 포인트</span>
                 <span className="text-lg font-bold text-stone-900">
-                  {userPoints.toLocaleString()}냥
+                  {userPoints.toLocaleString()}P
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-stone-600">주문 확정 복비</span>
+                <span className="text-stone-600">주문 확정 포인트</span>
                 <span className="text-lg font-bold text-red-500">
-                  -{totalAmount.toLocaleString()}냥
+                  -{totalAmount.toLocaleString()}P
                 </span>
               </div>
             </div>

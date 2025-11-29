@@ -6,7 +6,8 @@ import { Button } from "@repo/ui/components/button";
 import { Badge } from "@repo/ui/components/badge";
 import { Input } from "@repo/ui/components/input";
 import { Textarea } from "@repo/ui/components/textarea";
-import { Eye, Edit, Trash2, RefreshCw, Plus, X } from "lucide-react";
+import { Eye, Edit, Trash2, RefreshCw, Plus, X, Youtube } from "lucide-react";
+import { extractVideoId, isValidYouTubeUrl } from "@/lib/utils/youtube";
 import {
   Select,
   SelectContent,
@@ -20,6 +21,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@repo/ui/components/dialog";
+import { Checkbox } from "@repo/ui/components/checkbox";
+import { Label } from "@repo/ui/components/label";
 import { getCohortMissions } from "@/serverActions/admin/cohort";
 import {
   createMission,
@@ -37,6 +40,9 @@ interface Mission {
   updatedAt: Date;
   misc: any;
   cohortId?: number;
+  youtubeUrl?: string | null;
+  youtubeVideoId?: string | null;
+  autoPersonalize?: boolean;
 }
 
 interface MissionNoticeClientPageProps {
@@ -69,6 +75,8 @@ export default function MissionNoticeClientPage({
   const [formWeek, setFormWeek] = useState(1);
   const [formDueDate, setFormDueDate] = useState("");
   const [formCohortId, setFormCohortId] = useState<string>("");
+  const [formYoutubeUrl, setFormYoutubeUrl] = useState("");
+  const [formAutoPersonalize, setFormAutoPersonalize] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 선택된 기수에 따라 미션 불러오기
@@ -127,6 +135,8 @@ export default function MissionNoticeClientPage({
     setFormDueDate(kdayjs(mission.dueDate).format("YYYY-MM-DDTHH:mm"));
     // 선택된 기수 ID 사용 (현재 선택된 기수의 미션이므로)
     setFormCohortId(selectedCohortId?.toString() || "");
+    setFormYoutubeUrl(mission.youtubeUrl || "");
+    setFormAutoPersonalize(mission.autoPersonalize || false);
   };
 
   const handleEdit = (mission: Mission, e?: React.MouseEvent) => {
@@ -148,6 +158,20 @@ export default function MissionNoticeClientPage({
       return;
     }
 
+    // YouTube URL 검증 및 videoId 추출
+    let youtubeVideoId: string | undefined = undefined;
+    if (formYoutubeUrl) {
+      if (!isValidYouTubeUrl(formYoutubeUrl)) {
+        toast.error("올바른 YouTube URL을 입력해주세요.");
+        return;
+      }
+      youtubeVideoId = extractVideoId(formYoutubeUrl) || undefined;
+      if (!youtubeVideoId) {
+        toast.error("YouTube URL에서 영상 ID를 추출할 수 없습니다.");
+        return;
+      }
+    }
+
     setIsSubmitting(true);
     try {
       const missionCohortId = Number(formCohortId);
@@ -159,6 +183,9 @@ export default function MissionNoticeClientPage({
         week: formWeek,
         dueDate: new Date(formDueDate),
         cohortId: missionCohortId,
+        youtubeUrl: formYoutubeUrl || undefined,
+        youtubeVideoId: youtubeVideoId,
+        autoPersonalize: formAutoPersonalize,
       });
 
       toast.success("미션이 성공적으로 수정되었습니다.");
@@ -203,6 +230,8 @@ export default function MissionNoticeClientPage({
     setFormWeek(1);
     setFormDueDate("");
     setFormCohortId(selectedCohortId?.toString() || "");
+    setFormYoutubeUrl("");
+    setFormAutoPersonalize(false);
   };
 
   const handleCloseModal = () => {
@@ -216,6 +245,20 @@ export default function MissionNoticeClientPage({
       return;
     }
 
+    // YouTube URL 검증 및 videoId 추출
+    let youtubeVideoId: string | undefined = undefined;
+    if (formYoutubeUrl) {
+      if (!isValidYouTubeUrl(formYoutubeUrl)) {
+        toast.error("올바른 YouTube URL을 입력해주세요.");
+        return;
+      }
+      youtubeVideoId = extractVideoId(formYoutubeUrl) || undefined;
+      if (!youtubeVideoId) {
+        toast.error("YouTube URL에서 영상 ID를 추출할 수 없습니다.");
+        return;
+      }
+    }
+
     setIsSubmitting(true);
     try {
       await createMission({
@@ -224,6 +267,9 @@ export default function MissionNoticeClientPage({
         week: formWeek,
         dueDate: new Date(formDueDate),
         cohortId: Number(formCohortId),
+        youtubeUrl: formYoutubeUrl || undefined,
+        youtubeVideoId: youtubeVideoId,
+        autoPersonalize: formAutoPersonalize,
       });
 
       toast.success("미션이 성공적으로 생성되었습니다.");
@@ -237,6 +283,8 @@ export default function MissionNoticeClientPage({
       setFormWeek(1);
       setFormDueDate("");
       setFormCohortId("");
+      setFormYoutubeUrl("");
+      setFormAutoPersonalize(false);
 
       // 선택된 기수가 생성한 기수와 같으면 목록 새로고침
       if (selectedCohortId === Number(formCohortId)) {
@@ -683,6 +731,48 @@ export default function MissionNoticeClientPage({
                     </SelectContent>
                   </Select>
                 </div>
+
+                {/* YouTube URL */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <Youtube className="inline w-4 h-4 mr-1 text-red-600" />
+                    YouTube 영상 URL
+                  </label>
+                  <Input
+                    type="url"
+                    placeholder="https://www.youtube.com/watch?v=..."
+                    value={formYoutubeUrl}
+                    onChange={(e) => setFormYoutubeUrl(e.target.value)}
+                    className="w-full px-3 py-3 sm:px-4 text-base text-slate-900 border rounded-xl transition-all focus:ring-2 focus:border-transparent placeholder-slate-400 border-slate-300 focus:ring-blue-500"
+                  />
+                  <p className="text-xs text-slate-500 mt-1">
+                    YouTube 영상 URL을 입력하면 수강생에게 개인화된 학습 자료를
+                    제공할 수 있습니다.
+                  </p>
+                </div>
+
+                {/* 자동 개인화 옵션 */}
+                {formYoutubeUrl && (
+                  <div className="flex items-center space-x-2 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <Checkbox
+                      id="autoPersonalize"
+                      checked={formAutoPersonalize}
+                      onCheckedChange={(checked) =>
+                        setFormAutoPersonalize(checked === true)
+                      }
+                    />
+                    <Label
+                      htmlFor="autoPersonalize"
+                      className="text-sm font-medium text-slate-700 cursor-pointer"
+                    >
+                      자동 개인화 활성화
+                    </Label>
+                    <p className="text-xs text-slate-500 ml-2">
+                      수강생의 학습 수준과 목표에 맞춰 자동으로 개인화된 대본을
+                      생성합니다.
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* 버튼 */}
@@ -957,6 +1047,48 @@ export default function MissionNoticeClientPage({
                     </SelectContent>
                   </Select>
                 </div>
+
+                {/* YouTube URL */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <Youtube className="inline w-4 h-4 mr-1 text-red-600" />
+                    YouTube 영상 URL
+                  </label>
+                  <Input
+                    type="url"
+                    placeholder="https://www.youtube.com/watch?v=..."
+                    value={formYoutubeUrl}
+                    onChange={(e) => setFormYoutubeUrl(e.target.value)}
+                    className="w-full px-3 py-3 sm:px-4 text-base text-slate-900 border rounded-xl transition-all focus:ring-2 focus:border-transparent placeholder-slate-400 border-slate-300 focus:ring-blue-500"
+                  />
+                  <p className="text-xs text-slate-500 mt-1">
+                    YouTube 영상 URL을 입력하면 수강생에게 개인화된 학습 자료를
+                    제공할 수 있습니다.
+                  </p>
+                </div>
+
+                {/* 자동 개인화 옵션 */}
+                {formYoutubeUrl && (
+                  <div className="flex items-center space-x-2 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <Checkbox
+                      id="autoPersonalizeEdit"
+                      checked={formAutoPersonalize}
+                      onCheckedChange={(checked) =>
+                        setFormAutoPersonalize(checked === true)
+                      }
+                    />
+                    <Label
+                      htmlFor="autoPersonalizeEdit"
+                      className="text-sm font-medium text-slate-700 cursor-pointer"
+                    >
+                      자동 개인화 활성화
+                    </Label>
+                    <p className="text-xs text-slate-500 ml-2">
+                      수강생의 학습 수준과 목표에 맞춰 자동으로 개인화된 대본을
+                      생성합니다.
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* 버튼 */}

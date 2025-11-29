@@ -38,8 +38,8 @@ export default function AdminManageMenu({ stats }: AdminManageMenuProps) {
           onClick={() => router.push("/admin/posts")}
         >
           <CardContent className="p-6 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100">
-              <FileText className="h-8 w-8 text-blue-600" />
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#3B82F6]/10">
+              <FileText className="h-8 w-8 text-[#3B82F6]" />
             </div>
             <h3 className="mb-2 text-lg font-semibold text-gray-900">
               게시글 관리
@@ -47,7 +47,7 @@ export default function AdminManageMenu({ stats }: AdminManageMenuProps) {
             <p className="mb-4 text-sm text-gray-600">
               모든 게시글 관리 및 모니터링
             </p>
-            <Badge className="bg-blue-100 text-blue-700">
+            <Badge className="bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/20">
               {stats.totalPosts}개 게시글
             </Badge>
           </CardContent>

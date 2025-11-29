@@ -1,5 +1,4 @@
 import { requireStudent } from "@/shared/lib/auth-guards";
-import { getAdminDashboardStats } from "@/serverActions/admin/dashboard.sa";
 import { StatCard } from "@/shared/components/ui/stat-card";
 // import DashboardHeader from "./components/dashboard-header";
 // import AdminManageMenu from "./components/admin-manage-menu";
@@ -11,13 +10,10 @@ export const dynamic = "force-dynamic";
 
 export default async function StudentDashboard() {
   // 🛡️ 서버에서 권한 검증 (미들웨어 통과 후 2차 검증)
-  const session = await requireStudent();
-
-  // 서버에서 대시보드 데이터 직접 페칭
-  // const stats = await getAdminDashboardStats();
+  await requireStudent();
 
   return (
-    <div className="min-h-screen bg-[#fbf4ec]">
+    <div className="min-h-screen bg-slate-50">
       {/* <DashboardHeader /> */}
 
       <div className="w-full max-w-7xl mx-auto px-6 py-6">

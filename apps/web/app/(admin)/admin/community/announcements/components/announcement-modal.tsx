@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useActionState } from "react";
 import { X, Bold, Italic, List, Link as LinkIcon, Eye } from "lucide-react";
 import { createPost } from "@/serverActions/post.actions";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
 
 interface AnnouncementModalProps {
   isOpen: boolean;
@@ -28,7 +28,7 @@ export default function AnnouncementModal({
 }: AnnouncementModalProps) {
   const [showPreview, setShowPreview] = useState(false);
   const [content, setContent] = useState("");
-  const [state, formAction] = useFormState<any, FormData>(
+  const [state, formAction] = useActionState<any, FormData>(
     createPost,
     initialState
   );
@@ -55,10 +55,7 @@ export default function AnnouncementModal({
     // 커서 위치 재조정은 React 상태 업데이트 후 실행되어야 함
     setTimeout(() => {
       textarea.focus();
-      textarea.setSelectionRange(
-        start + before.length,
-        end + before.length
-      );
+      textarea.setSelectionRange(start + before.length, end + before.length);
     }, 0);
   };
 
@@ -225,7 +222,9 @@ export default function AnnouncementModal({
                       type="button"
                       onClick={() => setShowPreview(!showPreview)}
                       className={`flex items-center space-x-2 px-3 py-1 rounded-lg transition-colors ${
-                        showPreview ? "bg-blue-100 text-blue-700" : "hover:bg-slate-200"
+                        showPreview
+                          ? "bg-blue-100 text-blue-700"
+                          : "hover:bg-slate-200"
                       }`}
                     >
                       <Eye className="w-4 h-4" />
@@ -233,7 +232,9 @@ export default function AnnouncementModal({
                     </button>
                   </div>
                   <div className="flex">
-                    <div className={`w-full transition-all ${showPreview ? "hidden" : "block"}`}>
+                    <div
+                      className={`w-full transition-all ${showPreview ? "hidden" : "block"}`}
+                    >
                       <textarea
                         name="content"
                         value={content}
@@ -261,15 +262,17 @@ export default function AnnouncementModal({
                         {/* 실제 마크다운 렌더링을 위해서는 react-markdown 같은 라이브러리가 필요하지만, 
                             여기서는 간단히 줄바꿈만 처리해서 보여주거나, 원본을 보여줍니다. 
                             추후 react-markdown 도입 권장 */}
-                        <pre className="whitespace-pre-wrap font-sans">{content}</pre>
+                        <pre className="whitespace-pre-wrap font-sans">
+                          {content}
+                        </pre>
                       </div>
                     )}
                   </div>
                   <div className="bg-slate-50 border-t border-slate-200 px-4 py-2">
                     <p className="text-xs text-slate-500">
-                      <strong>팁:</strong> **굵게**, *기울임*, # 대제목, ## 중제목, ###
-                      소제목, * 리스트, [링크](URL) 형식으로 작성하세요. Ctrl+B(굵게),
-                      Ctrl+I(기울임) 단축키 사용 가능
+                      <strong>팁:</strong> **굵게**, *기울임*, # 대제목, ##
+                      중제목, ### 소제목, * 리스트, [링크](URL) 형식으로
+                      작성하세요. Ctrl+B(굵게), Ctrl+I(기울임) 단축키 사용 가능
                     </p>
                   </div>
                 </div>

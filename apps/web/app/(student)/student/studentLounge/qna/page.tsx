@@ -156,7 +156,7 @@ export default function QnAPage() {
 
   if (loading && posts.length === 0) {
     return (
-      <div className="flex-1 overflow-y-auto bg-[#fbf4ec] p-4 lg:p-6">
+      <div className="flex-1 overflow-y-auto bg-slate-50 p-4 lg:p-6">
         <div className="text-center py-12 text-stone-500">로딩 중...</div>
       </div>
     );
@@ -164,7 +164,7 @@ export default function QnAPage() {
 
   return (
     <>
-      <div className="flex-1 overflow-y-auto bg-[#fbf4ec] p-4 lg:p-6">
+      <div className="flex-1 overflow-y-auto bg-slate-50 p-4 lg:p-6">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* 헤더 */}
           <div className="mb-6">
@@ -423,7 +423,7 @@ export default function QnAPage() {
 
             {/* 본문 */}
             {selectedPost && (
-              <div className="px-6 py-6 bg-[#fbf4ec]">
+              <div className="px-6 py-6 bg-slate-50">
                 {/* 제목과 답변 상태 */}
                 <div className="flex items-start justify-between mb-4">
                   <h2 className="text-xl font-bold text-stone-900 flex-1">

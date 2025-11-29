@@ -11,8 +11,8 @@ export default function DashboardHeader() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="flex items-center gap-2 text-2xl font-bold text-gray-900">
-              <ChartBar className="h-6 w-6 text-[#E53935]" />
-              관리자 대시보드
+              <ChartBar className="h-6 w-6 text-[#3B82F6]" />
+              LearnFlow 관리자 대시보드
             </h1>
             <p className="text-gray-600">
               페이지 전체 현황을 한눈에 확인하세요

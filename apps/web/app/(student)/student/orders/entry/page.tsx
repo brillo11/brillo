@@ -42,7 +42,7 @@ interface OrderRow {
 // Initial empty row
 const createEmptyRow = (): OrderRow => ({
   id: crypto.randomUUID(),
-  productCode: "인생사주",
+  productCode: "기본 학습",
   email: "",
   name: "",
   calendarType: "SOLAR",
@@ -65,20 +65,20 @@ export default function OrderEntryPage() {
     const fetchProducts = async () => {
       try {
         const products = await getProductsForList();
-        const names = products.map(p => p.title);
+        const names = products.map((p) => p.title);
         setProductNames(names);
-        
+
         // If no products, set a default
         if (names.length === 0) {
-          setProductNames(["인생사주"]);
+          setProductNames(["기본 학습"]);
         }
       } catch (error) {
         console.error("Failed to fetch products:", error);
         // Fallback to default products
-        setProductNames(["인생사주", "정통사주", "연애사주"]);
+        setProductNames(["기본 학습", "고급 학습", "전문 학습"]);
       }
     };
-    
+
     fetchProducts();
   }, []);
 
@@ -99,7 +99,7 @@ export default function OrderEntryPage() {
         editable: true,
         cellEditor: "agSelectCellEditor",
         cellEditorParams: {
-          values: productNames.length > 0 ? productNames : ["인생사주"],
+          values: productNames.length > 0 ? productNames : ["기본 학습"],
         },
         width: 150,
       },
@@ -123,7 +123,8 @@ export default function OrderEntryPage() {
         cellEditorParams: {
           values: ["SOLAR", "LUNAR"],
         },
-        valueFormatter: (params) => (params.value === "SOLAR" ? "양력" : "음력"),
+        valueFormatter: (params) =>
+          params.value === "SOLAR" ? "양력" : "음력",
         width: 100,
       },
       {
@@ -215,8 +216,8 @@ export default function OrderEntryPage() {
       return;
     }
 
-    const selectedIds = new Set(selectedNodes.map(node => node.data?.id));
-    setRowData((prev) => prev.filter(row => !selectedIds.has(row.id)));
+    const selectedIds = new Set(selectedNodes.map((node) => node.data?.id));
+    setRowData((prev) => prev.filter((row) => !selectedIds.has(row.id)));
   }, []);
 
   const handleRegisterAll = useCallback(() => {
@@ -231,7 +232,7 @@ export default function OrderEntryPage() {
     setConfirmModalOpen(false);
 
     // Map Korean calendar/gender back to English for API (valueFormatter handles display)
-    const ordersToSubmit = rowData.map(row => ({
+    const ordersToSubmit = rowData.map((row) => ({
       productCode: row.productCode,
       email: row.email,
       name: row.name,
@@ -246,7 +247,7 @@ export default function OrderEntryPage() {
 
     try {
       const result = await createBulkPointOrders(ordersToSubmit);
-      
+
       if (result.success) {
         toast.success(`총 ${result.count}건의 주문이 등록되었습니다.`);
         // Clear the grid after successful registration
@@ -261,16 +262,20 @@ export default function OrderEntryPage() {
   }, [rowData]);
 
   return (
-    <div className="flex flex-col bg-[#fbf4ec] min-h-screen p-4 lg:p-6">
+    <div className="flex flex-col bg-slate-50 min-h-screen p-4 lg:p-6">
       <div className="max-w-screen-xl mx-auto w-full flex flex-col space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-stone-900">주문 대량 등록</h1>
+            <h1 className="text-2xl font-bold text-stone-900">
+              주문 대량 등록
+            </h1>
             <p className="text-stone-600 text-sm mt-1">
               엑셀처럼 데이터를 입력하여 주문을 일괄 등록할 수 있습니다.
             </p>
-            <p className="text-stone-600 text-sm mt-1 font-bold">*셀 선택 - 엔터 - 입력 - 엔터</p>
+            <p className="text-stone-600 text-sm mt-1 font-bold">
+              *셀 선택 - 엔터 - 입력 - 엔터
+            </p>
           </div>
           <div className="flex items-center space-x-2">
             <Button

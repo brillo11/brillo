@@ -3,8 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { kdayjs } from "@/shared/lib/utils/dayjs";
-import { submitMission, MissionWithSubmissions } from "@/serverActions/mission.actions";
+import {
+  submitMission,
+  MissionWithSubmissions,
+} from "@/serverActions/mission.actions";
 import { toast } from "sonner";
+import { YouTubeCaptionExtractor } from "./YouTubeCaptionExtractor";
 
 interface MissionSubmitButtonProps {
   mission: MissionWithSubmissions;
@@ -18,9 +22,7 @@ export default function MissionSubmitButton({
   children,
 }: MissionSubmitButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [content, setContent] = useState(
-    mission.submissions[0]?.content || ""
-  );
+  const [content, setContent] = useState(mission.submissions[0]?.content || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
@@ -35,9 +37,9 @@ export default function MissionSubmitButton({
 
     setIsSubmitting(true);
     try {
-      // Convert BigInt to number for the server action if needed, 
+      // Convert BigInt to number for the server action if needed,
       // but Prisma usually handles BigInt serialization with some config or we need to be careful.
-      // The server action expects number, but ID is BigInt. 
+      // The server action expects number, but ID is BigInt.
       // We might need to cast or change server action to accept BigInt or string.
       // For now assuming Number() works if IDs are small enough, or pass as string and parse.
       // Let's try passing as number.
@@ -55,10 +57,7 @@ export default function MissionSubmitButton({
 
   return (
     <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className={className}
-      >
+      <button onClick={() => setIsOpen(true)} className={className}>
         {children || (isSubmitted ? "수정하기" : "제출하기")}
       </button>
 
@@ -137,16 +136,30 @@ export default function MissionSubmitButton({
                   </div>
                 </div>
               ) : (
-                <div>
-                  <h4 className="text-sm font-semibold text-slate-900 mb-2">
-                    텍스트 제출 (링크 포함 가능)
-                  </h4>
-                  <textarea
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    placeholder="링크나 텍스트 내용을 입력하세요..."
-                    className="w-full h-32 p-4 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-none text-sm placeholder:text-slate-400"
+                <div className="space-y-4">
+                  {/* YouTube 자막 추출 */}
+                  <YouTubeCaptionExtractor
+                    onTranscriptExtracted={(transcript) => {
+                      setContent((prev) => {
+                        const newContent = prev
+                          ? `${prev}\n\n=== YouTube 자막 ===\n${transcript}`
+                          : `=== YouTube 자막 ===\n${transcript}`;
+                        return newContent;
+                      });
+                    }}
                   />
+
+                  <div>
+                    <h4 className="text-sm font-semibold text-slate-900 mb-2">
+                      텍스트 제출 (링크 포함 가능)
+                    </h4>
+                    <textarea
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      placeholder="링크나 텍스트 내용을 입력하세요. 위에서 YouTube 자막을 추출하면 자동으로 여기에 추가됩니다."
+                      className="w-full h-48 p-4 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-none text-sm placeholder:text-slate-400"
+                    />
+                  </div>
                 </div>
               )}
             </div>

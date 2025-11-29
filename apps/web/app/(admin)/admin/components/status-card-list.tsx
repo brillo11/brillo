@@ -40,8 +40,8 @@ export default function StatusCardList({ stats }: StatusCardListProps) {
                 {stats.newSignups} 신규
               </p>
             </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-              <Users className="h-6 w-6 text-blue-600" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#3B82F6]/10">
+              <Users className="h-6 w-6 text-[#3B82F6]" />
             </div>
           </div>
         </CardContent>
@@ -75,7 +75,7 @@ export default function StatusCardList({ stats }: StatusCardListProps) {
               <h3 className="mt-1 text-2xl font-bold text-gray-900">
                 {stats.totalPosts.toLocaleString()}
               </h3>
-              <p className="mt-1 text-sm text-blue-600">
+              <p className="mt-1 text-sm text-[#3B82F6]">
                 <MessageSquare className="mr-1 inline h-3 w-3" />
                 {stats.totalComments.toLocaleString()} 댓글
               </p>

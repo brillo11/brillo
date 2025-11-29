@@ -65,12 +65,12 @@ export default async function ProductDetailPage({
   };
 
   return (
-    <div className="min-h-[calc(100vh-70px)] bg-gradient-to-br from-[#F9EBDD] to-[#FAF0E6]">
+    <div className="min-h-[calc(100vh-70px)] bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* 뒤로가기 버튼 */}
         <Link
           href="/student/products"
-          className="inline-flex items-center gap-2 text-[#2C3E50] hover:text-[#F2779C] transition-colors mb-6"
+          className="inline-flex items-center gap-2 text-slate-700 hover:text-[#3B82F6] transition-colors mb-6"
         >
           <ArrowLeft className="h-4 w-4" />
           <span className="text-sm font-medium">상품 목록으로 돌아가기</span>
@@ -81,7 +81,7 @@ export default async function ProductDetailPage({
           <div className="space-y-4">
             {/* 메인 이미지 */}
             <div className="bg-white rounded-2xl p-6 shadow-md">
-              <div className="relative aspect-square bg-gradient-to-br from-[#F9EBDD] to-[#FAF0E6] rounded-xl flex items-center justify-center">
+              <div className="relative aspect-square bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center">
                 {product.images && product.images.length > 0 ? (
                   <Image
                     src={product.images[0]}
@@ -103,7 +103,7 @@ export default async function ProductDetailPage({
                   .map((image: string, index: number) => (
                     <div
                       key={index}
-                      className="bg-white rounded-xl p-4 shadow-sm border-2 border-transparent hover:border-[#F2779C]/30 transition-all"
+                      className="bg-white rounded-xl p-4 shadow-sm border-2 border-transparent hover:border-[#3B82F6]/30 transition-all"
                     >
                       <div className="relative aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
                         {index === 0 ? (
@@ -142,7 +142,7 @@ export default async function ProductDetailPage({
             {/* 상품 제목 및 상태 */}
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl font-bold text-[#2C3E50]">
+                <h1 className="text-3xl font-bold text-slate-900">
                   {product.name}
                 </h1>
                 {product.inStock && (
@@ -171,7 +171,7 @@ export default async function ProductDetailPage({
                       {product.originalPrice.toLocaleString()}원
                     </span>
                   )}
-                <span className="text-3xl font-bold text-[#F2779C]">
+                <span className="text-3xl font-bold text-[#3B82F6]">
                   {product.price.toLocaleString()}원
                 </span>
               </div>
@@ -191,19 +191,19 @@ export default async function ProductDetailPage({
 
             {/* 기본 정보 */}
             <div className="bg-white rounded-xl p-6 shadow-md">
-              <h2 className="text-lg font-semibold text-[#3BB4C1] mb-4 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-[#3B82F6] mb-4 flex items-center gap-2">
                 <span>●</span> 기본 정보
               </h2>
               <div className="space-y-3">
                 <div>
                   <span className="text-sm text-gray-600">상품설명</span>
-                  <p className="text-sm text-[#2C3E50] mt-1">
+                  <p className="text-sm text-slate-700 mt-1">
                     {product.description}
                   </p>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">서비스 형태</span>
-                  <span className="text-sm font-medium text-[#2C3E50]">
+                  <span className="text-sm font-medium text-slate-700">
                     {serviceType}
                   </span>
                 </div>
@@ -218,25 +218,25 @@ export default async function ProductDetailPage({
 
             {/* 제공 정보 */}
             <div className="bg-white rounded-xl p-6 shadow-md">
-              <h2 className="text-lg font-semibold text-[#3BB4C1] mb-4 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-[#3B82F6] mb-4 flex items-center gap-2">
                 <span>●</span> 제공 정보
               </h2>
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">제공 형태</span>
-                  <span className="text-sm font-medium text-[#2C3E50]">
+                  <span className="text-sm font-medium text-slate-700">
                     {provisionType}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">전송 방법</span>
-                  <span className="text-sm font-medium text-[#2C3E50]">
+                  <span className="text-sm font-medium text-slate-700">
                     {deliveryMethod}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">소요 시간</span>
-                  <span className="text-sm font-medium text-[#2C3E50]">
+                  <span className="text-sm font-medium text-slate-700">
                     ● {timeRequired}
                   </span>
                 </div>
@@ -256,7 +256,7 @@ export default async function ProductDetailPage({
             </div>
 
             {/* 구매 버튼 */}
-            <Button className="w-full bg-gradient-to-r from-[#F2779C] to-[#3BB4C1] text-white hover:opacity-90 py-6 text-lg font-semibold">
+            <Button className="w-full bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A] text-white hover:opacity-90 py-6 text-lg font-semibold">
               상품 주문하기
             </Button>
           </div>

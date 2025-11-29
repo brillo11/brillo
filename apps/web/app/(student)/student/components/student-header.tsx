@@ -4,11 +4,19 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, User, ChevronDown } from "lucide-react";
+import {
+  Menu,
+  X,
+  User,
+  ChevronDown,
+  Settings,
+  GraduationCap,
+} from "lucide-react";
 import { PATH } from "@/shared/consts/path";
 import { studentMenus } from "@/shared/consts/menus";
 import { Button } from "@repo/ui/components/button";
 import { signOut } from "@/shared/lib/auth-client";
+import { LogOut } from "lucide-react";
 
 export function StudentHeader({ points = 0 }: { points?: number }) {
   const pathname = usePathname();
@@ -42,7 +50,7 @@ export function StudentHeader({ points = 0 }: { points?: number }) {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#F9EBDD]/95 backdrop-blur-md border-b border-[#F2779C]/10 shadow-sm">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-[70px]">
           {/* 좌측: 로고 (데스크톱) / 메뉴 버튼 (모바일) */}
@@ -50,9 +58,9 @@ export function StudentHeader({ points = 0 }: { points?: number }) {
             {/* 모바일 메뉴 버튼 */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden flex flex-col gap-1 p-2 hover:bg-[#F2779C]/10 rounded-lg transition-colors"
+              className="md:hidden flex flex-col gap-1 p-2 hover:bg-[#3B82F6]/10 rounded-lg transition-colors"
             >
-              <Menu className="h-6 w-6 text-[#2C3E50]" />
+              <Menu className="h-6 w-6 text-slate-700" />
             </button>
 
             {/* 로고 (데스크톱만 표시) */}
@@ -60,13 +68,14 @@ export function StudentHeader({ points = 0 }: { points?: number }) {
               href={PATH.STUDENT_ROOT}
               className="hidden md:flex items-center gap-3 no-underline"
             >
-              <Image
-                src="/logo_yhd.png"
-                alt="연화당 로고"
-                width={120}
-                height={40}
-                className="h-10 w-auto"
-              />
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#3B82F6] to-[#1E3A8A] text-white shadow-md">
+                  <GraduationCap className="h-4 w-4" />
+                </div>
+                <span className="text-lg font-semibold text-slate-900">
+                  LearnFlow
+                </span>
+              </div>
             </Link>
           </div>
 
@@ -86,8 +95,8 @@ export function StudentHeader({ points = 0 }: { points?: number }) {
                         }
                         className={`px-5 py-4 text-[15px] font-medium rounded-xl transition-all flex items-center gap-1 ${
                           active
-                            ? "text-[#F2779C] bg-[#F2779C]/10"
-                            : "text-[#2C3E50] hover:text-[#F2779C] hover:bg-[#F2779C]/10"
+                            ? "text-[#3B82F6] bg-[#3B82F6]/10"
+                            : "text-slate-700 hover:text-[#3B82F6] hover:bg-[#3B82F6]/10"
                         }`}
                       >
                         {menu.title}
@@ -108,8 +117,8 @@ export function StudentHeader({ points = 0 }: { points?: number }) {
                                 onClick={() => setOpenSubmenu(null)}
                                 className={`block px-4 py-2 text-sm transition-all ${
                                   subActive
-                                    ? "text-[#F2779C] bg-[#F2779C]/10 font-medium"
-                                    : "text-[#2C3E50] hover:text-[#F2779C] hover:bg-[#F2779C]/10"
+                                    ? "text-[#3B82F6] bg-[#3B82F6]/10 font-medium"
+                                    : "text-slate-700 hover:text-[#3B82F6] hover:bg-[#3B82F6]/10"
                                 }`}
                               >
                                 {subMenu.title}
@@ -124,8 +133,8 @@ export function StudentHeader({ points = 0 }: { points?: number }) {
                       href={menu.url}
                       className={`px-5 py-4 text-[15px] font-medium rounded-xl transition-all ${
                         active
-                          ? "text-[#F2779C] bg-[#F2779C]/10"
-                          : "text-[#2C3E50] hover:text-[#F2779C] hover:bg-[#F2779C]/10"
+                          ? "text-[#3B82F6] bg-[#3B82F6]/10"
+                          : "text-slate-700 hover:text-[#3B82F6] hover:bg-[#3B82F6]/10"
                       }`}
                     >
                       {menu.title}
@@ -136,33 +145,35 @@ export function StudentHeader({ points = 0 }: { points?: number }) {
             })}
           </nav>
 
-          {/* 우측: 복비(냥) 배지 + 프로필 */}
+          {/* 우측: 포인트 배지 + 프로필 */}
           <div className="flex items-center gap-4">
-            {/* 복비(냥) 배지 */}
+            {/* 포인트 배지 */}
             <Link href={PATH.STUDENT_POINTS_CHARGE}>
-              <div className="bg-gradient-to-r from-[#3BB4C1] to-[#2C8A99] text-white px-4 py-2 rounded-full text-sm font-semibold cursor-pointer hover:opacity-90 transition-opacity">
-                복비 {points.toLocaleString()} 냥
+              <div className="bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A] text-white px-4 py-2 rounded-full text-sm font-semibold cursor-pointer hover:from-[#2563EB] hover:to-[#1E40AF] transition-all shadow-md">
+                포인트 {points.toLocaleString()}P
               </div>
             </Link>
 
             {/* 프로필 아이콘 */}
             <div className="relative group">
-              <div className="w-11 h-11 bg-gradient-to-br from-[#F2779C] to-[#E85A89] rounded-full flex items-center justify-center text-white cursor-pointer hover:shadow-lg transition-shadow">
+              <div className="w-11 h-11 bg-gradient-to-br from-[#3B82F6] to-[#1E3A8A] rounded-full flex items-center justify-center text-white cursor-pointer hover:shadow-lg transition-shadow">
                 <User className="h-5 w-5" />
               </div>
               {/* 드롭다운 메뉴 */}
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 overflow-hidden">
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 overflow-hidden">
                 <div className="py-2">
                   <Link
-                    href="/my-account"
-                    className="block px-4 py-2 text-sm text-[#2C3E50] hover:bg-gradient-to-r hover:from-[#F2779C] hover:to-[#3BB4C1] hover:text-white transition-all"
+                    href={PATH.STUDENT_PROFILE}
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-[#3B82F6]/10 hover:text-[#3B82F6] transition-all"
                   >
-                    내 정보
+                    <Settings className="h-4 w-4" />
+                    프로필 설정
                   </Link>
                   <button
                     onClick={handleSignOut}
-                    className="w-full text-left px-4 py-2 text-sm text-[#2C3E50] hover:bg-gradient-to-r hover:from-[#F2779C] hover:to-[#3BB4C1] hover:text-white transition-all"
+                    className="w-full text-left flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-[#3B82F6]/10 hover:text-[#3B82F6] transition-all"
                   >
+                    <LogOut className="h-4 w-4" />
                     로그아웃
                   </button>
                 </div>
@@ -173,7 +184,7 @@ export function StudentHeader({ points = 0 }: { points?: number }) {
 
         {/* 모바일 메뉴 */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-[#F2779C]/10 py-4">
+          <div className="md:hidden border-t border-slate-200 py-4">
             <nav className="flex flex-col gap-2">
               {studentMenus.map((menu) => {
                 const active = isActive(menu.url) || hasActiveSubmenu(menu);
@@ -189,8 +200,8 @@ export function StudentHeader({ points = 0 }: { points?: number }) {
                           }
                           className={`w-full text-left px-4 py-3 text-[15px] font-medium rounded-xl transition-all flex items-center justify-between ${
                             active
-                              ? "text-[#F2779C] bg-[#F2779C]/10"
-                              : "text-[#2C3E50] hover:text-[#F2779C] hover:bg-[#F2779C]/10"
+                              ? "text-[#3B82F6] bg-[#3B82F6]/10"
+                              : "text-slate-700 hover:text-[#3B82F6] hover:bg-[#3B82F6]/10"
                           }`}
                         >
                           {menu.title}
@@ -214,8 +225,8 @@ export function StudentHeader({ points = 0 }: { points?: number }) {
                                   }}
                                   className={`block px-4 py-2 text-sm rounded-lg transition-all ${
                                     subActive
-                                      ? "text-[#F2779C] bg-[#F2779C]/10 font-medium"
-                                      : "text-[#2C3E50] hover:text-[#F2779C] hover:bg-[#F2779C]/10"
+                                      ? "text-[#3B82F6] bg-[#3B82F6]/10 font-medium"
+                                      : "text-slate-700 hover:text-[#3B82F6] hover:bg-[#3B82F6]/10"
                                   }`}
                                 >
                                   {subMenu.title}
@@ -231,8 +242,8 @@ export function StudentHeader({ points = 0 }: { points?: number }) {
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={`px-4 py-3 text-[15px] font-medium rounded-xl transition-all ${
                           active
-                            ? "text-[#F2779C] bg-[#F2779C]/10"
-                            : "text-[#2C3E50] hover:text-[#F2779C] hover:bg-[#F2779C]/10"
+                            ? "text-[#3B82F6] bg-[#3B82F6]/10"
+                            : "text-slate-700 hover:text-[#3B82F6] hover:bg-[#3B82F6]/10"
                         }`}
                       >
                         {menu.title}

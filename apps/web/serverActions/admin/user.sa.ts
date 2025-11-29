@@ -33,7 +33,17 @@ export async function getAdminUserList({
 
   // 역할 필터
   if (role) {
-    where.role = role;
+    // ROLE enum으로 변환 (USER는 STUDENT로 매핑)
+    const roleMap: Record<string, ROLE> = {
+      USER: ROLE.STUDENT,
+      STUDENT: ROLE.STUDENT,
+      ADMIN: ROLE.ADMIN,
+      SUPER_ADMIN: ROLE.SUPER_ADMIN,
+    };
+    const mappedRole = roleMap[role.toUpperCase()];
+    if (mappedRole) {
+      where.role = mappedRole;
+    }
   }
 
   // 상태 필터
