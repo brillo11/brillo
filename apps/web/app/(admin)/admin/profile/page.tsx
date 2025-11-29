@@ -15,7 +15,9 @@ export default async function AdminProfilePage() {
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-slate-900 mb-2">마이페이지</h1>
-          <p className="text-slate-600">프로필 정보를 확인하고 수정할 수 있습니다.</p>
+          <p className="text-slate-600">
+            프로필 정보를 확인하고 수정할 수 있습니다.
+          </p>
         </div>
 
         <StudentProfileClient initialProfile={profile} />
@@ -23,4 +25,3 @@ export default async function AdminProfilePage() {
     </div>
   );
 }
-

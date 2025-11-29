@@ -103,7 +103,9 @@ export function UserHeader({ className }: UserHeaderProps) {
                     <p className="text-sm font-semibold text-slate-900 truncate">
                       {userName}
                     </p>
-                    <p className="text-xs text-slate-500 truncate">{userEmail}</p>
+                    <p className="text-xs text-slate-500 truncate">
+                      {userEmail}
+                    </p>
                   </div>
 
                   {/* 메뉴 아이템 */}
@@ -136,4 +138,3 @@ export function UserHeader({ className }: UserHeaderProps) {
     </header>
   );
 }
-

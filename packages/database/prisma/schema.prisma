@@ -324,6 +324,50 @@ model Refund {
   @@index([createdAt])
 }
 
+model YoutubeChannel {
+  id              String         @id // YouTube Channel ID (UC...)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  title           String         @default("")
+  thumbnailUrl    String         @default("")
+  regionCode      String?        // 수집 기준 지역 (예: KR)
+  uploadsPlaylist String?        // 업로드 플레이리스트 ID
+  overallAvgView  Float?         // 전체 평균 조회수 (totalViews / videoCount)
+  recentAvgVph    Float?         // 최근 N개 평균 VPH
+  lastCrawledAt   DateTime?
+  misc            Json           @default("{}")
+
+  videos YoutubeVideo[]
+}
+
+model YoutubeVideo {
+  id                 String    @id // YouTube Video ID
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  channelId          String
+  title              String     @default("")
+  description        String     @default("")
+  thumbnailUrl       String     @default("")
+  publishedAt        DateTime?
+  duration           String     @default("")
+  viewCount          Int        @default(0)
+  likeCount          Int?
+  commentCount       Int?
+  viewsPerHour       Float?
+  outlierVph         Float?
+  outlierView        Float?
+  regionCode         String?    // 수집 지역 코드
+  crawledAt          DateTime   @default(now())
+  misc               Json       @default("{}")
+
+  channel YoutubeChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@index([channelId])
+  @@index([regionCode])
+  @@index([outlierVph])
+  @@index([viewsPerHour])
+  @@index([publishedAt])
+}
 enum ROLE {
   SUPER_ADMIN
   ADMIN
