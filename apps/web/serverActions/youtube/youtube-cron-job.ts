@@ -56,21 +56,32 @@ export async function runYoutubePopularCron(
     const channelIds = Array.from(channelIdSet);
 
     // 3. 채널 정보 조회 (statistics, snippet, contentDetails)
-    const chParams = new URLSearchParams({
-      part: "statistics,contentDetails,snippet",
-      id: channelIds.join(","),
-      key: apiKey,
-    });
-    const chRes = await fetch(
-      `https://www.googleapis.com/youtube/v3/channels?${chParams.toString()}`
-    );
+    // YouTube API는 한 번에 최대 50개까지만 조회 가능하므로 50개씩 나눠서 호출
+    const channels: any[] = [];
+    const BATCH_SIZE = 50;
 
-    if (!chRes.ok) {
-      throw new Error(`Failed to fetch channel data: ${chRes.statusText}`);
+    for (let i = 0; i < channelIds.length; i += BATCH_SIZE) {
+      const batch = channelIds.slice(i, i + BATCH_SIZE);
+      const chParams = new URLSearchParams({
+        part: "statistics,contentDetails,snippet",
+        id: batch.join(","),
+        key: apiKey,
+      });
+
+      const chRes = await fetch(
+        `https://www.googleapis.com/youtube/v3/channels?${chParams.toString()}`
+      );
+
+      if (!chRes.ok) {
+        console.error(
+          `Failed to fetch channel batch ${i / BATCH_SIZE + 1}: ${chRes.statusText}`
+        );
+        continue; // 일부 실패해도 계속 진행
+      }
+
+      const chData = await chRes.json();
+      channels.push(...(chData.items || []));
     }
-
-    const chData = await chRes.json();
-    const channels = chData.items || [];
 
     // 4. 채널 정보만 DB에 저장
     let savedCount = 0;
