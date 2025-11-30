@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runYoutubePopularCron } from "@/serverActions/youtube/youtube-cron-job";
 
-// Simple auth via header token
+// Vercel Cron Job 인증: Authorization Bearer 토큰
 function isAuthorized(req: NextRequest): boolean {
-  const token = req.headers.get("x-cron-token");
-  const expected = process.env.CRON_AUTH_TOKEN || "";
-  return expected.length > 0 && token === expected;
+  const authHeader = req.headers.get("Authorization");
+  const expectedToken = process.env.CRON_SECRET || "";
+
+  if (!authHeader || !expectedToken) {
+    return false;
+  }
+
+  const token = authHeader.replace(/^Bearer\s+/i, "");
+  return token === expectedToken;
 }
 
 export async function GET(req: NextRequest) {
