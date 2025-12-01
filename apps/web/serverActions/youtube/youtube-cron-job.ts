@@ -144,7 +144,7 @@ export async function runYoutubePopularCron(
 
     // 3. Search API로 다양한 키워드로 채널 추가 수집
     const searchQueries = getSearchQueries(regionCode);
-    const channelsPerQuery = Math.max(5, Math.floor(50 / searchQueries.length)); // 쿼리당 5개씩
+    const channelsPerQuery = 20;
 
     console.log(
       `[Search API] ${searchQueries.length}개 쿼리로 채널 검색 시작...`
