@@ -111,11 +111,27 @@ export const adminMenus: MenuItem[] = [
     icon: GraduationCap,
   },
   {
-    id: "youtube-channels",
-    title: "YouTube 채널",
+    id: "youtube",
+    title: "YouTube",
     baseUrl: PATH.ADMIN_YOUTUBE_CHANNELS,
     url: PATH.ADMIN_YOUTUBE_CHANNELS,
     icon: Video,
+    subMenus: [
+      {
+        id: "youtube-channels",
+        title: "채널",
+        baseUrl: PATH.ADMIN_YOUTUBE_CHANNELS,
+        url: PATH.ADMIN_YOUTUBE_CHANNELS,
+        icon: Video,
+      },
+      {
+        id: "youtube-videos",
+        title: "영상",
+        baseUrl: PATH.ADMIN_YOUTUBE_VIDEOS,
+        url: PATH.ADMIN_YOUTUBE_VIDEOS,
+        icon: PlayCircle,
+      },
+    ],
   },
 
   // {
