@@ -110,6 +110,13 @@ export const adminMenus: MenuItem[] = [
     url: PATH.ADMIN_COHORT,
     icon: GraduationCap,
   },
+  {
+    id: "youtube-channels",
+    title: "YouTube 채널",
+    baseUrl: PATH.ADMIN_YOUTUBE_CHANNELS,
+    url: PATH.ADMIN_YOUTUBE_CHANNELS,
+    icon: Video,
+  },
 
   // {
   //   id: "posts",

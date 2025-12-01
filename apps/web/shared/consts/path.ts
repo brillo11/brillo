@@ -36,6 +36,7 @@ export const PATH = {
   ADMIN_USER: "/admin/user",
   ADMIN_STUDENTS: "/admin/students",
   ADMIN_PROFILE: "/admin/profile",
+  ADMIN_YOUTUBE_CHANNELS: "/admin/channels",
 
   // 공통 마이페이지
   MY_PAGE: "/my-page",
