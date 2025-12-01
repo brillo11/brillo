@@ -2,7 +2,6 @@ import { requireStudent } from "@/shared/lib/auth-guards";
 import { prisma } from "@repo/database";
 import { StudentSidebar } from "@/app/(student)/student/components/student-sidebar";
 import { StudentClientProviders } from "@/app/(admin)/admin/components/studentProviders";
-import { UserHeader } from "@/shared/components/header/user-header";
 
 export async function StudentProviders({
   children,
@@ -24,7 +23,6 @@ export async function StudentProviders({
     <StudentClientProviders>
       <StudentSidebar points={points} />
       <div className="flex flex-col flex-1 w-full min-h-screen">
-        <UserHeader />
         <div className="flex-1">{children}</div>
       </div>
     </StudentClientProviders>

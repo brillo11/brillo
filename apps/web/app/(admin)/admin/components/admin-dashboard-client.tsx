@@ -60,15 +60,13 @@ export default function AdminDashboardClient({
     }
   }, [selectedCohortId]);
 
-  const selectedCohort = activeCohorts.find(
-    (c) => c.id === selectedCohortId
-  );
+  const selectedCohort = activeCohorts.find((c) => c.id === selectedCohortId);
 
   return (
     <main className="flex-1 overflow-y-auto bg-slate-50 p-4 lg:p-6">
       <div className="space-y-4 sm:space-y-6 lg:space-y-8">
         {/* 헤더 섹션 */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#3B82F6] via-[#2563EB] to-[#1E3A8A] rounded-xl p-4 text-white shadow-lg">
+        <div className="relative overflow-hidden bg-gradient-to-br from-red-600 via-orange-600 to-amber-600 rounded-xl p-4 text-white shadow-lg">
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-4">
               <div>
@@ -385,7 +383,7 @@ export default function AdminDashboardClient({
                                 <div
                                   className={`h-1.5 rounded-full ${
                                     data.submissionRate >= 50
-                                      ? "bg-[#3B82F6]"
+                                      ? "bg-red-600"
                                       : "bg-slate-500"
                                   }`}
                                   style={{ width: `${data.submissionRate}%` }}
@@ -404,8 +402,8 @@ export default function AdminDashboardClient({
                             <span
                               className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                                 data.status === "양호"
-                                  ? "bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/20"
-                                  : "bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20"
+                                  ? "bg-red-600/10 text-red-600 border border-red-600/20"
+                                  : "bg-amber-500/10 text-amber-600 border border-amber-500/20"
                               }`}
                             >
                               {data.status}
@@ -465,7 +463,7 @@ export default function AdminDashboardClient({
                   <div className="text-base text-slate-600">명</div>
                 </div>
                 <div className="flex items-center space-x-2 mt-1">
-                  <div className="text-sm font-medium text-[#3B82F6]">0%</div>
+                  <div className="text-sm font-medium text-red-600">0%</div>
                   <div className="text-xs text-slate-500">전체 대비</div>
                 </div>
               </div>
@@ -502,4 +500,3 @@ export default function AdminDashboardClient({
     </main>
   );
 }
-
