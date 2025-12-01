@@ -23,6 +23,7 @@ export default function Conversation({ sessionId }: { sessionId: string }) {
   const [isThumbnailLoading, setIsThumbnailLoading] = useState(false)
   const [isScriptLoading, setIsScriptLoading] = useState(false)
   const [thumbnailEditText, setThumbnailEditText] = useState('')
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
   const step = datas?.step || 'TITLE'
   useEffect(() => {
     //로컬 스토리지에서 세션 가져오기
@@ -113,7 +114,10 @@ export default function Conversation({ sessionId }: { sessionId: string }) {
   async function fixThumbnail() {
     setIsThumbnailLoading(true)
     try {
-      const response = await sendFixThumbnailResponses(thumbnailEditText, datas.thumbnailResponses)
+      const file = thumbnailFile ? await thumbnailFile?.arrayBuffer() : undefined
+      const base64 = file ? Buffer.from(file).toString('base64') : undefined
+      const mimeType = thumbnailFile ? thumbnailFile?.type : undefined
+      const response = await sendFixThumbnailResponses(thumbnailEditText, datas.thumbnailResponses, base64, mimeType)
       const newData = { ...datas, thumbnailResponses: response }
       setDatas(newData)
       localStorage.setItem(sessionId, JSON.stringify(newData))
@@ -227,6 +231,13 @@ export default function Conversation({ sessionId }: { sessionId: string }) {
                     value={thumbnailEditText}
                     onChange={(e: any) => setThumbnailEditText(e.target.value)}
                     className="resize-none"
+                    disabled={isThumbnailLoading}
+                  />
+                  <Label>참고 이미지</Label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e: any) => setThumbnailFile(e.target.files[0])}
                     disabled={isThumbnailLoading}
                   />
                   <Button onClick={fixThumbnail} disabled={isThumbnailLoading}>

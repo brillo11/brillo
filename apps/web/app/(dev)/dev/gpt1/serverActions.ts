@@ -212,18 +212,32 @@ export async function sendThumbnailResponses({
   // return output
 }
 
-export async function sendFixThumbnailResponses(thumbnailEditText: string, thumbnailResponses: string) {
+export async function sendFixThumbnailResponses(
+  thumbnailEditText: string,
+  thumbnailResponses: string,
+  referenceImage?: string,
+  referenceImageMimeType?: string
+) {
+  const contents = [
+    { text: `유튜브 썸네일을 수정해줘.\n수정 내용: ${thumbnailEditText}` },
+    {
+      inlineData: {
+        mimeType: 'image/jpeg',
+        data: thumbnailResponses,
+      },
+    },
+  ]
+  if (referenceImage && referenceImageMimeType) {
+    contents.push({
+      inlineData: {
+        mimeType: referenceImageMimeType,
+        data: referenceImage,
+      },
+    })
+  }
   const response = await geminiClient.models.generateContent({
     model: 'gemini-3-pro-image-preview', //gemini-3-pro-image-preview
-    contents: [
-      { text: `유튜브 썸네일을 수정해줘.\n수정 내용: ${thumbnailEditText}` },
-      {
-        inlineData: {
-          mimeType: 'image/jpeg',
-          data: thumbnailResponses,
-        },
-      },
-    ],
+    contents: contents,
     config: {
       imageConfig: {
         aspectRatio: '16:9',
