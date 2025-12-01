@@ -5,7 +5,7 @@ import { prisma } from "@repo/database";
 // 상수 정의
 const RECENT_VIDEOS_AVG_COUNT = 10; // 최근 N개 영상의 평균 VPH 계산
 const MIN_OUTLIER_VPH = 3; // outlierVph가 이 값 이상인 영상만 저장
-const MIN_VIEWS_PER_HOUR = 100; // VPH가 이 값 이상인 영상만 저장
+// const MIN_VIEWS_PER_HOUR = 100; // VPH가 이 값 이상인 영상만 저장
 const MAX_VIDEOS_PER_CHANNEL = 50; // 채널당 최대 수집 영상 수
 
 interface VideoData {
@@ -229,7 +229,7 @@ function processVideos(
  * DB에 저장된 채널들의 영상 중 outlier가 높은 영상들을 수집하여 저장
  */
 export async function runYoutubeVideosCron(
-  maxChannels: number = 50,
+  maxChannels?: number,
   regionCode?: string
 ) {
   try {
@@ -248,7 +248,7 @@ export async function runYoutubeVideosCron(
 
     const channels = await prisma.youtubeChannel.findMany({
       where,
-      take: maxChannels,
+      ...(maxChannels && { take: maxChannels }),
       orderBy: {
         lastCrawledAt: "desc",
       },
@@ -289,14 +289,11 @@ export async function runYoutubeVideosCron(
           channel.overallAvgView
         );
 
-        // outlier가 높은 영상들만 필터링
+        // outlier가 높은 영상들만 필터링 (outlierVph 기준만)
         const highOutlierVideos = processedVideos.filter((video) => {
-          const hasHighOutlierVph =
-            video.outlierVph !== null && video.outlierVph >= MIN_OUTLIER_VPH;
-          const hasHighVph =
-            video.viewsPerHour !== null &&
-            video.viewsPerHour >= MIN_VIEWS_PER_HOUR;
-          return hasHighOutlierVph || hasHighVph;
+          return (
+            video.outlierVph !== null && video.outlierVph >= MIN_OUTLIER_VPH
+          );
         });
 
         // DB에 저장
