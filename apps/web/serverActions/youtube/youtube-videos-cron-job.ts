@@ -229,7 +229,7 @@ function processVideos(
  * DB에 저장된 채널들의 영상 중 outlier가 높은 영상들을 수집하여 저장
  */
 export async function runYoutubeVideosCron(
-  maxChannels: number = 50,
+  maxChannels?: number,
   regionCode?: string
 ) {
   try {
@@ -248,7 +248,7 @@ export async function runYoutubeVideosCron(
 
     const channels = await prisma.youtubeChannel.findMany({
       where,
-      take: maxChannels,
+      ...(maxChannels && { take: maxChannels }),
       orderBy: {
         lastCrawledAt: "desc",
       },

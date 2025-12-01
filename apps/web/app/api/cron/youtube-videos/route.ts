@@ -21,13 +21,10 @@ export async function GET(req: NextRequest) {
 
   try {
     const region = req.nextUrl.searchParams.get("region") || undefined;
-    const maxChannels = Math.min(
-      Math.max(
-        parseInt(req.nextUrl.searchParams.get("maxChannels") || "50", 10),
-        1
-      ),
-      100
-    );
+    const maxChannelsParam = req.nextUrl.searchParams.get("maxChannels");
+    const maxChannels = maxChannelsParam
+      ? Math.min(Math.max(parseInt(maxChannelsParam, 10), 1), 100)
+      : undefined;
 
     const result = await runYoutubeVideosCron(maxChannels, region);
 

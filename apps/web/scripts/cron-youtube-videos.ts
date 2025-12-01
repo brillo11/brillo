@@ -12,7 +12,7 @@ import { runYoutubeVideosCron } from "../serverActions/youtube/youtube-videos-cr
 
 const args = process.argv.slice(2);
 let region: string | undefined = undefined;
-let maxChannels = 50;
+let maxChannels: number | undefined = undefined;
 
 // 간단한 인자 파싱
 for (const arg of args) {
@@ -25,7 +25,7 @@ for (const arg of args) {
 
 async function main() {
   console.log(
-    `[크론 시작] 지역: ${region || "전체"}, 최대 채널 수: ${maxChannels}`
+    `[크론 시작] 지역: ${region || "전체"}, 최대 채널 수: ${maxChannels || "제한 없음 (모든 채널)"}`
   );
   console.log("=".repeat(50));
 
