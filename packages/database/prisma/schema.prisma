@@ -332,6 +332,7 @@ model YoutubeChannel {
   thumbnailUrl    String         @default("")
   regionCode      String?        // 수집 기준 지역 (예: KR)
   uploadsPlaylist String?        // 업로드 플레이리스트 ID
+  videoCount      Int?           // 채널의 전체 영상 개수
   overallAvgView  Float?         // 전체 평균 조회수 (totalViews / videoCount)
   recentAvgVph    Float?         // 최근 N개 평균 VPH
   lastCrawledAt   DateTime?

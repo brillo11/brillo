@@ -10,7 +10,8 @@
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "typecheck": "tsc --noEmit",
-    "cron:youtube": "tsx scripts/cron-youtube-popular.ts"
+    "cron:youtube": "tsx scripts/cron-youtube-popular.ts",
+    "cron:youtube:videos": "tsx scripts/cron-youtube-videos.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.850.0",
