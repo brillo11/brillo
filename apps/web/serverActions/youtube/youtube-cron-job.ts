@@ -31,6 +31,94 @@ async function fetchMostPopular(regionCode: string, targetCount: number) {
   return collected.slice(0, targetCount);
 }
 
+// Search API로 채널 검색 (다양한 키워드로 고르게 수집)
+async function searchChannelsByQuery(
+  apiKey: string,
+  query: string,
+  regionCode: string,
+  maxResults: number = 10
+): Promise<string[]> {
+  const params = new URLSearchParams({
+    part: "snippet",
+    q: query,
+    type: "channel", // 채널만 검색
+    maxResults: String(Math.min(maxResults, 50)),
+    regionCode,
+    key: apiKey,
+  });
+
+  const res = await fetch(
+    `https://www.googleapis.com/youtube/v3/search?${params.toString()}`
+  );
+
+  if (!res.ok) {
+    console.error(`Search failed for query "${query}": ${res.statusText}`);
+    return [];
+  }
+
+  const data = await res.json();
+  const channelIds: string[] = [];
+
+  for (const item of data.items || []) {
+    if (item.id?.channelId) {
+      channelIds.push(item.id.channelId);
+    }
+  }
+
+  return channelIds;
+}
+
+// 고르게 채널 수집을 위한 검색 쿼리 리스트
+function getSearchQueries(regionCode: string): string[] {
+  // 한국 기준 다양한 카테고리 키워드
+  const krQueries = [
+    // 교육/학습
+    "코딩 강의",
+    "영어 공부",
+    "수학 강의",
+    "자격증",
+    "온라인 강의",
+    // 엔터테인먼트
+    "음악",
+    "게임",
+    "먹방",
+    "브이로그",
+    "리액션",
+    // 라이프스타일
+    "요리",
+    "여행",
+    "패션",
+    "뷰티",
+    "운동",
+    // 기술/IT
+    "프로그래밍",
+    "개발",
+    "테크 리뷰",
+    "앱 리뷰",
+    // 뉴스/정보
+    "뉴스",
+    "시사",
+    "경제",
+    "정치",
+  ];
+
+  // 다른 지역은 영어 키워드 사용
+  const enQueries = [
+    "coding tutorial",
+    "music",
+    "gaming",
+    "cooking",
+    "travel",
+    "tech review",
+    "education",
+    "lifestyle",
+    "news",
+    "entertainment",
+  ];
+
+  return regionCode === "KR" ? krQueries : enQueries;
+}
+
 export async function runYoutubePopularCron(
   region: string = "KR",
   targetCount: number = 200
@@ -53,9 +141,40 @@ export async function runYoutubePopularCron(
       const chId = it?.snippet?.channelId;
       if (chId) channelIdSet.add(chId);
     }
-    const channelIds = Array.from(channelIdSet);
 
-    // 3. 채널 정보 조회 (statistics, snippet, contentDetails)
+    // 3. Search API로 다양한 키워드로 채널 추가 수집
+    const searchQueries = getSearchQueries(regionCode);
+    const channelsPerQuery = 20;
+
+    console.log(
+      `[Search API] ${searchQueries.length}개 쿼리로 채널 검색 시작...`
+    );
+
+    for (const query of searchQueries) {
+      try {
+        const foundChannelIds = await searchChannelsByQuery(
+          apiKey,
+          query,
+          regionCode,
+          channelsPerQuery
+        );
+        for (const chId of foundChannelIds) {
+          channelIdSet.add(chId);
+        }
+        // API 쿼터 고려하여 약간의 딜레이
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      } catch (error) {
+        console.error(`Search failed for query "${query}":`, error);
+        // 개별 쿼리 실패는 무시하고 계속 진행
+      }
+    }
+
+    const channelIds = Array.from(channelIdSet);
+    console.log(
+      `[채널 수집 완료] 인기 영상: ${items.length}개, 검색 추가: ${channelIds.length - items.length}개, 총 고유 채널: ${channelIds.length}개`
+    );
+
+    // 4. 채널 정보 조회 (statistics, snippet, contentDetails)
     // YouTube API는 한 번에 최대 50개까지만 조회 가능하므로 50개씩 나눠서 호출
     const channels: any[] = [];
     const BATCH_SIZE = 50;
@@ -83,7 +202,7 @@ export async function runYoutubePopularCron(
       channels.push(...(chData.items || []));
     }
 
-    // 4. 채널 정보만 DB에 저장
+    // 5. 채널 정보만 DB에 저장
     let savedCount = 0;
     for (const ch of channels) {
       const channelId = ch.id;
