@@ -70,7 +70,7 @@ export default function AdminYoutubeVideosView() {
                     variant={video.outlierVph >= 3 ? "default" : "outline"}
                     className={
                       video.outlierVph >= 3
-                        ? "bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A] text-white text-xs"
+                        ? "bg-gradient-to-r from-red-600 to-orange-600 text-white text-xs"
                         : "text-xs"
                     }
                   >
@@ -165,7 +165,7 @@ export default function AdminYoutubeVideosView() {
                 variant={outlier >= 3 ? "default" : "outline"}
                 className={
                   outlier >= 3
-                    ? "bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A] text-white"
+                    ? "bg-gradient-to-r from-red-600 to-orange-600 text-white"
                     : ""
                 }
               >
@@ -318,7 +318,7 @@ export default function AdminYoutubeVideosView() {
                 </div>
                 <Button
                   onClick={handleSearch}
-                  className="bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A] text-white hover:opacity-90 px-6 h-10"
+                  className="bg-gradient-to-r from-red-600 to-orange-600 text-white hover:opacity-90 px-6 h-10"
                 >
                   검색
                 </Button>
@@ -351,7 +351,7 @@ export default function AdminYoutubeVideosView() {
                     onClick={() => handleFilterChange("region", "KR")}
                     className={
                       regionFilter === "KR"
-                        ? "bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A] text-white hover:opacity-90"
+                        ? "bg-gradient-to-r from-red-600 to-orange-600 text-white hover:opacity-90"
                         : "border-slate-300 text-slate-700 hover:bg-slate-50"
                     }
                   >
@@ -363,7 +363,7 @@ export default function AdminYoutubeVideosView() {
                     onClick={() => handleFilterChange("region", "US")}
                     className={
                       regionFilter === "US"
-                        ? "bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A] text-white hover:opacity-90"
+                        ? "bg-gradient-to-r from-red-600 to-orange-600 text-white hover:opacity-90"
                         : "border-slate-300 text-slate-700 hover:bg-slate-50"
                     }
                   >

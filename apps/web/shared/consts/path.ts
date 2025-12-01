@@ -21,7 +21,7 @@ export const PATH = {
   STUDENT_POINTS_CHARGE: "/student/points/charge",
   STUDENT_POINTS_HISTORY: "/student/points/history",
   STUDENT_PROFILE: "/student/profile",
-
+  STUDENT_LOUNGE_LIBRARY: "/student/studentLounge/library",
   // 어드민
   ADMIN_ROOT: "/admin",
   ADMIN_COMMUNITY: "/admin/community",

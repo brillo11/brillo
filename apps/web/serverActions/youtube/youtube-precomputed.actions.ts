@@ -16,6 +16,7 @@ export interface PrecomputedVideo {
   duration: string;
   viewsPerHour: number | null;
   outlierVph: number | null;
+  regionCode: string | null;
 }
 
 export async function getTopPrecomputedVideos(limit = 50, regionCode?: string) {
@@ -48,5 +49,6 @@ export async function getTopPrecomputedVideos(limit = 50, regionCode?: string) {
     duration: v.duration,
     viewsPerHour: v.viewsPerHour,
     outlierVph: v.outlierVph,
+    regionCode: v.regionCode,
   })) as PrecomputedVideo[];
 }

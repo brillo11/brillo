@@ -1,9 +1,5 @@
 import { requireStudent } from "@/shared/lib/auth-guards";
 import { StatCard } from "@/shared/components/ui/stat-card";
-// import DashboardHeader from "./components/dashboard-header";
-// import AdminManageMenu from "./components/admin-manage-menu";
-// import StatusCardList from "./components/status-card-list";
-// import QuickActions from "./components/quick-actions";
 
 // SSR + Dynamic - 항상 최신 데이터, 캐시 없음
 export const dynamic = "force-dynamic";
@@ -38,7 +34,7 @@ export default async function StudentDashboard() {
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
                 stroke="currentColor"
-                className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600"
+                className="w-4 h-4 sm:w-5 sm:h-5 text-red-600"
               >
                 <path
                   strokeLinecap="round"
@@ -47,10 +43,10 @@ export default async function StudentDashboard() {
                 />
               </svg>
             }
-            iconBgColor="bg-blue-50"
+            iconBgColor="bg-red-50"
             label="진행률"
             value="8%"
-            progressBar={{ percentage: 8, color: "bg-blue-800" }}
+            progressBar={{ percentage: 8, color: "bg-red-600" }}
           />
 
           {/* 완료 카드 */}
@@ -153,7 +149,7 @@ export default async function StudentDashboard() {
               <div className="bg-slate-100 rounded-2xl p-6">
                 <div className="w-full bg-white rounded-xl h-8 overflow-hidden shadow-inner">
                   <div
-                    className="bg-blue-800 h-8 rounded-xl transition-all duration-1000 ease-out flex items-center justify-end pr-3"
+                    className="bg-red-600 h-8 rounded-xl transition-all duration-1000 ease-out flex items-center justify-end pr-3"
                     style={{ width: "8%" }}
                   />
                 </div>
@@ -179,12 +175,12 @@ export default async function StudentDashboard() {
                   {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((week) => (
                     <div
                       key={week}
-                      className="text-center py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-semibold bg-blue-50 text-blue-800"
+                      className="text-center py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-semibold bg-red-50 text-red-800"
                     >
                       {week}
                     </div>
                   ))}
-                  <div className="text-center py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-semibold bg-blue-800 text-white">
+                  <div className="text-center py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg text-xs sm:text-sm font-semibold bg-red-600 text-white">
                     12
                   </div>
                   {[13, 14, 15, 16, 17].map((week) => (

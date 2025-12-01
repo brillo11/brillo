@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { loginWithEmail, loginWithSocial } from "@/shared/lib/auth-helpers";
 import Image from "next/image";
 import { Card, CardContent } from "@repo/ui/components/card";
+import { Logo } from "@repo/ui/components/proBlocks/logo";
 import { Button } from "@repo/ui/components/button";
 import {
   PlayCircle,
@@ -16,6 +17,7 @@ import {
   CheckCircle2,
   Youtube,
   GraduationCap,
+  Play,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -118,78 +120,80 @@ export default function HomePage() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <Image
-                src="/logo_yhd.png"
-                alt="로고"
-                width={120}
-                height={40}
-                className="h-8 w-auto"
-              />
-            </div>
-            <Button
+            <Logo variant="full" size="md" />
+            <button
               onClick={() => setIsLoginOpen(true)}
-              className="bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A] text-white hover:opacity-90"
+              className="text-gray-600 hover:text-red-600 font-medium text-sm transition-colors"
             >
               로그인
-            </Button>
+            </button>
           </div>
         </div>
       </nav>
-
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50"></div>
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-200/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      {/* Hero */}
+      <section className="relative overflow-hidden pt-16 pb-24 lg:pt-32 bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        {/* Background blobs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-20 w-[500px] h-[500px] bg-red-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+          <div className="absolute top-40 right-20 w-[400px] h-[400px] bg-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob delay-[2s]"></div>
         </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-red-50 border border-red-100 text-red-600 text-xs font-bold uppercase tracking-wide mb-8 animate-fade-in-up">
+            <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
+            AI-Powered Personalized Learning
+            {/* YouTube로 시작하는 개인화된 학습 */}
+          </div>
 
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full mb-6">
-              <Sparkles className="w-4 h-4 text-blue-600" />
-              <span className="text-sm font-medium text-blue-700">
-                YouTube로 시작하는 개인화된 학습
-              </span>
-            </div>
+          <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 tracking-tight mb-8 leading-tight">
+            YouTube 인사이트로 <br className="hidden md:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-orange-500 to-amber-500">
+              학습의 새로운 차원을
+            </span>
+          </h1>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight">
-              YouTube 인사이트로
-              <br />
-              <span className="bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] bg-clip-text text-transparent">
-                학습의 새로운 차원을
-              </span>
-            </h1>
+          <p className="max-w-2xl mx-auto text-xl text-gray-600 mb-12 leading-relaxed">
+            인기 YouTube 영상을 활용한 개인화된 학습 플랫폼으로{" "}
+            <br className="hidden sm:block" /> 나만의 학습 자료를 만들고
+            체계적으로 학습하세요.
+          </p>
 
-            <p className="text-lg sm:text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
-              인기 YouTube 영상을 활용한 개인화된 학습 플랫폼으로
-              <br className="hidden sm:block" />
-              나만의 학습 자료를 만들고 체계적으로 학습하세요.
-            </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button
+              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-xl hover:shadow-red-200 transition-all flex items-center justify-center gap-2 group"
+              onClick={() => setIsLoginOpen(true)}
+            >
+              무료로 학습 시작하기
+              <ArrowRight
+                size={20}
+                className="group-hover:translate-x-1 transition-transform"
+              />
+            </button>
+          </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button
-                onClick={() => setIsLoginOpen(true)}
-                size="lg"
-                className="bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A] text-white hover:opacity-90 px-8 py-6 text-lg"
-              >
-                무료로 시작하기
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-2 border-slate-300 hover:border-slate-400 px-8 py-6 text-lg"
-              >
-                <PlayCircle className="mr-2 w-5 h-5" />
-                서비스 둘러보기
-              </Button>
+          {/* Hero Visual */}
+          <div className="mt-16 relative mx-auto max-w-5xl rounded-2xl border border-gray-200 shadow-2xl overflow-hidden bg-gray-900/5 aspect-video flex items-center justify-center group">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20 z-10"></div>
+            <img
+              src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1974&auto=format&fit=crop"
+              alt="Dashboard Preview"
+              className="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute z-20 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center text-white shadow-lg">
+                <Play size={24} fill="currentColor" />
+              </div>
+              <div className="text-left">
+                <p className="text-white font-bold text-lg">
+                  Analyzing Content...
+                </p>
+                <p className="text-white/80 text-sm">
+                  Extracting key insights from 124 videos
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
-
       {/* Features Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50">
         <div className="max-w-7xl mx-auto">
@@ -204,62 +208,31 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => (
-              <Card
+              <div
                 key={index}
-                className="border-none shadow-lg hover:shadow-xl transition-shadow"
+                className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
               >
-                <CardContent className="p-6">
-                  <div
-                    className={`w-12 h-12 ${feature.bgColor} rounded-lg flex items-center justify-center mb-4`}
-                  >
-                    <feature.icon className={`w-6 h-6 ${feature.color}`} />
-                  </div>
-                  <h3 className="text-xl font-semibold text-slate-900 mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-slate-600 text-sm leading-relaxed">
-                    {feature.description}
-                  </p>
-                </CardContent>
-              </Card>
+                <div className="w-14 h-14 bg-gradient-to-br from-red-50 to-orange-50 rounded-2xl flex items-center justify-center text-red-600 mb-6 border border-red-100">
+                  <feature.icon size={28} />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  {feature.description}
+                </p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-[#3B82F6] to-[#1E3A8A]">
-        <div className="max-w-4xl mx-auto text-center">
-          <GraduationCap className="w-16 h-16 text-white mx-auto mb-6" />
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-            지금 시작하세요
-          </h2>
-          <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
-            무료로 가입하고 YouTube 기반 개인화된 학습을 경험해보세요
-          </p>
-          <Button
-            onClick={() => setIsLoginOpen(true)}
-            size="lg"
-            className="bg-white text-[#3B82F6] hover:bg-blue-50 px-8 py-6 text-lg font-semibold"
-          >
-            무료로 시작하기
-            <ArrowRight className="ml-2 w-5 h-5" />
-          </Button>
-        </div>
-      </section>
-
       {/* Footer */}
-      <footer className="bg-slate-900 text-slate-300 py-12 px-4 sm:px-6 lg:px-8">
+      <footer className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="mb-4 md:mb-0">
-              <Image
-                src="/logo_yhd.png"
-                alt="로고"
-                width={120}
-                height={40}
-                className="h-8 w-auto opacity-80"
-              />
+              <Logo variant="full" size="md" />
             </div>
             <p className="text-sm text-slate-400">
               © 2024 TubeInsight. All rights reserved.
