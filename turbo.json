@@ -27,6 +27,7 @@
       "cache": false
     },
     "generate": {
+      "cache": false,
       "dependsOn": ["^generate"]
     },
     "dev": {

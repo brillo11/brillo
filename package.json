@@ -19,7 +19,7 @@
     "auth-gen": "node auth-gen.js"
   },
   "dependencies": {
-    "@prisma/client": "latest",
+    "@prisma/client": "6.19.0",
     "dotenv": "^17.2.3"
   },
   "devDependencies": {
