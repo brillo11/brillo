@@ -173,14 +173,14 @@ export function PopularVideosSection({ videos }: PopularVideosSectionProps) {
                       {formatVph(video.viewsPerHour)}
                     </span>
                   )}
-                  {formatOutlier(video.outlierMultiplierRecent) &&
-                    getOutlierBadgeClass(video.outlierMultiplierRecent) && (
+                  {formatOutlier(video.outlierVph) &&
+                    getOutlierBadgeClass(video.outlierVph) && (
                       <span
                         className={`ml-auto inline-flex items-center px-1.5 py-0.5 rounded-full border ${getOutlierBadgeClass(
-                          video.outlierMultiplierRecent
+                          video.outlierVph
                         )}`}
                       >
-                        {formatOutlier(video.outlierMultiplierRecent)}
+                        {formatOutlier(video.outlierVph)}
                       </span>
                     )}
                 </div>
@@ -266,19 +266,17 @@ export function PopularVideosSection({ videos }: PopularVideosSectionProps) {
                 <div className="flex flex-wrap items-center gap-2 text-[11px] sm:text-xs text-slate-500">
                   {formatVph(selectedVideo.viewsPerHour) && (
                     <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
-                      실시간 속도: {formatVph(selectedVideo.viewsPerHour)}
+                      시간당 조회수: {formatVph(selectedVideo.viewsPerHour)}
                     </span>
                   )}
-                  {formatOutlier(selectedVideo.outlierMultiplierRecent) &&
-                    getOutlierBadgeClass(
-                      selectedVideo.outlierMultiplierRecent
-                    ) && (
+                  {formatOutlier(selectedVideo.outlierVph) &&
+                    getOutlierBadgeClass(selectedVideo.outlierVph) && (
                       <span
                         className={`inline-flex items-center px-2 py-0.5 rounded-full border ${getOutlierBadgeClass(
-                          selectedVideo.outlierMultiplierRecent
+                          selectedVideo.outlierVph
                         )}`}
                       >
-                        {formatOutlier(selectedVideo.outlierMultiplierRecent)}
+                        {formatOutlier(selectedVideo.outlierVph)}
                       </span>
                     )}
                 </div>

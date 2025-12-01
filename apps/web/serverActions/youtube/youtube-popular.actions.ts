@@ -41,8 +41,8 @@ export interface PopularVideo {
   duration: string;
   channelId: string | null;
   viewsPerHour: number | null;
-  outlierMultiplierRecent: number | null;
-  outlierMultiplierOverall: number | null;
+  outlierVph: number | null;
+  outlierView: number | null;
 }
 
 interface GetPopularVideosResult {
@@ -273,18 +273,18 @@ export async function getPopularVideos(
       }
 
       // outliers: 채널 평균 대비 배수
-      let outlierMultiplierRecent: number | null = null;
-      let outlierMultiplierOverall: number | null = null;
+      let outlierVph: number | null = null;
+      let outlierView: number | null = null;
       if (channelId) {
         const recentAvgVph = recentAvgVphMap[channelId];
         if (recentAvgVph && recentAvgVph > 0 && viewsPerHour !== null) {
           const raw = viewsPerHour / recentAvgVph;
-          outlierMultiplierRecent = Number.isFinite(raw) ? raw : null;
+          outlierVph = Number.isFinite(raw) ? raw : null;
         }
         const overallAvg = channelOverallAverageMap[channelId];
         if (overallAvg && overallAvg > 0) {
           const raw = viewCount / overallAvg;
-          outlierMultiplierOverall = Number.isFinite(raw) ? raw : null;
+          outlierView = Number.isFinite(raw) ? raw : null;
         }
       }
 
@@ -301,8 +301,8 @@ export async function getPopularVideos(
         duration: contentDetails.duration ?? "",
         channelId,
         viewsPerHour,
-        outlierMultiplierRecent,
-        outlierMultiplierOverall,
+        outlierVph,
+        outlierView,
       };
     });
 

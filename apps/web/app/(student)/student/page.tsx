@@ -11,8 +11,6 @@ export default async function StudentPage() {
   // 🛡️ 서버에서 권한 검증 (미들웨어 통과 후 2차 검증)
   await requireStudent();
 
-  // Product 테이블에서 상품 데이터 가져오기
-  const services = await getProductsForList();
   const precomputed = await getTopPrecomputedVideos(50, "KR");
 
   return (
