@@ -38,7 +38,7 @@ export async function createConversation() {
 const setSchema = z.object({
   thumbnailTitle: z.string(),
   videoTitle: z.string(),
-  hookingText: z.string(),
+  // hookingText: z.string(),
 })
 const titleSchema = z.object({
   sets: z.array(setSchema).length(5),
@@ -57,12 +57,12 @@ export async function sendTitleResponses(sessionId: string, message: string) {
             type: 'input_text',
             text: `1. 사용자가 키워드, 주제, 또는 영상에서 보여주고 싶은 내용을 제시하면 **무조건 가장 먼저 ABCD 제목 공식**을 적용한 5개의 제목 세트를 제시한다. 이 단계는 지침에서 최우선적으로 반영되며, 반드시 아래 구조를 따른다:
 
-(이모지)썸네일 후킹 텍스트  
+썸네일 후킹 텍스트(썸네일 제목) 
 [ABCD 제목 공식에 따른 가장 강력하고 자극적인 썸네일 제목: 주로 AB+C 조합 응용]  
 (이모지)영상 제목  
 **[ABCD 제목 공식에 따른 영상을 설명하고 키워드를 배치할 수 있는 제목: ABCD 제목 공식 응용]**  
 
-- 썸네일 후킹 텍스트는 자극적이고 짧게, 단순하게 작성한다.  
+- 썸네일 후킹 텍스트(썸네일 제목)는 자극적이고 짧게, 단순하게 작성한다.  
 - 영상 제목은 설명과 키워드를 담되, 썸네일 후킹 텍스트와 겹치지 않아야 한다.  
 - 영상 제목은 반드시 굵은 볼드체로 표기한다.  
 - 영상 제목에는 이모지를 넣지 않는다. (단, 패션·뷰티 등 여성향 콘텐츠일 경우만 이모지 허용)  
@@ -77,6 +77,7 @@ export async function sendTitleResponses(sessionId: string, message: string) {
 2. 제목이 확정되면 **썸네일 가이드 3개**를 추천한다.
 - 텍스트 강조 위치는 필요 없음.
 - 등장 요소(인물, 배경, 소품, 분위기 등)에 집중.
+- 위의 요소와 함께 위의 요소를 요약한 요약본을 각각 제공한다.
 
 
 3. 사용자가 대본 생성을 원하면 아래 구조로 작성한다.
@@ -149,6 +150,7 @@ export async function sendScriptResponses(sessionId: string) {
 const thumbnailGuideSetSchema = z.object({
   guideTitle: z.string().describe('markdown 형식으로 작성'),
   guideDescription: z.string().describe('markdown 형식으로 작성'),
+  guideSummary: z.string().describe('markdown 형식으로 작성'),
 })
 const thumbnailGuideSchema = z.object({
   thumbnailGuides: z.array(thumbnailGuideSetSchema).length(3),

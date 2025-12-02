@@ -173,7 +173,7 @@ export default function Conversation({ sessionId }: { sessionId: string }) {
                 </CardHeader>
                 <CardContent>
                   썸네일 제목 <MarkdownRenderer content={set.thumbnailTitle} />
-                  후킹 텍스트 <MarkdownRenderer content={set.hookingText} />
+                  {/* 후킹 텍스트 <MarkdownRenderer content={set.hookingText} /> */}
                   영상 제목 <MarkdownRenderer content={set.videoTitle} />
                 </CardContent>
                 <CardFooter>
@@ -200,7 +200,7 @@ export default function Conversation({ sessionId }: { sessionId: string }) {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <MarkdownRenderer content={guide.guideDescription} />
+                    <MarkdownRenderer content={guide.guideSummary} />
                   </CardContent>
                   <CardFooter>
                     <Button onClick={() => selectThumbnailGuide(index)}>선택</Button>
