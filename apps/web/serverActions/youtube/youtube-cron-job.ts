@@ -99,7 +99,6 @@ function getAllSearchQueries(regionCode: string): string[] {
     "뉴스",
     "시사",
     "경제",
-    "정치",
   ];
 
   // 다른 지역은 영어 키워드 사용
