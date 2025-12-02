@@ -166,7 +166,7 @@ export async function runYoutubePopularCronByCategory(
       categoryEnd,
       regionCode
     );
-    const channelsPerQuery = 20;
+    const channelsPerQuery = 50;
 
     console.log(
       `[Search API] 카테고리 ${categoryStart}-${categoryEnd} 범위, ${searchQueries.length}개 쿼리로 채널 검색 시작...`
