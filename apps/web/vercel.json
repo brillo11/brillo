@@ -5,23 +5,23 @@
       "schedule": "0 0 * * *"
     },
     {
-      "path": "/api/cron/youtube-popular-category-1-5",
+      "path": "/api/cron/youtube-search-category-1-5",
       "schedule": "0 1 * * *"
     },
     {
-      "path": "/api/cron/youtube-popular-category-6-10",
+      "path": "/api/cron/youtube-search-category-6-10",
       "schedule": "0 2 * * *"
     },
     {
-      "path": "/api/cron/youtube-popular-category-11-15",
+      "path": "/api/cron/youtube-search-category-11-15",
       "schedule": "0 3 * * *"
     },
     {
-      "path": "/api/cron/youtube-popular-category-16-20",
+      "path": "/api/cron/youtube-search-category-16-20",
       "schedule": "0 4 * * *"
     },
     {
-      "path": "/api/cron/youtube-popular-category-21-25",
+      "path": "/api/cron/youtube-search-category-21-25",
       "schedule": "0 5 * * *"
     },
     {
