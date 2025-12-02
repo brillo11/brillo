@@ -294,7 +294,7 @@ export async function runYoutubeVideosCron(
       ...(take !== undefined && { take }),
       ...(maxChannels && !take && { take: maxChannels }),
       orderBy: {
-        lastCrawledAt: "desc",
+        lastCrawledAt: "asc",
       },
     });
 

@@ -2,47 +2,47 @@
   "crons": [
     {
       "path": "/api/cron/youtube-popular",
-      "schedule": "0 0 * * *"
+      "schedule": "0 15 * * 6"
     },
     {
       "path": "/api/cron/youtube-search-category-1-5",
-      "schedule": "0 1 * * *"
+      "schedule": "0 16 * * 6"
     },
     {
       "path": "/api/cron/youtube-search-category-6-10",
-      "schedule": "0 2 * * *"
+      "schedule": "0 17 * * 6"
     },
     {
       "path": "/api/cron/youtube-search-category-11-15",
-      "schedule": "0 3 * * *"
+      "schedule": "0 18 * * 6"
     },
     {
       "path": "/api/cron/youtube-search-category-16-20",
-      "schedule": "0 4 * * *"
+      "schedule": "0 19 * * 6"
     },
     {
       "path": "/api/cron/youtube-search-category-21-25",
-      "schedule": "0 5 * * *"
+      "schedule": "0 20 * * 6"
     },
     {
       "path": "/api/cron/youtube-videos-batch-1",
-      "schedule": "0 6 * * *"
+      "schedule": "0 21 * * *"
     },
     {
       "path": "/api/cron/youtube-videos-batch-2",
-      "schedule": "10 6 * * *"
+      "schedule": "10 21 * * *"
     },
     {
       "path": "/api/cron/youtube-videos-batch-3",
-      "schedule": "20 6 * * *"
+      "schedule": "20 21 * * *"
     },
     {
       "path": "/api/cron/youtube-videos-batch-4",
-      "schedule": "30 6 * * *"
+      "schedule": "30 21 * * *"
     },
     {
       "path": "/api/cron/youtube-videos-batch-5",
-      "schedule": "40 6 * * *"
+      "schedule": "40 21 * * *"
     }
   ]
 }
