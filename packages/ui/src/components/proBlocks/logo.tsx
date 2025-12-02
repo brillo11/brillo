@@ -45,9 +45,9 @@ export const Logo: React.FC<LogoProps> = ({
         */}
         <svg
           viewBox="0 0 24 24"
-          fill="none"
+      fill="none"
           className="w-3/5 h-3/5 fill-white"
-          xmlns="http://www.w3.org/2000/svg"
+      xmlns="http://www.w3.org/2000/svg"
         >
           {/* Top Bar */}
           <path d="M5 6C5 4.89543 5.89543 4 7 4H11C12.1046 4 13 4.89543 13 6C13 7.10457 12.1046 8 11 8H7C5.89543 8 5 7.10457 5 6Z" />
@@ -57,7 +57,7 @@ export const Logo: React.FC<LogoProps> = ({
 
           {/* Bottom Bar */}
           <path d="M5 18C5 16.8954 5.89543 16 7 16H11C12.1046 16 13 16.8954 13 18C13 19.1046 12.1046 20 11 20H7C5.89543 20 5 19.1046 5 18Z" />
-        </svg>
+    </svg>
       </div>
 
       {/* Text Logo */}

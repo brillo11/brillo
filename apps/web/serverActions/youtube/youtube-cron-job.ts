@@ -68,8 +68,8 @@ async function searchChannelsByQuery(
   return channelIds;
 }
 
-// 고르게 채널 수집을 위한 검색 쿼리 리스트
-function getSearchQueries(regionCode: string): string[] {
+// 고르게 채널 수집을 위한 검색 쿼리 리스트 (전체)
+function getAllSearchQueries(regionCode: string): string[] {
   // 한국 기준 다양한 카테고리 키워드
   const krQueries = [
     // 교육/학습
@@ -119,7 +119,37 @@ function getSearchQueries(regionCode: string): string[] {
   return regionCode === "KR" ? krQueries : enQueries;
 }
 
-export async function runYoutubePopularCron(
+// 카테고리 범위별로 검색 쿼리 분배 (각 라우트당 5개씩)
+function getSearchQueriesByCategoryRange(
+  categoryStart: number,
+  categoryEnd: number,
+  regionCode: string
+): string[] {
+  const allQueries = getAllSearchQueries(regionCode);
+  const queriesPerRoute = 5; // 각 라우트당 5개 쿼리
+
+  // 현재 범위의 인덱스 계산 (1-5=0, 6-10=1, 11-15=2, ...)
+  const rangeIndex = Math.floor((categoryStart - 1) / 5);
+
+  // 해당 범위에 할당된 쿼리 추출 (5개씩)
+  const startIndex = rangeIndex * queriesPerRoute;
+  const endIndex = Math.min(startIndex + queriesPerRoute, allQueries.length);
+
+  return allQueries.slice(startIndex, endIndex);
+}
+
+// 고르게 채널 수집을 위한 검색 쿼리 리스트 (기존 호환성 유지)
+function getSearchQueries(regionCode: string): string[] {
+  return getAllSearchQueries(regionCode);
+}
+
+/**
+ * YouTube Popular 크론잡 실행 (카테고리별)
+ * Search API에서 특정 카테고리 범위의 채널을 수집
+ */
+export async function runYoutubePopularCronByCategory(
+  categoryStart: number,
+  categoryEnd: number,
   region: string = "KR",
   targetCount: number = 200
 ) {
@@ -142,12 +172,16 @@ export async function runYoutubePopularCron(
       if (chId) channelIdSet.add(chId);
     }
 
-    // 3. Search API로 다양한 키워드로 채널 추가 수집
-    const searchQueries = getSearchQueries(regionCode);
+    // 3. Search API로 카테고리별 채널 추가 수집 (해당 범위에 할당된 쿼리만 사용)
+    const searchQueries = getSearchQueriesByCategoryRange(
+      categoryStart,
+      categoryEnd,
+      regionCode
+    );
     const channelsPerQuery = 20;
 
     console.log(
-      `[Search API] ${searchQueries.length}개 쿼리로 채널 검색 시작...`
+      `[Search API] 카테고리 ${categoryStart}-${categoryEnd} 범위, ${searchQueries.length}개 쿼리로 채널 검색 시작...`
     );
 
     for (const query of searchQueries) {
@@ -257,8 +291,21 @@ export async function runYoutubePopularCron(
       uniqueChannels: channelIds.length,
       videosAnalyzed: items.length,
       region: regionCode,
+      categoryRange: `${categoryStart}-${categoryEnd}`,
     };
   } catch (e: any) {
     throw new Error(e?.message || "cron failed");
   }
+}
+
+/**
+ * YouTube Popular 크론잡 실행 (기존 - 모든 카테고리)
+ * @deprecated 카테고리별 크론잡 사용 권장
+ */
+export async function runYoutubePopularCron(
+  region: string = "KR",
+  targetCount: number = 200
+) {
+  // 모든 카테고리 처리 (1-44)
+  return runYoutubePopularCronByCategory(1, 22, region, targetCount);
 }

@@ -21,6 +21,7 @@ interface VideoData {
   viewsPerHour: number | null;
   outlierVph: number | null;
   outlierView: number | null;
+  categoryId: number | null;
 }
 
 /**
@@ -113,6 +114,39 @@ async function fetchVideoDetails(
 }
 
 /**
+ * ISO 8601 duration을 초 단위로 변환
+ * 예: "PT1M30S" -> 90, "PT60S" -> 60
+ */
+function parseDurationToSeconds(isoDuration: string): number {
+  if (!isoDuration) return 0;
+
+  const match = isoDuration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/i);
+  if (!match) return 0;
+
+  const hours = Number.parseInt(match[1] ?? "0", 10);
+  const minutes = Number.parseInt(match[2] ?? "0", 10);
+  const seconds = Number.parseInt(match[3] ?? "0", 10);
+
+  return hours * 3600 + minutes * 60 + seconds;
+}
+
+/**
+ * 영상이 쇼츠인지 확인
+ * 1. duration이 60초 이하인 경우
+ * 2. 제목에 "#shorts" 또는 "#Shorts"가 포함된 경우
+ */
+function isShortsVideo(duration: string, title: string): boolean {
+  // 제목에 #shorts 포함 여부 확인
+  const hasShortsTag = /#shorts/i.test(title);
+
+  // duration이 60초 이하인지 확인
+  const durationSeconds = parseDurationToSeconds(duration);
+  const isShortDuration = durationSeconds > 0 && durationSeconds <= 60;
+
+  return hasShortsTag || isShortDuration;
+}
+
+/**
  * VPH (Views Per Hour) 계산
  */
 function calculateViewsPerHour(
@@ -186,6 +220,11 @@ function processVideos(
       snippet.thumbnails?.default?.url ||
       "";
 
+    // categoryId 추출 (YouTube 비디오 카테고리 ID)
+    const categoryId = snippet.categoryId
+      ? parseInt(snippet.categoryId, 10)
+      : null;
+
     // VPH 계산
     const viewsPerHour = calculateViewsPerHour(viewCount, publishedAt);
 
@@ -205,6 +244,7 @@ function processVideos(
         overallAvgView && overallAvgView > 0
           ? viewCount / overallAvgView
           : null,
+      categoryId: Number.isFinite(categoryId ?? 0) ? categoryId : null,
     });
   }
 
@@ -258,6 +298,7 @@ export async function runYoutubeVideosCron(
 
     let totalVideosProcessed = 0;
     let totalVideosSaved = 0;
+    let totalShortsSaved = 0;
     let channelsProcessed = 0;
 
     // 2. 각 채널의 영상 수집 및 처리
@@ -289,15 +330,33 @@ export async function runYoutubeVideosCron(
           channel.overallAvgView
         );
 
+        // 쇼츠와 일반 영상 분리
+        const shortsVideos: VideoData[] = [];
+        const regularVideos: VideoData[] = [];
+
+        for (const video of processedVideos) {
+          if (isShortsVideo(video.duration, video.title)) {
+            shortsVideos.push(video);
+          } else {
+            regularVideos.push(video);
+          }
+        }
+
         // outlier가 높은 영상들만 필터링 (outlierVph 기준만)
-        const highOutlierVideos = processedVideos.filter((video) => {
+        const highOutlierRegularVideos = regularVideos.filter((video) => {
           return (
             video.outlierVph !== null && video.outlierVph >= MIN_OUTLIER_VPH
           );
         });
 
-        // DB에 저장
-        for (const video of highOutlierVideos) {
+        const highOutlierShortsVideos = shortsVideos.filter((video) => {
+          return (
+            video.outlierVph !== null && video.outlierVph >= MIN_OUTLIER_VPH
+          );
+        });
+
+        // 일반 영상을 YoutubeVideo 테이블에 저장
+        for (const video of highOutlierRegularVideos) {
           try {
             await prisma.youtubeVideo.upsert({
               where: { id: video.id },
@@ -314,6 +373,7 @@ export async function runYoutubeVideosCron(
                 outlierVph: video.outlierVph,
                 outlierView: video.outlierView,
                 regionCode: channel.regionCode,
+                categoryId: video.categoryId,
                 crawledAt: new Date(),
               },
               create: {
@@ -331,6 +391,7 @@ export async function runYoutubeVideosCron(
                 outlierVph: video.outlierVph,
                 outlierView: video.outlierView,
                 regionCode: channel.regionCode,
+                categoryId: video.categoryId,
                 crawledAt: new Date(),
               },
             });
@@ -343,8 +404,58 @@ export async function runYoutubeVideosCron(
           }
         }
 
+        // 쇼츠를 YoutubeShorts 테이블에 저장
+        for (const video of highOutlierShortsVideos) {
+          try {
+            await prisma.youtubeShorts.upsert({
+              where: { id: video.id },
+              update: {
+                title: video.title,
+                description: video.description,
+                thumbnailUrl: video.thumbnailUrl,
+                publishedAt: video.publishedAt,
+                duration: video.duration,
+                viewCount: video.viewCount,
+                likeCount: video.likeCount,
+                commentCount: video.commentCount,
+                viewsPerHour: video.viewsPerHour,
+                outlierVph: video.outlierVph,
+                outlierView: video.outlierView,
+                regionCode: channel.regionCode,
+                categoryId: video.categoryId,
+                crawledAt: new Date(),
+              },
+              create: {
+                id: video.id,
+                channelId: channel.id,
+                title: video.title,
+                description: video.description,
+                thumbnailUrl: video.thumbnailUrl,
+                publishedAt: video.publishedAt,
+                duration: video.duration,
+                viewCount: video.viewCount,
+                likeCount: video.likeCount,
+                commentCount: video.commentCount,
+                viewsPerHour: video.viewsPerHour,
+                outlierVph: video.outlierVph,
+                outlierView: video.outlierView,
+                regionCode: channel.regionCode,
+                categoryId: video.categoryId,
+                crawledAt: new Date(),
+              },
+            });
+            totalVideosSaved++;
+            totalShortsSaved++;
+          } catch (error) {
+            console.error(
+              `[${channel.title}] 쇼츠 저장 실패 (${video.id}):`,
+              error
+            );
+          }
+        }
+
         console.log(
-          `[${channel.title}] 처리 완료: ${apiVideos.length}개 조회, ${highOutlierVideos.length}개 저장`
+          `[${channel.title}] 처리 완료: ${apiVideos.length}개 조회, 일반 영상 ${highOutlierRegularVideos.length}개, 쇼츠 ${highOutlierShortsVideos.length}개 저장`
         );
 
         channelsProcessed++;
@@ -362,7 +473,8 @@ export async function runYoutubeVideosCron(
       channelsProcessed,
       totalChannels: channels.length,
       videosProcessed: totalVideosProcessed,
-      videosSaved: totalVideosSaved,
+      videosSaved: totalVideosSaved - totalShortsSaved, // 일반 영상 개수
+      shortsSaved: totalShortsSaved, // 쇼츠 개수
       regionCode: regionCode || "all",
     };
   } catch (e: any) {

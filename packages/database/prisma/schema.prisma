@@ -339,6 +339,7 @@ model YoutubeChannel {
   misc            Json           @default("{}")
 
   videos YoutubeVideo[]
+  shorts YoutubeShorts[]
 }
 
 model YoutubeVideo {
@@ -358,6 +359,7 @@ model YoutubeVideo {
   outlierVph         Float?
   outlierView        Float?
   regionCode         String?    // 수집 지역 코드
+  categoryId         Int?       // YouTube 비디오 카테고리 ID
   crawledAt          DateTime   @default(now())
   misc               Json       @default("{}")
 
@@ -368,6 +370,38 @@ model YoutubeVideo {
   @@index([outlierVph])
   @@index([viewsPerHour])
   @@index([publishedAt])
+  @@index([categoryId])
+}
+
+model YoutubeShorts {
+  id                 String    @id // YouTube Video ID
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  channelId          String
+  title              String     @default("")
+  description        String     @default("")
+  thumbnailUrl       String     @default("")
+  publishedAt        DateTime?
+  duration           String     @default("")
+  viewCount          Int        @default(0)
+  likeCount          Int?
+  commentCount       Int?
+  viewsPerHour       Float?
+  outlierVph         Float?
+  outlierView        Float?
+  regionCode         String?    // 수집 지역 코드
+  categoryId         Int?       // YouTube 비디오 카테고리 ID
+  crawledAt          DateTime   @default(now())
+  misc               Json       @default("{}")
+
+  channel YoutubeChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@index([channelId])
+  @@index([regionCode])
+  @@index([outlierVph])
+  @@index([viewsPerHour])
+  @@index([publishedAt])
+  @@index([categoryId])
 }
 enum ROLE {
   SUPER_ADMIN
