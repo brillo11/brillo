@@ -52,3 +52,37 @@ export async function getTopPrecomputedVideos(limit = 50, regionCode?: string) {
     regionCode: v.regionCode,
   })) as PrecomputedVideo[];
 }
+
+export async function getTopPrecomputedShorts(limit = 50, regionCode?: string) {
+  const shorts = await prisma.youtubeShorts.findMany({
+    where: {
+      ...(regionCode ? { regionCode } : {}),
+    },
+    orderBy: [
+      { outlierVph: "desc" },
+      { viewsPerHour: "desc" },
+      { viewCount: "desc" },
+    ],
+    take: Math.min(Math.max(limit, 1), 100),
+    include: {
+      channel: true,
+    },
+  });
+
+  return shorts.map((s) => ({
+    id: s.id,
+    title: s.title,
+    description: s.description,
+    thumbnailUrl: s.thumbnailUrl,
+    channelId: s.channelId,
+    channelTitle: s.channel?.title || "",
+    publishedAt: s.publishedAt,
+    viewCount: s.viewCount,
+    likeCount: s.likeCount,
+    commentCount: s.commentCount,
+    duration: s.duration,
+    viewsPerHour: s.viewsPerHour,
+    outlierVph: s.outlierVph,
+    regionCode: s.regionCode,
+  })) as PrecomputedVideo[];
+}

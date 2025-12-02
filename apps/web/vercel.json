@@ -25,8 +25,24 @@
       "schedule": "0 5 * * *"
     },
     {
-      "path": "/api/cron/youtube-videos",
+      "path": "/api/cron/youtube-videos-batch-1",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/youtube-videos-batch-2",
+      "schedule": "10 6 * * *"
+    },
+    {
+      "path": "/api/cron/youtube-videos-batch-3",
+      "schedule": "20 6 * * *"
+    },
+    {
+      "path": "/api/cron/youtube-videos-batch-4",
+      "schedule": "30 6 * * *"
+    },
+    {
+      "path": "/api/cron/youtube-videos-batch-5",
+      "schedule": "40 6 * * *"
     }
   ]
 }

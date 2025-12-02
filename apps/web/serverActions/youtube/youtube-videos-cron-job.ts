@@ -270,7 +270,9 @@ function processVideos(
  */
 export async function runYoutubeVideosCron(
   maxChannels?: number,
-  regionCode?: string
+  regionCode?: string,
+  skip?: number,
+  take?: number
 ) {
   try {
     const apiKey = process.env.YOUTUBE_DATA_API_KEY;
@@ -288,7 +290,9 @@ export async function runYoutubeVideosCron(
 
     const channels = await prisma.youtubeChannel.findMany({
       where,
-      ...(maxChannels && { take: maxChannels }),
+      ...(skip !== undefined && { skip }),
+      ...(take !== undefined && { take }),
+      ...(maxChannels && !take && { take: maxChannels }),
       orderBy: {
         lastCrawledAt: "desc",
       },
