@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { runYoutubePopularCronByCategory } from "@/serverActions/youtube/youtube-cron-job";
 
 // 카테고리 범위 정의
-const CATEGORY_START = 6;
-const CATEGORY_END = 10;
+const CATEGORY_START = 16;
+const CATEGORY_END = 20;
 
 // Vercel Cron Job 인증: Authorization Bearer 토큰
 function isAuthorized(req: NextRequest): boolean {
@@ -25,16 +25,11 @@ export async function GET(req: NextRequest) {
 
   try {
     const region = req.nextUrl.searchParams.get("region") || "KR";
-    const targetCount = Math.min(
-      Math.max(parseInt(req.nextUrl.searchParams.get("count") || "200", 10), 1),
-      200
-    );
 
     const result = await runYoutubePopularCronByCategory(
       CATEGORY_START,
       CATEGORY_END,
-      region,
-      targetCount
+      region
     );
 
     return NextResponse.json(result);
