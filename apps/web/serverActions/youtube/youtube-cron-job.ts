@@ -150,8 +150,7 @@ function getSearchQueries(regionCode: string): string[] {
 export async function runYoutubePopularCronByCategory(
   categoryStart: number,
   categoryEnd: number,
-  region: string = "KR",
-  targetCount: number = 200
+  region: string = "KR"
 ) {
   try {
     const apiKey = process.env.YOUTUBE_DATA_API_KEY;
@@ -160,19 +159,8 @@ export async function runYoutubePopularCronByCategory(
     }
 
     const regionCode = region.toUpperCase();
-    const safeCount = Math.min(Math.max(targetCount, 1), 200);
 
-    // 1. 인기 영상 200개 가져오기
-    const items = await fetchMostPopular(regionCode, safeCount);
-
-    // 2. 채널 ID 추출 (중복 제거)
-    const channelIdSet = new Set<string>();
-    for (const it of items) {
-      const chId = it?.snippet?.channelId;
-      if (chId) channelIdSet.add(chId);
-    }
-
-    // 3. Search API로 카테고리별 채널 추가 수집 (해당 범위에 할당된 쿼리만 사용)
+    // Search API로 카테고리별 채널 수집 (해당 범위에 할당된 쿼리만 사용)
     const searchQueries = getSearchQueriesByCategoryRange(
       categoryStart,
       categoryEnd,
@@ -183,6 +171,8 @@ export async function runYoutubePopularCronByCategory(
     console.log(
       `[Search API] 카테고리 ${categoryStart}-${categoryEnd} 범위, ${searchQueries.length}개 쿼리로 채널 검색 시작...`
     );
+
+    const channelIdSet = new Set<string>();
 
     for (const query of searchQueries) {
       try {
@@ -205,7 +195,7 @@ export async function runYoutubePopularCronByCategory(
 
     const channelIds = Array.from(channelIdSet);
     console.log(
-      `[채널 수집 완료] 인기 영상: ${items.length}개, 검색 추가: ${channelIds.length - items.length}개, 총 고유 채널: ${channelIds.length}개`
+      `[채널 수집 완료] 검색으로 수집한 채널: ${channelIds.length}개`
     );
 
     // 4. 채널 정보 조회 (statistics, snippet, contentDetails)
@@ -233,7 +223,12 @@ export async function runYoutubePopularCronByCategory(
       }
 
       const chData = await chRes.json();
-      channels.push(...(chData.items || []));
+      // 영상이 10개 초과인 채널만 필터링
+      const validChannels = (chData.items || []).filter((ch: any) => {
+        const videoCount = parseInt(ch.statistics?.videoCount || "0", 10);
+        return videoCount > 10;
+      });
+      channels.push(...validChannels);
     }
 
     // 5. 채널 정보만 DB에 저장
@@ -289,7 +284,6 @@ export async function runYoutubePopularCronByCategory(
       success: true,
       channelsProcessed: savedCount,
       uniqueChannels: channelIds.length,
-      videosAnalyzed: items.length,
       region: regionCode,
       categoryRange: `${categoryStart}-${categoryEnd}`,
     };
@@ -299,13 +293,123 @@ export async function runYoutubePopularCronByCategory(
 }
 
 /**
- * YouTube Popular 크론잡 실행 (기존 - 모든 카테고리)
- * @deprecated 카테고리별 크론잡 사용 권장
+ * YouTube Popular 크론잡 실행 (인기 영상 기반)
+ * 인기 영상에서 채널을 추출하여 수집
  */
 export async function runYoutubePopularCron(
   region: string = "KR",
   targetCount: number = 200
 ) {
-  // 모든 카테고리 처리 (1-44)
-  return runYoutubePopularCronByCategory(1, 22, region, targetCount);
+  try {
+    const apiKey = process.env.YOUTUBE_DATA_API_KEY;
+    if (!apiKey) {
+      throw new Error("YOUTUBE_DATA_API_KEY is not set");
+    }
+
+    const regionCode = region.toUpperCase();
+    const safeCount = Math.min(Math.max(targetCount, 1), 200);
+
+    // 1. 인기 영상 가져오기
+    const items = await fetchMostPopular(regionCode, safeCount);
+
+    // 2. 채널 ID 추출 (중복 제거)
+    const channelIdSet = new Set<string>();
+    for (const it of items) {
+      const chId = it?.snippet?.channelId;
+      if (chId) channelIdSet.add(chId);
+    }
+
+    const channelIds = Array.from(channelIdSet);
+    console.log(
+      `[인기 영상 크론] 영상: ${items.length}개, 고유 채널: ${channelIds.length}개`
+    );
+
+    // 3. 채널 정보 조회 (statistics, snippet, contentDetails)
+    const channels: any[] = [];
+    const BATCH_SIZE = 50;
+
+    for (let i = 0; i < channelIds.length; i += BATCH_SIZE) {
+      const batch = channelIds.slice(i, i + BATCH_SIZE);
+      const chParams = new URLSearchParams({
+        part: "statistics,contentDetails,snippet",
+        id: batch.join(","),
+        key: apiKey,
+      });
+
+      const chRes = await fetch(
+        `https://www.googleapis.com/youtube/v3/channels?${chParams.toString()}`
+      );
+
+      if (!chRes.ok) {
+        console.error(
+          `Failed to fetch channel batch ${i / BATCH_SIZE + 1}: ${chRes.statusText}`
+        );
+        continue;
+      }
+
+      const chData = await chRes.json();
+      // 영상이 10개 초과인 채널만 필터링
+      const validChannels = (chData.items || []).filter((ch: any) => {
+        const videoCount = parseInt(ch.statistics?.videoCount || "0", 10);
+        return videoCount > 10;
+      });
+      channels.push(...validChannels);
+    }
+
+    // 4. 채널 정보만 DB에 저장
+    let savedCount = 0;
+    for (const ch of channels) {
+      const channelId = ch.id;
+      if (!channelId) continue;
+
+      const totalViews = parseInt(ch.statistics?.viewCount || "0", 10);
+      const videoCount = parseInt(ch.statistics?.videoCount || "0", 10);
+      const overallAvgView =
+        videoCount > 0 && Number.isFinite(totalViews)
+          ? totalViews / videoCount
+          : null;
+
+      const thumbnailUrl =
+        ch.snippet?.thumbnails?.high?.url ||
+        ch.snippet?.thumbnails?.default?.url ||
+        "";
+
+      const uploadsPlaylist =
+        ch.contentDetails?.relatedPlaylists?.uploads || null;
+
+      await prisma.youtubeChannel.upsert({
+        where: { id: channelId },
+        update: {
+          title: ch.snippet?.title || "",
+          thumbnailUrl,
+          regionCode: regionCode,
+          uploadsPlaylist,
+          videoCount: videoCount > 0 ? videoCount : null,
+          overallAvgView,
+          lastCrawledAt: new Date(),
+        },
+        create: {
+          id: channelId,
+          title: ch.snippet?.title || "",
+          thumbnailUrl,
+          regionCode: regionCode,
+          uploadsPlaylist,
+          videoCount: videoCount > 0 ? videoCount : null,
+          overallAvgView,
+          lastCrawledAt: new Date(),
+        },
+      });
+      savedCount++;
+    }
+
+    return {
+      success: true,
+      channelsProcessed: savedCount,
+      uniqueChannels: channelIds.length,
+      videosAnalyzed: items.length,
+      region: regionCode,
+    };
+  } catch (e: any) {
+    throw new Error(e?.message || "cron failed");
+  }
 }

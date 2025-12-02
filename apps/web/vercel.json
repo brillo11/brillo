@@ -1,6 +1,10 @@
 {
   "crons": [
     {
+      "path": "/api/cron/youtube-popular",
+      "schedule": "0 0 * * *"
+    },
+    {
       "path": "/api/cron/youtube-popular-category-1-5",
       "schedule": "0 1 * * *"
     },

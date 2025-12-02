@@ -25,16 +25,11 @@ export async function GET(req: NextRequest) {
 
   try {
     const region = req.nextUrl.searchParams.get("region") || "KR";
-    const targetCount = Math.min(
-      Math.max(parseInt(req.nextUrl.searchParams.get("count") || "200", 10), 1),
-      200
-    );
 
     const result = await runYoutubePopularCronByCategory(
       CATEGORY_START,
       CATEGORY_END,
-      region,
-      targetCount
+      region
     );
 
     return NextResponse.json(result);
