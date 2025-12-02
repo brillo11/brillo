@@ -21,21 +21,17 @@ export async function GET(req: NextRequest) {
 
   try {
     const region = req.nextUrl.searchParams.get("region") || undefined;
-    const maxChannelsParam = req.nextUrl.searchParams.get("maxChannels");
-    const maxChannels = maxChannelsParam
-      ? Math.min(Math.max(parseInt(maxChannelsParam, 10), 1), 100)
-      : undefined;
-    const skipParam = req.nextUrl.searchParams.get("skip");
-    const skip = skipParam ? parseInt(skipParam, 10) : undefined;
-    const takeParam = req.nextUrl.searchParams.get("take");
-    const take = takeParam ? parseInt(takeParam, 10) : undefined;
+    // Batch 2: 200-399 (200개)
+    const result = await runYoutubeVideosCron(undefined, region, 200, 200);
 
-    const result = await runYoutubeVideosCron(maxChannels, region, skip, take);
-
-    return NextResponse.json(result);
+    return NextResponse.json({
+      ...result,
+      batch: 2,
+      range: "200-399",
+    });
   } catch (e: any) {
     return NextResponse.json(
-      { success: false, error: e?.message || "cron failed" },
+      { success: false, error: e?.message || "cron failed", batch: 2 },
       { status: 500 }
     );
   }
