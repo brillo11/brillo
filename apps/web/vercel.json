@@ -43,6 +43,10 @@
     {
       "path": "/api/cron/youtube-videos-batch-5",
       "schedule": "40 21 * * *"
+    },
+    {
+      "path": "/api/cron/youtube-videos-batch-6",
+      "schedule": "50 21 * * *"
     }
   ]
 }
