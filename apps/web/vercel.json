@@ -1,12 +1,28 @@
 {
   "crons": [
     {
-      "path": "/api/cron/youtube-popular",
-      "schedule": "0 6 * * *"
+      "path": "/api/cron/youtube-popular-category-1-5",
+      "schedule": "0 1 * * *"
+    },
+    {
+      "path": "/api/cron/youtube-popular-category-6-10",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/youtube-popular-category-11-15",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/youtube-popular-category-16-20",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/youtube-popular-category-21-25",
+      "schedule": "0 5 * * *"
     },
     {
       "path": "/api/cron/youtube-videos",
-      "schedule": "0 8 * * *"
+      "schedule": "0 6 * * *"
     }
   ]
 }
