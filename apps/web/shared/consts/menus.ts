@@ -30,6 +30,7 @@ import {
   BookMarked,
   Library,
   NotebookPen,
+  Bot,
 } from "lucide-react";
 import { PATH } from "./path";
 
@@ -183,6 +184,13 @@ export const studentMenus: MenuItem[] = [
         baseUrl: PATH.STUDENT_ORDERS,
         url: PATH.STUDENT_ORDERS_LIST,
         icon: FileText,
+      },
+      {
+        id: "ai-assistant",
+        title: "AI 어시스턴트",
+        baseUrl: PATH.STUDENT_LOUNGE,
+        url: PATH.STUDENT_LOUNGE_AI_ASSISTANT,
+        icon: Bot,
       },
     ],
   },

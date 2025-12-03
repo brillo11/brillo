@@ -17,6 +17,7 @@ export const PATH = {
   STUDENT_LOUNGE_MISSION: "/student/studentLounge/mission",
   STUDENT_LOUNGE_ANNOUNCEMENTS: "/student/studentLounge/announcements",
   STUDENT_LOUNGE_QNA: "/student/studentLounge/qna",
+  STUDENT_LOUNGE_AI_ASSISTANT: "/student/studentLounge/ai-assistant",
   STUDENT_POINTS: "/student/points",
   STUDENT_POINTS_CHARGE: "/student/points/charge",
   STUDENT_POINTS_HISTORY: "/student/points/history",
