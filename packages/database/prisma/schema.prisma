@@ -53,6 +53,8 @@ model User {
   cohortId BigInt?
   cohort   Cohort? @relation(fields: [cohortId], references: [id])
 
+  aiAssistantSessions AIAssistantSession[]
+
   @@index([email])
 }
 
@@ -482,4 +484,19 @@ model Product {
   @@index([category])
   @@index([featured])
   @@index([inStock])
+}
+
+model AIAssistantSession {
+  id            String   @id @default(uuid())
+  userId        String
+  conversationId String   // 외부 AI 서비스 conversation ID (OpenAI, Claude 등)
+  title         String?  // 세션 제목 (titleMessage 기반)
+  data          Json     @default("{}") // 세션 데이터
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([conversationId])
 }
