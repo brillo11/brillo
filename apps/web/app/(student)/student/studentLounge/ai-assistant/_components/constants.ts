@@ -3,11 +3,11 @@ import type { CreatorPersona } from "./types";
 export const MOCK_CREATOR_PERSONAS: CreatorPersona[] = [
   {
     id: "p1",
-    name: "The AI Specialist",
-    description:
-      "Expert in explaining complex AI tools simply. Focuses on tech tutorials and news.",
+    name: "유튜브 훈련소 AI 크리에이터",
+    description: "유튜브 제목·썸네일·대본·메타데이터·쇼츠 제목 제작 도우미",
     iconName: "Bot",
     color: "bg-blue-100 text-blue-600",
+    image: "/images/ai-creator-thumbnail.png",
   },
   {
     id: "p2",

@@ -10,6 +10,8 @@ import { Step3Titles } from "./step3-titles";
 import { Step4ThumbGuide } from "./step4-thumb-guide";
 import { Step5ThumbGen } from "./step5-thumb-gen";
 import { Step6Script } from "./step6-script";
+import { Step7Metadata } from "./step7-metadata";
+import { Step8ShortsTitles } from "./step8-shorts-titles";
 import {
   createAIAssistantSession,
   updateAIAssistantSession,
@@ -20,6 +22,8 @@ import {
   sendThumbnailGuideResponses,
   sendThumbnailResponses,
   sendFixThumbnailResponses,
+  sendMetadataResponses,
+  sendShortsTitlesResponses,
 } from "@/serverActions/ai-assistant/ai-assistant.actions";
 
 export function AIAssistantClient() {
@@ -42,6 +46,8 @@ export function AIAssistantClient() {
   const [isThumbnailGuideLoading, setIsThumbnailGuideLoading] = useState(false);
   const [isThumbnailLoading, setIsThumbnailLoading] = useState(false);
   const [isScriptLoading, setIsScriptLoading] = useState(false);
+  const [isMetadataLoading, setIsMetadataLoading] = useState(false);
+  const [isShortsTitlesLoading, setIsShortsTitlesLoading] = useState(false);
 
   // Chat & Thumbnail State
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
@@ -60,18 +66,31 @@ export function AIAssistantClient() {
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   // 세션 데이터 저장
-  const saveSessionData = async (updates: any) => {
+  const saveSessionData = async (updates: {
+    titleMessage?: string;
+    titleResponses?: any;
+    selectedTitle?: string;
+    selectedTitleIndex?: number | null;
+    thumbnailGuideResponses?: any;
+    selectedThumbnailGuideIndex?: number | null;
+    thumbnailResponses?: string;
+    scriptResponses?: string;
+    metadataResponses?: any;
+    shortsTitlesResponses?: any;
+    step?: string;
+  }) => {
     if (!currentSessionId) return;
 
     const newData = { ...sessionData, ...updates };
     setSessionData(newData);
 
     try {
-      await updateAIAssistantSession(
-        currentSessionId,
-        newData,
-        newData.titleMessage || newData.selectedTitle || undefined
-      );
+      const title =
+        updates.titleMessage ||
+        updates.selectedTitle ||
+        sessionData.titleMessage ||
+        sessionData.selectedTitle;
+      await updateAIAssistantSession(currentSessionId, updates, title);
     } catch (error) {
       console.error("Failed to save session data:", error);
     }
@@ -106,11 +125,8 @@ export function AIAssistantClient() {
         if (currentSessionId) {
           const newData = { ...sessionData, ...updates };
           setSessionData(newData);
-          await updateAIAssistantSession(
-            currentSessionId,
-            newData,
-            newData.titleMessage || newData.selectedTitle || undefined
-          );
+          const title = sessionData.titleMessage || sessionData.selectedTitle;
+          await updateAIAssistantSession(currentSessionId, updates, title);
         }
 
         // 자동 생성이 아닐 때만 다음 스텝으로 이동
@@ -191,6 +207,44 @@ export function AIAssistantClient() {
     isScriptLoading,
   ]);
 
+  // Step 7 진입 시 메타데이터 자동 생성
+  useEffect(() => {
+    const shouldAutoGenerate =
+      currentStep === 7 &&
+      !sessionData.metadataResponses &&
+      currentSessionId &&
+      !isMetadataLoading;
+
+    if (shouldAutoGenerate) {
+      handleMetadataGenerate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    currentStep,
+    currentSessionId,
+    sessionData.metadataResponses,
+    isMetadataLoading,
+  ]);
+
+  // Step 8 진입 시 쇼츠 제목 자동 생성
+  useEffect(() => {
+    const shouldAutoGenerate =
+      currentStep === 8 &&
+      !sessionData.shortsTitlesResponses &&
+      currentSessionId &&
+      !isShortsTitlesLoading;
+
+    if (shouldAutoGenerate) {
+      handleShortsTitlesGenerate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    currentStep,
+    currentSessionId,
+    sessionData.shortsTitlesResponses,
+    isShortsTitlesLoading,
+  ]);
+
   const simulateLoading = (callback: () => void, duration = 1500) => {
     setIsGenerating(true);
     setTimeout(() => {
@@ -211,14 +265,14 @@ export function AIAssistantClient() {
       setCurrentSessionId(sessionId);
 
       // 세션 데이터 초기화
-      const initialData = { topic, titleMessage: topic, step: "TITLE" };
-      setSessionData(initialData);
+      const initialData = { titleMessage: topic, step: "TITLE" };
+      setSessionData({ ...initialData, topic }); // UI 상태에는 topic 유지
       await updateAIAssistantSession(sessionId, initialData, topic);
 
       // 제목 생성
       const response = await sendTitleResponses(sessionId, topic);
-      const updatedData = { ...initialData, titleResponses: response };
-      setSessionData(updatedData);
+      const updatedData = { titleResponses: response };
+      setSessionData({ ...initialData, ...updatedData, topic }); // UI 상태에는 topic 유지
       await updateAIAssistantSession(sessionId, updatedData, topic);
 
       handleNextStep();
@@ -369,6 +423,58 @@ export function AIAssistantClient() {
     }
   };
 
+  const handleMetadataGenerate = async () => {
+    if (!currentSessionId) return;
+
+    setIsMetadataLoading(true);
+
+    try {
+      const response = await sendMetadataResponses(currentSessionId);
+      const updates = { metadataResponses: response, step: "SHORTS_TITLES" };
+      await saveSessionData(updates);
+      toast.success("메타데이터가 생성되었습니다.");
+    } catch (error) {
+      console.error("Failed to generate metadata:", error);
+      toast.error("메타데이터 생성에 실패했습니다.");
+    } finally {
+      setIsMetadataLoading(false);
+    }
+  };
+
+  const handleScriptNext = async () => {
+    const updates = {
+      step: "METADATA",
+    };
+    await saveSessionData(updates);
+    setTimeout(() => handleNextStep(), 300);
+  };
+
+  const handleMetadataNext = async () => {
+    const updates = {
+      step: "SHORTS_TITLES",
+    };
+    await saveSessionData(updates);
+    setTimeout(() => handleNextStep(), 300);
+  };
+
+  const handleShortsTitlesGenerate = async () => {
+    if (!currentSessionId) return;
+
+    setIsShortsTitlesLoading(true);
+
+    try {
+      const response = await sendShortsTitlesResponses(currentSessionId);
+      const updates = { shortsTitlesResponses: response, step: "COMPLETE" };
+      await saveSessionData(updates);
+      toast.success("쇼츠 제목이 생성되었습니다.");
+    } catch (error) {
+      console.error("Failed to generate shorts titles:", error);
+      toast.error("쇼츠 제목 생성에 실패했습니다.");
+    } finally {
+      setIsShortsTitlesLoading(false);
+    }
+  };
+
   const handleChatSubmit = async () => {
     if (!chatInput.trim() || !currentSessionId) return;
 
@@ -433,7 +539,7 @@ export function AIAssistantClient() {
           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 -z-10 rounded-full"></div>
           <div
             className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-red-600 -z-10 rounded-full transition-all duration-500"
-            style={{ width: `${((currentStep - 1) / 5) * 100}%` }}
+            style={{ width: `${((currentStep - 1) / 7) * 100}%` }}
           ></div>
 
           {[
@@ -443,6 +549,8 @@ export function AIAssistantClient() {
             { step: 4, label: "Style" },
             { step: 5, label: "Design" },
             { step: 6, label: "Script" },
+            { step: 7, label: "Metadata" },
+            { step: 8, label: "Shorts" },
           ].map((s) => (
             <div
               key={s.step}
@@ -534,7 +642,23 @@ export function AIAssistantClient() {
             topic={topic}
             scriptResponses={sessionData.scriptResponses}
             onGenerate={handleScriptGenerate}
+            onNext={handleScriptNext}
             isGenerating={isScriptLoading}
+          />
+        )}
+        {currentStep === 7 && (
+          <Step7Metadata
+            metadataResponses={sessionData.metadataResponses}
+            onGenerate={handleMetadataGenerate}
+            onNext={handleMetadataNext}
+            isGenerating={isMetadataLoading}
+          />
+        )}
+        {currentStep === 8 && (
+          <Step8ShortsTitles
+            shortsTitlesResponses={sessionData.shortsTitlesResponses}
+            onGenerate={handleShortsTitlesGenerate}
+            isGenerating={isShortsTitlesLoading}
           />
         )}
       </div>

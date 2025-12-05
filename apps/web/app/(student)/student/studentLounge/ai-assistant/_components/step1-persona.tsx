@@ -4,6 +4,7 @@ import { ArrowRight, Check } from "lucide-react";
 import type { CreatorPersona } from "./types";
 import { MOCK_CREATOR_PERSONAS } from "./constants";
 import { renderIcon } from "./utils";
+import Image from "next/image";
 
 interface Step1PersonaProps {
   selectedPersona: CreatorPersona | null;
@@ -19,11 +20,9 @@ export function Step1Persona({
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">
-          Choose Your AI Partner
-        </h2>
+        <h2 className="text-2xl font-bold text-gray-900">AI 파트너 선택</h2>
         <p className="text-gray-500">
-          Select a persona to help you create your next viral video.
+          다음 영상 제작을 도와줄 페르소나를 선택해주세요.
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -37,9 +36,22 @@ export function Step1Persona({
                 : "border-gray-100 bg-white hover:border-red-200"
             }`}
           >
-            <div className={`p-3 rounded-full shrink-0 ${persona.color}`}>
-              {renderIcon(persona.iconName, "w-6 h-6")}
-            </div>
+            {persona.image ? (
+              <div className="relative w-12 h-12">
+                <Image
+                  src={persona.image}
+                  alt={persona.name}
+                  fill
+                  className="object-cover rounded-full"
+                />
+              </div>
+            ) : (
+              <div
+                className={`p-3 rounded-full shrink-0 ${persona.color} overflow-hidden`}
+              >
+                {renderIcon(persona.iconName, "w-6 h-6")}
+              </div>
+            )}
             <div>
               <h3 className="font-bold text-gray-900 mb-1">{persona.name}</h3>
               <p className="text-sm text-gray-600 leading-relaxed">

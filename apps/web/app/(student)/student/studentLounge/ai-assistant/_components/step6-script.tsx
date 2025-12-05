@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, FileText, Copy } from "lucide-react";
+import { Check, FileText, Copy, ChevronRight } from "lucide-react";
 import { Button } from "@repo/ui/components/button";
 import { LoadingSpinner } from "@repo/ui/components/loading-spinner";
 import MarkdownRenderer from "./MarkdownRenderer";
@@ -12,6 +12,7 @@ interface Step6ScriptProps {
   topic: string;
   scriptResponses?: string;
   onGenerate?: () => void;
+  onNext?: () => void;
   isGenerating?: boolean;
 }
 
@@ -21,6 +22,7 @@ export function Step6Script({
   topic,
   scriptResponses,
   onGenerate,
+  onNext,
   isGenerating = false,
 }: Step6ScriptProps) {
   const handleCopy = () => {
@@ -37,7 +39,6 @@ export function Step6Script({
           {isGenerating ? (
             <>
               <LoadingSpinner loadingText="대본 생성 중..." />
-              <p className="text-gray-500 mt-4">잠시만 기다려주세요...</p>
             </>
           ) : (
             <>
@@ -134,6 +135,18 @@ export function Step6Script({
           </div>
         </div>
       </div>
+
+      {onNext && scriptResponses && (
+        <div className="flex justify-end mt-6">
+          <button
+            onClick={onNext}
+            className="px-8 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2"
+          >
+            Next Step
+            <ChevronRight size={20} />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

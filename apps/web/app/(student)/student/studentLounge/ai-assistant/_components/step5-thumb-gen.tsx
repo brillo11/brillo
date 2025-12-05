@@ -191,7 +191,10 @@ export function Step5ThumbGen({
                     className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold shadow-sm"
                   >
                     {isGenerating ? (
-                      <LoadingSpinner loadingText="썸네일 수정 중..." />
+                      <div className="flex items-center gap-2">
+                        <Edit3 size={16} />
+                        썸네일 수정 중...
+                      </div>
                     ) : (
                       <div className="flex items-center gap-2">
                         <Edit3 size={16} />

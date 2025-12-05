@@ -113,21 +113,16 @@ export async function sendTitleResponses(sessionId: string, message: string) {
 - **마무리**: 핵심 요약, 구독/좋아요 요청, 다음 영상 예고와 댓글 참여 유도.
 - Opinon/Reason/Example/Offer와 같은 분류는 넣지 않고, 완성된 읽기용 대본만 제공한다.
 
-4. 대본 생성이 끝나면 반드시 후속 질문을 한다:
-- "대본 길이를 더 늘려드릴까요? 아니면 쇼츠용으로 줄여드릴까요?"
-- 그리고 "다음"이라고 입력하면 메타데이터 생성으로 넘어간다고 안내한다.
-
-5. 마지막 단계는 **유튜브 메타데이터 생성**이다.
+4. 마지막 단계는 **유튜브 메타데이터 생성**이다.
 - **설명**: 대본 내용을 검색 친화적으로 300자 내외로 요약.
 - **타임스탬프**: 인트로~마무리까지 임의 시간 배치.
 - **해시태그**: 관련 키워드 4개 제시.
 - **태그**: 제목·대본 관련 키워드, 오타 가능성 키워드 포함, 최대 7개.
 - 메타데이터는 복사·붙여넣기 편리하도록 각 항목을 코드 블록 형태로 제공한다.
 
-6. 메타데이터까지 제공한 뒤에는, 사용자가 따로 요청하지 않는 한 새로운 메타데이터 제안은 하지 않는다. 대신 반드시 이렇게 물어본다:
-- "각 챕터별로 쇼츠 영상도 제작하시겠어요? 원하신다면 ABCD 제목 공식을 적용한 쇼츠용 제목을 챕터별로 제안드릴 수 있습니다."
+5. 메타데이터까지 제공한 뒤에는, 사용자가 따로 요청하지 않는 한 새로운 메타데이터 제안은 하지 않는다.
 
-7. 쇼츠 제목 생성:
+6. 쇼츠 제목 생성:
 - 각 챕터별로 2~3개의 쇼츠용 제목을 ABCD 제목 공식에 따라 제시한다.
 - 쇼츠 제목은 짧고 직관적이며, 강한 후킹과 자극적인 표현을 포함해야 한다.
 
@@ -278,4 +273,89 @@ export async function sendFixThumbnailResponses(
   const output =
     response?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
   return output;
+}
+
+// 메타데이터 스키마 정의
+const metadataSchema = z.object({
+  description: z
+    .string()
+    .describe("대본 내용을 검색 친화적으로 300자 내외로 요약"),
+  timestamps: z
+    .array(
+      z.object({
+        time: z.string().describe("타임스탬프 시간 (예: 0:00, 1:30)"),
+        title: z.string().describe("해당 시간의 제목"),
+      })
+    )
+    .describe("인트로~마무리까지 임의 시간 배치된 타임스탬프"),
+  hashtags: z.array(z.string()).length(4).describe("관련 키워드 4개"),
+  tags: z
+    .array(z.string())
+    .max(7)
+    .describe("제목·대본 관련 키워드, 오타 가능성 키워드 포함 최대 7개"),
+});
+
+const metadataTextFormat = zodTextFormat(metadataSchema, "metadata");
+
+/**
+ * 메타데이터 생성
+ */
+export async function sendMetadataResponses(sessionId: string) {
+  const conversationId = await getConversationId(sessionId);
+
+  const responses = await openAiClient.responses.create({
+    model: "gpt-5.1",
+    input: "메타데이터 만들어줘",
+    conversation: conversationId,
+    tools: tools,
+    text: {
+      format: metadataTextFormat,
+    },
+  });
+
+  const output = responses.output_text;
+  const jsonOutput = JSON.parse(output);
+  return jsonOutput;
+}
+
+// 쇼츠 제목 스키마 정의
+const shortsTitleSchema = z.object({
+  chapterTitle: z.string().describe("챕터 제목"),
+  titles: z
+    .array(z.string())
+    .min(2)
+    .max(3)
+    .describe("해당 챕터의 쇼츠 제목 2~3개"),
+});
+
+const shortsTitlesSchema = z.object({
+  shortsTitles: z.array(shortsTitleSchema).describe("각 챕터별 쇼츠 제목"),
+});
+
+const shortsTitlesTextFormat = zodTextFormat(
+  shortsTitlesSchema,
+  "shortsTitles"
+);
+
+/**
+ * 쇼츠 제목 생성
+ * 각 챕터별로 2~3개의 쇼츠용 제목을 ABCD 제목 공식에 따라 생성
+ */
+export async function sendShortsTitlesResponses(sessionId: string) {
+  const conversationId = await getConversationId(sessionId);
+
+  const responses = await openAiClient.responses.create({
+    model: "gpt-5.1",
+    input:
+      "쇼츠 제목 만들어줘. 각 챕터별로 2~3개의 쇼츠용 제목을 ABCD 제목 공식에 따라 제시해줘. 쇼츠 제목은 짧고 직관적이며, 강한 후킹과 자극적인 표현을 포함해야 해.",
+    conversation: conversationId,
+    tools: tools,
+    text: {
+      format: shortsTitlesTextFormat,
+    },
+  });
+
+  const output = responses.output_text;
+  const jsonOutput = JSON.parse(output);
+  return jsonOutput;
 }
