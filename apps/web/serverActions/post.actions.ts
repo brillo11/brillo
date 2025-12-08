@@ -223,7 +223,7 @@ export async function createPost(formData: FormData): Promise<{
     },
   });
 
-  revalidateTag("posts");
+  revalidateTag("posts", "default");
   revalidatePath(`/board/${boardSlug}`);
 
   return { success: true, post };
@@ -269,7 +269,7 @@ export async function updatePost(slug: string, formData: FormData) {
     },
   });
 
-  revalidateTag("posts");
+  revalidateTag("posts", "default");
   revalidatePath(`/board/${updatedPost.board.slug}`);
   revalidatePath(`/board/${updatedPost.board.slug}/${slug}`);
 
@@ -298,7 +298,7 @@ export async function deletePost(slug: string) {
     where: { slug },
   });
 
-  revalidateTag("posts");
+  revalidateTag("posts", "default");
   revalidatePath(`/board/${post.board.slug}`);
 
   redirect(`/board/${post.board.slug}`);

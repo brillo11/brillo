@@ -29,10 +29,10 @@ export function Step2Topic({
           <span>{selectedPersona?.name} is ready</span>
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          What is your video about?
+          영상 주제를 입력해주세요
         </h2>
         <p className="text-gray-500">
-          Enter a keyword or a rough idea. I'll help you refine it.
+          키워드나 아이디어를 입력해주세요. 함께 다듬어드리겠습니다.
         </p>
       </div>
 
@@ -41,7 +41,7 @@ export function Step2Topic({
           type="text"
           value={topic}
           onChange={(e) => onTopicChange(e.target.value)}
-          placeholder="e.g., How to study effectively, My travel vlog to Japan..."
+          placeholder="예시: 효과적인 공부법, 일본 여행 브이로그, 요리 레시피..."
           className="w-full text-lg p-6 border-2 border-gray-200 rounded-2xl focus:border-red-500 focus:outline-none shadow-sm transition-colors text-center disabled:opacity-70 disabled:cursor-not-allowed"
           onKeyDown={(e) => e.key === "Enter" && !isGenerating && onSubmit()}
           disabled={isGenerating}
@@ -54,7 +54,7 @@ export function Step2Topic({
         className="px-10 py-4 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg disabled:opacity-70 transition-all flex items-center gap-2 mx-auto"
       >
         {isGenerating ? <Loader2 className="animate-spin" /> : <Sparkles />}
-        Generate Ideas
+        아이디어 생성
       </button>
     </div>
   );
