@@ -1,14 +1,15 @@
 "use client";
 
-import { ChevronRight, RefreshCw } from "lucide-react";
+import { ChevronRight, RefreshCw, Check } from "lucide-react";
 import MarkdownRenderer from "./MarkdownRenderer";
+import type { Step } from "./types";
 
 interface Step3TitlesProps {
   topic: string;
   selectedTitle: string;
   onSelectTitle: (index: number) => void;
   onRefresh: () => void;
-  onNext?: () => void;
+  onStepChange?: (step: Step) => void;
   titleResponses?: any;
   selectedTitleIndex?: number | null;
 }
@@ -18,7 +19,7 @@ export function Step3Titles({
   selectedTitle,
   onSelectTitle,
   onRefresh,
-  onNext,
+  onStepChange,
   titleResponses,
   selectedTitleIndex,
 }: Step3TitlesProps) {
@@ -58,36 +59,46 @@ export function Step3Titles({
               }`}
             >
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${
+                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
                   isSelected
-                    ? "bg-red-600 text-white"
-                    : "bg-gray-100 text-gray-500"
+                    ? "border-orange-500 bg-orange-500 text-white"
+                    : "border-gray-300 text-transparent"
                 }`}
               >
-                {idx + 1}
+                <Check size={16} strokeWidth={4} />
               </div>
-              <div className="flex-1 space-y-2">
-                <div className="text-sm text-gray-600">
-                  <span className="font-medium">썸네일 제목:</span>{" "}
-                  <MarkdownRenderer content={set.thumbnailTitle} />
-                </div>
-                <div className="text-lg font-medium text-gray-800">
-                  <span className="font-medium">영상 제목:</span>{" "}
+              <div className="flex-1">
+                <h4
+                  className={`font-bold text-lg ${
+                    isSelected ? "text-slate-900" : "text-slate-700"
+                  }`}
+                >
                   <MarkdownRenderer content={set.videoTitle} />
+                </h4>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    썸네일 텍스트
+                  </span>
+                  <span
+                    className={`text-sm font-medium px-2 py-0.5 rounded ${
+                      isSelected
+                        ? "bg-orange-100 text-orange-700"
+                        : "bg-gray-100 text-slate-600"
+                    }`}
+                  >
+                    "{set.thumbnailTitle || set.thumbnailText}"
+                  </span>
                 </div>
               </div>
-              <ChevronRight
-                className={`text-gray-300 group-hover:text-gray-600 shrink-0 ${isSelected ? "text-red-600" : ""}`}
-              />
             </div>
           );
         })}
       </div>
 
       <div className="flex flex-col items-end gap-4 mt-6">
-        {onNext && selectedTitleIndex !== null && (
+        {onStepChange && selectedTitleIndex !== null && (
           <button
-            onClick={onNext}
+            onClick={() => onStepChange(4)}
             className="px-8 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2"
           >
             Next Step

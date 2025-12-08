@@ -491,7 +491,34 @@ model AIAssistantSession {
   userId        String
   conversationId String   // 외부 AI 서비스 conversation ID (OpenAI, Claude 등)
   title         String?  // 세션 제목 (titleMessage 기반)
-  data          Json     @default("{}") // 세션 데이터
+  
+  // Step 2: Topic
+  titleMessage  String?  // 주제/토픽 메시지
+  
+  // Step 3: Title
+  titleResponses Json?   // 생성된 제목 세트 (복잡한 구조)
+  selectedTitle  String? // 선택된 영상 제목
+  selectedTitleIndex Int? // 선택된 제목 인덱스
+  
+  // Step 4: Thumbnail Guide
+  thumbnailGuideResponses Json? // 생성된 썸네일 가이드 (복잡한 구조)
+  selectedThumbnailGuideIndex Int? // 선택된 가이드 인덱스
+  
+  // Step 5: Thumbnail
+  thumbnailResponses String? @db.Text // 썸네일 이미지 (base64 또는 URL)
+  
+  // Step 6: Script
+  scriptResponses String? @db.Text // 생성된 대본
+  
+  // Step 7: Metadata
+  metadataResponses Json? // 메타데이터 (설명, 타임스탬프, 해시태그, 태그)
+  
+  // Step 8: Shorts Titles
+  shortsTitlesResponses Json? // 쇼츠 제목 (각 챕터별 2~3개)
+  
+  // Progress
+  step          String?  // 현재 단계 (TITLE, THUMBNAIL_GUIDE, THUMBNAIL, SCRIPT, METADATA, SHORTS_TITLES)
+  
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -499,4 +526,5 @@ model AIAssistantSession {
   @@index([userId])
   @@index([createdAt])
   @@index([conversationId])
+  @@index([step])
 }

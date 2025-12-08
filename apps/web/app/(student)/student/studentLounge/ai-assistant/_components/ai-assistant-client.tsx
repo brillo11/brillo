@@ -10,6 +10,8 @@ import { Step3Titles } from "./step3-titles";
 import { Step4ThumbGuide } from "./step4-thumb-guide";
 import { Step5ThumbGen } from "./step5-thumb-gen";
 import { Step6Script } from "./step6-script";
+import { Step7Metadata } from "./step7-metadata";
+import { Step8ShortsTitles } from "./step8-shorts-titles";
 import {
   createAIAssistantSession,
   updateAIAssistantSession,
@@ -20,6 +22,8 @@ import {
   sendThumbnailGuideResponses,
   sendThumbnailResponses,
   sendFixThumbnailResponses,
+  sendMetadataResponses,
+  sendShortsTitlesResponses,
 } from "@/serverActions/ai-assistant/ai-assistant.actions";
 
 export function AIAssistantClient() {
@@ -42,6 +46,8 @@ export function AIAssistantClient() {
   const [isThumbnailGuideLoading, setIsThumbnailGuideLoading] = useState(false);
   const [isThumbnailLoading, setIsThumbnailLoading] = useState(false);
   const [isScriptLoading, setIsScriptLoading] = useState(false);
+  const [isMetadataLoading, setIsMetadataLoading] = useState(false);
+  const [isShortsTitlesLoading, setIsShortsTitlesLoading] = useState(false);
 
   // Chat & Thumbnail State
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
@@ -60,18 +66,31 @@ export function AIAssistantClient() {
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   // 세션 데이터 저장
-  const saveSessionData = async (updates: any) => {
+  const saveSessionData = async (updates: {
+    titleMessage?: string;
+    titleResponses?: any;
+    selectedTitle?: string;
+    selectedTitleIndex?: number | null;
+    thumbnailGuideResponses?: any;
+    selectedThumbnailGuideIndex?: number | null;
+    thumbnailResponses?: string;
+    scriptResponses?: string;
+    metadataResponses?: any;
+    shortsTitlesResponses?: any;
+    step?: string;
+  }) => {
     if (!currentSessionId) return;
 
     const newData = { ...sessionData, ...updates };
     setSessionData(newData);
 
     try {
-      await updateAIAssistantSession(
-        currentSessionId,
-        newData,
-        newData.titleMessage || newData.selectedTitle || undefined
-      );
+      const title =
+        updates.titleMessage ||
+        updates.selectedTitle ||
+        sessionData.titleMessage ||
+        sessionData.selectedTitle;
+      await updateAIAssistantSession(currentSessionId, updates, title);
     } catch (error) {
       console.error("Failed to save session data:", error);
     }
@@ -82,8 +101,28 @@ export function AIAssistantClient() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
 
-  const handleNextStep = () => {
-    setCurrentStep((prev) => (prev + 1) as Step);
+  const handleStepChange = async (
+    step: Step,
+    updates?: {
+      titleMessage?: string;
+      titleResponses?: any;
+      selectedTitle?: string;
+      selectedTitleIndex?: number | null;
+      thumbnailGuideResponses?: any;
+      selectedThumbnailGuideIndex?: number | null;
+      thumbnailResponses?: string;
+      scriptResponses?: string;
+      metadataResponses?: any;
+      shortsTitlesResponses?: any;
+      step?: string;
+    }
+  ) => {
+    if (updates) {
+      await saveSessionData(updates);
+    }
+    setTimeout(() => {
+      setCurrentStep(step);
+    }, 300);
   };
 
   const handleThumbnailGuideGenerate = useCallback(
@@ -106,16 +145,13 @@ export function AIAssistantClient() {
         if (currentSessionId) {
           const newData = { ...sessionData, ...updates };
           setSessionData(newData);
-          await updateAIAssistantSession(
-            currentSessionId,
-            newData,
-            newData.titleMessage || newData.selectedTitle || undefined
-          );
+          const title = sessionData.titleMessage || sessionData.selectedTitle;
+          await updateAIAssistantSession(currentSessionId, updates, title);
         }
 
         // 자동 생성이 아닐 때만 다음 스텝으로 이동
         if (!autoGenerate) {
-          handleNextStep();
+          handleStepChange(4);
         }
         toast.success("썸네일 가이드가 생성되었습니다.");
       } catch (error) {
@@ -191,6 +227,44 @@ export function AIAssistantClient() {
     isScriptLoading,
   ]);
 
+  // Step 7 진입 시 메타데이터 자동 생성
+  useEffect(() => {
+    const shouldAutoGenerate =
+      currentStep === 7 &&
+      !sessionData.metadataResponses &&
+      currentSessionId &&
+      !isMetadataLoading;
+
+    if (shouldAutoGenerate) {
+      handleMetadataGenerate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    currentStep,
+    currentSessionId,
+    sessionData.metadataResponses,
+    isMetadataLoading,
+  ]);
+
+  // Step 8 진입 시 쇼츠 제목 자동 생성
+  useEffect(() => {
+    const shouldAutoGenerate =
+      currentStep === 8 &&
+      !sessionData.shortsTitlesResponses &&
+      currentSessionId &&
+      !isShortsTitlesLoading;
+
+    if (shouldAutoGenerate) {
+      handleShortsTitlesGenerate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    currentStep,
+    currentSessionId,
+    sessionData.shortsTitlesResponses,
+    isShortsTitlesLoading,
+  ]);
+
   const simulateLoading = (callback: () => void, duration = 1500) => {
     setIsGenerating(true);
     setTimeout(() => {
@@ -211,17 +285,17 @@ export function AIAssistantClient() {
       setCurrentSessionId(sessionId);
 
       // 세션 데이터 초기화
-      const initialData = { topic, titleMessage: topic, step: "TITLE" };
-      setSessionData(initialData);
+      const initialData = { titleMessage: topic, step: "TITLE" };
+      setSessionData({ ...initialData, topic }); // UI 상태에는 topic 유지
       await updateAIAssistantSession(sessionId, initialData, topic);
 
       // 제목 생성
       const response = await sendTitleResponses(sessionId, topic);
-      const updatedData = { ...initialData, titleResponses: response };
-      setSessionData(updatedData);
+      const updatedData = { titleResponses: response };
+      setSessionData({ ...initialData, ...updatedData, topic }); // UI 상태에는 topic 유지
       await updateAIAssistantSession(sessionId, updatedData, topic);
 
-      handleNextStep();
+      handleStepChange(3);
       toast.success("제목이 생성되었습니다.");
     } catch (error) {
       console.error("Failed to generate titles:", error);
@@ -249,13 +323,7 @@ export function AIAssistantClient() {
 
   const handleTitleNext = async () => {
     if (selectedTitleIndex === null) return;
-
-    const updates = {
-      step: "THUMBNAIL_GUIDE",
-    };
-    await saveSessionData(updates);
-
-    setTimeout(() => handleNextStep(), 300);
+    await handleStepChange(4, { step: "THUMBNAIL_GUIDE" });
   };
 
   const handleGuideSelect = async (index: number) => {
@@ -265,12 +333,7 @@ export function AIAssistantClient() {
 
   const handleGuideNext = async () => {
     if (selectedGuide === null) return;
-    const updates = {
-      step: "THUMBNAIL",
-    };
-    await saveSessionData(updates);
-
-    setTimeout(() => handleNextStep(), 300);
+    await handleStepChange(5, { step: "THUMBNAIL" });
   };
 
   const handleThumbnailGenerate = async () => {
@@ -369,6 +432,50 @@ export function AIAssistantClient() {
     }
   };
 
+  const handleMetadataGenerate = async () => {
+    if (!currentSessionId) return;
+
+    setIsMetadataLoading(true);
+
+    try {
+      const response = await sendMetadataResponses(currentSessionId);
+      const updates = { metadataResponses: response, step: "SHORTS_TITLES" };
+      await saveSessionData(updates);
+      toast.success("메타데이터가 생성되었습니다.");
+    } catch (error) {
+      console.error("Failed to generate metadata:", error);
+      toast.error("메타데이터 생성에 실패했습니다.");
+    } finally {
+      setIsMetadataLoading(false);
+    }
+  };
+
+  const handleScriptNext = async () => {
+    await handleStepChange(7, { step: "METADATA" });
+  };
+
+  const handleMetadataNext = async () => {
+    await handleStepChange(8, { step: "SHORTS_TITLES" });
+  };
+
+  const handleShortsTitlesGenerate = async () => {
+    if (!currentSessionId) return;
+
+    setIsShortsTitlesLoading(true);
+
+    try {
+      const response = await sendShortsTitlesResponses(currentSessionId);
+      const updates = { shortsTitlesResponses: response, step: "COMPLETE" };
+      await saveSessionData(updates);
+      toast.success("쇼츠 제목이 생성되었습니다.");
+    } catch (error) {
+      console.error("Failed to generate shorts titles:", error);
+      toast.error("쇼츠 제목 생성에 실패했습니다.");
+    } finally {
+      setIsShortsTitlesLoading(false);
+    }
+  };
+
   const handleChatSubmit = async () => {
     if (!chatInput.trim() || !currentSessionId) return;
 
@@ -397,7 +504,7 @@ export function AIAssistantClient() {
   };
 
   const handleConfirm = () => {
-    handleNextStep();
+    handleStepChange(6);
   };
 
   const handleRefreshTitles = async () => {
@@ -416,6 +523,38 @@ export function AIAssistantClient() {
     }
   };
 
+  const ProgressBar = () => {
+    const steps = [
+      "Persona",
+      "Topic",
+      "Title",
+      "Style",
+      "Design",
+      "Script",
+      "Meta",
+      "Final",
+    ];
+
+    const currentIdx = currentStep - 1;
+
+    const progress = (currentIdx / (steps.length - 1)) * 100;
+
+    return (
+      <div className="mb-10 px-2">
+        <div className="flex justify-between text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider">
+          <span>Start Workflow</span>
+          <span>Final Asset</span>
+        </div>
+        <div className="h-3 bg-gray-200 rounded-full overflow-hidden relative border border-gray-300 shadow-inner">
+          <div
+            className="h-full bg-gradient-to-r from-red-600 to-orange-500 transition-all duration-700 ease-out shadow-sm"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="max-w-6xl mx-auto min-h-screen">
       {/* Progress Header */}
@@ -429,11 +568,12 @@ export function AIAssistantClient() {
             제목, 썸네일, 스크립트까지 단계별로 안내해드립니다.
           </p>
         </div>
+        <ProgressBar />
         <div className="flex items-center justify-between relative">
           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 -z-10 rounded-full"></div>
           <div
             className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-red-600 -z-10 rounded-full transition-all duration-500"
-            style={{ width: `${((currentStep - 1) / 5) * 100}%` }}
+            style={{ width: `${((currentStep - 1) / 7) * 100}%` }}
           ></div>
 
           {[
@@ -443,6 +583,8 @@ export function AIAssistantClient() {
             { step: 4, label: "Style" },
             { step: 5, label: "Design" },
             { step: 6, label: "Script" },
+            { step: 7, label: "Metadata" },
+            { step: 8, label: "Shorts" },
           ].map((s) => (
             <div
               key={s.step}
@@ -473,7 +615,7 @@ export function AIAssistantClient() {
           <Step1Persona
             selectedPersona={selectedPersona}
             onSelectPersona={setSelectedPersona}
-            onNext={handleNextStep}
+            onStepChange={handleStepChange}
           />
         )}
         {currentStep === 2 && (
@@ -491,7 +633,7 @@ export function AIAssistantClient() {
             selectedTitle={selectedTitle}
             onSelectTitle={handleTitleSelect}
             onRefresh={handleRefreshTitles}
-            onNext={handleTitleNext}
+            onStepChange={handleTitleNext}
             titleResponses={sessionData.titleResponses}
             selectedTitleIndex={selectedTitleIndex}
           />
@@ -500,7 +642,7 @@ export function AIAssistantClient() {
           <Step4ThumbGuide
             selectedGuide={selectedGuide}
             onSelectGuide={handleGuideSelect}
-            onNext={handleGuideNext}
+            onStepChange={handleGuideNext}
             thumbnailGuideResponses={sessionData.thumbnailGuideResponses}
             onGenerate={handleThumbnailGuideGenerate}
             isGenerating={isThumbnailGuideLoading}
@@ -516,7 +658,7 @@ export function AIAssistantClient() {
             isGenerating={isThumbnailLoading}
             onChatInputChange={setChatInput}
             onChatSubmit={handleChatSubmit}
-            onConfirm={handleConfirm}
+            onStepChange={handleConfirm}
             chatEndRef={chatEndRef}
             thumbnailResponses={sessionData.thumbnailResponses}
             thumbnailEditText={thumbnailEditText}
@@ -534,7 +676,23 @@ export function AIAssistantClient() {
             topic={topic}
             scriptResponses={sessionData.scriptResponses}
             onGenerate={handleScriptGenerate}
+            onStepChange={handleScriptNext}
             isGenerating={isScriptLoading}
+          />
+        )}
+        {currentStep === 7 && (
+          <Step7Metadata
+            metadataResponses={sessionData.metadataResponses}
+            onGenerate={handleMetadataGenerate}
+            onStepChange={handleMetadataNext}
+            isGenerating={isMetadataLoading}
+          />
+        )}
+        {currentStep === 8 && (
+          <Step8ShortsTitles
+            shortsTitlesResponses={sessionData.shortsTitlesResponses}
+            onGenerate={handleShortsTitlesGenerate}
+            isGenerating={isShortsTitlesLoading}
           />
         )}
       </div>

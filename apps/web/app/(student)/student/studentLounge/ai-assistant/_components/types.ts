@@ -4,9 +4,10 @@ export interface CreatorPersona {
   description: string;
   iconName: "Bot" | "Zap" | "Lightbulb" | "TrendingUp";
   color: string;
+  image?: string;
 }
 
-export type Step = 1 | 2 | 3 | 4 | 5 | 6;
+export type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 export interface ChatMessage {
   id: string;

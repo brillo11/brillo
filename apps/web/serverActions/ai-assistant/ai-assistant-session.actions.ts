@@ -11,7 +11,17 @@ const openAiClient = new OpenAI({
 export interface AIAssistantSessionData {
   id: string;
   title: string | null;
-  data: any;
+  titleMessage: string | null;
+  titleResponses: any | null;
+  selectedTitle: string | null;
+  selectedTitleIndex: number | null;
+  thumbnailGuideResponses: any | null;
+  selectedThumbnailGuideIndex: number | null;
+  thumbnailResponses: string | null;
+  scriptResponses: string | null;
+  metadataResponses: any | null;
+  shortsTitlesResponses: any | null;
+  step: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,7 +41,6 @@ export async function createAIAssistantSession(): Promise<string> {
     data: {
       userId,
       conversationId,
-      data: {},
     },
   });
 
@@ -54,9 +63,26 @@ export async function getAIAssistantSessions(): Promise<
     orderBy: {
       updatedAt: "desc",
     },
+    select: {
+      id: true,
+      title: true,
+      titleMessage: true,
+      titleResponses: true,
+      selectedTitle: true,
+      selectedTitleIndex: true,
+      thumbnailGuideResponses: true,
+      selectedThumbnailGuideIndex: true,
+      thumbnailResponses: true,
+      scriptResponses: true,
+      metadataResponses: true,
+      shortsTitlesResponses: true,
+      step: true,
+      createdAt: true,
+      updatedAt: true,
+    },
   });
 
-  return sessions;
+  return sessions as AIAssistantSessionData[];
 }
 
 /**
@@ -73,9 +99,26 @@ export async function getAIAssistantSession(
       id: sessionId,
       userId, // 본인 세션만 조회 가능
     },
+    select: {
+      id: true,
+      title: true,
+      titleMessage: true,
+      titleResponses: true,
+      selectedTitle: true,
+      selectedTitleIndex: true,
+      thumbnailGuideResponses: true,
+      selectedThumbnailGuideIndex: true,
+      thumbnailResponses: true,
+      scriptResponses: true,
+      metadataResponses: true,
+      shortsTitlesResponses: true,
+      step: true,
+      createdAt: true,
+      updatedAt: true,
+    },
   });
 
-  return aiSession;
+  return aiSession as AIAssistantSessionData | null;
 }
 
 /**
@@ -83,7 +126,19 @@ export async function getAIAssistantSession(
  */
 export async function updateAIAssistantSession(
   sessionId: string,
-  data: any,
+  updates: {
+    titleMessage?: string;
+    titleResponses?: any;
+    selectedTitle?: string;
+    selectedTitleIndex?: number | null;
+    thumbnailGuideResponses?: any;
+    selectedThumbnailGuideIndex?: number | null;
+    thumbnailResponses?: string;
+    scriptResponses?: string;
+    metadataResponses?: any;
+    shortsTitlesResponses?: any;
+    step?: string;
+  },
   title?: string
 ): Promise<void> {
   const session = await requireStudent();
@@ -95,7 +150,7 @@ export async function updateAIAssistantSession(
       userId, // 본인 세션만 업데이트 가능
     },
     data: {
-      data,
+      ...updates,
       ...(title && { title }),
     },
   });
