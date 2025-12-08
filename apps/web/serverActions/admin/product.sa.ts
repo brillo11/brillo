@@ -124,7 +124,7 @@ export async function createProduct(formData: FormData): Promise<void> {
       },
     });
 
-    revalidateTag("products");
+    revalidateTag("products", "default");
     revalidatePath("/admin/products");
   } catch (error) {
     console.error("제품 등록 실패:", error);
@@ -201,7 +201,7 @@ export async function updateProduct(
       },
     });
 
-    revalidateTag("products");
+    revalidateTag("products", "default");
     revalidatePath("/admin/products");
     revalidatePath(`/admin/products/${id}/edit`);
   } catch (error) {
@@ -221,7 +221,7 @@ export async function deleteProduct(id: string): Promise<void> {
       where: { id: parseInt(id) },
     });
 
-    revalidateTag("products");
+    revalidateTag("products", "default");
     revalidatePath("/admin/products");
   } catch (error) {
     console.error("제품 삭제 실패:", error);
