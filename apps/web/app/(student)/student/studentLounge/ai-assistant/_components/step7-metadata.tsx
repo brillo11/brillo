@@ -4,6 +4,7 @@ import { Copy, Hash, Tag, Clock, FileText, ChevronRight } from "lucide-react";
 import { Button } from "@repo/ui/components/button";
 import { LoadingSpinner } from "@repo/ui/components/loading-spinner";
 import { toast } from "sonner";
+import type { Step } from "./types";
 
 interface Step7MetadataProps {
   metadataResponses?: {
@@ -13,14 +14,14 @@ interface Step7MetadataProps {
     tags?: string[];
   };
   onGenerate?: () => void;
-  onNext?: () => void;
+  onStepChange?: (step: Step) => void;
   isGenerating?: boolean;
 }
 
 export function Step7Metadata({
   metadataResponses,
   onGenerate,
-  onNext,
+  onStepChange,
   isGenerating = false,
 }: Step7MetadataProps) {
   const handleCopy = (text: string, label: string) => {
@@ -56,134 +57,140 @@ export function Step7Metadata({
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">메타데이터</h2>
-        <p className="text-gray-500">
-          유튜브 업로드에 필요한 메타데이터입니다.
-        </p>
-      </div>
+    <div className="space-y-6 animate-fade-in max-w-5xl mx-auto">
+      <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+        <Hash className="text-orange-600" /> Metadata Optimization
+      </h2>
 
-      <div className="space-y-4">
-        {/* 설명 */}
+      <div className="grid gap-6">
+        {/* Description */}
         {metadataResponses.description && (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <FileText size={18} className="text-gray-500" />
-                <h3 className="font-bold text-gray-900">설명</h3>
-              </div>
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-gray-300 transition-colors">
+            <div className="flex justify-between mb-4 items-center">
+              <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">
+                Description
+              </span>
               <button
                 onClick={() =>
-                  handleCopy(metadataResponses.description || "", "설명")
+                  handleCopy(metadataResponses.description || "", "Description")
                 }
-                className="text-gray-500 hover:text-gray-900 p-1"
+                className="text-slate-400 hover:text-orange-600 transition-colors"
               >
                 <Copy size={18} />
               </button>
             </div>
-            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-              <pre className="text-sm text-gray-700 whitespace-pre-wrap font-sans">
-                {metadataResponses.description}
-              </pre>
-            </div>
+            <textarea
+              readOnly
+              className="w-full bg-gray-50 rounded-xl border border-gray-200 p-4 text-sm h-32 text-slate-800 focus:outline-none focus:ring-1 focus:ring-gray-300 resize-none"
+              value={metadataResponses.description}
+            />
           </div>
         )}
 
-        {/* 타임스탬프 */}
-        {metadataResponses.timestamps &&
-          metadataResponses.timestamps.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Clock size={18} className="text-gray-500" />
-                  <h3 className="font-bold text-gray-900">타임스탬프</h3>
-                </div>
-                <button
-                  onClick={() => {
-                    const timestampsText = metadataResponses.timestamps
-                      ?.map((ts) => `${ts.time} ${ts.title}`)
-                      .join("\n");
-                    handleCopy(timestampsText || "", "타임스탬프");
-                  }}
-                  className="text-gray-500 hover:text-gray-900 p-1"
-                >
-                  <Copy size={18} />
-                </button>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                <pre className="text-sm text-gray-700 whitespace-pre-wrap font-sans">
-                  {metadataResponses.timestamps
-                    .map((ts) => `${ts.time} ${ts.title}`)
-                    .join("\n")}
-                </pre>
-              </div>
-            </div>
-          )}
-
-        {/* 해시태그 */}
-        {metadataResponses.hashtags &&
-          metadataResponses.hashtags.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Hash size={18} className="text-gray-500" />
-                  <h3 className="font-bold text-gray-900">해시태그</h3>
-                </div>
-                <button
-                  onClick={() => {
-                    const hashtagsText = metadataResponses.hashtags?.join(" ");
-                    handleCopy(hashtagsText || "", "해시태그");
-                  }}
-                  className="text-gray-500 hover:text-gray-900 p-1"
-                >
-                  <Copy size={18} />
-                </button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {metadataResponses.hashtags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="px-3 py-1 bg-red-50 text-red-600 rounded-full text-sm font-medium"
-                  >
-                    #{tag}
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Timestamps */}
+          {metadataResponses.timestamps &&
+            metadataResponses.timestamps.length > 0 && (
+              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-gray-300 transition-colors">
+                <div className="flex justify-between mb-4 items-center">
+                  <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">
+                    Timestamps
                   </span>
-                ))}
+                  <button
+                    onClick={() => {
+                      const timestampsText = metadataResponses.timestamps
+                        ?.map((ts) => `${ts.time} ${ts.title}`)
+                        .join("\n");
+                      handleCopy(timestampsText || "", "Timestamps");
+                    }}
+                    className="text-slate-400 hover:text-orange-600 transition-colors"
+                  >
+                    <Copy size={18} />
+                  </button>
+                </div>
+                <div className="space-y-2 text-sm text-slate-600 font-mono bg-gray-50 p-4 rounded-xl border border-gray-200 h-48 overflow-y-auto">
+                  {metadataResponses.timestamps.map((ts, i) => (
+                    <div
+                      key={i}
+                      className="hover:text-slate-900 transition-colors"
+                    >
+                      {ts.time} {ts.title}
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-        {/* 태그 */}
-        {metadataResponses.tags && metadataResponses.tags.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Tag size={18} className="text-gray-500" />
-                <h3 className="font-bold text-gray-900">태그</h3>
+          <div className="space-y-6">
+            {/* Hashtags */}
+            {metadataResponses.hashtags &&
+              metadataResponses.hashtags.length > 0 && (
+                <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-gray-300 transition-colors">
+                  <div className="flex justify-between mb-4 items-center">
+                    <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">
+                      Hashtags
+                    </span>
+                    <button
+                      onClick={() => {
+                        const hashtagsText =
+                          metadataResponses.hashtags?.join(" ");
+                        handleCopy(hashtagsText || "", "Hashtags");
+                      }}
+                      className="text-slate-400 hover:text-orange-600 transition-colors"
+                    >
+                      <Copy size={18} />
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {metadataResponses.hashtags.map((h) => (
+                      <span
+                        key={h}
+                        className="text-orange-600 bg-orange-50 px-3 py-1.5 rounded-lg text-sm border border-orange-100"
+                      >
+                        {h}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+            {/* Tags */}
+            {metadataResponses.tags && metadataResponses.tags.length > 0 && (
+              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-gray-300 transition-colors">
+                <div className="flex justify-between mb-4 items-center">
+                  <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">
+                    Tags
+                  </span>
+                  <button
+                    onClick={() => {
+                      const tagsText = metadataResponses.tags?.join(",");
+                      handleCopy(tagsText || "", "Tags");
+                    }}
+                    className="text-slate-400 hover:text-orange-600 transition-colors"
+                  >
+                    <Copy size={18} />
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {metadataResponses.tags.map((t) => (
+                    <span
+                      key={t}
+                      className="text-slate-600 bg-gray-100 px-3 py-1.5 rounded-lg text-xs border border-gray-200"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
               </div>
-              <button
-                onClick={() => {
-                  const tagsText = metadataResponses.tags?.join(", ");
-                  handleCopy(tagsText || "", "태그");
-                }}
-                className="text-gray-500 hover:text-gray-900 p-1"
-              >
-                <Copy size={18} />
-              </button>
-            </div>
-            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-              <pre className="text-sm text-gray-700 whitespace-pre-wrap font-sans">
-                {metadataResponses.tags.join(", ")}
-              </pre>
-            </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
-      {onNext && metadataResponses && (
+      {onStepChange && metadataResponses && (
         <div className="flex justify-end mt-6">
           <button
-            onClick={onNext}
+            onClick={() => onStepChange(8)}
             className="px-8 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2"
           >
             Next Step

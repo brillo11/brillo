@@ -101,8 +101,28 @@ export function AIAssistantClient() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
 
-  const handleNextStep = () => {
-    setCurrentStep((prev) => (prev + 1) as Step);
+  const handleStepChange = async (
+    step: Step,
+    updates?: {
+      titleMessage?: string;
+      titleResponses?: any;
+      selectedTitle?: string;
+      selectedTitleIndex?: number | null;
+      thumbnailGuideResponses?: any;
+      selectedThumbnailGuideIndex?: number | null;
+      thumbnailResponses?: string;
+      scriptResponses?: string;
+      metadataResponses?: any;
+      shortsTitlesResponses?: any;
+      step?: string;
+    }
+  ) => {
+    if (updates) {
+      await saveSessionData(updates);
+    }
+    setTimeout(() => {
+      setCurrentStep(step);
+    }, 300);
   };
 
   const handleThumbnailGuideGenerate = useCallback(
@@ -131,7 +151,7 @@ export function AIAssistantClient() {
 
         // 자동 생성이 아닐 때만 다음 스텝으로 이동
         if (!autoGenerate) {
-          handleNextStep();
+          handleStepChange(4);
         }
         toast.success("썸네일 가이드가 생성되었습니다.");
       } catch (error) {
@@ -275,7 +295,7 @@ export function AIAssistantClient() {
       setSessionData({ ...initialData, ...updatedData, topic }); // UI 상태에는 topic 유지
       await updateAIAssistantSession(sessionId, updatedData, topic);
 
-      handleNextStep();
+      handleStepChange(3);
       toast.success("제목이 생성되었습니다.");
     } catch (error) {
       console.error("Failed to generate titles:", error);
@@ -303,13 +323,7 @@ export function AIAssistantClient() {
 
   const handleTitleNext = async () => {
     if (selectedTitleIndex === null) return;
-
-    const updates = {
-      step: "THUMBNAIL_GUIDE",
-    };
-    await saveSessionData(updates);
-
-    setTimeout(() => handleNextStep(), 300);
+    await handleStepChange(4, { step: "THUMBNAIL_GUIDE" });
   };
 
   const handleGuideSelect = async (index: number) => {
@@ -319,12 +333,7 @@ export function AIAssistantClient() {
 
   const handleGuideNext = async () => {
     if (selectedGuide === null) return;
-    const updates = {
-      step: "THUMBNAIL",
-    };
-    await saveSessionData(updates);
-
-    setTimeout(() => handleNextStep(), 300);
+    await handleStepChange(5, { step: "THUMBNAIL" });
   };
 
   const handleThumbnailGenerate = async () => {
@@ -442,19 +451,11 @@ export function AIAssistantClient() {
   };
 
   const handleScriptNext = async () => {
-    const updates = {
-      step: "METADATA",
-    };
-    await saveSessionData(updates);
-    setTimeout(() => handleNextStep(), 300);
+    await handleStepChange(7, { step: "METADATA" });
   };
 
   const handleMetadataNext = async () => {
-    const updates = {
-      step: "SHORTS_TITLES",
-    };
-    await saveSessionData(updates);
-    setTimeout(() => handleNextStep(), 300);
+    await handleStepChange(8, { step: "SHORTS_TITLES" });
   };
 
   const handleShortsTitlesGenerate = async () => {
@@ -503,7 +504,7 @@ export function AIAssistantClient() {
   };
 
   const handleConfirm = () => {
-    handleNextStep();
+    handleStepChange(6);
   };
 
   const handleRefreshTitles = async () => {
@@ -522,6 +523,38 @@ export function AIAssistantClient() {
     }
   };
 
+  const ProgressBar = () => {
+    const steps = [
+      "Persona",
+      "Topic",
+      "Title",
+      "Style",
+      "Design",
+      "Script",
+      "Meta",
+      "Final",
+    ];
+
+    const currentIdx = currentStep - 1;
+
+    const progress = (currentIdx / (steps.length - 1)) * 100;
+
+    return (
+      <div className="mb-10 px-2">
+        <div className="flex justify-between text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider">
+          <span>Start Workflow</span>
+          <span>Final Asset</span>
+        </div>
+        <div className="h-3 bg-gray-200 rounded-full overflow-hidden relative border border-gray-300 shadow-inner">
+          <div
+            className="h-full bg-gradient-to-r from-red-600 to-orange-500 transition-all duration-700 ease-out shadow-sm"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="max-w-6xl mx-auto min-h-screen">
       {/* Progress Header */}
@@ -535,6 +568,7 @@ export function AIAssistantClient() {
             제목, 썸네일, 스크립트까지 단계별로 안내해드립니다.
           </p>
         </div>
+        <ProgressBar />
         <div className="flex items-center justify-between relative">
           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 -z-10 rounded-full"></div>
           <div
@@ -581,7 +615,7 @@ export function AIAssistantClient() {
           <Step1Persona
             selectedPersona={selectedPersona}
             onSelectPersona={setSelectedPersona}
-            onNext={handleNextStep}
+            onStepChange={handleStepChange}
           />
         )}
         {currentStep === 2 && (
@@ -599,7 +633,7 @@ export function AIAssistantClient() {
             selectedTitle={selectedTitle}
             onSelectTitle={handleTitleSelect}
             onRefresh={handleRefreshTitles}
-            onNext={handleTitleNext}
+            onStepChange={handleTitleNext}
             titleResponses={sessionData.titleResponses}
             selectedTitleIndex={selectedTitleIndex}
           />
@@ -608,7 +642,7 @@ export function AIAssistantClient() {
           <Step4ThumbGuide
             selectedGuide={selectedGuide}
             onSelectGuide={handleGuideSelect}
-            onNext={handleGuideNext}
+            onStepChange={handleGuideNext}
             thumbnailGuideResponses={sessionData.thumbnailGuideResponses}
             onGenerate={handleThumbnailGuideGenerate}
             isGenerating={isThumbnailGuideLoading}
@@ -624,7 +658,7 @@ export function AIAssistantClient() {
             isGenerating={isThumbnailLoading}
             onChatInputChange={setChatInput}
             onChatSubmit={handleChatSubmit}
-            onConfirm={handleConfirm}
+            onStepChange={handleConfirm}
             chatEndRef={chatEndRef}
             thumbnailResponses={sessionData.thumbnailResponses}
             thumbnailEditText={thumbnailEditText}
@@ -642,7 +676,7 @@ export function AIAssistantClient() {
             topic={topic}
             scriptResponses={sessionData.scriptResponses}
             onGenerate={handleScriptGenerate}
-            onNext={handleScriptNext}
+            onStepChange={handleScriptNext}
             isGenerating={isScriptLoading}
           />
         )}
@@ -650,7 +684,7 @@ export function AIAssistantClient() {
           <Step7Metadata
             metadataResponses={sessionData.metadataResponses}
             onGenerate={handleMetadataGenerate}
-            onNext={handleMetadataNext}
+            onStepChange={handleMetadataNext}
             isGenerating={isMetadataLoading}
           />
         )}

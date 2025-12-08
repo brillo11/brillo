@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight, Check } from "lucide-react";
-import type { CreatorPersona } from "./types";
+import type { CreatorPersona, Step } from "./types";
 import { MOCK_CREATOR_PERSONAS } from "./constants";
 import { renderIcon } from "./utils";
 import Image from "next/image";
@@ -9,13 +9,13 @@ import Image from "next/image";
 interface Step1PersonaProps {
   selectedPersona: CreatorPersona | null;
   onSelectPersona: (persona: CreatorPersona) => void;
-  onNext: () => void;
+  onStepChange: (step: Step) => void;
 }
 
 export function Step1Persona({
   selectedPersona,
   onSelectPersona,
-  onNext,
+  onStepChange,
 }: Step1PersonaProps) {
   return (
     <div className="space-y-6">
@@ -69,7 +69,7 @@ export function Step1Persona({
       <div className="flex justify-end mt-8">
         <button
           disabled={!selectedPersona}
-          onClick={onNext}
+          onClick={() => onStepChange(2)}
           className="px-8 py-3 bg-gray-900 text-white rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-800 transition-colors flex items-center gap-2"
         >
           Next Step <ArrowRight size={18} />
