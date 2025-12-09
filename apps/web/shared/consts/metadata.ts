@@ -1,7 +1,9 @@
 export const METADATA = {
-  TITLE: "LearnFlow - YouTube로 시작하는 개인화된 학습",
-  DESCRIPTION: "YouTube 영상을 개인화된 학습 자료로 변환하는 LMS 플랫폼",
+  TITLE: "TubeInsight - YouTube 컨텐츠 제작 어시스턴트 플랫폼",
+  DESCRIPTION:
+    "AI 어시스턴트가 페르소나부터 대본, 썸네일, 메타데이터까지 YouTube 콘텐츠 제작의 모든 과정을 도와드립니다",
   THUMBNAIL: "/thumbnail.png",
+  COMPANY_NAME: "TALOS WORKS",
   // 절대 URL 버전 추가
   getThumbnailUrl: () => {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";

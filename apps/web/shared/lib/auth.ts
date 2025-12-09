@@ -71,6 +71,12 @@ export const auth: any = betterAuth({
   }),
   baseURL: process.env.BETTER_AUTH_URL, // apps/admin 전용 포트
   basePath: "/api/auth",
+  trustedOrigins: [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://www.youtube-longform-web.vercel.app/",
+    "https://youtube-longform-web.vercel.app/",
+  ], // 로컬 및 프로덕션 환경 허용
   user: {
     modelName: "user",
     fields: {
@@ -128,21 +134,21 @@ export const auth: any = betterAuth({
     },
   },
   socialProviders: {
-    naver: {
-      clientId: process.env.NAVER_CLIENT_ID || "",
-      clientSecret: process.env.NAVER_CLIENT_SECRET || "",
-      scope: ["email", "nickname", "mobile"] as string[], // 필요한 동의 항목
-    },
+    // naver: {
+    //   clientId: process.env.NAVER_CLIENT_ID || "",
+    //   clientSecret: process.env.NAVER_CLIENT_SECRET || "",
+    //   scope: ["email", "nickname", "mobile"] as string[], // 필요한 동의 항목
+    // },
     kakao: {
       clientId: process.env.KAKAO_CLIENT_ID || "", // REST API 키
       clientSecret: process.env.KAKAO_CLIENT_SECRET || "", // Client Secret (보안 탭에서 생성)
       scope: ["account_email", "profile_nickname", "phone_number"] as string[], // 필요한 동의 항목
     },
-    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-      scope: ["email", "profile"] as string[], // 구글에서 제공하는 기본 정보
-    },
+    // google: {
+    //   clientId: process.env.GOOGLE_CLIENT_ID || "",
+    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+    //   scope: ["email", "profile"] as string[], // 구글에서 제공하는 기본 정보
+    // },
   },
 } as const);
 
