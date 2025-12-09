@@ -74,8 +74,8 @@ export const auth: any = betterAuth({
   trustedOrigins: [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://www.youtube-longform-web.vercel.app/",
-    "https://youtube-longform-web.vercel.app/",
+    "https://www.youtube-longform-web.vercel.app",
+    "https://youtube-longform-web.vercel.app",
   ], // 로컬 및 프로덕션 환경 허용
   user: {
     modelName: "user",
