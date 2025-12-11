@@ -4,7 +4,6 @@ import { Toaster } from "@repo/ui/components/sonner";
 import { Metadata } from "next";
 import { METADATA } from "@/shared/consts/metadata";
 
-
 export const metadata: Metadata = {
   title: `${METADATA.TITLE}`,
   description: `${METADATA.DESCRIPTION}`,
