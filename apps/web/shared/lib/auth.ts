@@ -142,7 +142,8 @@ export const auth: any = betterAuth({
     kakao: {
       clientId: process.env.KAKAO_CLIENT_ID || "", // REST API 키
       clientSecret: process.env.KAKAO_CLIENT_SECRET || "", // Client Secret (보안 탭에서 생성)
-      scope: ["account_email", "profile_nickname", "phone_number"] as string[], // 필요한 동의 항목
+      scope: ["account_email", "profile_nickname"] as string[], // 필요한 동의 항목
+      disableDefaultScope: true, // 기본 스코프(profile_image 등) 비활성화
     },
     // google: {
     //   clientId: process.env.GOOGLE_CLIENT_ID || "",
