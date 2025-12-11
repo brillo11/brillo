@@ -33,7 +33,7 @@ export async function getYouTubeCaptions(youtubeUrl: string) {
       };
     }
 
-    const apiKey = process.env.YOUTUBE_DATA_API_KEY;
+    const apiKey = process.env.YOUTUBE_DATA_API_KEY2;
 
     if (!apiKey) {
       return {

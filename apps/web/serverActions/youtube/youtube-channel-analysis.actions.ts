@@ -8,7 +8,7 @@ export async function analyzeYouTubeChannel(channelIdOrUsername: string) {
   console.log(`[analyzeYouTubeChannel] 입력:`, channelIdOrUsername);
 
   try {
-    const apiKey = process.env.YOUTUBE_DATA_API_KEY;
+    const apiKey = process.env.YOUTUBE_DATA_API_KEY2;
 
     if (!apiKey) {
       console.error(`[analyzeYouTubeChannel] API 키 없음`);
