@@ -21,17 +21,17 @@ export async function GET(req: NextRequest) {
 
   try {
     const region = req.nextUrl.searchParams.get("region") || undefined;
-    // Batch 6: 1000-1199 (200개)
-    const result = await runYoutubeVideosCron(undefined, region, 1000, 200);
+    // Batch 25: 4800-4999 (200개)
+    const result = await runYoutubeVideosCron(undefined, region, 4800, 200);
 
     return NextResponse.json({
       ...result,
-      batch: 6,
-      range: "1000-1199",
+      batch: 25,
+      range: "4800-4999",
     });
   } catch (e: any) {
     return NextResponse.json(
-      { success: false, error: e?.message || "cron failed", batch: 6 },
+      { success: false, error: e?.message || "cron failed", batch: 25 },
       { status: 500 }
     );
   }
