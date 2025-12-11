@@ -281,9 +281,9 @@ export async function runYoutubeVideosCron(
   take?: number
 ) {
   try {
-    const apiKey = process.env.YOUTUBE_DATA_API_KEY;
+    const apiKey = process.env.YOUTUBE_DATA_API_KEY2;
     if (!apiKey) {
-      throw new Error("YOUTUBE_DATA_API_KEY is not set");
+      throw new Error("YOUTUBE_DATA_API_KEY2 is not set");
     }
 
     // 1. DB에서 채널 목록 가져오기 (uploadsPlaylist가 있는 것들)
