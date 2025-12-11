@@ -21,6 +21,7 @@ interface VideoData {
   viewsPerHour: number | null;
   outlierVph: number | null;
   outlierView: number | null;
+  outlierSubscriber: number | null;
   categoryId: number | null;
 }
 
@@ -191,7 +192,8 @@ function processVideos(
   apiVideos: any[],
   channelId: string,
   regionCode: string | null,
-  overallAvgView: number | null
+  overallAvgView: number | null,
+  subscriberCount: number | null
 ): VideoData[] {
   const now = Date.now();
   const processed: VideoData[] = [];
@@ -243,6 +245,10 @@ function processVideos(
       outlierView:
         overallAvgView && overallAvgView > 0
           ? viewCount / overallAvgView
+          : null,
+      outlierSubscriber:
+        subscriberCount && subscriberCount > 0
+          ? viewCount / subscriberCount
           : null,
       categoryId: Number.isFinite(categoryId ?? 0) ? categoryId : null,
     });
@@ -331,7 +337,8 @@ export async function runYoutubeVideosCron(
           apiVideos,
           channel.id,
           channel.regionCode,
-          channel.overallAvgView
+          channel.overallAvgView,
+          channel.subscriberCount
         );
 
         // 쇼츠와 일반 영상 분리

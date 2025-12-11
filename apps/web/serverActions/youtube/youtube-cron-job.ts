@@ -239,6 +239,7 @@ export async function runYoutubePopularCronByCategory(
       // 전체 평균 조회수 계산
       const totalViews = parseInt(ch.statistics?.viewCount || "0", 10);
       const videoCount = parseInt(ch.statistics?.videoCount || "0", 10);
+      const subscriberCount = parseInt(ch.statistics?.subscriberCount || "0", 10);
       const overallAvgView =
         videoCount > 0 && Number.isFinite(totalViews)
           ? totalViews / videoCount
@@ -262,6 +263,7 @@ export async function runYoutubePopularCronByCategory(
           regionCode: regionCode,
           uploadsPlaylist,
           videoCount: videoCount > 0 ? videoCount : null,
+          subscriberCount: subscriberCount > 0 ? subscriberCount : null,
           overallAvgView,
           lastCrawledAt: new Date(),
         },
@@ -272,6 +274,7 @@ export async function runYoutubePopularCronByCategory(
           regionCode: regionCode,
           uploadsPlaylist,
           videoCount: videoCount > 0 ? videoCount : null,
+          subscriberCount: subscriberCount > 0 ? subscriberCount : null,
           overallAvgView,
           lastCrawledAt: new Date(),
         },
@@ -363,6 +366,7 @@ export async function runYoutubePopularCron(
 
       const totalViews = parseInt(ch.statistics?.viewCount || "0", 10);
       const videoCount = parseInt(ch.statistics?.videoCount || "0", 10);
+      const subscriberCount = parseInt(ch.statistics?.subscriberCount || "0", 10);
       const overallAvgView =
         videoCount > 0 && Number.isFinite(totalViews)
           ? totalViews / videoCount
@@ -384,6 +388,7 @@ export async function runYoutubePopularCron(
           regionCode: regionCode,
           uploadsPlaylist,
           videoCount: videoCount > 0 ? videoCount : null,
+          subscriberCount: subscriberCount > 0 ? subscriberCount : null,
           overallAvgView,
           lastCrawledAt: new Date(),
         },
@@ -394,6 +399,7 @@ export async function runYoutubePopularCron(
           regionCode: regionCode,
           uploadsPlaylist,
           videoCount: videoCount > 0 ? videoCount : null,
+          subscriberCount: subscriberCount > 0 ? subscriberCount : null,
           overallAvgView,
           lastCrawledAt: new Date(),
         },

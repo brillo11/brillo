@@ -130,7 +130,7 @@ function UserActionsCell({
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>사용자 승인</AlertDialogTitle>
-                <AlertDialogDescription>
+                <AlertDialogDescription asChild>
                   <div className="space-y-2">
                     <p>이 사용자를 승인하시겠습니까?</p>
                     <div className="p-3 bg-gray-50 rounded border-l-4 border-green-500">
@@ -177,7 +177,7 @@ function UserActionsCell({
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>사용자 거부</AlertDialogTitle>
-                <AlertDialogDescription>
+                <AlertDialogDescription asChild>
                   <div className="space-y-2">
                     <p>이 사용자를 거부하시겠습니까?</p>
                     <div className="p-3 bg-gray-50 rounded border-l-4 border-gray-500">
@@ -224,7 +224,7 @@ function UserActionsCell({
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>사용자 삭제</AlertDialogTitle>
-                <AlertDialogDescription>
+                <AlertDialogDescription asChild>
                   <div className="space-y-2">
                     <p>정말로 이 사용자를 삭제하시겠습니까?</p>
                     <div className="p-3 bg-gray-50 rounded border-l-4 border-red-500">
@@ -275,7 +275,7 @@ function UserActionsCell({
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>역할 변경</AlertDialogTitle>
-                <AlertDialogDescription>
+                <AlertDialogDescription asChild>
                   <div className="space-y-2">
                     <p>
                       이 관리자의 역할을 <strong>Student</strong>로
@@ -321,7 +321,7 @@ function UserActionsCell({
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>관리자 삭제</AlertDialogTitle>
-                <AlertDialogDescription>
+                <AlertDialogDescription asChild>
                   <div className="space-y-2">
                     <p>정말로 이 관리자를 삭제하시겠습니까?</p>
                     <div className="p-3 bg-gray-50 rounded border-l-4 border-red-500">

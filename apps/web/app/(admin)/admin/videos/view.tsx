@@ -204,6 +204,31 @@ export default function AdminYoutubeVideosView() {
       },
     },
     {
+      accessorKey: "outlierSubscriber",
+      header: "Outlier (Sub)",
+      cell: ({ row }) => {
+        const outlier = row.getValue("outlierSubscriber") as number | null;
+        return (
+          <div className="text-center">
+            {outlier !== null ? (
+              <Badge
+                variant={outlier >= 2 ? "default" : "outline"}
+                className={
+                  outlier >= 2
+                    ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
+                    : ""
+                }
+              >
+                {outlier.toFixed(2)}
+              </Badge>
+            ) : (
+              <span className="text-slate-400 text-xs">-</span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
       accessorKey: "publishedAt",
       header: "게시일",
       cell: ({ row }) => {

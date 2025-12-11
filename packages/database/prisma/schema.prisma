@@ -346,6 +346,7 @@ model YoutubeChannel {
   regionCode      String?        // 수집 기준 지역 (예: KR)
   uploadsPlaylist String?        // 업로드 플레이리스트 ID
   videoCount      Int?           // 채널의 전체 영상 개수
+  subscriberCount Int?           // 채널 구독자 수
   overallAvgView  Float?         // 전체 평균 조회수 (totalViews / videoCount)
   recentAvgVph    Float?         // 최근 N개 평균 VPH
   lastCrawledAt   DateTime?
@@ -371,6 +372,7 @@ model YoutubeVideo {
   viewsPerHour       Float?
   outlierVph         Float?
   outlierView        Float?
+  outlierSubscriber  Float?
   regionCode         String?    // 수집 지역 코드
   categoryId         Int?       // YouTube 비디오 카테고리 ID
   crawledAt          DateTime   @default(now())
@@ -402,6 +404,7 @@ model YoutubeShorts {
   viewsPerHour       Float?
   outlierVph         Float?
   outlierView        Float?
+  outlierSubscriber  Float?
   regionCode         String?    // 수집 지역 코드
   categoryId         Int?       // YouTube 비디오 카테고리 ID
   crawledAt          DateTime   @default(now())
