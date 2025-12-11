@@ -89,16 +89,33 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // 🔹 ONBOARDING CHECK
+  if (session?.user && !pathname.startsWith("/api/auth")) {
+    const status = (session.user as any).status;
+
+    // 1. UNKNOWN -> Onboarding
+    if (status === "UNKNOWN" && !pathname.startsWith("/auth/onboarding")) {
+       console.log("⚠️ Unknown user redirect to onboarding");
+       return NextResponse.redirect(new URL("/auth/onboarding", request.url));
+    }
+
+    // 2. PENDING -> Pending Page
+    if (status === "PENDING" && !pathname.startsWith("/auth/pending")) {
+       console.log("⚠️ Pending user redirect to pending page");
+       return NextResponse.redirect(new URL("/auth/pending", request.url));
+    }
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
+    "/", // Root path check
     "/admin/:path*",
     "/api/admin/:path*",
-    "/auth/:path*", // 로그인/회원가입 페이지도 체크 (이미 로그인된 경우 리다이렉트)
-    // 결제 페이지도 인증 필요
+    "/auth/:path*", 
     "/payment/:path*",
   ],
-  runtime: "nodejs", // Prisma 사용을 위해 Node.js runtime 명시
+  runtime: "nodejs", 
 };
