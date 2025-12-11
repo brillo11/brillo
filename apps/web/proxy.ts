@@ -42,5 +42,4 @@ export const config = {
     "/auth/:path*",
     "/admin/:path*",
   ],
-  runtime: "nodejs",
 };
