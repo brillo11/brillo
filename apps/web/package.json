@@ -5,20 +5,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack --port 3000",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "typecheck": "tsc --noEmit",
-    "cron:youtube": "tsx scripts/cron-youtube-popular.ts",
-    "cron:youtube:videos": "tsx scripts/cron-youtube-videos.ts",
-    "create-test-accounts": "tsx scripts/create-test-accounts.ts"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.850.0",
     "@google/genai": "^1.30.0",
     "@prisma/nextjs-monorepo-workaround-plugin": "latest",
-    "@repo/database": "workspace:*",
     "@repo/ui": "workspace:*",
     "@tanstack/react-query": "^5.90.0",
     "@tanstack/react-table": "^8.21.3",
@@ -49,6 +45,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@repo/database": "workspace:*",
     "@repo/eslint-config": "workspace:^",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^22",
