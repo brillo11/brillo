@@ -57,7 +57,7 @@ export async function submitOnboarding(prevState: any, formData: FormData) {
       },
     });
 
-    revalidatePath("/");
+    revalidatePath("/student");
     revalidatePath("/", "layout"); // 전체 레이아웃 갱신
   } catch (error: any) {
     console.error("Onboarding error:", error);
@@ -67,5 +67,5 @@ export async function submitOnboarding(prevState: any, formData: FormData) {
     return { error: "저장 중 오류가 발생했습니다." };
   }
 
-  redirect("/auth/pending");
+  redirect("/student");
 }
