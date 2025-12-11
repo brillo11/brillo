@@ -11,9 +11,10 @@ import { Button } from "@repo/ui/components/button";
 import { Card, CardContent } from "@repo/ui/components/card";
 import { Badge } from "@repo/ui/components/badge";
 import { Input } from "@repo/ui/components/input";
-import { Search, Youtube, PlayCircle } from "lucide-react";
+import { Search, Youtube, PlayCircle, Link as LinkIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { formatCount } from "@/shared/lib/utils/numberFormat";
 
 export default function AdminYoutubeVideosView() {
   const router = useRouter();
@@ -53,7 +54,7 @@ export default function AdminYoutubeVideosView() {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="font-semibold text-slate-900 truncate">
+              <div className="font-semibold text-slate-900 truncate max-w-[300px]">
                 {video.title || "제목 없음"}
               </div>
               <div className="text-xs text-slate-500 truncate mb-1">
@@ -104,7 +105,7 @@ export default function AdminYoutubeVideosView() {
                 </div>
               )}
             </div>
-            <div className="text-sm text-slate-700 truncate">
+            <div className="text-sm text-slate-700 truncate max-w-[100px]">
               {channel?.title || "-"}
             </div>
           </div>
@@ -136,7 +137,7 @@ export default function AdminYoutubeVideosView() {
         const count = row.getValue("viewCount") as number;
         return (
           <div className="text-center text-sm text-slate-700">
-            {count.toLocaleString()}
+            {formatCount(count)}
           </div>
         );
       },
@@ -242,7 +243,7 @@ export default function AdminYoutubeVideosView() {
     },
     {
       accessorKey: "actions",
-      header: "관리",
+      header: "채널 링크",
       cell: ({ row }) => {
         const videoId = row.original.id;
         return (
@@ -253,7 +254,7 @@ export default function AdminYoutubeVideosView() {
               rel="noopener noreferrer"
             >
               <Button variant="outline" size="sm" className="text-xs">
-                YouTube
+                <LinkIcon />  
               </Button>
             </Link>
           </div>
