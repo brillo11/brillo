@@ -48,9 +48,6 @@ importers:
       '@prisma/nextjs-monorepo-workaround-plugin':
         specifier: latest
         version: 7.0.1
-      '@repo/database':
-        specifier: workspace:*
-        version: link:../../packages/database
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -136,6 +133,9 @@ importers:
         specifier: ^4.1.12
         version: 4.1.12
     devDependencies:
+      '@repo/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@repo/eslint-config':
         specifier: workspace:^
         version: link:../../packages/eslint-config
