@@ -11,9 +11,10 @@ import { Button } from "@repo/ui/components/button";
 import { Card, CardContent } from "@repo/ui/components/card";
 import { Badge } from "@repo/ui/components/badge";
 import { Input } from "@repo/ui/components/input";
-import { Search, Youtube } from "lucide-react";
+import { Search, Youtube, Link as LinkIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { formatCount } from "@/shared/lib/utils/numberFormat";
 
 export default function AdminYoutubeChannelsView() {
   const router = useRouter();
@@ -88,7 +89,7 @@ export default function AdminYoutubeChannelsView() {
           <div className="text-center">
             {avg !== null ? (
               <span className="text-sm text-slate-700">
-                {Math.round(avg).toLocaleString()}
+                {formatCount(Math.round(avg))}
               </span>
             ) : (
               <span className="text-slate-400 text-xs">-</span>
@@ -104,7 +105,7 @@ export default function AdminYoutubeChannelsView() {
         const count = row.getValue("videoCount") as number | null;
         return (
           <div className="text-center text-sm text-slate-700">
-            {count !== null ? count.toLocaleString() : "-"}
+            {formatCount(count)}
           </div>
         );
       },
@@ -131,12 +132,11 @@ export default function AdminYoutubeChannelsView() {
             <Link
               href={`https://www.youtube.com/channel/${channelId}`}
               target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button variant="outline" size="sm" className="text-xs">
-                YouTube
-              </Button>
-            </Link>
+              >
+                <Button variant="outline" size="sm" className="text-xs">
+                  <LinkIcon />
+                </Button>
+              </Link>
           </div>
         );
       },

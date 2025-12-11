@@ -120,7 +120,7 @@ export function AdminDataTable({
     <div className="mx-auto w-full max-w-[1280px] space-y-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between bg-white">
-          <CardTitle>목록 ({data?.data?.length || 0}개)</CardTitle>
+          <CardTitle>목록 ({data?.total || 0}개)</CardTitle>
           {options.searchBar && (
             <div className="max-w-md flex-1 bg-white">
               <input
@@ -194,7 +194,7 @@ export function AdminDataTable({
               page={params.page || page}
               totalPages={data.totalPages}
               pageSize={params.size}
-              totalCount={data?.data?.length || 0}
+              totalCount={data?.total || 0}
               setPage={setPage}
             />
           )}
