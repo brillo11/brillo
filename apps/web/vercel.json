@@ -79,50 +79,6 @@
     {
       "path": "/api/cron/youtube-videos-batch-14",
       "schedule": "10 23 * * *"
-    },
-    {
-      "path": "/api/cron/youtube-videos-batch-15",
-      "schedule": "20 23 * * *"
-    },
-    {
-      "path": "/api/cron/youtube-videos-batch-16",
-      "schedule": "30 23 * * *"
-    },
-    {
-      "path": "/api/cron/youtube-videos-batch-17",
-      "schedule": "40 23 * * *"
-    },
-    {
-      "path": "/api/cron/youtube-videos-batch-18",
-      "schedule": "50 23 * * *"
-    },
-    {
-      "path": "/api/cron/youtube-videos-batch-19",
-      "schedule": "0 0 * * *"
-    },
-    {
-      "path": "/api/cron/youtube-videos-batch-20",
-      "schedule": "10 0 * * *"
-    },
-    {
-      "path": "/api/cron/youtube-videos-batch-21",
-      "schedule": "20 0 * * *"
-    },
-    {
-      "path": "/api/cron/youtube-videos-batch-22",
-      "schedule": "30 0 * * *"
-    },
-    {
-      "path": "/api/cron/youtube-videos-batch-23",
-      "schedule": "40 0 * * *"
-    },
-    {
-      "path": "/api/cron/youtube-videos-batch-24",
-      "schedule": "50 0 * * *"
-    },
-    {
-      "path": "/api/cron/youtube-videos-batch-25",
-      "schedule": "0 1 * * *"
     }
   ]
 }
