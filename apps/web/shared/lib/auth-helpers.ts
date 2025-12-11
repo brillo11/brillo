@@ -94,7 +94,7 @@ export async function loginWithSocial(
 
     await betterSignIn.social({
       provider,
-      callbackURL: "/", // 미들웨어(middleware.ts)가 상태(UNKNOWN/PENDING)에 따라 적절한 페이지로 리다이렉트 처리함
+      callbackURL: PATH.STUDENT_ROOT, // 미들웨어(middleware.ts)가 상태(UNKNOWN/PENDING)에 따라 적절한 페이지로 리다이렉트 처리함
     });
     return { success: true };
   } catch (error: any) {

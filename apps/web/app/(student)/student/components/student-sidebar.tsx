@@ -145,7 +145,7 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
                               />
                             </button>
                           </CollapsibleTrigger>
-                          <CollapsibleContent>
+                          <CollapsibleContent id={`sidebar-item-${item.id}`}>
                             <ul className="mt-1 space-y-1 pl-4">
                               {item.subMenus?.map((subMenu) => {
                                 // 서브 메뉴의 active 판단: 정확한 URL 매칭만 사용

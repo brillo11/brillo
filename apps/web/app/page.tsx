@@ -20,6 +20,10 @@ import {
   Play,
 } from "lucide-react";
 import Link from "next/link";
+import { MarketingNavbar } from "@/components/marketing-navbar";
+import { useSession } from "@/shared/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { PATH } from "@/shared/consts/path";
 
 export default function HomePage() {
   const [credentials, setCredentials] = useState({
@@ -31,6 +35,16 @@ export default function HomePage() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isAdminFormOpen, setIsAdminFormOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  const handleStartLearning = () => {
+    if (session?.user) {
+      router.push(PATH.STUDENT_ROOT);
+    } else {
+      setIsLoginOpen(true);
+    }
+  };
 
   const handleSocialLogin = async (provider: "kakao") => {
     setIsSocialLoading(true);
@@ -117,19 +131,8 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Logo variant="full" size="md" />
-            <button
-              onClick={() => setIsLoginOpen(true)}
-              className="text-gray-600 hover:text-red-600 font-medium text-sm transition-colors"
-            >
-              로그인
-            </button>
-          </div>
-        </div>
-      </nav>
+      {/* Navigation */}
+      <MarketingNavbar onLoginClick={() => setIsLoginOpen(true)} />
       {/* Hero */}
       <section className="relative overflow-hidden pt-16 pb-24 lg:pt-32 bg-gradient-to-br from-blue-50 via-white to-purple-50">
         {/* Background blobs */}
@@ -160,7 +163,7 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-xl hover:shadow-red-200 transition-all flex items-center justify-center gap-2 group"
-              onClick={() => setIsLoginOpen(true)}
+              onClick={handleStartLearning}
             >
               무료로 학습 시작하기
               <ArrowRight
