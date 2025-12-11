@@ -78,7 +78,7 @@ export const auth: any = betterAuth({
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "https://tubeinsight.net",
-    "https://www.tubeinsight.net/",
+    "https://www.tubeinsight.net",
   ], // 로컬 및 프로덕션 환경 허용
   user: {
     modelName: "user",
@@ -90,6 +90,17 @@ export const auth: any = betterAuth({
       status: "status",
       createdAt: "createdAt",
       updatedAt: "updatedAt",
+    },
+    additionalFields: {
+      role: {
+        type: "string",
+      },
+      status: {
+        type: "string",
+      },
+      phoneNumber: {
+        type: "string",
+      },
     },
   },
   account: {
