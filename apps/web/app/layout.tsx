@@ -2,7 +2,6 @@ import "@repo/ui/globals.css";
 import { Providers } from "./providers";
 import { Toaster } from "@repo/ui/components/sonner";
 import { Metadata } from "next";
-
 import { METADATA } from "@/shared/consts/metadata";
 
 

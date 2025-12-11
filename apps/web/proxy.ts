@@ -42,5 +42,5 @@ export const config = {
     "/auth/:path*",
     "/admin/:path*",
   ],
-  // runtime: "nodejs", // If supported by custom server?
+  runtime: "nodejs",
 };

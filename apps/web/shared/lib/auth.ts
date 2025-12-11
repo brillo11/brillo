@@ -21,11 +21,14 @@ const prismaWithLogging = new Proxy(prisma, {
                   JSON.stringify(args[0]?.data, null, 2)
                 );
 
-                // 네이버의 mobile을 phoneNumber로 변환
-                if (args[0]?.data?.mobile) {
-                  console.log("📱 전화번호 감지:", args[0].data.mobile);
-                  args[0].data.phoneNumber = args[0].data.mobile;
+                // 네이버(mobile)와 카카오(phone_number)의 전화번호를 phoneNumber로 변환
+                if (args[0]?.data?.mobile || args[0]?.data?.phone_number) {
+                  const phone =
+                    args[0].data.mobile || args[0].data.phone_number;
+                  console.log("📱 전화번호 감지:", phone);
+                  args[0].data.phoneNumber = phone;
                   delete args[0].data.mobile;
+                  delete args[0].data.phone_number;
                   console.log("📝 phoneNumber 필드로 변환 완료");
                 }
 
@@ -74,8 +77,8 @@ export const auth: any = betterAuth({
   trustedOrigins: [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://www.youtube-longform-web.vercel.app",
-    "https://youtube-longform-web.vercel.app",
+    "https://tubeinsight.net",
+    "https://www.tubeinsight.net/",
   ], // 로컬 및 프로덕션 환경 허용
   user: {
     modelName: "user",
@@ -126,11 +129,15 @@ export const auth: any = betterAuth({
   callbacks: {
     async session({ session, user }: { session: any; user: any }) {
       // 세션에 사용자 role과 status 포함
-      if (user) {
-        (session.user as any).role = (user as any).role;
-        (session.user as any).status = (user as any).status;
-      }
-      return session;
+        return {
+        ...session,
+        user: {
+          ...session.user,
+          role: user.role,
+          status: user.status,
+          phoneNumber: user.phoneNumber, // 온보딩 체크를 위해 전화번호도 추가
+        },
+      };
     },
   },
   socialProviders: {
