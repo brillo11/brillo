@@ -522,7 +522,7 @@ model AIAssistantSession {
   thumbnailResponses String? @db.Text // 썸네일 이미지 (base64 또는 URL)
   
   // Step 6: Script
-  scriptResponses String? @db.Text // 생성된 대본
+  scriptResponses Json? // 생성된 대본 (구조화된 JSON)
   
   // Step 7: Metadata
   metadataResponses Json? // 메타데이터 (설명, 타임스탬프, 해시태그, 태그)

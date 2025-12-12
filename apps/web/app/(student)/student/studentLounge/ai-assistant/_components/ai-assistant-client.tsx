@@ -39,6 +39,9 @@ export function AIAssistantClient() {
     null
   );
   const [selectedGuide, setSelectedGuide] = useState<number | null>(null);
+  const [referenceThumbnails, setReferenceThumbnails] = useState<
+    Array<{ id: string; url: string; title?: string }>
+  >([]);
 
   // Loading states
   const [isGenerating, setIsGenerating] = useState(false);
@@ -164,106 +167,20 @@ export function AIAssistantClient() {
     [selectedTitleIndex, currentSessionId, sessionData]
   );
 
-  // Step 4 진입 시 썸네일 가이드 자동 생성
-  useEffect(() => {
-    const shouldAutoGenerate =
-      currentStep === 4 &&
-      !sessionData.thumbnailGuideResponses &&
-      selectedTitleIndex !== null &&
-      currentSessionId &&
-      !isThumbnailGuideLoading;
+  // Step 4 진입 시 썸네일 가이드 자동 생성 - 제거 (이제 handleTitleNext에서 처리)
+  // useEffect(() => { ... }, [...]);
 
-    if (shouldAutoGenerate) {
-      handleThumbnailGuideGenerate(true); // autoGenerate = true로 전달
-    }
-  }, [
-    currentStep,
-    selectedTitleIndex,
-    currentSessionId,
-    sessionData.thumbnailGuideResponses,
-    isThumbnailGuideLoading,
-    handleThumbnailGuideGenerate,
-  ]);
+  // Step 5 진입 시 썸네일 자동 생성 - 제거 (이제 handleGuideNext에서 처리)
+  // useEffect(() => { ... }, [...]);
 
-  // Step 5 진입 시 썸네일 자동 생성
-  useEffect(() => {
-    const shouldAutoGenerate =
-      currentStep === 5 &&
-      !sessionData.thumbnailResponses &&
-      selectedTitleIndex !== null &&
-      selectedGuide !== null &&
-      currentSessionId &&
-      !isThumbnailLoading;
+  // Step 6 진입 시 대본 자동 생성 - 제거 (이제 handleConfirm에서 처리)
+  // useEffect(() => { ... }, [...]);
 
-    if (shouldAutoGenerate) {
-      handleThumbnailGenerate();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    currentStep,
-    selectedTitleIndex,
-    selectedGuide,
-    currentSessionId,
-    sessionData.thumbnailResponses,
-    isThumbnailLoading,
-  ]);
+  // Step 7 진입 시 메타데이터 자동 생성 - 제거 (이제 handleScriptNext에서 처리)
+  // useEffect(() => { ... }, [...]);
 
-  // Step 6 진입 시 대본 자동 생성
-  useEffect(() => {
-    const shouldAutoGenerate =
-      currentStep === 6 &&
-      !sessionData.scriptResponses &&
-      currentSessionId &&
-      !isScriptLoading;
-
-    if (shouldAutoGenerate) {
-      handleScriptGenerate();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    currentStep,
-    currentSessionId,
-    sessionData.scriptResponses,
-    isScriptLoading,
-  ]);
-
-  // Step 7 진입 시 메타데이터 자동 생성
-  useEffect(() => {
-    const shouldAutoGenerate =
-      currentStep === 7 &&
-      !sessionData.metadataResponses &&
-      currentSessionId &&
-      !isMetadataLoading;
-
-    if (shouldAutoGenerate) {
-      handleMetadataGenerate();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    currentStep,
-    currentSessionId,
-    sessionData.metadataResponses,
-    isMetadataLoading,
-  ]);
-
-  // Step 8 진입 시 쇼츠 제목 자동 생성
-  useEffect(() => {
-    const shouldAutoGenerate =
-      currentStep === 8 &&
-      !sessionData.shortsTitlesResponses &&
-      currentSessionId &&
-      !isShortsTitlesLoading;
-
-    if (shouldAutoGenerate) {
-      handleShortsTitlesGenerate();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    currentStep,
-    currentSessionId,
-    sessionData.shortsTitlesResponses,
-    isShortsTitlesLoading,
-  ]);
+  // Step 8 진입 시 쇼츠 제목 자동 생성 - 제거 (이제 handleMetadataNext에서 처리)
+  // useEffect(() => { ... }, [...]);
 
   const simulateLoading = (callback: () => void, duration = 1500) => {
     setIsGenerating(true);
@@ -322,8 +239,28 @@ export function AIAssistantClient() {
   };
 
   const handleTitleNext = async () => {
-    if (selectedTitleIndex === null) return;
-    await handleStepChange(4, { step: "THUMBNAIL_GUIDE" });
+    if (selectedTitleIndex === null || !currentSessionId) return;
+    
+    // 썸네일 가이드 생성 후 다음 스텝으로 이동
+    setIsThumbnailGuideLoading(true);
+    try {
+      const response = await sendThumbnailGuideResponses(
+        currentSessionId,
+        selectedTitleIndex
+      );
+      const updates = {
+        thumbnailGuideResponses: response,
+        step: "THUMBNAIL",
+      };
+      await saveSessionData(updates);
+      await handleStepChange(4);
+      toast.success("썸네일 가이드가 생성되었습니다.");
+    } catch (error) {
+      console.error("Failed to generate thumbnail guide:", error);
+      toast.error("썸네일 가이드 생성에 실패했습니다.");
+    } finally {
+      setIsThumbnailGuideLoading(false);
+    }
   };
 
   const handleGuideSelect = async (index: number) => {
@@ -332,8 +269,38 @@ export function AIAssistantClient() {
   };
 
   const handleGuideNext = async () => {
-    if (selectedGuide === null) return;
-    await handleStepChange(5, { step: "THUMBNAIL" });
+    if (selectedGuide === null || selectedTitleIndex === null || !currentSessionId) return;
+    
+    // 썸네일 생성 후 다음 스텝으로 이동
+    setIsThumbnailLoading(true);
+    try {
+      const selectedTitleSet = sessionData.titleResponses?.sets[selectedTitleIndex];
+      const thumbnailGuide = sessionData.thumbnailGuideResponses?.thumbnailGuides[selectedGuide];
+
+      if (!selectedTitleSet || !thumbnailGuide) {
+        toast.error("제목과 썸네일 가이드를 선택해주세요.");
+        return;
+      }
+
+      const response = await sendThumbnailResponses({
+        thumbnailTitle: selectedTitleSet.thumbnailTitle,
+        hookingText: selectedTitleSet.hookingText || "",
+        videoTitle: selectedTitleSet.videoTitle,
+        thumbnailGuide: thumbnailGuide.guideDescription,
+        referenceImages: referenceThumbnails,
+      });
+
+      setThumbnailUrl(`data:image/jpeg;base64,${response}`);
+      const updates = { thumbnailResponses: response, step: "SCRIPT" };
+      await saveSessionData(updates);
+      await handleStepChange(5);
+      toast.success("썸네일이 생성되었습니다.");
+    } catch (error) {
+      console.error("Failed to generate thumbnail:", error);
+      toast.error("썸네일 생성에 실패했습니다.");
+    } finally {
+      setIsThumbnailLoading(false);
+    }
   };
 
   const handleThumbnailGenerate = async () => {
@@ -451,11 +418,41 @@ export function AIAssistantClient() {
   };
 
   const handleScriptNext = async () => {
-    await handleStepChange(7, { step: "METADATA" });
+    if (!currentSessionId) return;
+    
+    // 메타데이터 생성 후 다음 스텝으로 이동
+    setIsMetadataLoading(true);
+    try {
+      const response = await sendMetadataResponses(currentSessionId);
+      const updates = { metadataResponses: response, step: "SHORTS_TITLES" };
+      await saveSessionData(updates);
+      await handleStepChange(7);
+      toast.success("메타데이터가 생성되었습니다.");
+    } catch (error) {
+      console.error("Failed to generate metadata:", error);
+      toast.error("메타데이터 생성에 실패했습니다.");
+    } finally {
+      setIsMetadataLoading(false);
+    }
   };
 
   const handleMetadataNext = async () => {
-    await handleStepChange(8, { step: "SHORTS_TITLES" });
+    if (!currentSessionId) return;
+    
+    // 쇼츠 제목 생성 후 다음 스텝으로 이동
+    setIsShortsTitlesLoading(true);
+    try {
+      const response = await sendShortsTitlesResponses(currentSessionId);
+      const updates = { shortsTitlesResponses: response, step: "COMPLETE" };
+      await saveSessionData(updates);
+      await handleStepChange(8);
+      toast.success("쇼츠 제목이 생성되었습니다.");
+    } catch (error) {
+      console.error("Failed to generate shorts titles:", error);
+      toast.error("쇼츠 제목 생성에 실패했습니다.");
+    } finally {
+      setIsShortsTitlesLoading(false);
+    }
   };
 
   const handleShortsTitlesGenerate = async () => {
@@ -503,8 +500,23 @@ export function AIAssistantClient() {
     }
   };
 
-  const handleConfirm = () => {
-    handleStepChange(6);
+  const handleConfirm = async () => {
+    if (!currentSessionId) return;
+    
+    // 대본 생성 후 다음 스텝으로 이동
+    setIsScriptLoading(true);
+    try {
+      const response = await sendScriptResponses(currentSessionId);
+      const updates = { scriptResponses: response, step: "METADATA" };
+      await saveSessionData(updates);
+      await handleStepChange(6);
+      toast.success("대본이 생성되었습니다.");
+    } catch (error) {
+      console.error("Failed to generate script:", error);
+      toast.error("대본 생성에 실패했습니다.");
+    } finally {
+      setIsScriptLoading(false);
+    }
   };
 
   const handleRefreshTitles = async () => {
@@ -636,6 +648,7 @@ export function AIAssistantClient() {
             onStepChange={handleTitleNext}
             titleResponses={sessionData.titleResponses}
             selectedTitleIndex={selectedTitleIndex}
+            isLoading={isThumbnailGuideLoading}
           />
         )}
         {currentStep === 4 && (
@@ -646,6 +659,8 @@ export function AIAssistantClient() {
             thumbnailGuideResponses={sessionData.thumbnailGuideResponses}
             onGenerate={handleThumbnailGuideGenerate}
             isGenerating={isThumbnailGuideLoading}
+            isLoading={isThumbnailLoading}
+            onReferenceThumbnailsChange={setReferenceThumbnails}
           />
         )}
         {currentStep === 5 && (
@@ -667,6 +682,7 @@ export function AIAssistantClient() {
             onThumbnailFileChange={setThumbnailFile}
             onThumbnailGenerate={handleThumbnailGenerate}
             onFixThumbnail={handleFixThumbnail}
+            isLoading={isScriptLoading}
           />
         )}
         {currentStep === 6 && (
@@ -678,6 +694,7 @@ export function AIAssistantClient() {
             onGenerate={handleScriptGenerate}
             onStepChange={handleScriptNext}
             isGenerating={isScriptLoading}
+            isLoading={isMetadataLoading}
           />
         )}
         {currentStep === 7 && (
@@ -686,6 +703,7 @@ export function AIAssistantClient() {
             onGenerate={handleMetadataGenerate}
             onStepChange={handleMetadataNext}
             isGenerating={isMetadataLoading}
+            isLoading={isShortsTitlesLoading}
           />
         )}
         {currentStep === 8 && (

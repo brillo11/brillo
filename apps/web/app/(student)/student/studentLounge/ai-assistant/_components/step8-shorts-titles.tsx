@@ -148,7 +148,7 @@ export function Step8ShortsTitles({
       </div>
 
       {/* Section 2: Voice */}
-      <div className="bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-2xl p-8 overflow-hidden relative shadow-md">
+      {/* <div className="bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-2xl p-8 overflow-hidden relative shadow-md">
         <div className="absolute top-0 right-0 p-32 bg-orange-100/50 blur-[80px] rounded-full pointer-events-none"></div>
 
         <h3 className="text-xl font-bold text-slate-900 mb-8 flex items-center gap-3 relative z-10">
@@ -275,19 +275,7 @@ export function Step8ShortsTitles({
             )}
           </div>
         </div>
-      </div>
-
-      <div className="flex justify-start pt-4">
-        <button
-          onClick={() => {
-            // TODO: 이전 단계로 이동하는 로직 구현
-            toast.info("이전 단계로 이동");
-          }}
-          className="px-6 py-3 rounded-xl font-medium text-slate-500 hover:text-slate-900 hover:bg-gray-100 transition-all flex items-center gap-2"
-        >
-          <ChevronLeft size={18} /> Back
-        </button>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -26,6 +26,7 @@ interface Step5ThumbGenProps {
   onThumbnailFileChange?: (file: File | null) => void;
   onThumbnailGenerate?: () => void;
   onFixThumbnail?: () => void;
+  isLoading?: boolean;
 }
 
 export function Step5ThumbGen({
@@ -46,6 +47,7 @@ export function Step5ThumbGen({
   onThumbnailFileChange,
   onThumbnailGenerate,
   onFixThumbnail,
+  isLoading = false,
 }: Step5ThumbGenProps) {
   const displayUrl = thumbnailResponses
     ? `data:image/jpeg;base64,${thumbnailResponses}`
@@ -116,7 +118,7 @@ export function Step5ThumbGen({
                         onThumbnailEditTextChange(e.target.value)
                       }
                       className="resize-none min-h-[180px] border border-gray-200 focus:border-red-400 focus:ring-1 focus:ring-red-400/20 flex-1"
-                      disabled={isGenerating}
+                      disabled={isGenerating || isLoading}
                       placeholder="예: 텍스트 크기를 키워주세요, 배경색을 더 밝게 해주세요..."
                     />
                   </div>
@@ -132,12 +134,12 @@ export function Step5ThumbGen({
                         onChange={(e) =>
                           onThumbnailFileChange?.(e.target.files?.[0] || null)
                         }
-                        disabled={isGenerating}
+                        disabled={isGenerating || isLoading}
                         className="hidden"
                       />
                       <div
                         className={`flex items-center gap-3 p-3 border-2 border-dashed rounded-lg transition-all ${
-                          isGenerating
+                          isGenerating || isLoading
                             ? "border-gray-200 bg-gray-50 cursor-not-allowed opacity-60"
                             : thumbnailFile
                               ? "border-red-300 bg-red-50/50 hover:border-red-400 hover:bg-red-50 cursor-pointer"
@@ -153,14 +155,14 @@ export function Step5ThumbGen({
                             <Image
                               size={20}
                               className={
-                                isGenerating ? "text-gray-400" : "text-red-600"
+                                isGenerating || isLoading ? "text-gray-400" : "text-red-600"
                               }
                             />
                           ) : (
                             <Upload
                               size={20}
                               className={
-                                isGenerating ? "text-gray-400" : "text-gray-500"
+                                isGenerating || isLoading ? "text-gray-400" : "text-gray-500"
                               }
                             />
                           )}
@@ -168,7 +170,7 @@ export function Step5ThumbGen({
                         <div className="flex-1 min-w-0">
                           <p
                             className={`text-sm font-medium truncate ${
-                              isGenerating ? "text-gray-400" : "text-gray-700"
+                              isGenerating || isLoading ? "text-gray-400" : "text-gray-700"
                             }`}
                           >
                             {thumbnailFile
@@ -187,7 +189,7 @@ export function Step5ThumbGen({
 
                   <Button
                     onClick={onFixThumbnail}
-                    disabled={isGenerating || !thumbnailEditText.trim()}
+                    disabled={isGenerating || isLoading || !thumbnailEditText.trim()}
                     className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold shadow-sm"
                   >
                     {isGenerating ? (
@@ -208,10 +210,20 @@ export function Step5ThumbGen({
 
             <Button
               onClick={() => onStepChange(6)}
-              className="w-full py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-bold text-base hover:from-green-700 hover:to-emerald-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+              disabled={isLoading}
+              className="w-full py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-bold text-base hover:from-green-700 hover:to-emerald-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              <span>Confirm & Generate Script</span>
-              <Send size={18} />
+              {isLoading ? (
+                <>
+                  <Loader2 className="animate-spin" size={18} />
+                  <span>Generating Script...</span>
+                </>
+              ) : (
+                <>
+                  <span>Confirm & Generate Script</span>
+                  <Send size={18} />
+                </>
+              )}
             </Button>
           </div>
         </div>

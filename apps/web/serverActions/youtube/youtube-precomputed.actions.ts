@@ -5,18 +5,19 @@ import { prisma } from "@repo/database";
 export interface PrecomputedVideo {
   id: string;
   title: string;
-  description: string;
+  description: string | null;
   thumbnailUrl: string;
-  channelId: string;
+  channelId: string | null;
   channelTitle: string;
   publishedAt: Date | null;
   viewCount: number;
   likeCount: number | null;
   commentCount: number | null;
-  duration: string;
+  duration: string | null;
   viewsPerHour: number | null;
   outlierVph: number | null;
   regionCode: string | null;
+  categoryId: number | null;
 }
 
 export async function getTopPrecomputedVideos(limit = 50, regionCode?: string) {
@@ -50,6 +51,7 @@ export async function getTopPrecomputedVideos(limit = 50, regionCode?: string) {
     viewsPerHour: v.viewsPerHour,
     outlierVph: v.outlierVph,
     regionCode: v.regionCode,
+    categoryId: v.categoryId,
   })) as PrecomputedVideo[];
 }
 
@@ -84,5 +86,6 @@ export async function getTopPrecomputedShorts(limit = 50, regionCode?: string) {
     viewsPerHour: s.viewsPerHour,
     outlierVph: s.outlierVph,
     regionCode: s.regionCode,
+    categoryId: s.categoryId,
   })) as PrecomputedVideo[];
 }

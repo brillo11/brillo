@@ -109,7 +109,6 @@ export async function sendTitleResponses(sessionId: string, message: string) {
 - 전체 길이는 최대 4분 이내.
 - **인트로 (초반 30초)**: 제목과 썸네일에서 끌어낸 후킹과 기대감을 이어가며 놀라운 사실, 중대한 약속, 로드맵을 자연스럽게 녹여낸 30초 분량 대본.
 - **본론**: 자기소개와 3개의 챕터, 각 챕터는 한 문장으로 자극적인 제목을 붙이고, 약 1분 분량으로 바로 읽을 수 있는 대본을 작성한다.
- - 자기소개 앞에는 🎤 이모지를 붙인다.
  - 각 챕터 제목 앞에는 📌 이모지를 붙인다.
 - **마무리**: 핵심 요약, 구독/좋아요 요청, 다음 영상 예고와 댓글 참여 유도.
 - Opinon/Reason/Example/Offer와 같은 분류는 넣지 않고, 완성된 읽기용 대본만 제공한다.
@@ -159,17 +158,43 @@ export async function sendTitleResponses(sessionId: string, message: string) {
   return jsonOutput;
 }
 
+const scriptChapterSchema = z.object({
+  title: z.string().describe("📌 이모지로 시작하는 자극적인 챕터 제목 (한 문장)"),
+  content: z.string().describe("약 1분 분량의 바로 읽을 수 있는 대본"),
+});
+
+const scriptSchema = z.object({
+  intro: z.string().describe("🎬 인트로 (초반 30초): 제목과 썸네일에서 끌어낸 후킹과 기대감을 이어가며 놀라운 사실, 중대한 약속, 로드맵을 자연스럽게 녹여낸 30초 분량 대본"),
+  selfIntro: z.string().describe("자기소개: 간단한 자기소개"),
+  chapters: z.array(scriptChapterSchema).length(3).describe("본론 3개 챕터"),
+  outro: z.string().describe("🎬 마무리: 핵심 요약, 구독/좋아요 요청, 다음 영상 예고와 댓글 참여 유도"),
+});
+
+const scriptTextFormat = zodTextFormat(scriptSchema, "script");
+
 export async function sendScriptResponses(sessionId: string) {
   const conversationId = await getConversationId(sessionId);
 
   const responses = await openAiClient.responses.create({
     model: "gpt-5.1",
-    input: "대본 만들어줘",
+    input: `대본을 만들어줘. 다음 지침을 따라줘:
+- 여러 대본 후보 없이 한 개의 대본만 제공한다.
+- 전체 길이는 최대 4분 이내.
+- **인트로 (초반 30초)**: 제목과 썸네일에서 끌어낸 후킹과 기대감을 이어가며 놀라운 사실, 중대한 약속, 로드맵을 자연스럽게 녹여낸 30초 분량 대본.
+- **본론**: 자기소개와 3개의 챕터, 각 챕터는 한 문장으로 자극적인 제목을 붙이고, 약 1분 분량으로 바로 읽을 수 있는 대본을 작성한다.
+  - 각 챕터 제목 앞에는 📌 이모지를 붙인다.
+- **마무리**: 핵심 요약, 구독/좋아요 요청, 다음 영상 예고와 댓글 참여 유도.
+- Opinion/Reason/Example/Offer와 같은 분류는 넣지 않고, 완성된 읽기용 대본만 제공한다.`,
     conversation: conversationId,
     tools: tools,
+    text: {
+      format: scriptTextFormat,
+    },
   });
 
-  return responses.output_text;
+  const output = responses.output_text;
+  const jsonOutput = JSON.parse(output);
+  return jsonOutput;
 }
 
 const thumbnailGuideSetSchema = z.object({
@@ -213,17 +238,47 @@ export async function sendThumbnailResponses({
   hookingText,
   videoTitle,
   thumbnailGuide,
+  referenceImages = [],
 }: {
   thumbnailTitle: string;
   hookingText: string;
   videoTitle: string;
   thumbnailGuide: string;
+  referenceImages?: Array<{ url: string; title?: string }>;
 }) {
-  const prompt = `유튜브 썸네일을 만들어줘. 아래의 가이드를 참고해줘. 반환내역은 이미지만 반환 할 것.  \n 썸네일 제목: ${thumbnailTitle}\n 후킹 텍스트: ${hookingText}\n 영상 제목: ${videoTitle}\n 가이드: ${thumbnailGuide}`;
+  let prompt = `유튜브 썸네일을 만들어줘. 아래의 가이드를 참고해줘. 반환내역은 이미지만 반환 할 것.  \n 썸네일 제목: ${thumbnailTitle}\n 후킹 텍스트: ${hookingText}\n 영상 제목: ${videoTitle}\n 가이드: ${thumbnailGuide}`;
+  
+  if (referenceImages.length > 0) {
+    prompt += `\n\n참고 썸네일 스타일 (${referenceImages.length}개의 이미지 첨부):`;
+    prompt += `\n위 첨부된 참고 이미지들의 스타일, 레이아웃, 색감, 폰트, 텍스트 배치를 분석하여 일관성 있는 썸네일을 제작해줘.`;
+  }
+
+  // Build contents array with text and reference images
+  const contents: any[] = [{ text: prompt }];
+  
+  // Fetch and add reference images
+  if (referenceImages.length > 0) {
+    for (const img of referenceImages) {
+      try {
+        const response = await fetch(img.url);
+        const arrayBuffer = await response.arrayBuffer();
+        const base64 = Buffer.from(arrayBuffer).toString('base64');
+        
+        contents.push({
+          inlineData: {
+            mimeType: 'image/jpeg',
+            data: base64,
+          },
+        });
+      } catch (error) {
+        console.error(`Failed to fetch reference image: ${img.url}`, error);
+      }
+    }
+  }
 
   const response = await geminiClient.models.generateContent({
     model: "gemini-3-pro-image-preview",
-    contents: prompt,
+    contents,
     config: {
       imageConfig: {
         aspectRatio: "16:9",
@@ -306,7 +361,11 @@ export async function sendMetadataResponses(sessionId: string) {
 
   const responses = await openAiClient.responses.create({
     model: "gpt-5.1",
-    input: "메타데이터 만들어줘",
+    input: `메타데이터 만들어줘. 이전 응답의 대본 내용을 바탕으로 다음 지침을 따라서 생성해줘.
+- **설명**: 대본 내용을 검색 친화적으로 300자 내외로 요약.
+- **타임스탬프**: 인트로~마무리까지 임의 시간 배치.
+- **해시태그**: 관련 키워드 4개 제시.
+- **태그**: 제목·대본 관련 키워드, 오타 가능성 키워드 포함, 최대 7개.`,
     conversation: conversationId,
     tools: tools,
     text: {

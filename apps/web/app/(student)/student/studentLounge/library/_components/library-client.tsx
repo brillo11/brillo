@@ -14,6 +14,7 @@ interface LibraryClientProps {
 export function LibraryClient({ videos, shorts }: LibraryClientProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [regionFilter, setRegionFilter] = useState<"ALL" | "KR" | "US">("ALL");
+  const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
   const [videoType, setVideoType] = useState<"long" | "short">("long");
 
   const filteredVideos = useMemo(() => {
@@ -26,9 +27,13 @@ export function LibraryClient({ videos, shorts }: LibraryClientProps) {
       const matchesRegion =
         regionFilter === "ALL" || video.regionCode === regionFilter;
 
-      return matchesSearch && matchesRegion;
+      const matchesCategory =
+        categoryFilter === "ALL" ||
+        (video.categoryId && video.categoryId.toString() === categoryFilter);
+
+      return matchesSearch && matchesRegion && matchesCategory;
     });
-  }, [videos, shorts, videoType, searchTerm, regionFilter]);
+  }, [videos, shorts, videoType, searchTerm, regionFilter, categoryFilter]);
 
   return (
     <div className="space-y-6 relative">
@@ -99,6 +104,47 @@ export function LibraryClient({ videos, shorts }: LibraryClientProps) {
                 <option value="ALL">전체 지역</option>
                 <option value="KR">한국 (KR)</option>
                 <option value="US">글로벌 (US)</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
+              <Filter size={16} className="text-gray-500" />
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="bg-transparent border-none text-sm font-medium text-gray-700 focus:ring-0 cursor-pointer"
+              >
+                <option value="ALL">전체 카테고리</option>
+                <option value="1">영화 & 애니메이션</option>
+                <option value="2">자동차 & 차량</option>
+                <option value="10">음악</option>
+                <option value="15">반려동물 & 동물</option>
+                <option value="17">스포츠</option>
+                <option value="18">단편 영화</option>
+                <option value="19">여행 & 이벤트</option>
+                <option value="20">게임</option>
+                <option value="21">비디오 블로그</option>
+                <option value="22">인물 & 블로그</option>
+                <option value="23">코미디</option>
+                <option value="24">엔터테인먼트</option>
+                <option value="25">뉴스 & 정치</option>
+                <option value="26">노하우 & 스타일</option>
+                <option value="27">교육</option>
+                <option value="28">과학 & 기술</option>
+                <option value="30">영화</option>
+                <option value="31">애니메이션</option>
+                <option value="32">액션/어드벤처</option>
+                <option value="33">클래식</option>
+                <option value="34">코미디</option>
+                <option value="35">다큐멘터리</option>
+                <option value="36">드라마</option>
+                <option value="37">가족</option>
+                <option value="38">해외</option>
+                <option value="39">공포</option>
+                <option value="40">SF/판타지</option>
+                <option value="41">스릴러</option>
+                <option value="42">쇼츠</option>
+                <option value="43">쇼</option>
+                <option value="44">예고편</option>
               </select>
             </div>
           </div>
