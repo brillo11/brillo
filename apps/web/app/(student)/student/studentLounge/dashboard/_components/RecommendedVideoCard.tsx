@@ -6,14 +6,15 @@ import Image from "next/image";
 import { PlayCircle, Zap, BarChart, Eye } from "lucide-react";
 import { PopularVideoModal } from "./PopularVideoModal";
 import type { PrecomputedVideo } from "@/serverActions/youtube/youtube-precomputed.actions";
-import type { PopularVideo } from "@/serverActions/youtube/youtube-popular.actions";
+import type { VideoForModal } from "@/shared/types/video";
+import { getCategoryName } from "@/shared/lib/utils/youtubeCategory";
 
 interface RecommendedVideoCardProps {
   video: PrecomputedVideo;
 }
 
-// PrecomputedVideo를 PopularVideo 형태로 변환
-function convertToPopularVideo(video: PrecomputedVideo): PopularVideo {
+// PrecomputedVideo를 VideoForModal 형태로 변환
+function convertToVideoForModal(video: PrecomputedVideo): VideoForModal {
   return {
     id: video.id,
     title: video.title,
@@ -28,6 +29,7 @@ function convertToPopularVideo(video: PrecomputedVideo): PopularVideo {
     commentCount: video.commentCount,
     duration: video.duration || "",
     channelId: video.channelId || null,
+    categoryId: video.categoryId,
     viewsPerHour: video.viewsPerHour,
     outlierVph: video.outlierVph,
     outlierView: null, // PrecomputedVideo에는 없으므로 null
@@ -51,7 +53,7 @@ export function RecommendedVideoCard({ video }: RecommendedVideoCardProps) {
     handleCloseModal();
   };
 
-  const popularVideo = convertToPopularVideo(video);
+  const videoForModal = convertToVideoForModal(video);
 
   return (
     <>
@@ -78,6 +80,11 @@ export function RecommendedVideoCard({ video }: RecommendedVideoCardProps) {
             <span className="bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded">
               {video.regionCode || "KR"}
             </span>
+            {video.categoryId && (
+              <span className="bg-blue-600/80 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded">
+                {getCategoryName(video.categoryId.toString())}
+              </span>
+            )}
           </div>
 
           {/* Outlier Badge on Thumbnail */}
@@ -161,7 +168,7 @@ export function RecommendedVideoCard({ video }: RecommendedVideoCardProps) {
       </div>
 
       <PopularVideoModal
-        video={popularVideo}
+        video={videoForModal}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onStartLearning={handleStartLearning}

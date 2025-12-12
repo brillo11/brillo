@@ -1,11 +1,12 @@
 "use client";
 
 import { kdayjs } from "@/shared/lib/utils/dayjs";
+import { getCategoryName } from "@/shared/lib/utils/youtubeCategory";
 import { X, Calendar, BarChart, Zap, Play, ExternalLink } from "lucide-react";
-import type { PopularVideo } from "@/serverActions/youtube/youtube-popular.actions";
+import type { VideoForModal } from "@/shared/types/video";
 
 interface PopularVideoModalProps {
-  video: PopularVideo | null;
+  video: VideoForModal | null;
   isOpen: boolean;
   onClose: () => void;
   onStartLearning: () => void;
@@ -51,9 +52,16 @@ export function PopularVideoModal({
             <X size={20} />
           </button>
           <div className="absolute bottom-6 left-6 right-6 text-white">
-            <span className="inline-block px-2 py-1 bg-red-600 rounded text-xs font-bold mb-2">
-              KR
-            </span>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="inline-block px-2 py-1 bg-red-600 rounded text-xs font-bold">
+                KR
+              </span>
+              {video.categoryId && (
+                <span className="inline-block px-2 py-1 bg-blue-600 rounded text-xs font-bold">
+                  {getCategoryName(video.categoryId.toString())}
+                </span>
+              )}
+            </div>
             <h2 className="text-2xl font-bold leading-tight mb-2">
               {video.title}
             </h2>

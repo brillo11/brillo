@@ -91,7 +91,18 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
           <SidebarGroupContent>
             <nav className="flex-1 overflow-y-auto py-6 px-4">
               <ul className="space-y-1.5">
-                {studentMenus.map((item) => {
+                {studentMenus.map((item, index) => {
+                  // 섹션 헤더 렌더링
+                  if (item.section) {
+                    return (
+                      <div key={item.id} className="pt-4 pb-2">
+                        <div className="text-[10px] uppercase tracking-wider font-bold text-slate-400 pl-3">
+                          {item.section}
+                        </div>
+                      </div>
+                    );
+                  }
+
                   // 부모 메뉴의 active 판단
                   let isActive = false;
 
@@ -145,21 +156,45 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
                               />
                             </button>
                           </CollapsibleTrigger>
-                          <CollapsibleContent id={`sidebar-item-${item.id}`}>
+                          <CollapsibleContent>
                             <ul className="mt-1 space-y-1 pl-4">
                               {item.subMenus?.map((subMenu) => {
+                                // 서브메뉴 내 섹션 헤더 렌더링
+                                if (subMenu.section) {
+                                  return (
+                                    <div key={subMenu.id} className="pt-2 pb-1">
+                                      <div className="text-[10px] uppercase tracking-wider font-bold text-slate-400 pl-3">
+                                        {subMenu.section}
+                                      </div>
+                                    </div>
+                                  );
+                                }
+
+
                                 // 서브 메뉴의 active 판단: 정확한 URL 매칭만 사용
                                 const isSubActive = pathname === subMenu.url;
+                                
+                                // 2단계 메뉴 렌더링
                                 return (
                                   <li key={subMenu.title}>
                                     <Link
                                       href={subMenu.url}
-                                      className={`group w-full text-left px-4 py-3 rounded-xl flex items-center text-sm font-medium transition-all duration-200 ${
+                                      className={`group w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-medium transition-all duration-200 ${
                                         isSubActive
                                           ? "bg-red-50 text-red-700 shadow-sm"
                                           : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                                       }`}
                                     >
+                                      {subMenu.icon && (
+                                        <subMenu.icon
+                                          size={16}
+                                          className={
+                                            isSubActive
+                                              ? "text-red-600"
+                                              : "text-gray-400"
+                                          }
+                                        />
+                                      )}
                                       <span>{subMenu.title}</span>
                                     </Link>
                                   </li>

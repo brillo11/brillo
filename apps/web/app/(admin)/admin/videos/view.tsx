@@ -15,6 +15,7 @@ import { Search, Youtube, PlayCircle, Link as LinkIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { formatCount } from "@/shared/lib/utils/numberFormat";
+import { getCategoryName } from "@/shared/lib/utils/youtubeCategory";
 
 export default function AdminYoutubeVideosView() {
   const router = useRouter();
@@ -22,6 +23,7 @@ export default function AdminYoutubeVideosView() {
 
   const searchKeyword = searchParams.get("search") || "";
   const regionFilter = searchParams.get("region") || "all";
+  const categoryFilter = searchParams.get("category") || "all";
   const page = Number(searchParams.get("page")) || 1;
   const size = Number(searchParams.get("size")) || 30;
 
@@ -61,6 +63,11 @@ export default function AdminYoutubeVideosView() {
                 {video.id}
               </div>
               <div className="flex items-center gap-2 flex-wrap">
+                {video.categoryId && (
+                  <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                    {getCategoryName(video.categoryId.toString())}
+                  </Badge>
+                )}
                 {video.viewsPerHour !== null && (
                   <Badge variant="outline" className="text-xs">
                     VPH: {Math.round(video.viewsPerHour).toLocaleString()}
@@ -269,6 +276,7 @@ export default function AdminYoutubeVideosView() {
     size,
     search: searchKeyword,
     regionCode: regionFilter !== "all" ? regionFilter : undefined,
+    categoryId: categoryFilter !== "all" ? Number(categoryFilter) : undefined,
   };
 
   const queryFn = async () => {
@@ -278,6 +286,7 @@ export default function AdminYoutubeVideosView() {
         size,
         search: searchKeyword,
         regionCode: regionFilter !== "all" ? regionFilter : undefined,
+        categoryId: categoryFilter !== "all" ? Number(categoryFilter) : undefined,
       });
       return result;
     } catch (error) {
@@ -366,7 +375,7 @@ export default function AdminYoutubeVideosView() {
                     className={
                       regionFilter === "all"
                         ? "bg-slate-700 text-white hover:bg-slate-800"
-                        : "border-slate-300 text-slate-700 hover:bg-slate-50"
+                        : "border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                     }
                   >
                     전체
@@ -378,7 +387,7 @@ export default function AdminYoutubeVideosView() {
                     className={
                       regionFilter === "KR"
                         ? "bg-gradient-to-r from-red-600 to-orange-600 text-white hover:opacity-90"
-                        : "border-slate-300 text-slate-700 hover:bg-slate-50"
+                        : "border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                     }
                   >
                     한국 (KR)
@@ -390,11 +399,79 @@ export default function AdminYoutubeVideosView() {
                     className={
                       regionFilter === "US"
                         ? "bg-gradient-to-r from-red-600 to-orange-600 text-white hover:opacity-90"
-                        : "border-slate-300 text-slate-700 hover:bg-slate-50"
+                        : "border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                     }
                   >
                     미국 (US)
                   </Button>
+                </div>
+              </div>
+
+              {/* 카테고리 필터 */}
+              <div className="space-y-3 md:col-span-2">
+                <label className="block text-sm font-semibold text-slate-900">
+                  카테고리
+                </label>
+                <div className="flex flex-wrap gap-2 max-h-[200px] overflow-y-auto p-3 bg-slate-50 rounded-lg border border-slate-200">
+                  <Button
+                    variant={categoryFilter === "all" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleFilterChange("category", "all")}
+                    className={
+                      categoryFilter === "all"
+                        ? "bg-slate-700 text-white hover:bg-slate-800 shadow-sm"
+                        : "border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900 hover:border-slate-400"
+                    }
+                  >
+                    전체
+                  </Button>
+                  {[
+                    { id: "1", name: "영화 & 애니메이션" },
+                    { id: "2", name: "자동차 & 차량" },
+                    { id: "10", name: "음악" },
+                    { id: "15", name: "반려동물 & 동물" },
+                    { id: "17", name: "스포츠" },
+                    { id: "18", name: "단편 영화" },
+                    { id: "19", name: "여행 & 이벤트" },
+                    { id: "20", name: "게임" },
+                    { id: "21", name: "비디오 블로그" },
+                    { id: "22", name: "인물 & 블로그" },
+                    { id: "23", name: "코미디" },
+                    { id: "24", name: "엔터테인먼트" },
+                    { id: "25", name: "뉴스 & 정치" },
+                    { id: "26", name: "노하우 & 스타일" },
+                    { id: "27", name: "교육" },
+                    { id: "28", name: "과학 & 기술" },
+                    { id: "30", name: "영화" },
+                    { id: "31", name: "애니메이션" },
+                    { id: "32", name: "액션/어드벤처" },
+                    { id: "33", name: "클래식" },
+                    { id: "34", name: "코미디" },
+                    { id: "35", name: "다큐멘터리" },
+                    { id: "36", name: "드라마" },
+                    { id: "37", name: "가족" },
+                    { id: "38", name: "해외" },
+                    { id: "39", name: "공포" },
+                    { id: "40", name: "SF/판타지" },
+                    { id: "41", name: "스릴러" },
+                    { id: "42", name: "쇼츠" },
+                    { id: "43", name: "쇼" },
+                    { id: "44", name: "예고편" },
+                  ].map((cat) => (
+                    <Button
+                      key={cat.id}
+                      variant={categoryFilter === cat.id ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handleFilterChange("category", cat.id)}
+                      className={
+                        categoryFilter === cat.id
+                          ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:opacity-90 shadow-sm"
+                          : "border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900 hover:border-blue-400"
+                      }
+                    >
+                      {cat.name}
+                    </Button>
+                  ))}
                 </div>
               </div>
             </div>

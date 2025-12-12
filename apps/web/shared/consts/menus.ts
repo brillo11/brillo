@@ -58,6 +58,7 @@ export interface MenuItem {
   url: string;
   subMenus?: MenuItem[];
   icon?: LucideIcon;
+  section?: string; // 섹션 구분자
 }
 
 export const adminMenus: MenuItem[] = [
@@ -186,14 +187,29 @@ export const studentMenus: MenuItem[] = [
         icon: FileText,
       },
       {
+        id: "ai-tools-section",
+        title: "AI Tools",
+        baseUrl: "",
+        url: "",
+        section: "AI Tools",
+      },
+      {
         id: "ai-assistant",
         title: "AI 어시스턴트",
         baseUrl: PATH.STUDENT_LOUNGE,
         url: PATH.STUDENT_LOUNGE_AI_ASSISTANT,
         icon: Bot,
       },
+      {
+        id: "ai-history",
+        title: "작업 기록",
+        baseUrl: PATH.STUDENT_LOUNGE,
+        url: `${PATH.STUDENT_LOUNGE_AI_ASSISTANT}/history`,
+        icon: History,
+      },
     ],
   },
+
   {
     id: "assignments",
     title: "과제",

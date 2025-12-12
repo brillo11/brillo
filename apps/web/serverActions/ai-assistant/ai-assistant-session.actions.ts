@@ -144,10 +144,10 @@ export async function updateAIAssistantSession(
   const session = await requireStudent();
   const userId = session.user.id;
 
-  await prisma.aIAssistantSession.updateMany({
+  // updateMany 대신 update 사용 (Json 타입 필드 처리를 위해)
+  await prisma.aIAssistantSession.update({
     where: {
       id: sessionId,
-      userId, // 본인 세션만 업데이트 가능
     },
     data: {
       ...updates,

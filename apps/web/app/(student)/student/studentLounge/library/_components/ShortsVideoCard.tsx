@@ -6,14 +6,15 @@ import Image from "next/image";
 import { PlayCircle, Zap, BarChart, Film } from "lucide-react";
 import { PopularVideoModal } from "../../dashboard/_components/PopularVideoModal";
 import type { PrecomputedVideo } from "@/serverActions/youtube/youtube-precomputed.actions";
-import type { PopularVideo } from "@/serverActions/youtube/youtube-popular.actions";
+import type { VideoForModal } from "@/shared/types/video";
+import { getCategoryName } from "@/shared/lib/utils/youtubeCategory";
 
 interface ShortsVideoCardProps {
   video: PrecomputedVideo;
 }
 
-// PrecomputedVideo를 PopularVideo 형태로 변환
-function convertToPopularVideo(video: PrecomputedVideo): PopularVideo {
+// PrecomputedVideo를 VideoForModal 형태로 변환
+function convertToVideoForModal(video: PrecomputedVideo): VideoForModal {
   return {
     id: video.id,
     title: video.title,
@@ -28,6 +29,7 @@ function convertToPopularVideo(video: PrecomputedVideo): PopularVideo {
     commentCount: video.commentCount,
     duration: video.duration || "",
     channelId: video.channelId || null,
+    categoryId: video.categoryId,
     viewsPerHour: video.viewsPerHour,
     outlierVph: video.outlierVph,
     outlierView: null, // PrecomputedVideo에는 없으므로 null
@@ -51,7 +53,7 @@ export function ShortsVideoCard({ video }: ShortsVideoCardProps) {
     handleCloseModal();
   };
 
-  const popularVideo = convertToPopularVideo(video);
+  const videoForModal = convertToVideoForModal(video);
 
   return (
     <>
@@ -94,9 +96,16 @@ export function ShortsVideoCard({ video }: ShortsVideoCardProps) {
               <span>{video.outlierVph.toFixed(1)}x</span>
             </div>
           )}
-          <span className="bg-black/40 backdrop-blur-md text-white text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10">
-            {video.regionCode || "KR"}
-          </span>
+          <div className="flex gap-1">
+            <span className="bg-black/40 backdrop-blur-md text-white text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10">
+              {video.regionCode || "KR"}
+            </span>
+            {video.categoryId && (
+              <span className="bg-blue-600/80 backdrop-blur-md text-white text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10">
+                {getCategoryName(video.categoryId.toString())}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Info - Bottom */}
@@ -118,7 +127,7 @@ export function ShortsVideoCard({ video }: ShortsVideoCardProps) {
       </div>
 
       <PopularVideoModal
-        video={popularVideo}
+        video={videoForModal}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onStartLearning={handleStartLearning}

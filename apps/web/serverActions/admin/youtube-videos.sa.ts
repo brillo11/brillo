@@ -15,6 +15,7 @@ export interface YoutubeVideoListItem {
   outlierVph: number | null;
   outlierView: number | null;
   outlierSubscriber: number | null;
+  categoryId: number | null;
   regionCode: string | null;
   crawledAt: Date;
   channel: {
@@ -30,6 +31,7 @@ export interface GetYoutubeVideosParams {
   search?: string;
   regionCode?: string;
   channelId?: string;
+  categoryId?: number;
   minOutlierVph?: number;
   minOutlierSubscriber?: number;
 }
@@ -48,6 +50,7 @@ export async function getYoutubeVideosList({
   search,
   regionCode,
   channelId,
+  categoryId,
   minOutlierVph,
   minOutlierSubscriber,
 }: GetYoutubeVideosParams = {}): Promise<GetYoutubeVideosResult> {
@@ -76,6 +79,10 @@ export async function getYoutubeVideosList({
       where.outlierVph = {
         gte: minOutlierVph,
       };
+    }
+
+    if (categoryId) {
+      where.categoryId = categoryId;
     }
 
     if (minOutlierSubscriber !== undefined) {
@@ -122,6 +129,7 @@ export async function getYoutubeVideosList({
         outlierVph: video.outlierVph,
         outlierView: video.outlierView,
         outlierSubscriber: video.outlierSubscriber,
+        categoryId: video.categoryId,
         regionCode: video.regionCode,
         crawledAt: video.crawledAt,
         channel: {
