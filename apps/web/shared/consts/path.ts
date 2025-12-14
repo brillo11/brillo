@@ -18,6 +18,7 @@ export const PATH = {
   STUDENT_LOUNGE_ANNOUNCEMENTS: "/student/studentLounge/announcements",
   STUDENT_LOUNGE_QNA: "/student/studentLounge/qna",
   STUDENT_LOUNGE_AI_ASSISTANT: "/student/studentLounge/ai-assistant",
+  STUDENT_LOUNGE_SMART_SEARCH: "/student/studentLounge/smart-search",
   STUDENT_POINTS: "/student/points",
   STUDENT_POINTS_CHARGE: "/student/points/charge",
   STUDENT_POINTS_HISTORY: "/student/points/history",

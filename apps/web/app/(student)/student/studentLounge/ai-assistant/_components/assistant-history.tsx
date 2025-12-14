@@ -16,10 +16,14 @@ import {
   Loader2,
   Trash2,
 } from "lucide-react";
-import { getAIAssistantSessions, deleteAIAssistantSession } from "@/serverActions/ai-assistant/ai-assistant-session.actions";
+import {
+  getAIAssistantSessions,
+  deleteAIAssistantSession,
+} from "@/serverActions/ai-assistant/ai-assistant-session.actions";
 import type { AIAssistantSessionData } from "@/serverActions/ai-assistant/ai-assistant-session.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { VideoGenerator } from "./video-generator";
 
 const STEP_LABELS: Record<string, string> = {
   TITLE: "제목 생성",
@@ -33,7 +37,8 @@ const STEP_LABELS: Record<string, string> = {
 export function AssistantHistory() {
   const router = useRouter();
   const [sessions, setSessions] = useState<AIAssistantSessionData[]>([]);
-  const [selectedSession, setSelectedSession] = useState<AIAssistantSessionData | null>(null);
+  const [selectedSession, setSelectedSession] =
+    useState<AIAssistantSessionData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -61,15 +66,15 @@ export function AssistantHistory() {
     try {
       await deleteAIAssistantSession(sessionId);
       toast.success("삭제되었습니다.");
-      
+
       // 상세 뷰에서 삭제한 경우 리스트로 돌아가기
       if (selectedSession?.id === sessionId) {
         setSelectedSession(null);
       }
-      
+
       // 세션 목록 새로고침
       loadSessions();
-      
+
       // 히스토리 페이지로 이동
       router.push("/student/studentLounge/ai-assistant/history");
     } catch (error) {
@@ -85,9 +90,10 @@ export function AssistantHistory() {
     return "Draft";
   };
 
-  const filteredSessions = sessions.filter((session) =>
-    session.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    session.titleMessage?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredSessions = sessions.filter(
+    (session) =>
+      session.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      session.titleMessage?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Detail View
@@ -95,7 +101,8 @@ export function AssistantHistory() {
     const scriptData = selectedSession.scriptResponses as any;
     const metadataData = selectedSession.metadataResponses as any;
     const titleData = selectedSession.titleResponses as any;
-    const selectedTitleSet = titleData?.sets?.[selectedSession.selectedTitleIndex ?? 0];
+    const selectedTitleSet =
+      titleData?.sets?.[selectedSession.selectedTitleIndex ?? 0];
 
     return (
       <div className="flex-1 bg-gray-50 h-screen overflow-y-auto animate-fade-in custom-scrollbar">
@@ -123,7 +130,11 @@ export function AssistantHistory() {
                   {getCompletionStatus(selectedSession)}
                 </span>
                 <span>•</span>
-                <span>{new Date(selectedSession.createdAt).toLocaleDateString("ko-KR")}</span>
+                <span>
+                  {new Date(selectedSession.createdAt).toLocaleDateString(
+                    "ko-KR"
+                  )}
+                </span>
               </div>
             </div>
           </div>
@@ -167,7 +178,9 @@ export function AssistantHistory() {
                   </div>
                 </div>
               ) : (
-                <div className="text-sm text-slate-400 italic">제목이 선택되지 않았습니다.</div>
+                <div className="text-sm text-slate-400 italic">
+                  제목이 선택되지 않았습니다.
+                </div>
               )}
             </div>
 
@@ -200,7 +213,6 @@ export function AssistantHistory() {
               </div>
             </div>
           </div>
-
           {/* Script & Metadata */}
           <div className="grid lg:grid-cols-2 gap-6">
             <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm flex flex-col h-[500px]">
@@ -225,26 +237,38 @@ export function AssistantHistory() {
                 {scriptData ? (
                   <div className="space-y-4 text-sm text-slate-700">
                     <div>
-                      <div className="font-bold text-red-600 mb-2">🎬 인트로</div>
+                      <div className="font-bold text-red-600 mb-2">
+                        🎬 인트로
+                      </div>
                       <p className="whitespace-pre-wrap">{scriptData.intro}</p>
                     </div>
                     <div>
-                      <div className="font-bold text-orange-600 mb-2">🎤 자기소개</div>
-                      <p className="whitespace-pre-wrap">{scriptData.selfIntro}</p>
+                      <div className="font-bold text-orange-600 mb-2">
+                        🎤 자기소개
+                      </div>
+                      <p className="whitespace-pre-wrap">
+                        {scriptData.selfIntro}
+                      </p>
                     </div>
                     {scriptData.chapters?.map((chapter: any, idx: number) => (
                       <div key={idx}>
-                        <div className="font-bold text-blue-600 mb-2">{chapter.title}</div>
+                        <div className="font-bold text-blue-600 mb-2">
+                          {chapter.title}
+                        </div>
                         <p className="whitespace-pre-wrap">{chapter.content}</p>
                       </div>
                     ))}
                     <div>
-                      <div className="font-bold text-green-600 mb-2">🎬 마무리</div>
+                      <div className="font-bold text-green-600 mb-2">
+                        🎬 마무리
+                      </div>
                       <p className="whitespace-pre-wrap">{scriptData.outro}</p>
                     </div>
                   </div>
                 ) : (
-                  <div className="text-sm text-slate-400 italic">대본이 생성되지 않았습니다.</div>
+                  <div className="text-sm text-slate-400 italic">
+                    대본이 생성되지 않았습니다.
+                  </div>
                 )}
               </div>
             </div>
@@ -256,26 +280,34 @@ export function AssistantHistory() {
               {metadataData ? (
                 <div className="space-y-4">
                   <div>
-                    <div className="text-xs font-bold text-slate-400 uppercase mb-1">설명</div>
+                    <div className="text-xs font-bold text-slate-400 uppercase mb-1">
+                      설명
+                    </div>
                     <div className="text-xs text-slate-600 bg-gray-50 p-2 rounded border border-gray-100 max-h-32 overflow-y-auto">
                       {metadataData.description}
                     </div>
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-slate-400 uppercase mb-1">태그</div>
+                    <div className="text-xs font-bold text-slate-400 uppercase mb-1">
+                      태그
+                    </div>
                     <div className="flex flex-wrap gap-1">
-                      {metadataData.tags?.slice(0, 10).map((t: string, i: number) => (
-                        <span
-                          key={i}
-                          className="px-2 py-0.5 bg-gray-100 text-slate-600 rounded text-[10px] border border-gray-200"
-                        >
-                          {t}
-                        </span>
-                      ))}
+                      {metadataData.tags
+                        ?.slice(0, 10)
+                        .map((t: string, i: number) => (
+                          <span
+                            key={i}
+                            className="px-2 py-0.5 bg-gray-100 text-slate-600 rounded text-[10px] border border-gray-200"
+                          >
+                            {t}
+                          </span>
+                        ))}
                     </div>
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-slate-400 uppercase mb-1">해시태그</div>
+                    <div className="text-xs font-bold text-slate-400 uppercase mb-1">
+                      해시태그
+                    </div>
                     <div className="flex flex-wrap gap-1">
                       {metadataData.hashtags?.map((h: string, i: number) => (
                         <span
@@ -295,6 +327,11 @@ export function AssistantHistory() {
               )}
             </div>
           </div>
+          {/* Video Generator Section */}
+          <VideoGenerator
+            sessionId={selectedSession.id}
+            useMock={false} // 실제 API 사용 전까지 Mock 모드 활성화
+          />
         </div>
       </div>
     );
@@ -308,11 +345,16 @@ export function AssistantHistory() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-slate-900">작업 기록</h1>
-            <p className="text-slate-500">AI Assistant로 생성한 콘텐츠를 확인하고 관리하세요.</p>
+            <p className="text-slate-500">
+              AI Assistant로 생성한 콘텐츠를 확인하고 관리하세요.
+            </p>
           </div>
           <div className="flex gap-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                size={18}
+              />
               <input
                 type="text"
                 placeholder="검색..."
@@ -396,10 +438,12 @@ export function AssistantHistory() {
 
                   <div className="mt-auto pt-4 flex items-center gap-4 text-xs text-slate-400 border-t border-gray-100">
                     <span className="flex items-center gap-1">
-                      <Calendar size={12} /> {new Date(session.createdAt).toLocaleDateString("ko-KR")}
+                      <Calendar size={12} />{" "}
+                      {new Date(session.createdAt).toLocaleDateString("ko-KR")}
                     </span>
                     <span className="flex items-center gap-1">
-                      <FileText size={12} /> {session.scriptResponses ? "대본 완료" : "대본 없음"}
+                      <FileText size={12} />{" "}
+                      {session.scriptResponses ? "대본 완료" : "대본 없음"}
                     </span>
                   </div>
                 </div>
@@ -415,8 +459,12 @@ export function AssistantHistory() {
                 <FileText size={24} />
               </div>
               <div className="text-center">
-                <div className="font-bold text-slate-700 group-hover:text-red-700">새 프로젝트</div>
-                <div className="text-xs text-slate-400 mt-1">AI Assistant 시작하기</div>
+                <div className="font-bold text-slate-700 group-hover:text-red-700">
+                  새 프로젝트
+                </div>
+                <div className="text-xs text-slate-400 mt-1">
+                  AI Assistant 시작하기
+                </div>
               </div>
             </div>
           </div>

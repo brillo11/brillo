@@ -5,12 +5,16 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { PlayCircle, Zap, BarChart, Film } from "lucide-react";
 import { PopularVideoModal } from "../../dashboard/_components/PopularVideoModal";
-import type { PrecomputedVideo } from "@/serverActions/youtube/youtube-precomputed.actions";
+import type {
+  PrecomputedVideo,
+  OutlierType,
+} from "@/serverActions/youtube/youtube-precomputed.actions";
 import type { VideoForModal } from "@/shared/types/video";
 import { getCategoryName } from "@/shared/lib/utils/youtubeCategory";
 
 interface ShortsVideoCardProps {
   video: PrecomputedVideo;
+  outlierType?: OutlierType;
 }
 
 // PrecomputedVideo를 VideoForModal 형태로 변환
@@ -32,13 +36,33 @@ function convertToVideoForModal(video: PrecomputedVideo): VideoForModal {
     categoryId: video.categoryId,
     viewsPerHour: video.viewsPerHour,
     outlierVph: video.outlierVph,
-    outlierView: null, // PrecomputedVideo에는 없으므로 null
+    outlierSubscriber: video.outlierSubscriber,
+    outlierView: video.outlierView,
   };
 }
 
-export function ShortsVideoCard({ video }: ShortsVideoCardProps) {
+export function ShortsVideoCard({
+  video,
+  outlierType = "outlierView",
+}: ShortsVideoCardProps) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // 선택된 outlier 값 가져오기
+  const outlierValue = video[outlierType] as number | null;
+
+  // outlier 표시 형식
+  const formatOutlier = (value: number | null) => {
+    if (!value) return "-";
+    return `${value.toFixed(1)}x`;
+  };
+
+  // outlier 임계값 (색상 결정)
+  const getThresholds = () => {
+    return { high: 2.0, medium: 1.0 };
+  };
+
+  const thresholds = getThresholds();
 
   const handleCardClick = () => {
     setIsModalOpen(true);
@@ -84,16 +108,16 @@ export function ShortsVideoCard({ video }: ShortsVideoCardProps) {
 
         {/* Badges - Top */}
         <div className="absolute top-2 right-2 left-2 flex justify-between items-start z-10">
-          {video.outlierVph && video.outlierVph > 1.0 && (
+          {outlierValue && outlierValue > thresholds.medium && (
             <div
               className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold shadow-sm backdrop-blur-sm ${
-                video.outlierVph > 2.0
+                outlierValue > thresholds.high
                   ? "bg-red-600/90 text-white"
                   : "bg-orange-500/90 text-white"
               }`}
             >
               <Zap size={10} fill="currentColor" />
-              <span>{video.outlierVph.toFixed(1)}x</span>
+              <span>{formatOutlier(outlierValue)}</span>
             </div>
           )}
           <div className="flex gap-1">
@@ -131,6 +155,7 @@ export function ShortsVideoCard({ video }: ShortsVideoCardProps) {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onStartLearning={handleStartLearning}
+        outlierType={outlierType}
       />
     </>
   );

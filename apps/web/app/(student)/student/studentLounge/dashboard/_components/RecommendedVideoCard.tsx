@@ -5,12 +5,16 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { PlayCircle, Zap, BarChart, Eye } from "lucide-react";
 import { PopularVideoModal } from "./PopularVideoModal";
-import type { PrecomputedVideo } from "@/serverActions/youtube/youtube-precomputed.actions";
+import type {
+  PrecomputedVideo,
+  OutlierType,
+} from "@/serverActions/youtube/youtube-precomputed.actions";
 import type { VideoForModal } from "@/shared/types/video";
 import { getCategoryName } from "@/shared/lib/utils/youtubeCategory";
 
 interface RecommendedVideoCardProps {
   video: PrecomputedVideo;
+  outlierType?: OutlierType;
 }
 
 // PrecomputedVideo를 VideoForModal 형태로 변환
@@ -32,13 +36,36 @@ function convertToVideoForModal(video: PrecomputedVideo): VideoForModal {
     categoryId: video.categoryId,
     viewsPerHour: video.viewsPerHour,
     outlierVph: video.outlierVph,
-    outlierView: null, // PrecomputedVideo에는 없으므로 null
+    outlierView: video.outlierView,
+    outlierSubscriber: video.outlierSubscriber,
   };
 }
 
-export function RecommendedVideoCard({ video }: RecommendedVideoCardProps) {
+export function RecommendedVideoCard({
+  video,
+  outlierType = "outlierView",
+}: RecommendedVideoCardProps) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // 선택된 outlier 값 가져오기
+  const outlierValue = video[outlierType] as number | null;
+
+  // outlier 레이블
+  const outlierLabel = "아웃라이어";
+
+  // outlier 표시 형식
+  const formatOutlier = (value: number | null) => {
+    if (!value) return "-";
+    return `${value.toFixed(1)}x`;
+  };
+
+  // outlier 임계값 (색상 결정)
+  const getThresholds = () => {
+    return { high: 2.0, medium: 1.0 };
+  };
+
+  const thresholds = getThresholds();
 
   const handleCardClick = () => {
     setIsModalOpen(true);
@@ -88,16 +115,16 @@ export function RecommendedVideoCard({ video }: RecommendedVideoCardProps) {
           </div>
 
           {/* Outlier Badge on Thumbnail */}
-          {video.outlierVph && video.outlierVph > 1.0 && (
+          {outlierValue && outlierValue > thresholds.medium && (
             <div
               className={`absolute bottom-2 left-2 flex items-center gap-1 px-2 py-1 rounded text-[10px] font-bold shadow-sm ${
-                video.outlierVph > 2.0
+                outlierValue > thresholds.high
                   ? "bg-red-600 text-white"
                   : "bg-orange-500 text-white"
               }`}
             >
               <Zap size={10} fill="currentColor" />
-              <span>{video.outlierVph.toFixed(1)}x</span>
+              <span>{formatOutlier(outlierValue)}</span>
             </div>
           )}
         </div>
@@ -128,21 +155,21 @@ export function RecommendedVideoCard({ video }: RecommendedVideoCardProps) {
             </div>
             <div
               className={`p-2 rounded-lg flex flex-col justify-center ${
-                video.outlierVph && video.outlierVph > 2.0
+                outlierValue && outlierValue > thresholds.high
                   ? "bg-red-50"
-                  : video.outlierVph && video.outlierVph > 1.0
+                  : outlierValue && outlierValue > thresholds.medium
                     ? "bg-orange-50"
                     : "bg-gray-50"
               }`}
             >
               <span className="text-[10px] text-gray-400 uppercase font-bold mb-0.5">
-                아웃라이어
+                {outlierLabel}
               </span>
               <div
                 className={`flex items-center gap-1.5 font-bold text-sm ${
-                  video.outlierVph && video.outlierVph > 2.0
+                  outlierValue && outlierValue > thresholds.high
                     ? "text-red-700"
-                    : video.outlierVph && video.outlierVph > 1.0
+                    : outlierValue && outlierValue > thresholds.medium
                       ? "text-orange-600"
                       : "text-gray-600"
                 }`}
@@ -150,12 +177,12 @@ export function RecommendedVideoCard({ video }: RecommendedVideoCardProps) {
                 <Zap
                   size={14}
                   fill={
-                    video.outlierVph && video.outlierVph > 1.0
+                    outlierValue && outlierValue > thresholds.medium
                       ? "currentColor"
                       : "none"
                   }
                 />
-                {video.outlierVph ? video.outlierVph.toFixed(1) : "-"}x
+                {formatOutlier(outlierValue)}
               </div>
             </div>
           </div>
@@ -172,6 +199,7 @@ export function RecommendedVideoCard({ video }: RecommendedVideoCardProps) {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onStartLearning={handleStartLearning}
+        outlierType={outlierType}
       />
     </>
   );
