@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@repo/database";
+import { isShortsVideo, calculateViewsPerHour } from "./youtube-common";
 
 // 상수 정의
 const RECENT_VIDEOS_AVG_COUNT = 10; // 최근 N개 영상의 평균 VPH 계산
@@ -21,6 +22,7 @@ interface VideoData {
   viewsPerHour: number | null;
   outlierVph: number | null;
   outlierView: number | null;
+  outlierSubscriber: number | null;
   categoryId: number | null;
 }
 
@@ -113,60 +115,7 @@ async function fetchVideoDetails(
   return allVideos;
 }
 
-/**
- * ISO 8601 duration을 초 단위로 변환
- * 예: "PT1M30S" -> 90, "PT60S" -> 60
- */
-function parseDurationToSeconds(isoDuration: string): number {
-  if (!isoDuration) return 0;
-
-  const match = isoDuration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/i);
-  if (!match) return 0;
-
-  const hours = Number.parseInt(match[1] ?? "0", 10);
-  const minutes = Number.parseInt(match[2] ?? "0", 10);
-  const seconds = Number.parseInt(match[3] ?? "0", 10);
-
-  return hours * 3600 + minutes * 60 + seconds;
-}
-
-/**
- * 영상이 쇼츠인지 확인
- * 1. duration이 60초 이하인 경우
- * 2. 제목에 "#shorts" 또는 "#Shorts"가 포함된 경우
- */
-function isShortsVideo(duration: string, title: string): boolean {
-  // 제목에 #shorts 포함 여부 확인
-  const hasShortsTag = /#shorts/i.test(title);
-
-  // duration이 60초 이하인지 확인
-  const durationSeconds = parseDurationToSeconds(duration);
-  const isShortDuration = durationSeconds > 0 && durationSeconds <= 60;
-
-  return hasShortsTag || isShortDuration;
-}
-
-/**
- * VPH (Views Per Hour) 계산
- */
-function calculateViewsPerHour(
-  viewCount: number,
-  publishedAt: Date | null
-): number | null {
-  if (!publishedAt) return null;
-
-  const now = Date.now();
-  const publishedTime = publishedAt.getTime();
-  if (Number.isNaN(publishedTime)) return null;
-
-  const hoursSincePublished = Math.max(
-    (now - publishedTime) / (1000 * 60 * 60),
-    1 / 60 // 최소 1분
-  );
-
-  const rawVph = viewCount / hoursSincePublished;
-  return Number.isFinite(rawVph) ? rawVph : null;
-}
+// 공통 함수들은 youtube-common.ts로 이동
 
 /**
  * 채널의 최근 영상들의 평균 VPH 계산
@@ -191,7 +140,8 @@ function processVideos(
   apiVideos: any[],
   channelId: string,
   regionCode: string | null,
-  overallAvgView: number | null
+  overallAvgView: number | null,
+  subscriberCount: number | null
 ): VideoData[] {
   const now = Date.now();
   const processed: VideoData[] = [];
@@ -244,6 +194,10 @@ function processVideos(
         overallAvgView && overallAvgView > 0
           ? viewCount / overallAvgView
           : null,
+      outlierSubscriber:
+        subscriberCount && subscriberCount > 0
+          ? viewCount / subscriberCount
+          : null,
       categoryId: Number.isFinite(categoryId ?? 0) ? categoryId : null,
     });
   }
@@ -275,9 +229,9 @@ export async function runYoutubeVideosCron(
   take?: number
 ) {
   try {
-    const apiKey = process.env.YOUTUBE_DATA_API_KEY;
+    const apiKey = process.env.YOUTUBE_DATA_API_KEY2;
     if (!apiKey) {
-      throw new Error("YOUTUBE_DATA_API_KEY is not set");
+      throw new Error("YOUTUBE_DATA_API_KEY2 is not set");
     }
 
     // 1. DB에서 채널 목록 가져오기 (uploadsPlaylist가 있는 것들)
@@ -331,7 +285,8 @@ export async function runYoutubeVideosCron(
           apiVideos,
           channel.id,
           channel.regionCode,
-          channel.overallAvgView
+          channel.overallAvgView,
+          channel.subscriberCount
         );
 
         // 쇼츠와 일반 영상 분리

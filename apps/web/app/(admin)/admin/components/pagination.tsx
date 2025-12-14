@@ -30,8 +30,21 @@ const Pagination = ({
           이전
         </Button>
         <div className="flex items-center gap-1">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-            (pageNumber) => (
+          {(() => {
+            const maxPages = 10;
+            let startPage = Math.max(1, page - Math.floor(maxPages / 2));
+            const endPage = Math.min(totalPages, startPage + maxPages - 1);
+
+            if (endPage - startPage + 1 < maxPages) {
+              startPage = Math.max(1, endPage - maxPages + 1);
+            }
+
+            const pages = [];
+            for (let i = startPage; i <= endPage; i++) {
+              pages.push(i);
+            }
+
+            return pages.map((pageNumber) => (
               <Button
                 key={pageNumber}
                 variant={page === pageNumber ? "default" : "outline"}
@@ -43,8 +56,8 @@ const Pagination = ({
               >
                 {pageNumber}
               </Button>
-            )
-          )}
+            ));
+          })()}
         </div>
         <Button
           variant="outline"

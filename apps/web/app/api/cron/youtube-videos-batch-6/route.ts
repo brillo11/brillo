@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const region = req.nextUrl.searchParams.get("region") || undefined;
-    // Batch 5: 800-999 (200개)
+    // Batch 6: 1000-1199 (200개)
     const result = await runYoutubeVideosCron(undefined, region, 1000, 200);
 
     return NextResponse.json({
@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     });
   } catch (e: any) {
     return NextResponse.json(
-      { success: false, error: e?.message || "cron failed", batch: 5 },
+      { success: false, error: e?.message || "cron failed", batch: 6 },
       { status: 500 }
     );
   }

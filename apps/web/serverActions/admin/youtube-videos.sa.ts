@@ -14,6 +14,8 @@ export interface YoutubeVideoListItem {
   viewsPerHour: number | null;
   outlierVph: number | null;
   outlierView: number | null;
+  outlierSubscriber: number | null;
+  categoryId: number | null;
   regionCode: string | null;
   crawledAt: Date;
   channel: {
@@ -29,7 +31,9 @@ export interface GetYoutubeVideosParams {
   search?: string;
   regionCode?: string;
   channelId?: string;
+  categoryId?: number;
   minOutlierVph?: number;
+  minOutlierSubscriber?: number;
 }
 
 export interface GetYoutubeVideosResult {
@@ -46,7 +50,9 @@ export async function getYoutubeVideosList({
   search,
   regionCode,
   channelId,
+  categoryId,
   minOutlierVph,
+  minOutlierSubscriber,
 }: GetYoutubeVideosParams = {}): Promise<GetYoutubeVideosResult> {
   try {
     const skip = (page - 1) * size;
@@ -72,6 +78,16 @@ export async function getYoutubeVideosList({
     if (minOutlierVph !== undefined) {
       where.outlierVph = {
         gte: minOutlierVph,
+      };
+    }
+
+    if (categoryId) {
+      where.categoryId = categoryId;
+    }
+
+    if (minOutlierSubscriber !== undefined) {
+      where.outlierSubscriber = {
+        gte: minOutlierSubscriber,
       };
     }
 
@@ -112,6 +128,8 @@ export async function getYoutubeVideosList({
         viewsPerHour: video.viewsPerHour,
         outlierVph: video.outlierVph,
         outlierView: video.outlierView,
+        outlierSubscriber: video.outlierSubscriber,
+        categoryId: video.categoryId,
         regionCode: video.regionCode,
         crawledAt: video.crawledAt,
         channel: {

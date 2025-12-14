@@ -36,33 +36,42 @@ async function searchChannelsByQuery(
   apiKey: string,
   query: string,
   regionCode: string,
-  maxResults: number = 10
+  maxResults: number = 50
 ): Promise<string[]> {
-  const params = new URLSearchParams({
-    part: "snippet",
-    q: query,
-    type: "channel", // 채널만 검색
-    maxResults: String(Math.min(maxResults, 50)),
-    regionCode,
-    key: apiKey,
-  });
-
-  const res = await fetch(
-    `https://www.googleapis.com/youtube/v3/search?${params.toString()}`
-  );
-
-  if (!res.ok) {
-    console.error(`Search failed for query "${query}": ${res.statusText}`);
-    return [];
-  }
-
-  const data = await res.json();
   const channelIds: string[] = [];
+  let pageToken: string | undefined = undefined;
 
-  for (const item of data.items || []) {
-    if (item.id?.channelId) {
-      channelIds.push(item.id.channelId);
+  while (channelIds.length < maxResults) {
+    const params = new URLSearchParams({
+      part: "snippet",
+      q: query,
+      type: "channel",
+      maxResults: String(Math.min(maxResults - channelIds.length, 50)),
+      regionCode,
+      key: apiKey,
+    });
+    if (pageToken) params.set("pageToken", pageToken);
+
+    const res = await fetch(
+      `https://www.googleapis.com/youtube/v3/search?${params.toString()}`
+    );
+
+    if (!res.ok) {
+      console.error(`Search failed for query "${query}": ${res.statusText}`);
+      break;
     }
+
+    const data = await res.json();
+    const items = data.items || [];
+
+    for (const item of items) {
+      if (item.id?.channelId) {
+        channelIds.push(item.id.channelId);
+      }
+    }
+
+    pageToken = data.nextPageToken;
+    if (!pageToken || channelIds.length >= maxResults) break;
   }
 
   return channelIds;
@@ -165,7 +174,7 @@ export async function runYoutubePopularCronByCategory(
       categoryEnd,
       regionCode
     );
-    const channelsPerQuery = 50;
+    const channelsPerQuery = 200;
 
     console.log(
       `[Search API] 카테고리 ${categoryStart}-${categoryEnd} 범위, ${searchQueries.length}개 쿼리로 채널 검색 시작...`
@@ -239,6 +248,7 @@ export async function runYoutubePopularCronByCategory(
       // 전체 평균 조회수 계산
       const totalViews = parseInt(ch.statistics?.viewCount || "0", 10);
       const videoCount = parseInt(ch.statistics?.videoCount || "0", 10);
+      const subscriberCount = parseInt(ch.statistics?.subscriberCount || "0", 10);
       const overallAvgView =
         videoCount > 0 && Number.isFinite(totalViews)
           ? totalViews / videoCount
@@ -262,6 +272,7 @@ export async function runYoutubePopularCronByCategory(
           regionCode: regionCode,
           uploadsPlaylist,
           videoCount: videoCount > 0 ? videoCount : null,
+          subscriberCount: subscriberCount > 0 ? subscriberCount : null,
           overallAvgView,
           lastCrawledAt: new Date(),
         },
@@ -272,6 +283,7 @@ export async function runYoutubePopularCronByCategory(
           regionCode: regionCode,
           uploadsPlaylist,
           videoCount: videoCount > 0 ? videoCount : null,
+          subscriberCount: subscriberCount > 0 ? subscriberCount : null,
           overallAvgView,
           lastCrawledAt: new Date(),
         },
@@ -363,6 +375,7 @@ export async function runYoutubePopularCron(
 
       const totalViews = parseInt(ch.statistics?.viewCount || "0", 10);
       const videoCount = parseInt(ch.statistics?.videoCount || "0", 10);
+      const subscriberCount = parseInt(ch.statistics?.subscriberCount || "0", 10);
       const overallAvgView =
         videoCount > 0 && Number.isFinite(totalViews)
           ? totalViews / videoCount
@@ -384,6 +397,7 @@ export async function runYoutubePopularCron(
           regionCode: regionCode,
           uploadsPlaylist,
           videoCount: videoCount > 0 ? videoCount : null,
+          subscriberCount: subscriberCount > 0 ? subscriberCount : null,
           overallAvgView,
           lastCrawledAt: new Date(),
         },
@@ -394,6 +408,7 @@ export async function runYoutubePopularCron(
           regionCode: regionCode,
           uploadsPlaylist,
           videoCount: videoCount > 0 ? videoCount : null,
+          subscriberCount: subscriberCount > 0 ? subscriberCount : null,
           overallAvgView,
           lastCrawledAt: new Date(),
         },

@@ -91,7 +91,18 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
           <SidebarGroupContent>
             <nav className="flex-1 overflow-y-auto py-6 px-4">
               <ul className="space-y-1.5">
-                {studentMenus.map((item) => {
+                {studentMenus.map((item, index) => {
+                  // 섹션 헤더 렌더링
+                  if (item.section) {
+                    return (
+                      <div key={item.id} className="pt-4 pb-2">
+                        <div className="text-[10px] uppercase tracking-wider font-bold text-slate-400 pl-3">
+                          {item.section}
+                        </div>
+                      </div>
+                    );
+                  }
+
                   // 부모 메뉴의 active 판단
                   let isActive = false;
 
@@ -114,9 +125,10 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
                         defaultOpen={isActive}
                         className="group/collapsible"
                       >
-                        <li>
+                        <li suppressHydrationWarning>
                           <CollapsibleTrigger asChild>
                             <button
+                              suppressHydrationWarning
                               className={`group w-full text-left px-4 py-3 rounded-xl flex items-center justify-between text-sm font-medium transition-all duration-200 ${
                                 isActive
                                   ? "bg-red-50 text-red-700 shadow-sm"
@@ -148,18 +160,41 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
                           <CollapsibleContent>
                             <ul className="mt-1 space-y-1 pl-4">
                               {item.subMenus?.map((subMenu) => {
+                                // 서브메뉴 내 섹션 헤더 렌더링
+                                if (subMenu.section) {
+                                  return (
+                                    <div key={subMenu.id} className="pt-2 pb-1">
+                                      <div className="text-[10px] uppercase tracking-wider font-bold text-slate-400 pl-3">
+                                        {subMenu.section}
+                                      </div>
+                                    </div>
+                                  );
+                                }
+
                                 // 서브 메뉴의 active 판단: 정확한 URL 매칭만 사용
                                 const isSubActive = pathname === subMenu.url;
+
+                                // 2단계 메뉴 렌더링
                                 return (
                                   <li key={subMenu.title}>
                                     <Link
                                       href={subMenu.url}
-                                      className={`group w-full text-left px-4 py-3 rounded-xl flex items-center text-sm font-medium transition-all duration-200 ${
+                                      className={`group w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-medium transition-all duration-200 ${
                                         isSubActive
                                           ? "bg-red-50 text-red-700 shadow-sm"
                                           : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                                       }`}
                                     >
+                                      {subMenu.icon && (
+                                        <subMenu.icon
+                                          size={16}
+                                          className={
+                                            isSubActive
+                                              ? "text-red-600"
+                                              : "text-gray-400"
+                                          }
+                                        />
+                                      )}
                                       <span>{subMenu.title}</span>
                                     </Link>
                                   </li>
@@ -202,42 +237,44 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
       </SidebarContent>
 
       {/* 하단 메뉴 */}
-      {state === "expanded" && user && (
-        <SidebarFooter className="border-t border-gray-100 p-4">
-          <div className="flex items-center gap-3 mb-4 px-2 p-2 rounded-lg bg-gray-50/50">
-            <Avatar className="w-10 h-10 rounded-full border border-white shadow-sm">
-              <AvatarImage src={userImage || ""} alt={userName} />
-              <AvatarFallback className="bg-red-100 text-red-600">
-                {userName.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="overflow-hidden flex-1 min-w-0">
-              <p className="text-sm font-bold text-gray-800 truncate">
-                {userName}
-              </p>
-              {userEmail && (
-                <p className="text-xs text-gray-500 truncate">{userEmail}</p>
-              )}
+      <SidebarFooter className="border-t border-gray-100 p-4">
+        {state === "expanded" && user && (
+          <>
+            <div className="flex items-center gap-3 mb-4 px-2 p-2 rounded-lg bg-gray-50/50">
+              <Avatar className="w-10 h-10 rounded-full border border-white shadow-sm">
+                <AvatarImage src={userImage || ""} alt={userName} />
+                <AvatarFallback className="bg-red-100 text-red-600">
+                  {userName.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div className="overflow-hidden flex-1 min-w-0">
+                <p className="text-sm font-bold text-gray-800 truncate">
+                  {userName}
+                </p>
+                {userEmail && (
+                  <p className="text-xs text-gray-500 truncate">{userEmail}</p>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="space-y-1">
-            <Link
-              href={PATH.STUDENT_PROFILE}
-              className="flex items-center gap-2 w-full px-4 py-2 text-sm font-medium text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-            >
-              <Settings size={18} />
-              마이페이지
-            </Link>
-            <button
-              onClick={handleSignOut}
-              className="flex items-center gap-2 w-full px-4 py-2 text-sm font-medium text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-            >
-              <LogOut size={18} />
-              로그아웃
-            </button>
-          </div>
-        </SidebarFooter>
-      )}
+            <div className="space-y-1">
+              <Link
+                href={PATH.STUDENT_PROFILE}
+                className="flex items-center gap-2 w-full px-4 py-2 text-sm font-medium text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <Settings size={18} />
+                마이페이지
+              </Link>
+              <button
+                onClick={handleSignOut}
+                className="flex items-center gap-2 w-full px-4 py-2 text-sm font-medium text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <LogOut size={18} />
+                로그아웃
+              </button>
+            </div>
+          </>
+        )}
+      </SidebarFooter>
     </Sidebar>
   );
 }

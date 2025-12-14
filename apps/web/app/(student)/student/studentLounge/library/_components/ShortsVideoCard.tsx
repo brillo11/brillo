@@ -5,15 +5,20 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { PlayCircle, Zap, BarChart, Film } from "lucide-react";
 import { PopularVideoModal } from "../../dashboard/_components/PopularVideoModal";
-import type { PrecomputedVideo } from "@/serverActions/youtube/youtube-precomputed.actions";
-import type { PopularVideo } from "@/serverActions/youtube/youtube-popular.actions";
+import type {
+  PrecomputedVideo,
+  OutlierType,
+} from "@/serverActions/youtube/youtube-precomputed.actions";
+import type { VideoForModal } from "@/shared/types/video";
+import { getCategoryName } from "@/shared/lib/utils/youtubeCategory";
 
 interface ShortsVideoCardProps {
   video: PrecomputedVideo;
+  outlierType?: OutlierType;
 }
 
-// PrecomputedVideo를 PopularVideo 형태로 변환
-function convertToPopularVideo(video: PrecomputedVideo): PopularVideo {
+// PrecomputedVideo를 VideoForModal 형태로 변환
+function convertToVideoForModal(video: PrecomputedVideo): VideoForModal {
   return {
     id: video.id,
     title: video.title,
@@ -28,15 +33,36 @@ function convertToPopularVideo(video: PrecomputedVideo): PopularVideo {
     commentCount: video.commentCount,
     duration: video.duration || "",
     channelId: video.channelId || null,
+    categoryId: video.categoryId,
     viewsPerHour: video.viewsPerHour,
     outlierVph: video.outlierVph,
-    outlierView: null, // PrecomputedVideo에는 없으므로 null
+    outlierSubscriber: video.outlierSubscriber,
+    outlierView: video.outlierView,
   };
 }
 
-export function ShortsVideoCard({ video }: ShortsVideoCardProps) {
+export function ShortsVideoCard({
+  video,
+  outlierType = "outlierView",
+}: ShortsVideoCardProps) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // 선택된 outlier 값 가져오기
+  const outlierValue = video[outlierType] as number | null;
+
+  // outlier 표시 형식
+  const formatOutlier = (value: number | null) => {
+    if (!value) return "-";
+    return `${value.toFixed(1)}x`;
+  };
+
+  // outlier 임계값 (색상 결정)
+  const getThresholds = () => {
+    return { high: 2.0, medium: 1.0 };
+  };
+
+  const thresholds = getThresholds();
 
   const handleCardClick = () => {
     setIsModalOpen(true);
@@ -51,7 +77,7 @@ export function ShortsVideoCard({ video }: ShortsVideoCardProps) {
     handleCloseModal();
   };
 
-  const popularVideo = convertToPopularVideo(video);
+  const videoForModal = convertToVideoForModal(video);
 
   return (
     <>
@@ -82,21 +108,28 @@ export function ShortsVideoCard({ video }: ShortsVideoCardProps) {
 
         {/* Badges - Top */}
         <div className="absolute top-2 right-2 left-2 flex justify-between items-start z-10">
-          {video.outlierVph && video.outlierVph > 1.0 && (
+          {outlierValue && outlierValue > thresholds.medium && (
             <div
               className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold shadow-sm backdrop-blur-sm ${
-                video.outlierVph > 2.0
+                outlierValue > thresholds.high
                   ? "bg-red-600/90 text-white"
                   : "bg-orange-500/90 text-white"
               }`}
             >
               <Zap size={10} fill="currentColor" />
-              <span>{video.outlierVph.toFixed(1)}x</span>
+              <span>{formatOutlier(outlierValue)}</span>
             </div>
           )}
-          <span className="bg-black/40 backdrop-blur-md text-white text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10">
-            {video.regionCode || "KR"}
-          </span>
+          <div className="flex gap-1">
+            <span className="bg-black/40 backdrop-blur-md text-white text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10">
+              {video.regionCode || "KR"}
+            </span>
+            {video.categoryId && (
+              <span className="bg-blue-600/80 backdrop-blur-md text-white text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10">
+                {getCategoryName(video.categoryId.toString())}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Info - Bottom */}
@@ -118,10 +151,11 @@ export function ShortsVideoCard({ video }: ShortsVideoCardProps) {
       </div>
 
       <PopularVideoModal
-        video={popularVideo}
+        video={videoForModal}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onStartLearning={handleStartLearning}
+        outlierType={outlierType}
       />
     </>
   );

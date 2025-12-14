@@ -1,14 +1,17 @@
 "use client";
 
 import { kdayjs } from "@/shared/lib/utils/dayjs";
+import { getCategoryName } from "@/shared/lib/utils/youtubeCategory";
 import { X, Calendar, BarChart, Zap, Play, ExternalLink } from "lucide-react";
-import type { PopularVideo } from "@/serverActions/youtube/youtube-popular.actions";
+import type { VideoForModal } from "@/shared/types/video";
+import type { OutlierType } from "@/serverActions/youtube/youtube-precomputed.actions";
 
 interface PopularVideoModalProps {
-  video: PopularVideo | null;
+  video: VideoForModal | null;
   isOpen: boolean;
   onClose: () => void;
   onStartLearning: () => void;
+  outlierType?: OutlierType;
 }
 
 export function PopularVideoModal({
@@ -16,10 +19,30 @@ export function PopularVideoModal({
   isOpen,
   onClose,
   onStartLearning,
+  outlierType = "outlierView",
 }: PopularVideoModalProps) {
   if (!video || !isOpen) {
     return null;
   }
+
+  // 선택된 outlier 값 가져오기
+  const outlierValue = video[outlierType] as number | null;
+
+  // outlier 레이블
+  const outlierLabel = "아웃라이어";
+
+  // outlier 표시 형식
+  const formatOutlier = (value: number | null) => {
+    if (!value) return "-";
+    return `${value.toFixed(1)}x`;
+  };
+
+  // outlier 임계값 (색상 결정)
+  const getThresholds = () => {
+    return { high: 2.0, medium: 1.0 };
+  };
+
+  const thresholds = getThresholds();
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -51,9 +74,16 @@ export function PopularVideoModal({
             <X size={20} />
           </button>
           <div className="absolute bottom-6 left-6 right-6 text-white">
-            <span className="inline-block px-2 py-1 bg-red-600 rounded text-xs font-bold mb-2">
-              KR
-            </span>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="inline-block px-2 py-1 bg-red-600 rounded text-xs font-bold">
+                KR
+              </span>
+              {video.categoryId && (
+                <span className="inline-block px-2 py-1 bg-blue-600 rounded text-xs font-bold">
+                  {getCategoryName(video.categoryId.toString())}
+                </span>
+              )}
+            </div>
             <h2 className="text-2xl font-bold leading-tight mb-2">
               {video.title}
             </h2>
@@ -94,23 +124,23 @@ export function PopularVideoModal({
             </div>
             <div
               className={`p-4 rounded-xl border flex flex-col items-center justify-center text-center ${
-                video.outlierVph && video.outlierVph > 2
+                outlierValue && outlierValue > thresholds.high
                   ? "bg-orange-50 border-orange-100"
                   : "bg-gray-50 border-gray-100"
               }`}
             >
               <span
                 className={`text-xs uppercase font-bold mb-1 ${
-                  video.outlierVph && video.outlierVph > 2
+                  outlierValue && outlierValue > thresholds.high
                     ? "text-orange-600"
                     : "text-gray-500"
                 }`}
               >
-                아웃라이어 점수
+                {outlierLabel}
               </span>
               <span
                 className={`text-lg font-bold flex items-center gap-2 ${
-                  video.outlierVph && video.outlierVph > 2
+                  outlierValue && outlierValue > thresholds.high
                     ? "text-orange-700"
                     : "text-gray-700"
                 }`}
@@ -118,12 +148,12 @@ export function PopularVideoModal({
                 <Zap
                   size={18}
                   fill={
-                    video.outlierVph && video.outlierVph > 2
+                    outlierValue && outlierValue > thresholds.high
                       ? "currentColor"
                       : "none"
                   }
                 />
-                {video.outlierVph ? video.outlierVph.toFixed(1) : "-"}x
+                {formatOutlier(outlierValue)}
               </span>
             </div>
           </div>
@@ -142,14 +172,14 @@ export function PopularVideoModal({
           )}
 
           {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            <button
+          <div className="flex flex-col sm:flex-row gap-3 justify-end">
+            {/* <button
               onClick={onStartLearning}
               className="flex-1 py-3.5 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-red-100 hover:shadow-xl transition-all flex items-center justify-center gap-2"
             >
               <Play size={18} fill="currentColor" />
               학습 미션 시작
-            </button>
+            </button> */}
             <a
               href={`https://youtube.com/watch?v=${video.id}`}
               target="_blank"

@@ -73,6 +73,17 @@ model Session {
   @@index([token])
 }
 
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+}
+
 model Account {
   id                    String    @id @default(uuid())
   userId                String
@@ -335,6 +346,7 @@ model YoutubeChannel {
   regionCode      String?        // 수집 기준 지역 (예: KR)
   uploadsPlaylist String?        // 업로드 플레이리스트 ID
   videoCount      Int?           // 채널의 전체 영상 개수
+  subscriberCount Int?           // 채널 구독자 수
   overallAvgView  Float?         // 전체 평균 조회수 (totalViews / videoCount)
   recentAvgVph    Float?         // 최근 N개 평균 VPH
   lastCrawledAt   DateTime?
@@ -360,6 +372,7 @@ model YoutubeVideo {
   viewsPerHour       Float?
   outlierVph         Float?
   outlierView        Float?
+  outlierSubscriber  Float?
   regionCode         String?    // 수집 지역 코드
   categoryId         Int?       // YouTube 비디오 카테고리 ID
   crawledAt          DateTime   @default(now())
@@ -391,6 +404,7 @@ model YoutubeShorts {
   viewsPerHour       Float?
   outlierVph         Float?
   outlierView        Float?
+  outlierSubscriber  Float?
   regionCode         String?    // 수집 지역 코드
   categoryId         Int?       // YouTube 비디오 카테고리 ID
   crawledAt          DateTime   @default(now())
@@ -508,7 +522,7 @@ model AIAssistantSession {
   thumbnailResponses String? @db.Text // 썸네일 이미지 (base64 또는 URL)
   
   // Step 6: Script
-  scriptResponses String? @db.Text // 생성된 대본
+  scriptResponses Json? // 생성된 대본 (구조화된 JSON)
   
   // Step 7: Metadata
   metadataResponses Json? // 메타데이터 (설명, 타임스탬프, 해시태그, 태그)

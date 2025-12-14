@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Image as ImageIcon,
   ChevronRight,
@@ -22,6 +22,8 @@ interface Step4ThumbGuideProps {
   thumbnailGuideResponses?: any;
   onGenerate?: () => void;
   isGenerating?: boolean;
+  isLoading?: boolean;
+  onReferenceThumbnailsChange?: (thumbnails: ThumbnailReference[]) => void;
 }
 
 interface ThumbnailReference {
@@ -30,7 +32,7 @@ interface ThumbnailReference {
   title?: string;
 }
 
-const MAX_THUMBNAILS = 6;
+const MAX_THUMBNAILS = 8;
 
 /**
  * ISO 8601 duration 형식을 초로 변환 (예: "PT1M30S" -> 90)
@@ -79,16 +81,23 @@ export function Step4ThumbGuide({
   thumbnailGuideResponses,
   onGenerate,
   isGenerating = false,
+  isLoading = false,
+  onReferenceThumbnailsChange,
 }: Step4ThumbGuideProps) {
   const guides = thumbnailGuideResponses?.thumbnailGuides || [];
   const [expandedGuides, setExpandedGuides] = useState<Set<number>>(new Set());
   const [youtubeChannelUrl, setYoutubeChannelUrl] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isChannelLoading, setIsChannelLoading] = useState(false);
   const [youtubeThumbnails, setYoutubeThumbnails] = useState<
     ThumbnailReference[]
   >([]);
-  const [selectedReferenceThumbnail, setSelectedReferenceThumbnail] =
-    useState<ThumbnailReference | null>(null);
+  const [selectedReferenceThumbnails, setSelectedReferenceThumbnails] =
+    useState<ThumbnailReference[]>([]);
+
+  // Notify parent when selected thumbnails change
+  useEffect(() => {
+    onReferenceThumbnailsChange?.(selectedReferenceThumbnails);
+  }, [selectedReferenceThumbnails, onReferenceThumbnailsChange]);
 
   const fetchYoutubeThumbnails = async () => {
     if (!youtubeChannelUrl.trim()) {
@@ -96,7 +105,7 @@ export function Step4ThumbGuide({
       return;
     }
 
-    setIsLoading(true);
+    setIsChannelLoading(true);
     try {
       // URL에서 채널 ID 또는 username 추출
       let channelIdOrUsername = youtubeChannelUrl.trim();
@@ -114,7 +123,7 @@ export function Step4ThumbGuide({
             channelIdOrUsername = channelIdMatch[1];
           } else {
             toast.error("올바른 YouTube 채널 URL을 입력해주세요.");
-            setIsLoading(false);
+            setIsChannelLoading(false);
             return;
           }
         }
@@ -160,7 +169,7 @@ export function Step4ThumbGuide({
       console.error("Failed to fetch YouTube thumbnails:", error);
       toast.error("썸네일을 가져오는데 실패했습니다.");
     } finally {
-      setIsLoading(false);
+      setIsChannelLoading(false);
     }
   };
 
@@ -205,11 +214,13 @@ export function Step4ThumbGuide({
           return (
             <div
               key={index}
-              onClick={() => onSelectGuide(index)}
+              onClick={() => !isLoading && onSelectGuide(index)}
               className={`p-6 rounded-xl border-2 cursor-pointer transition-all hover:-translate-y-1 h-full flex flex-col ${
                 selectedGuide === index
                   ? "border-red-600 bg-red-50 shadow-md"
                   : "border-gray-100 bg-white hover:shadow-lg"
+              } ${
+                isLoading ? "opacity-50 cursor-not-allowed pointer-events-none" : ""
               }`}
             >
               <div>
@@ -251,28 +262,15 @@ export function Step4ThumbGuide({
         })}
       </div>
 
-      {onStepChange && selectedGuide !== null && (
-        <div className="flex justify-end mt-6">
-          <button
-            onClick={() => onStepChange(5)}
-            className="px-8 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2"
-          >
-            Next Step
-            <ChevronRight size={20} />
-          </button>
-        </div>
-      )}
-
-      {/* YouTube Integration */}
+      {/* YouTube 채널 참고 (선택사항) */}
       <div className="mt-8">
         <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-6 flex flex-col h-full overflow-y-auto">
           <div>
             <div className="flex items-center gap-2 text-red-600 font-bold text-lg mb-2">
-              <PlayCircle className="fill-current" /> Channel Reference
+              <PlayCircle className="fill-current" /> 채널 참고 (선택사항)
             </div>
             <p className="text-sm text-slate-500">
-              Input a channel to analyze existing thumbnail styles for
-              consistency.
+              원하는 경우, 유튜브 채널 URL을 입력하여 해당 채널의 썸네일 스타일을 분석하고 참고할 수 있습니다.
             </p>
           </div>
 
@@ -280,57 +278,75 @@ export function Step4ThumbGuide({
             <input
               type="text"
               placeholder="https://youtube.com/@channel"
-              className="flex-1 bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-500/50 focus:border-red-500 outline-none transition-all text-slate-900"
+              className="flex-1 bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-500/50 focus:border-red-500 outline-none transition-all text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
               value={youtubeChannelUrl}
               onChange={(e) => setYoutubeChannelUrl(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && !isLoading) {
+                if (e.key === "Enter" && !isChannelLoading && !isLoading) {
                   fetchYoutubeThumbnails();
                 }
               }}
+              disabled={isChannelLoading || isLoading}
             />
             <button
               onClick={fetchYoutubeThumbnails}
-              disabled={isLoading}
+              disabled={isChannelLoading || isLoading}
               className="px-5 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? (
+              {isChannelLoading ? (
                 <Loader2 size={18} className="animate-spin" />
               ) : (
                 "Fetch"
               )}
             </button>
           </div>
-          <div className="grid grid-cols-2 gap-3 mt-2 flex-1 overflow-y-auto content-start min-h-[200px]">
+          <div className="grid grid-cols-4 gap-3 mt-2 flex-1 overflow-y-auto content-start min-h-[200px]">
             {youtubeThumbnails.length > 0 ? (
-              youtubeThumbnails.map((thumb) => (
-                <div
-                  key={thumb.id}
-                  onClick={() => setSelectedReferenceThumbnail(thumb)}
-                  className={`relative group cursor-pointer aspect-video rounded-lg overflow-hidden border-2 transition-all ${
-                    selectedReferenceThumbnail?.id === thumb.id
-                      ? "border-orange-500 ring-2 ring-orange-500/30"
-                      : "border-transparent hover:border-gray-300"
-                  }`}
-                >
-                  <img
-                    src={thumb.url}
-                    alt={thumb.title || "Thumbnail"}
-                    className="w-full h-full object-cover"
-                  />
+              youtubeThumbnails.map((thumb) => {
+                const isSelected = selectedReferenceThumbnails.some(
+                  (t) => t.id === thumb.id
+                );
+                return (
                   <div
-                    className={`absolute inset-0 bg-black/60 transition-opacity flex items-center justify-center ${
-                      selectedReferenceThumbnail?.id === thumb.id
-                        ? "opacity-100"
-                        : "opacity-0 group-hover:opacity-100"
+                    key={thumb.id}
+                    onClick={() => {
+                      if (isLoading) return;
+                      setSelectedReferenceThumbnails((prev) => {
+                        const newSelection = isSelected
+                          ? prev.filter((t) => t.id !== thumb.id)
+                          : [...prev, thumb];
+                        return newSelection;
+                      });
+                    }}
+                    className={`relative group aspect-video rounded-lg overflow-hidden border-2 transition-all ${
+                      isLoading
+                        ? "cursor-not-allowed opacity-50"
+                        : "cursor-pointer"
+                    } ${
+                      isSelected
+                        ? "border-red-500 ring-2 ring-red-500/30"
+                        : "border-transparent hover:border-gray-300"
                     }`}
                   >
-                    <span className="text-white text-xs font-bold bg-orange-600 px-2 py-1 rounded">
-                      Selected Ref
-                    </span>
+                    <img
+                      src={thumb.url}
+                      alt={thumb.title || "Thumbnail"}
+                      className="w-full h-full object-cover"
+                    />
+                    <div
+                      className={`absolute inset-0 bg-black/60 transition-opacity flex items-center justify-center ${
+                        isSelected
+                          ? "opacity-100"
+                          : "opacity-0 group-hover:opacity-100"
+                      }`}
+                    >
+                      <span className="text-white text-xs font-bold bg-red-600 px-2 py-1 rounded">
+                        {isSelected ? "✓ 선택됨" : "클릭하여 선택"}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <div className="col-span-2 flex flex-col items-center justify-center text-slate-400 h-full border-2 border-dashed border-gray-300 rounded-xl p-8 bg-white/50">
                 <ImageIcon size={32} className="mb-2 opacity-50" />
@@ -340,6 +356,27 @@ export function Step4ThumbGuide({
           </div>
         </div>
       </div>
+          {onStepChange && selectedGuide !== null && (
+        <div className="flex justify-end mt-6">
+          <button
+            onClick={() => onStepChange(5)}
+            disabled={isLoading}
+            className="px-8 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="animate-spin" size={20} />
+                Loading...
+              </>
+            ) : (
+              <>
+                Next Step
+                <ChevronRight size={20} />
+              </>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

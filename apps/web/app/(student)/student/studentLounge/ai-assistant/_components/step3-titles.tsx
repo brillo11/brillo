@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, RefreshCw, Check } from "lucide-react";
+import { ChevronRight, RefreshCw, Check, Loader2 } from "lucide-react";
 import MarkdownRenderer from "./MarkdownRenderer";
 import type { Step } from "./types";
 
@@ -12,6 +12,7 @@ interface Step3TitlesProps {
   onStepChange?: (step: Step) => void;
   titleResponses?: any;
   selectedTitleIndex?: number | null;
+  isLoading?: boolean;
 }
 
 export function Step3Titles({
@@ -22,6 +23,7 @@ export function Step3Titles({
   onStepChange,
   titleResponses,
   selectedTitleIndex,
+  isLoading = false,
 }: Step3TitlesProps) {
   const titles = titleResponses?.sets || [];
 
@@ -51,11 +53,13 @@ export function Step3Titles({
           return (
             <div
               key={idx}
-              onClick={() => onSelectTitle(idx)}
+              onClick={() => !isLoading && onSelectTitle(idx)}
               className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex items-start gap-4 group ${
                 isSelected
                   ? "border-red-600 bg-red-50"
                   : "border-gray-100 bg-white hover:border-gray-300"
+              } ${
+                isLoading ? "opacity-50 cursor-not-allowed pointer-events-none" : ""
               }`}
             >
               <div
@@ -99,10 +103,20 @@ export function Step3Titles({
         {onStepChange && selectedTitleIndex !== null && (
           <button
             onClick={() => onStepChange(4)}
-            className="px-8 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2"
+            disabled={isLoading}
+            className="px-8 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            Next Step
-            <ChevronRight size={20} />
+            {isLoading ? (
+              <>
+                <Loader2 className="animate-spin" size={20} />
+                Loading...
+              </>
+            ) : (
+              <>
+                Next Step
+                <ChevronRight size={20} />
+              </>
+            )}
           </button>
         )}
         {/* <button

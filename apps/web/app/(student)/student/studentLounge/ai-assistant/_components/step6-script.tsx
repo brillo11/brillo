@@ -1,20 +1,33 @@
 "use client";
 
-import { Check, FileText, Copy, ChevronRight } from "lucide-react";
+import { Check, FileText, Copy, ChevronRight, Loader2 } from "lucide-react";
 import { Button } from "@repo/ui/components/button";
 import { LoadingSpinner } from "@repo/ui/components/loading-spinner";
 import MarkdownRenderer from "./MarkdownRenderer";
 import { toast } from "sonner";
 import type { Step } from "./types";
 
+interface ScriptChapter {
+  title: string;
+  content: string;
+}
+
+interface ScriptResponse {
+  intro: string;
+  selfIntro: string;
+  chapters: ScriptChapter[];
+  outro: string;
+}
+
 interface Step6ScriptProps {
   thumbnailUrl: string;
   selectedTitle: string;
   topic: string;
-  scriptResponses?: string;
+  scriptResponses?: ScriptResponse;
   onGenerate?: () => void;
   onStepChange?: (step: Step) => void;
   isGenerating?: boolean;
+  isLoading?: boolean;
 }
 
 export function Step6Script({
@@ -25,10 +38,12 @@ export function Step6Script({
   onGenerate,
   onStepChange,
   isGenerating = false,
+  isLoading = false,
 }: Step6ScriptProps) {
   const handleCopy = () => {
     if (scriptResponses) {
-      navigator.clipboard.writeText(scriptResponses);
+      const fullScript = `${scriptResponses.intro}\n\n${scriptResponses.selfIntro}\n\n${scriptResponses.chapters.map(ch => `${ch.title}\n${ch.content}`).join('\n\n')}\n\n${scriptResponses.outro}`;
+      navigator.clipboard.writeText(fullScript);
       toast.success("대본이 복사되었습니다.");
     }
   };
@@ -62,23 +77,6 @@ export function Step6Script({
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div className="bg-green-50 border border-green-100 rounded-xl p-6 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
-            <Check size={24} />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">
-              Mission Complete!
-            </h2>
-            <p className="text-green-700">Your content package is ready.</p>
-          </div>
-        </div>
-        <button className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-600 shadow-sm hover:bg-gray-50">
-          Download Assets
-        </button>
-      </div>
-
       <div className="grid md:grid-cols-3 gap-6">
         {/* Final Info Card */}
         <div className="space-y-6">
@@ -127,9 +125,43 @@ export function Step6Script({
               <Copy size={18} />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-6 text-sm leading-loose text-gray-700">
+          <div className="flex-1 overflow-y-auto p-6 text-sm leading-loose text-gray-700 space-y-6">
             {scriptResponses ? (
-              <MarkdownRenderer content={scriptResponses} />
+              <>
+                {/* Intro */}
+                <div className="space-y-2">
+                  <h3 className="text-lg font-bold text-red-600 flex items-center gap-2">
+                    🎬 인트로 (30초)
+                  </h3>
+                  <p className="whitespace-pre-wrap">{scriptResponses.intro}</p>
+                </div>
+
+                {/* Self Intro */}
+                <div className="space-y-2">
+                  <h3 className="text-lg font-bold text-orange-600 flex items-center gap-2">
+                    🎤 자기소개
+                  </h3>
+                  <p className="whitespace-pre-wrap">{scriptResponses.selfIntro}</p>
+                </div>
+
+                {/* Chapters */}
+                {scriptResponses.chapters.map((chapter, idx) => (
+                  <div key={idx} className="space-y-2">
+                    <h3 className="text-lg font-bold text-blue-600">
+                      {chapter.title}
+                    </h3>
+                    <p className="whitespace-pre-wrap">{chapter.content}</p>
+                  </div>
+                ))}
+
+                {/* Outro */}
+                <div className="space-y-2">
+                  <h3 className="text-lg font-bold text-green-600 flex items-center gap-2">
+                    🎬 마무리
+                  </h3>
+                  <p className="whitespace-pre-wrap">{scriptResponses.outro}</p>
+                </div>
+              </>
             ) : (
               <p className="text-gray-400">대본이 없습니다.</p>
             )}
@@ -141,10 +173,20 @@ export function Step6Script({
         <div className="flex justify-end mt-6">
           <button
             onClick={() => onStepChange(7)}
-            className="px-8 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2"
+            disabled={isLoading}
+            className="px-8 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            Next Step
-            <ChevronRight size={20} />
+            {isLoading ? (
+              <>
+                <Loader2 className="animate-spin" size={20} />
+                Loading...
+              </>
+            ) : (
+              <>
+                Next Step
+                <ChevronRight size={20} />
+              </>
+            )}
           </button>
         </div>
       )}

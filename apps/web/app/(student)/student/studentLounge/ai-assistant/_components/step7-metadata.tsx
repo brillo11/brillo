@@ -1,6 +1,6 @@
 "use client";
 
-import { Copy, Hash, Tag, Clock, FileText, ChevronRight } from "lucide-react";
+import { Copy, Hash, Tag, Clock, FileText, ChevronRight, Loader2 } from "lucide-react";
 import { Button } from "@repo/ui/components/button";
 import { LoadingSpinner } from "@repo/ui/components/loading-spinner";
 import { toast } from "sonner";
@@ -16,6 +16,7 @@ interface Step7MetadataProps {
   onGenerate?: () => void;
   onStepChange?: (step: Step) => void;
   isGenerating?: boolean;
+  isLoading?: boolean;
 }
 
 export function Step7Metadata({
@@ -23,6 +24,7 @@ export function Step7Metadata({
   onGenerate,
   onStepChange,
   isGenerating = false,
+  isLoading = false,
 }: Step7MetadataProps) {
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -191,10 +193,20 @@ export function Step7Metadata({
         <div className="flex justify-end mt-6">
           <button
             onClick={() => onStepChange(8)}
-            className="px-8 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2"
+            disabled={isLoading}
+            className="px-8 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            Next Step
-            <ChevronRight size={20} />
+            {isLoading ? (
+              <>
+                <Loader2 className="animate-spin" size={20} />
+                Loading...
+              </>
+            ) : (
+              <>
+                Next Step
+                <ChevronRight size={20} />
+              </>
+            )}
           </button>
         </div>
       )}

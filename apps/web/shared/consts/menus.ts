@@ -58,6 +58,7 @@ export interface MenuItem {
   url: string;
   subMenus?: MenuItem[];
   icon?: LucideIcon;
+  section?: string; // 섹션 구분자
 }
 
 export const adminMenus: MenuItem[] = [
@@ -178,12 +179,19 @@ export const studentMenus: MenuItem[] = [
         url: PATH.STUDENT_LOUNGE_LIBRARY,
         icon: Library,
       },
+      // {
+      //   id: "study-materials",
+      //   title: "학습 자료",
+      //   baseUrl: PATH.STUDENT_ORDERS,
+      //   url: PATH.STUDENT_ORDERS_LIST,
+      //   icon: FileText,
+      // },
       {
-        id: "study-materials",
-        title: "학습 자료",
-        baseUrl: PATH.STUDENT_ORDERS,
-        url: PATH.STUDENT_ORDERS_LIST,
-        icon: FileText,
+        id: "ai-tools-section",
+        title: "AI Tools",
+        baseUrl: "",
+        url: "",
+        section: "AI Tools",
       },
       {
         id: "ai-assistant",
@@ -192,8 +200,23 @@ export const studentMenus: MenuItem[] = [
         url: PATH.STUDENT_LOUNGE_AI_ASSISTANT,
         icon: Bot,
       },
+      {
+        id: "ai-history",
+        title: "작업 기록",
+        baseUrl: PATH.STUDENT_LOUNGE,
+        url: `${PATH.STUDENT_LOUNGE_AI_ASSISTANT}/history`,
+        icon: History,
+      },
+      {
+        id: "smart-search",
+        title: "스마트 키워드 검색",
+        baseUrl: PATH.STUDENT_LOUNGE,
+        url: PATH.STUDENT_LOUNGE_SMART_SEARCH,
+        icon: Search,
+      },
     ],
   },
+
   {
     id: "assignments",
     title: "과제",

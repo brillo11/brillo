@@ -5,14 +5,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack --port 3000",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "typecheck": "tsc --noEmit",
-    "cron:youtube": "tsx scripts/cron-youtube-popular.ts",
-    "cron:youtube:videos": "tsx scripts/cron-youtube-videos.ts",
-    "create-test-accounts": "tsx scripts/create-test-accounts.ts"
+    "db:create-test-accounts": "tsx scripts/create-test-accounts.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.850.0",

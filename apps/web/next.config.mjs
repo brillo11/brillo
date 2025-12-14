@@ -30,8 +30,6 @@ const nextConfig = {
       },
     ],
   },
-  // Next.js 16: Turbopack 설정 추가
-  turbopack: {},
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.plugins = [...config.plugins, new PrismaPlugin()];
