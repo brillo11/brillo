@@ -235,8 +235,15 @@ export async function runYoutubeVideosCron(
     }
 
     // 1. DB에서 채널 목록 가져오기 (uploadsPlaylist가 있는 것들)
+    // 24시간 이내에 크롤링된 채널은 제외
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
     const where: any = {
       uploadsPlaylist: { not: null },
+      OR: [
+        { lastCrawledAt: null },
+        { lastCrawledAt: { lt: twentyFourHoursAgo } },
+      ],
     };
     if (regionCode) {
       where.regionCode = regionCode;
@@ -248,7 +255,7 @@ export async function runYoutubeVideosCron(
       ...(take !== undefined && { take }),
       ...(maxChannels && !take && { take: maxChannels }),
       orderBy: {
-        lastCrawledAt: "asc",
+        lastCrawledAt: "asc", // 가장 오래된 것부터
       },
     });
 

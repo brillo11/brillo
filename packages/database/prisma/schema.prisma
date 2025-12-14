@@ -419,6 +419,22 @@ model YoutubeShorts {
   @@index([publishedAt])
   @@index([categoryId])
 }
+
+model CronState {
+  id              String   @id @default(uuid())
+  name            String   @unique // 크론 작업 이름 (예: "youtube-videos")
+  currentOffset   Int      @default(0) // 현재 처리 중인 offset
+  batchSize       Int      @default(200) // 한 번에 처리할 개수
+  totalProcessed  Int      @default(0) // 총 처리된 개수
+  lastRunAt       DateTime? // 마지막 실행 시간
+  lastRunStatus   String?  // 마지막 실행 상태 (SUCCESS, FAILED, RUNNING)
+  lastRunError    String?  // 마지막 실행 에러 메시지
+  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now())
+
+  @@index([name])
+}
+
 enum ROLE {
   SUPER_ADMIN
   ADMIN
