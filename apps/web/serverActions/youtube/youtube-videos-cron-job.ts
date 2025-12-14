@@ -5,7 +5,7 @@ import { isShortsVideo, calculateViewsPerHour } from "./youtube-common";
 
 // 상수 정의
 const RECENT_VIDEOS_AVG_COUNT = 10; // 최근 N개 영상의 평균 VPH 계산
-const MIN_OUTLIER_VPH = 3; // outlierVph가 이 값 이상인 영상만 저장
+const MIN_OUTLIER_VIEW = 1.5; // outlierView가 이 값 이상인 영상만 저장 (채널 평균의 2배)
 // const MIN_VIEWS_PER_HOUR = 100; // VPH가 이 값 이상인 영상만 저장
 const MAX_VIDEOS_PER_CHANNEL = 50; // 채널당 최대 수집 영상 수
 
@@ -279,7 +279,11 @@ export async function runYoutubeVideosCron(
         );
 
         if (videoIds.length === 0) {
-          console.log(`[${channel.title}] 영상 없음`);
+          console.log(`[${channel.title}] 영상 없음 - 채널 삭제`);
+          // 영상이 없는 채널은 DB에서 삭제
+          await prisma.youtubeChannel.delete({
+            where: { id: channel.id },
+          });
           continue;
         }
 
@@ -308,16 +312,16 @@ export async function runYoutubeVideosCron(
           }
         }
 
-        // outlier가 높은 영상들만 필터링 (outlierVph 기준만)
+        // outlier가 높은 영상들만 필터링 (outlierView 기준)
         const highOutlierRegularVideos = regularVideos.filter((video) => {
           return (
-            video.outlierVph !== null && video.outlierVph >= MIN_OUTLIER_VPH
+            video.outlierView !== null && video.outlierView >= MIN_OUTLIER_VIEW
           );
         });
 
         const highOutlierShortsVideos = shortsVideos.filter((video) => {
           return (
-            video.outlierVph !== null && video.outlierVph >= MIN_OUTLIER_VPH
+            video.outlierView !== null && video.outlierView >= MIN_OUTLIER_VIEW
           );
         });
 
