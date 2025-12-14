@@ -17,4 +17,5 @@ export interface VideoForModal {
   viewsPerHour: number | null;
   outlierVph: number | null;
   outlierView: number | null;
+  outlierSubscriber: number | null;
 }
