@@ -122,7 +122,7 @@ export function StudentSidebar({ points = 0 }: { points?: number }) {
                       <Collapsible
                         key={item.id}
                         asChild
-                        defaultOpen={isActive}
+                        defaultOpen={true}
                         className="group/collapsible"
                       >
                         <li suppressHydrationWarning>
