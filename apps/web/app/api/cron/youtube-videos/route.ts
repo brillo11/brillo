@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@repo/database";
 import { runYoutubeVideosCron } from "@/serverActions/youtube/youtube-videos-cron-job";
+
+const CRON_NAME = "youtube-videos";
+const BATCH_SIZE = 200;
 
 // Vercel Cron Job 인증: Authorization Bearer 토큰
 function isAuthorized(req: NextRequest): boolean {
@@ -20,20 +24,144 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    // 1. CronState 조회 또는 생성
+    let cronState = await prisma.cronState.findUnique({
+      where: { name: CRON_NAME },
+    });
+
+    if (!cronState) {
+      cronState = await prisma.cronState.create({
+        data: {
+          name: CRON_NAME,
+          currentOffset: 0,
+          batchSize: BATCH_SIZE,
+          totalProcessed: 0,
+          lastRunStatus: "RUNNING",
+        },
+      });
+    } else {
+      // 실행 중 상태로 업데이트
+      await prisma.cronState.update({
+        where: { name: CRON_NAME },
+        data: {
+          lastRunStatus: "RUNNING",
+          lastRunAt: new Date(),
+          lastRunError: null,
+        },
+      });
+    }
+
     const region = req.nextUrl.searchParams.get("region") || undefined;
-    const maxChannelsParam = req.nextUrl.searchParams.get("maxChannels");
-    const maxChannels = maxChannelsParam
-      ? Math.min(Math.max(parseInt(maxChannelsParam, 10), 1), 100)
-      : undefined;
-    const skipParam = req.nextUrl.searchParams.get("skip");
-    const skip = skipParam ? parseInt(skipParam, 10) : undefined;
-    const takeParam = req.nextUrl.searchParams.get("take");
-    const take = takeParam ? parseInt(takeParam, 10) : undefined;
+    const currentOffset = cronState.currentOffset;
 
-    const result = await runYoutubeVideosCron(maxChannels, region, skip, take);
+    // 2. 오늘 크롤링이 필요한 채널 확인 (24시간 이내 크롤링 제외)
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-    return NextResponse.json(result);
+    const totalChannels = await prisma.youtubeChannel.count({
+      where: {
+        ...(region ? { regionCode: region } : {}),
+        OR: [
+          { lastCrawledAt: null },
+          { lastCrawledAt: { lt: twentyFourHoursAgo } },
+        ],
+      },
+    });
+
+    // 모든 채널이 24시간 이내에 크롤링되었으면 종료
+    if (totalChannels === 0) {
+      console.log(
+        `[YouTube Videos Cron] All channels crawled within last 24 hours. Skipping.`
+      );
+
+      await prisma.cronState.update({
+        where: { name: CRON_NAME },
+        data: {
+          lastRunStatus: "SKIPPED",
+          lastRunAt: new Date(),
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: "All channels already crawled today",
+        channelsProcessed: 0,
+        skipped: true,
+      });
+    }
+
+    // offset이 전체 필요한 채널 수를 초과하면 리셋
+    const adjustedOffset = currentOffset >= totalChannels ? 0 : currentOffset;
+
+    console.log(
+      `[YouTube Videos Cron] Starting batch: offset=${adjustedOffset}, batchSize=${BATCH_SIZE}, totalNeeded=${totalChannels}`
+    );
+
+    // 3. 현재 offset으로 크롤링 실행
+    const result = await runYoutubeVideosCron(
+      undefined, // maxChannels
+      region,
+      adjustedOffset,
+      BATCH_SIZE
+    );
+
+    // 4. 다음 offset 계산
+    const nextOffset =
+      adjustedOffset + BATCH_SIZE >= totalChannels
+        ? 0
+        : adjustedOffset + BATCH_SIZE;
+
+    const isFullCycleComplete = nextOffset === 0 && adjustedOffset > 0;
+
+    // 5. CronState 업데이트
+    await prisma.cronState.update({
+      where: { name: CRON_NAME },
+      data: {
+        currentOffset: nextOffset,
+        totalProcessed:
+          cronState.totalProcessed + (result.channelsProcessed || 0),
+        lastRunStatus: "SUCCESS",
+        lastRunAt: new Date(),
+      },
+    });
+
+    console.log(
+      `[YouTube Videos Cron] Completed: offset=${adjustedOffset}-${adjustedOffset + BATCH_SIZE - 1}, nextOffset=${nextOffset}${isFullCycleComplete ? " (Cycle Complete)" : ""}`
+    );
+
+    return NextResponse.json({
+      ...result,
+      cronInfo: {
+        currentBatch: `${adjustedOffset}-${adjustedOffset + BATCH_SIZE - 1}`,
+        nextOffset,
+        totalChannelsNeedingCrawl: totalChannels,
+        isFullCycleComplete,
+        totalProcessed:
+          cronState.totalProcessed + (result.channelsProcessed || 0),
+        note: isFullCycleComplete
+          ? "Full cycle complete. Next run will check for channels needing crawl."
+          : undefined,
+      },
+    });
   } catch (e: any) {
+    console.error("[YouTube Videos Cron] Error:", e);
+
+    // 에러 상태 저장
+    try {
+      await prisma.cronState.update({
+        where: { name: CRON_NAME },
+        data: {
+          lastRunStatus: "FAILED",
+          lastRunError: e?.message || "Unknown error",
+          lastRunAt: new Date(),
+        },
+      });
+    } catch (updateError) {
+      console.error(
+        "[YouTube Videos Cron] Failed to update error state:",
+        updateError
+      );
+    }
+
     return NextResponse.json(
       { success: false, error: e?.message || "cron failed" },
       { status: 500 }
