@@ -5,7 +5,7 @@ import { isShortsVideo, calculateViewsPerHour } from "./youtube-common";
 
 // 상수 정의
 const RECENT_VIDEOS_AVG_COUNT = 10; // 최근 N개 영상의 평균 VPH 계산
-const MIN_OUTLIER_VIEW = 2; // outlierView가 이 값 이상인 영상만 저장 (채널 평균의 2배)
+const MIN_OUTLIER_VIEW = 3; // outlierView가 이 값 이상인 영상만 저장 (채널 평균의 3배)
 // const MIN_VIEWS_PER_HOUR = 100; // VPH가 이 값 이상인 영상만 저장
 const MAX_VIDEOS_PER_CHANNEL = 50; // 채널당 최대 수집 영상 수
 
