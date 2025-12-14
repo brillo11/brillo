@@ -196,19 +196,19 @@ function getAllSearchQueries(regionCode: string): string[] {
   return regionCode === "KR" ? krQueries : enQueries;
 }
 
-// 카테고리 범위별로 검색 쿼리 분배 (각 라우트당 5개씩)
+// 카테고리 범위별로 검색 쿼리 분배 (각 라우트당 20개씩)
 function getSearchQueriesByCategoryRange(
   categoryStart: number,
   categoryEnd: number,
   regionCode: string
 ): string[] {
   const allQueries = getAllSearchQueries(regionCode);
-  const queriesPerRoute = 5; // 각 라우트당 5개 쿼리
+  const queriesPerRoute = 20; // 각 라우트당 20개 쿼리
 
-  // 현재 범위의 인덱스 계산 (1-5=0, 6-10=1, 11-15=2, ...)
-  const rangeIndex = Math.floor((categoryStart - 1) / 5);
+  // 현재 범위의 인덱스 계산 (1-20=0, 21-40=1, 41-60=2, ...)
+  const rangeIndex = Math.floor((categoryStart - 1) / 20);
 
-  // 해당 범위에 할당된 쿼리 추출 (5개씩)
+  // 해당 범위에 할당된 쿼리 추출 (20개씩)
   const startIndex = rangeIndex * queriesPerRoute;
   const endIndex = Math.min(startIndex + queriesPerRoute, allQueries.length);
 
