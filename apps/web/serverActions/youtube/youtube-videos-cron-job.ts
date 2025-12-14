@@ -28,6 +28,7 @@ interface VideoData {
 
 /**
  * 채널의 최근 영상 목록 가져오기
+ * @throws API 에러 발생 시 에러를 throw (Forbidden 등)
  */
 async function fetchChannelVideos(
   apiKey: string,
@@ -36,6 +37,7 @@ async function fetchChannelVideos(
 ): Promise<string[]> {
   const videoIds: string[] = [];
   let pageToken: string | undefined = undefined;
+  let hasApiError = false;
 
   while (videoIds.length < maxResults) {
     const params = new URLSearchParams({
@@ -52,7 +54,9 @@ async function fetchChannelVideos(
 
     if (!res.ok) {
       console.error(`Failed to fetch playlist items: ${res.statusText}`);
-      break;
+      // API 에러 발생 - 에러를 throw하여 호출자가 처리하도록
+      hasApiError = true;
+      throw new Error(`API Error: ${res.status} ${res.statusText}`);
     }
 
     const data = await res.json();
@@ -272,15 +276,24 @@ export async function runYoutubeVideosCron(
 
       try {
         // 채널의 최근 영상 목록 가져오기
-        const videoIds = await fetchChannelVideos(
-          apiKey,
-          channel.uploadsPlaylist,
-          MAX_VIDEOS_PER_CHANNEL
-        );
+        let videoIds: string[];
+        try {
+          videoIds = await fetchChannelVideos(
+            apiKey,
+            channel.uploadsPlaylist,
+            MAX_VIDEOS_PER_CHANNEL
+          );
+        } catch (apiError: any) {
+          // API 에러 (Forbidden 등) - 채널은 유지하고 건너뛰기
+          console.log(
+            `[${channel.title}] API 에러로 영상 목록 가져오기 실패: ${apiError.message} - 건너뛰기`
+          );
+          continue;
+        }
 
         if (videoIds.length === 0) {
-          console.log(`[${channel.title}] 영상 없음 - 채널 삭제`);
-          // 영상이 없는 채널은 DB에서 삭제
+          console.log(`[${channel.title}] 영상 없음 (정상 응답) - 채널 삭제`);
+          // API는 정상 응답했지만 영상이 없는 경우 → 채널 삭제
           await prisma.youtubeChannel.delete({
             where: { id: channel.id },
           });
