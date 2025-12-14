@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { runYoutubeVideosCron } from "@/serverActions/youtube/youtube-videos-cron-job";
+import { runYoutubePopularCronByCategory } from "@/serverActions/youtube/youtube-cron-job";
+
+// 한국 카테고리 전체 (1-56)
+const CATEGORY_START = 1;
+const CATEGORY_END = 56;
+const REGION = "KR";
 
 // Vercel Cron Job 인증: Authorization Bearer 토큰
 function isAuthorized(req: NextRequest): boolean {
@@ -20,18 +25,25 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const region = req.nextUrl.searchParams.get("region") || undefined;
-    // Batch 6: 1000-1199 (200개)
-    const result = await runYoutubeVideosCron(undefined, region, 1000, 200);
+    const result = await runYoutubePopularCronByCategory(
+      CATEGORY_START,
+      CATEGORY_END,
+      REGION
+    );
 
     return NextResponse.json({
       ...result,
-      batch: 6,
-      range: "1000-1199",
+      categoryRange: `${CATEGORY_START}-${CATEGORY_END}`,
+      region: REGION,
     });
   } catch (e: any) {
     return NextResponse.json(
-      { success: false, error: e?.message || "cron failed", batch: 6 },
+      {
+        success: false,
+        error: e?.message || "cron failed",
+        categoryRange: `${CATEGORY_START}-${CATEGORY_END}`,
+        region: REGION,
+      },
       { status: 500 }
     );
   }

@@ -79,49 +79,118 @@ async function searchChannelsByQuery(
 
 // 고르게 채널 수집을 위한 검색 쿼리 리스트 (전체)
 function getAllSearchQueries(regionCode: string): string[] {
-  // 한국 기준 다양한 카테고리 키워드
+  // 한국 기준 다양한 카테고리 키워드 (YouTube 카테고리 포함)
   const krQueries = [
-    // 교육/학습
+    // YouTube 카테고리 기반 (& 분리)
+    "영화",
+    "애니메이션",
+    "자동차",
+    "차량",
+    "음악",
+    "반려동물",
+    "동물",
+    "스포츠",
+    "단편 영화",
+    "여행",
+    "이벤트",
+    "게임",
+    "비디오 블로그",
+    "브이로그",
+    "인물",
+    "블로그",
+    "코미디",
+    "엔터테인먼트",
+    "뉴스",
+    "정치",
+    "노하우",
+    "스타일",
+    "교육",
+    "과학",
+    "기술",
+    "액션",
+    "어드벤처",
+    "클래식",
+    "다큐멘터리",
+    "드라마",
+    "가족",
+    "해외",
+    "공포",
+    "SF",
+    "판타지",
+    "스릴러",
+    "쇼츠",
+    "쇼",
+    "예고편",
+    // 추가 교육/학습
     "코딩 강의",
     "영어 공부",
     "수학 강의",
     "자격증",
     "온라인 강의",
-    // 엔터테인먼트
-    "음악",
-    "게임",
+    // 추가 엔터테인먼트
     "먹방",
-    "브이로그",
     "리액션",
-    // 라이프스타일
+    // 추가 라이프스타일
     "요리",
-    "여행",
     "패션",
     "뷰티",
     "운동",
-    // 기술/IT
+    // 추가 기술/IT
     "프로그래밍",
     "개발",
     "테크 리뷰",
     "앱 리뷰",
-    // 뉴스/정보
-    "뉴스",
+    // 추가 뉴스/정보
     "시사",
     "경제",
   ];
 
   // 다른 지역은 영어 키워드 사용
   const enQueries = [
-    "coding tutorial",
+    // YouTube categories
+    "movie",
+    "animation",
+    "automotive",
+    "vehicle",
     "music",
-    "gaming",
-    "cooking",
+    "pets",
+    "animals",
+    "sports",
+    "short film",
     "travel",
-    "tech review",
-    "education",
-    "lifestyle",
-    "news",
+    "events",
+    "gaming",
+    "vlog",
+    "people",
+    "blog",
+    "comedy",
     "entertainment",
+    "news",
+    "politics",
+    "howto",
+    "style",
+    "education",
+    "science",
+    "technology",
+    "action",
+    "adventure",
+    "classic",
+    "documentary",
+    "drama",
+    "family",
+    "foreign",
+    "horror",
+    "sci-fi",
+    "fantasy",
+    "thriller",
+    "shorts",
+    "shows",
+    "trailer",
+    // Additional
+    "coding tutorial",
+    "cooking",
+    "tech review",
+    "lifestyle",
   ];
 
   return regionCode === "KR" ? krQueries : enQueries;
@@ -146,11 +215,6 @@ function getSearchQueriesByCategoryRange(
   return allQueries.slice(startIndex, endIndex);
 }
 
-// 고르게 채널 수집을 위한 검색 쿼리 리스트 (기존 호환성 유지)
-function getSearchQueries(regionCode: string): string[] {
-  return getAllSearchQueries(regionCode);
-}
-
 /**
  * YouTube Popular 크론잡 실행 (카테고리별)
  * Search API에서 특정 카테고리 범위의 채널을 수집
@@ -158,12 +222,13 @@ function getSearchQueries(regionCode: string): string[] {
 export async function runYoutubePopularCronByCategory(
   categoryStart: number,
   categoryEnd: number,
-  region: string = "KR"
+  region: string = "KR",
+  apiKey?: string
 ) {
   try {
-    const apiKey = process.env.YOUTUBE_DATA_API_KEY;
-    if (!apiKey) {
-      throw new Error("YOUTUBE_DATA_API_KEY is not set");
+    const key = apiKey || process.env.YOUTUBE_DATA_API_KEY;
+    if (!key) {
+      throw new Error("API Key is not set");
     }
 
     const regionCode = region.toUpperCase();
@@ -185,7 +250,7 @@ export async function runYoutubePopularCronByCategory(
     for (const query of searchQueries) {
       try {
         const foundChannelIds = await searchChannelsByQuery(
-          apiKey,
+          key,
           query,
           regionCode,
           channelsPerQuery
@@ -216,7 +281,7 @@ export async function runYoutubePopularCronByCategory(
       const chParams = new URLSearchParams({
         part: "statistics,contentDetails,snippet",
         id: batch.join(","),
-        key: apiKey,
+        key: key,
       });
 
       const chRes = await fetch(
@@ -248,7 +313,10 @@ export async function runYoutubePopularCronByCategory(
       // 전체 평균 조회수 계산
       const totalViews = parseInt(ch.statistics?.viewCount || "0", 10);
       const videoCount = parseInt(ch.statistics?.videoCount || "0", 10);
-      const subscriberCount = parseInt(ch.statistics?.subscriberCount || "0", 10);
+      const subscriberCount = parseInt(
+        ch.statistics?.subscriberCount || "0",
+        10
+      );
       const overallAvgView =
         videoCount > 0 && Number.isFinite(totalViews)
           ? totalViews / videoCount
@@ -375,7 +443,10 @@ export async function runYoutubePopularCron(
 
       const totalViews = parseInt(ch.statistics?.viewCount || "0", 10);
       const videoCount = parseInt(ch.statistics?.videoCount || "0", 10);
-      const subscriberCount = parseInt(ch.statistics?.subscriberCount || "0", 10);
+      const subscriberCount = parseInt(
+        ch.statistics?.subscriberCount || "0",
+        10
+      );
       const overallAvgView =
         videoCount > 0 && Number.isFinite(totalViews)
           ? totalViews / videoCount

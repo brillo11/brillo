@@ -38,6 +38,21 @@ export const YOUTUBE_CATEGORY_MAP: Record<string, string> = {
 };
 
 /**
+ * 실제 존재하는 YouTube 카테고리 ID 목록
+ */
+export const YOUTUBE_CATEGORY_IDS = Object.keys(YOUTUBE_CATEGORY_MAP);
+
+/**
+ * 카테고리 ID를 그룹으로 분할
+ * Group 1: 초반 카테고리 (1-20 범위)
+ * Group 2: 후반 카테고리 (21-44 범위)
+ */
+export const YOUTUBE_CATEGORY_GROUPS = {
+  GROUP_1: YOUTUBE_CATEGORY_IDS.filter((id) => parseInt(id) <= 20),
+  GROUP_2: YOUTUBE_CATEGORY_IDS.filter((id) => parseInt(id) >= 21),
+} as const;
+
+/**
  * 카테고리 ID를 한글 이름으로 변환
  * @param categoryId - YouTube 카테고리 ID
  * @returns 한글 카테고리 이름 또는 "기타"
