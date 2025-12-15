@@ -17,7 +17,7 @@ export interface AIAssistantSessionData {
   selectedTitleIndex: number | null;
   thumbnailGuideResponses: any | null;
   selectedThumbnailGuideIndex: number | null;
-  thumbnailResponses: string | null;
+  thumbnailUrls: string | null; // S3 URL
   scriptResponses: string | null;
   metadataResponses: any | null;
   shortsTitlesResponses: any | null;
@@ -72,7 +72,7 @@ export async function getAIAssistantSessions(): Promise<
       selectedTitleIndex: true,
       thumbnailGuideResponses: true,
       selectedThumbnailGuideIndex: true,
-      thumbnailResponses: true,
+      thumbnailUrls: true,
       scriptResponses: true,
       metadataResponses: true,
       shortsTitlesResponses: true,
@@ -108,7 +108,7 @@ export async function getAIAssistantSession(
       selectedTitleIndex: true,
       thumbnailGuideResponses: true,
       selectedThumbnailGuideIndex: true,
-      thumbnailResponses: true,
+      thumbnailUrls: true,
       scriptResponses: true,
       metadataResponses: true,
       shortsTitlesResponses: true,
@@ -133,7 +133,7 @@ export async function updateAIAssistantSession(
     selectedTitleIndex?: number | null;
     thumbnailGuideResponses?: any;
     selectedThumbnailGuideIndex?: number | null;
-    thumbnailResponses?: string;
+    thumbnailUrls?: string; // S3 URL
     scriptResponses?: string;
     metadataResponses?: any;
     shortsTitlesResponses?: any;

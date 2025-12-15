@@ -190,15 +190,15 @@ export function AssistantHistory() {
                 <ImageIcon size={18} className="text-red-600" /> 썸네일
               </h3>
               <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden relative border border-gray-200 group">
-                {selectedSession.thumbnailResponses ? (
+                {selectedSession.thumbnailUrls ? (
                   <>
                     <img
-                      src={`data:image/jpeg;base64,${selectedSession.thumbnailResponses}`}
+                      src={selectedSession.thumbnailUrls}
                       className="w-full h-full object-cover"
                       alt="Thumbnail"
                     />
                     <a
-                      href={`data:image/jpeg;base64,${selectedSession.thumbnailResponses}`}
+                      href={selectedSession.thumbnailUrls}
                       download="thumbnail.jpg"
                       className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-medium gap-2"
                     >
@@ -394,9 +394,9 @@ export function AssistantHistory() {
               >
                 {/* Thumbnail */}
                 <div className="aspect-video bg-gray-100 relative overflow-hidden">
-                  {session.thumbnailResponses ? (
+                  {session.thumbnailUrls ? (
                     <img
-                      src={`data:image/jpeg;base64,${session.thumbnailResponses}`}
+                      src={session.thumbnailUrls}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       alt=""
                     />

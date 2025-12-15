@@ -19,7 +19,7 @@ interface Step5ThumbGenProps {
   onChatSubmit: () => void;
   onStepChange: (step: Step) => void;
   chatEndRef: React.RefObject<HTMLDivElement | null>;
-  thumbnailResponses?: string;
+  thumbnailUrls?: string;
   thumbnailEditText?: string;
   onThumbnailEditTextChange?: (text: string) => void;
   thumbnailFile?: File | null;
@@ -32,7 +32,7 @@ interface Step5ThumbGenProps {
 export function Step5ThumbGen({
   selectedPersona,
   selectedTitle,
-  thumbnailUrl,
+  thumbnailUrls,
   chatMessages,
   chatInput,
   isGenerating,
@@ -40,7 +40,6 @@ export function Step5ThumbGen({
   onChatSubmit,
   onStepChange,
   chatEndRef,
-  thumbnailResponses,
   thumbnailEditText = "",
   onThumbnailEditTextChange,
   thumbnailFile,
@@ -49,19 +48,18 @@ export function Step5ThumbGen({
   onFixThumbnail,
   isLoading = false,
 }: Step5ThumbGenProps) {
-  const displayUrl = thumbnailResponses
-    ? `data:image/jpeg;base64,${thumbnailResponses}`
-    : thumbnailUrl;
+  // thumbnailResponses는 이제 S3 URL 또는 base64 (마이그레이션 호환)
+  const displayUrl = thumbnailUrls;
 
   return (
     <div className="space-y-6">
-      {!thumbnailResponses && isGenerating && (
+      {!thumbnailUrls && isGenerating && (
         <div className="flex flex-col items-center justify-center py-12">
           <Loader2 className="animate-spin text-red-600 mb-4" size={48} />
           <p className="font-medium text-gray-600">썸네일 생성 중...</p>
         </div>
       )}
-      {thumbnailResponses && (
+      {thumbnailUrls && (
         <div className="h-[600px] flex flex-col md:flex-row gap-6">
           {/* Left: Image Preview */}
           <div className="flex-1 bg-black/5 rounded-2xl flex flex-col items-center justify-center p-6 border border-gray-200 relative overflow-hidden">
@@ -155,14 +153,18 @@ export function Step5ThumbGen({
                             <Image
                               size={20}
                               className={
-                                isGenerating || isLoading ? "text-gray-400" : "text-red-600"
+                                isGenerating || isLoading
+                                  ? "text-gray-400"
+                                  : "text-red-600"
                               }
                             />
                           ) : (
                             <Upload
                               size={20}
                               className={
-                                isGenerating || isLoading ? "text-gray-400" : "text-gray-500"
+                                isGenerating || isLoading
+                                  ? "text-gray-400"
+                                  : "text-gray-500"
                               }
                             />
                           )}
@@ -170,7 +172,9 @@ export function Step5ThumbGen({
                         <div className="flex-1 min-w-0">
                           <p
                             className={`text-sm font-medium truncate ${
-                              isGenerating || isLoading ? "text-gray-400" : "text-gray-700"
+                              isGenerating || isLoading
+                                ? "text-gray-400"
+                                : "text-gray-700"
                             }`}
                           >
                             {thumbnailFile
@@ -189,7 +193,9 @@ export function Step5ThumbGen({
 
                   <Button
                     onClick={onFixThumbnail}
-                    disabled={isGenerating || isLoading || !thumbnailEditText.trim()}
+                    disabled={
+                      isGenerating || isLoading || !thumbnailEditText.trim()
+                    }
                     className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold shadow-sm"
                   >
                     {isGenerating ? (

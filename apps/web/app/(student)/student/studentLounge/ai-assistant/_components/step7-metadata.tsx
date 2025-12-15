@@ -1,6 +1,14 @@
 "use client";
 
-import { Copy, Hash, Tag, Clock, FileText, ChevronRight, Loader2 } from "lucide-react";
+import {
+  Copy,
+  Hash,
+  Tag,
+  Clock,
+  FileText,
+  ChevronRight,
+  Loader2,
+} from "lucide-react";
 import { Button } from "@repo/ui/components/button";
 import { LoadingSpinner } from "@repo/ui/components/loading-spinner";
 import { toast } from "sonner";

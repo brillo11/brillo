@@ -535,7 +535,7 @@ model AIAssistantSession {
   selectedThumbnailGuideIndex Int? // 선택된 가이드 인덱스
   
   // Step 5: Thumbnail
-  thumbnailResponses String? @db.Text // 썸네일 이미지 (base64 또는 URL)
+  thumbnailUrls      String? // S3에 저장된 썸네일 이미지 URL
   
   // Step 6: Script
   scriptResponses Json? // 생성된 대본 (구조화된 JSON)
