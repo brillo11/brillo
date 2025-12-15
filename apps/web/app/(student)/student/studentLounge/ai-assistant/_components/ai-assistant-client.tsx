@@ -16,6 +16,7 @@ import {
   createAIAssistantSession,
   updateAIAssistantSession,
 } from "@/serverActions/ai-assistant/ai-assistant-session.actions";
+import type { AIAssistantSessionData } from "@/serverActions/ai-assistant/ai-assistant-session.actions";
 import {
   sendTitleResponses,
   sendScriptResponses,
@@ -28,7 +29,10 @@ import {
 
 export function AIAssistantClient() {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
-  const [sessionData, setSessionData] = useState<any>({});
+  type SessionData = Partial<AIAssistantSessionData> & { topic?: string };
+  type SessionUpdates = Parameters<typeof updateAIAssistantSession>[1];
+
+  const [sessionData, setSessionData] = useState<SessionData>({});
   const [currentStep, setCurrentStep] = useState<Step>(1);
   const [selectedPersona, setSelectedPersona] = useState<CreatorPersona | null>(
     null
@@ -44,7 +48,6 @@ export function AIAssistantClient() {
   >([]);
 
   // Loading states
-  const [isGenerating, setIsGenerating] = useState(false);
   const [isTitleLoading, setIsTitleLoading] = useState(false);
   const [isThumbnailGuideLoading, setIsThumbnailGuideLoading] = useState(false);
   const [isThumbnailLoading, setIsThumbnailLoading] = useState(false);
@@ -61,26 +64,17 @@ export function AIAssistantClient() {
     },
   ]);
   const [chatInput, setChatInput] = useState("");
-  const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
   const [thumbnailEditText, setThumbnailEditText] = useState("");
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   // 세션 데이터 저장
-  const saveSessionData = async (updates: {
-    titleMessage?: string;
-    titleResponses?: any;
-    selectedTitle?: string;
-    selectedTitleIndex?: number | null;
-    thumbnailGuideResponses?: any;
-    selectedThumbnailGuideIndex?: number | null;
-    thumbnailUrls?: string; // S3 URL
-    scriptResponses?: string;
-    metadataResponses?: any;
-    shortsTitlesResponses?: any;
-    step?: string;
-  }) => {
-    if (!currentSessionId) return;
+  const saveSessionData = async (
+    updates: SessionUpdates,
+    sessionIdOverride?: string
+  ) => {
+    const targetSessionId = sessionIdOverride ?? currentSessionId;
+    if (!targetSessionId) return;
 
     const newData = { ...sessionData, ...updates };
     setSessionData(newData);
@@ -91,7 +85,11 @@ export function AIAssistantClient() {
         updates.selectedTitle ||
         sessionData.titleMessage ||
         sessionData.selectedTitle;
-      await updateAIAssistantSession(currentSessionId, updates, title);
+      await updateAIAssistantSession(
+        targetSessionId,
+        updates,
+        title ?? undefined
+      );
     } catch (error) {
       console.error("Failed to save session data:", error);
     }
@@ -102,22 +100,7 @@ export function AIAssistantClient() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
 
-  const handleStepChange = async (
-    step: Step,
-    updates?: {
-      titleMessage?: string;
-      titleResponses?: any;
-      selectedTitle?: string;
-      selectedTitleIndex?: number | null;
-      thumbnailGuideResponses?: any;
-      selectedThumbnailGuideIndex?: number | null;
-      thumbnailUrls?: string; // S3 URL
-      scriptResponses?: string;
-      metadataResponses?: any;
-      shortsTitlesResponses?: any;
-      step?: string;
-    }
-  ) => {
+  const handleStepChange = async (step: Step, updates?: SessionUpdates) => {
     if (updates) {
       await saveSessionData(updates);
     }
@@ -142,12 +125,10 @@ export function AIAssistantClient() {
           step: "THUMBNAIL",
         };
 
-        // saveSessionData 직접 호출
         if (currentSessionId) {
-          const newData = { ...sessionData, ...updates };
-          setSessionData(newData);
           const title = sessionData.titleMessage || sessionData.selectedTitle;
-          await updateAIAssistantSession(currentSessionId, updates, title);
+          const newData = { ...sessionData, ...updates, title };
+          setSessionData(newData);
         }
 
         // 자동 생성이 아닐 때만 다음 스텝으로 이동
@@ -180,18 +161,9 @@ export function AIAssistantClient() {
   // Step 8 진입 시 쇼츠 제목 자동 생성 - 제거 (이제 handleMetadataNext에서 처리)
   // useEffect(() => { ... }, [...]);
 
-  const simulateLoading = (callback: () => void, duration = 1500) => {
-    setIsGenerating(true);
-    setTimeout(() => {
-      setIsGenerating(false);
-      callback();
-    }, duration);
-  };
-
   const handleTopicSubmit = async () => {
     if (!topic.trim()) return;
 
-    setIsGenerating(true);
     setIsTitleLoading(true);
 
     try {
@@ -201,14 +173,12 @@ export function AIAssistantClient() {
 
       // 세션 데이터 초기화
       const initialData = { titleMessage: topic, step: "TITLE" };
-      setSessionData({ ...initialData, topic }); // UI 상태에는 topic 유지
-      await updateAIAssistantSession(sessionId, initialData, topic);
+      await saveSessionData(initialData, sessionId);
 
       // 제목 생성
       const response = await sendTitleResponses(sessionId, topic);
       const updatedData = { titleResponses: response };
-      setSessionData({ ...initialData, ...updatedData, topic }); // UI 상태에는 topic 유지
-      await updateAIAssistantSession(sessionId, updatedData, topic);
+      await saveSessionData(updatedData, sessionId);
 
       handleStepChange(3);
       toast.success("제목이 생성되었습니다.");
@@ -216,7 +186,6 @@ export function AIAssistantClient() {
       console.error("Failed to generate titles:", error);
       toast.error("제목 생성에 실패했습니다.");
     } finally {
-      setIsGenerating(false);
       setIsTitleLoading(false);
     }
   };
@@ -295,7 +264,6 @@ export function AIAssistantClient() {
         referenceImages: referenceThumbnails,
       });
 
-      setThumbnailUrl(s3Url);
       const updates = { thumbnailUrls: s3Url, step: "SCRIPT" };
       await saveSessionData(updates);
       await handleStepChange(5);
@@ -336,7 +304,6 @@ export function AIAssistantClient() {
         thumbnailGuide: thumbnailGuide.guideDescription,
       });
 
-      setThumbnailUrl(s3Url);
       const updates = { thumbnailUrls: s3Url, step: "SCRIPT" };
       await saveSessionData(updates);
       toast.success("썸네일이 생성되었습니다.");
@@ -375,7 +342,6 @@ export function AIAssistantClient() {
         mimeType
       );
 
-      setThumbnailUrl(s3Url);
       await saveSessionData({ thumbnailUrls: s3Url });
       toast.success("썸네일이 수정되었습니다.");
     } catch (error) {
@@ -489,7 +455,6 @@ export function AIAssistantClient() {
     setChatMessages((prev) => [...prev, newMsg]);
     setChatInput("");
 
-    setIsGenerating(true);
     try {
       await handleFixThumbnail();
       const aiResponse: ChatMessage = {
@@ -500,8 +465,6 @@ export function AIAssistantClient() {
       setChatMessages((prev) => [...prev, aiResponse]);
     } catch (error) {
       console.error("Failed to process chat:", error);
-    } finally {
-      setIsGenerating(false);
     }
   };
 
@@ -668,11 +631,10 @@ export function AIAssistantClient() {
             onReferenceThumbnailsChange={setReferenceThumbnails}
           />
         )}
-        {currentStep === 5 && (
+        {currentStep === 5 && sessionData.thumbnailUrls && (
           <Step5ThumbGen
             selectedPersona={selectedPersona}
             selectedTitle={selectedTitle}
-            thumbnailUrl={thumbnailUrl}
             chatMessages={chatMessages}
             chatInput={chatInput}
             isGenerating={isThumbnailLoading}
@@ -692,10 +654,14 @@ export function AIAssistantClient() {
         )}
         {currentStep === 6 && (
           <Step6Script
-            thumbnailUrl={sessionData.thumbnailUrls || thumbnailUrl}
+            thumbnailUrl={sessionData.thumbnailUrls ?? ""}
             selectedTitle={selectedTitle}
             topic={topic}
-            scriptResponses={sessionData.scriptResponses}
+            scriptResponses={
+              typeof sessionData.scriptResponses === "string"
+                ? undefined
+                : (sessionData.scriptResponses as any)
+            }
             onGenerate={handleScriptGenerate}
             onStepChange={handleScriptNext}
             isGenerating={isScriptLoading}
