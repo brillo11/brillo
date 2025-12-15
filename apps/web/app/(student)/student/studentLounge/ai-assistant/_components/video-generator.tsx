@@ -5,7 +5,6 @@ import { Video, Loader2, Download, Play } from "lucide-react";
 import { toast } from "sonner";
 import {
   generateVideoWithVeo,
-  generateVideoWithVeoMock,
   downloadAndUploadVeoVideo,
 } from "@/serverActions/ai-assistant/veo.actions";
 
@@ -14,10 +13,7 @@ interface VideoGeneratorProps {
   useMock?: boolean; // Mock 모드 사용 여부
 }
 
-export function VideoGenerator({
-  sessionId,
-  useMock = false,
-}: VideoGeneratorProps) {
+export function VideoGenerator({ sessionId }: VideoGeneratorProps) {
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(
@@ -33,16 +29,10 @@ export function VideoGenerator({
     try {
       setIsGenerating(true);
 
-      if (useMock) {
-        toast.info("데모 모드: 샘플 비디오를 불러오는 중...");
-      } else {
-        toast.info("비디오 생성 중입니다. 약 1-2분 소요됩니다...");
-      }
+      toast.info("비디오 생성 중입니다. 약 1-2분 소요됩니다...");
 
       // Mock 모드 또는 실제 API 사용
-      const result = useMock
-        ? await generateVideoWithVeoMock(prompt)
-        : await generateVideoWithVeo(prompt);
+      const result = await generateVideoWithVeo(prompt);
 
       console.log("result", result);
 
@@ -181,16 +171,10 @@ export function VideoGenerator({
                   style={{ animationDelay: "300ms" }}
                 ></div>
               </div>
-              <span>
-                {useMock
-                  ? "샘플 비디오 로딩 중"
-                  : "AI가 비디오를 생성하고 있습니다"}
-              </span>
+              <span>AI가 비디오를 생성하고 있습니다"</span>
             </div>
             <p className="text-xs text-center text-slate-400">
-              {useMock
-                ? "잠시만 기다려주세요..."
-                : "약 1-2분 소요됩니다. 잠시만 기다려주세요..."}
+              약 1-2분 소요됩니다. 잠시만 기다려주세요...
             </p>
           </div>
         )}
@@ -237,64 +221,30 @@ export function VideoGenerator({
                 <Play size={14} className="text-red-600" />
                 <span>비디오 컨트롤로 재생/일시정지 할 수 있습니다</span>
               </div>
-              <div className="text-xs text-slate-400">
-                {useMock ? "샘플 비디오" : "AI 생성 비디오"}
-              </div>
+              <div className="text-xs text-slate-400">AI 생성 비디오</div>
             </div>
           </div>
         )}
 
         {/* Info Box */}
         {!generatedVideoUrl && (
-          <div
-            className={`mt-4 p-4 border rounded-xl ${
-              useMock
-                ? "bg-amber-50 border-amber-100"
-                : "bg-blue-50 border-blue-100"
-            }`}
-          >
+          <div className="mt-4 p-4 border rounded-xl bg-blue-50 border-blue-100">
             <div className="flex gap-3">
               <div className="flex-shrink-0">
-                <Video
-                  size={20}
-                  className={useMock ? "text-amber-600" : "text-blue-600"}
-                />
+                <Video size={20} className="text-blue-600" />
               </div>
               <div className="space-y-1">
-                <h4
-                  className={`text-sm font-semibold ${
-                    useMock ? "text-amber-900" : "text-blue-900"
-                  }`}
-                >
-                  {useMock ? "🧪 데모 모드" : "Google Veo 3.1 소개"}
+                <h4 className="text-sm font-semibold text-blue-900">
+                  Google Veo 3.1 소개
                 </h4>
-                <p
-                  className={`text-xs leading-relaxed ${
-                    useMock ? "text-amber-700" : "text-blue-700"
-                  }`}
-                >
-                  {useMock
-                    ? "현재 데모 모드입니다. 샘플 비디오를 빠르게 확인할 수 있습니다. 실제 API를 사용하려면 useMock={false}로 설정하세요."
-                    : "Veo 3.1은 Google의 최신 AI 비디오 생성 모델입니다. 텍스트 프롬프트만으로 고품질 비디오를 생성할 수 있습니다."}
+                <p className="text-xs leading-relaxed text-blue-700">
+                  Veo 3.1은 Google의 최신 AI 비디오 생성 모델입니다. 텍스트
+                  프롬프트만으로 고품질 비디오를 생성할 수 있습니다.
                 </p>
-                <ul
-                  className={`mt-2 space-y-1 text-xs ${
-                    useMock ? "text-amber-600" : "text-blue-600"
-                  }`}
-                >
-                  {useMock ? (
-                    <>
-                      <li>• 즉시 결과 확인</li>
-                      <li>• API 키 불필요</li>
-                      <li>• 샘플 비디오 제공</li>
-                    </>
-                  ) : (
-                    <>
-                      <li>• 최대 해상도: 4K</li>
-                      <li>• 생성 시간: 약 1-2분</li>
-                      <li>• 다양한 스타일 지원</li>
-                    </>
-                  )}
+                <ul className="mt-2 space-y-1 text-xs text-blue-600">
+                  <li>• 최대 해상도: 4K</li>
+                  <li>• 생성 시간: 약 1-2분</li>
+                  <li>• 다양한 스타일 지원</li>
                 </ul>
               </div>
             </div>
