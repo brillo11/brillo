@@ -423,7 +423,7 @@ export async function sendMetadataResponses(sessionId: string) {
   const responses = await openAiClient.responses.create({
     model: "gpt-5.1",
     input: `메타데이터 만들어줘. 이전 응답의 대본 내용을 바탕으로 다음 지침을 따라서 생성해줘.
-- **설명**: 대본 내용을 검색 친화적으로 300자 내외로 요약.
+- **설명**: 이전에 너가 나에게 보내준 대본 내용을 검색 친화적으로 300자 내외로 요약해 줘. 주제를 벗어나지 말고 대본 내용을 바탕으로 생성해 줘.
 - **타임스탬프**: 인트로~마무리까지 임의 시간 배치.
 - **해시태그**: 관련 키워드 4개 제시.
 - **태그**: 제목·대본 관련 키워드, 오타 가능성 키워드 포함, 최대 7개.`,
