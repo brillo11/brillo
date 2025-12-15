@@ -3,6 +3,7 @@
 import {
   Copy,
   Video,
+  Link as LinkIcon,
   Mic,
   Upload,
   Check,
@@ -12,6 +13,7 @@ import {
   ChevronLeft,
   Loader2,
 } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@repo/ui/components/button";
 import { LoadingSpinner } from "@repo/ui/components/loading-spinner";
 import { toast } from "sonner";
@@ -33,38 +35,38 @@ export function Step8ShortsTitles({
   onGenerate,
   isGenerating = false,
 }: Step8ShortsTitlesProps) {
-  const [voiceSource, setVoiceSource] = useState<"mic" | "upload" | null>(null);
-  const [isRecording, setIsRecording] = useState(false);
-  const [generatedVoiceUrl, setGeneratedVoiceUrl] = useState<string | null>(
-    null
-  );
-  const [isVoiceLoading, setIsVoiceLoading] = useState(false);
+  // const [voiceSource, setVoiceSource] = useState<"mic" | "upload" | null>(null);
+  // const [isRecording, setIsRecording] = useState(false);
+  // const [generatedVoiceUrl, setGeneratedVoiceUrl] = useState<string | null>(
+  //   null
+  // );
+  // const [isVoiceLoading, setIsVoiceLoading] = useState(false);
 
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast.success(`${label}이 복사되었습니다.`);
   };
 
-  const handleStartRecording = () => {
-    setIsRecording(true);
-    // TODO: 실제 녹음 로직 구현
-    setTimeout(() => {
-      setIsRecording(false);
-      setVoiceSource("mic");
-      toast.success("녹음이 완료되었습니다.");
-    }, 10000);
-  };
+  // const handleStartRecording = () => {
+  //   setIsRecording(true);
+  //   // TODO: 실제 녹음 로직 구현
+  //   setTimeout(() => {
+  //     setIsRecording(false);
+  //     setVoiceSource("mic");
+  //     toast.success("녹음이 완료되었습니다.");
+  //   }, 10000);
+  // };
 
-  const handleVoiceCloneAndGen = async () => {
-    if (!voiceSource) return;
-    setIsVoiceLoading(true);
-    // TODO: 실제 음성 클론 및 생성 로직 구현
-    setTimeout(() => {
-      setIsVoiceLoading(false);
-      setGeneratedVoiceUrl("#"); // 임시 URL
-      toast.success("음성이 생성되었습니다.");
-    }, 3000);
-  };
+  // const handleVoiceCloneAndGen = async () => {
+  //   if (!voiceSource) return;
+  //   setIsVoiceLoading(true);
+  //   // TODO: 실제 음성 클론 및 생성 로직 구현
+  //   setTimeout(() => {
+  //     setIsVoiceLoading(false);
+  //     setGeneratedVoiceUrl("#"); // 임시 URL
+  //     toast.success("음성이 생성되었습니다.");
+  //   }, 3000);
+  // };
 
   if (!shortsTitlesResponses?.shortsTitles) {
     return (
@@ -95,6 +97,19 @@ export function Step8ShortsTitles({
 
   return (
     <div className="space-y-10 animate-fade-in pb-20 max-w-5xl mx-auto">
+      <div className="flex justify-end">
+        <Button
+          asChild
+          variant="outline"
+          className="flex items-center gap-2 text-sm"
+        >
+          <Link href="/student/studentLounge/ai-assistant/history">
+            <LinkIcon size={16} />
+            작업 기록 페이지로 이동
+          </Link>
+        </Button>
+      </div>
+
       {/* Section 1: Shorts */}
       <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
         <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-3">
