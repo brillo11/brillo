@@ -42,7 +42,7 @@ export function Step6Script({
 }: Step6ScriptProps) {
   const handleCopy = () => {
     if (scriptResponses) {
-      const fullScript = `${scriptResponses.intro}\n\n${scriptResponses.selfIntro}\n\n${scriptResponses.chapters.map(ch => `${ch.title}\n${ch.content}`).join('\n\n')}\n\n${scriptResponses.outro}`;
+      const fullScript = `${scriptResponses.intro}\n\n${scriptResponses.selfIntro}\n\n${scriptResponses.chapters.map((ch) => `${ch.title}\n${ch.content}`).join("\n\n")}\n\n${scriptResponses.outro}`;
       navigator.clipboard.writeText(fullScript);
       toast.success("대본이 복사되었습니다.");
     }
@@ -141,7 +141,9 @@ export function Step6Script({
                   <h3 className="text-lg font-bold text-orange-600 flex items-center gap-2">
                     🎤 자기소개
                   </h3>
-                  <p className="whitespace-pre-wrap">{scriptResponses.selfIntro}</p>
+                  <p className="whitespace-pre-wrap">
+                    {scriptResponses.selfIntro}
+                  </p>
                 </div>
 
                 {/* Chapters */}
