@@ -13,6 +13,9 @@ export const metadata: Metadata = {
     images: [METADATA.getThumbnailUrl()],
     type: "website",
   },
+  icons: {
+    icon: [{ url: "/favicon.png" }],
+  },
 };
 
 export default function RootLayout({
@@ -23,9 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`mx-auto scroll-smooth font-sans antialiased shadow-sm`}>
-        <Providers>
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
         <Toaster />
       </body>
     </html>
