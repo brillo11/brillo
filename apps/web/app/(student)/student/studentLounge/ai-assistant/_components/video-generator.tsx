@@ -109,7 +109,7 @@ export function VideoGenerator({
       {/* Header */}
       <div className="flex items-center gap-2 mb-4">
         <Video size={18} className="text-red-600" />
-        <h3 className="font-bold text-slate-900">AI 비디오 생성 (Veo 2)</h3>
+        <h3 className="font-bold text-slate-900">AI 비디오 생성 (3.1)</h3>
       </div>
 
       {/* Input Section */}
