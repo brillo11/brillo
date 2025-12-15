@@ -4,14 +4,11 @@ import { Loader2, Send, Image, Upload, Edit3 } from "lucide-react";
 import { Button } from "@repo/ui/components/button";
 import { Textarea } from "@repo/ui/components/textarea";
 import { Label } from "@repo/ui/components/label";
-import { LoadingSpinner } from "@repo/ui/components/loading-spinner";
 import type { CreatorPersona, ChatMessage, Step } from "./types";
-import { renderIcon } from "./utils";
 
 interface Step5ThumbGenProps {
   selectedPersona: CreatorPersona | null;
   selectedTitle: string;
-  thumbnailUrl: string;
   chatMessages: ChatMessage[];
   chatInput: string;
   isGenerating: boolean;
