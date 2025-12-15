@@ -1,60 +1,60 @@
-'use server'
-import OpenAI from 'openai'
-import fs from 'fs'
-import { z } from 'zod'
-import { zodTextFormat } from 'openai/helpers/zod'
-import { GoogleGenAI, ImagePromptLanguage } from '@google/genai'
+"use server";
+import OpenAI from "openai";
+import fs from "fs";
+import { z } from "zod";
+import { zodTextFormat } from "openai/helpers/zod";
+import { GoogleGenAI, ImagePromptLanguage } from "@google/genai";
 const fileIds = [
-  'file-SzcgPBAvwrL2ddPtyqjgtX',
-  'file-WLNr8ZLt7Dh19ueDLse8MV',
-  'file-WYnvT7jueGzkkdS54XPU4j',
-  'file-XAqE8BusoWrmdtALeZ8tyQ',
-  'file-7EN1cCa6U2bep7mNTiSuKg',
-]
+  "file-SzcgPBAvwrL2ddPtyqjgtX",
+  "file-WLNr8ZLt7Dh19ueDLse8MV",
+  "file-WYnvT7jueGzkkdS54XPU4j",
+  "file-XAqE8BusoWrmdtALeZ8tyQ",
+  "file-7EN1cCa6U2bep7mNTiSuKg",
+];
 
 const tools = [
   {
-    type: 'code_interpreter',
+    type: "code_interpreter",
     container: {
-      type: 'auto',
+      type: "auto",
       file_ids: fileIds,
     },
   },
-] as any
+] as any;
 
 const openAiClient = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-})
+});
 const geminiClient = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY2, // 일단 결제되있는걸로 해드림
-})
+});
 
 export async function createConversation() {
-  const conversation = await openAiClient.conversations.create({})
+  const conversation = await openAiClient.conversations.create({});
 
-  return conversation.id
+  return conversation.id;
 }
 
 const setSchema = z.object({
   thumbnailTitle: z.string(),
   videoTitle: z.string(),
   // hookingText: z.string(),
-})
+});
 const titleSchema = z.object({
   sets: z.array(setSchema).length(5),
-})
-const titleTextFormat = zodTextFormat(titleSchema, 'title')
+});
+const titleTextFormat = zodTextFormat(titleSchema, "title");
 
 export async function sendTitleResponses(sessionId: string, message: string) {
-  console.log(sessionId)
+  console.log(sessionId);
   const responses = await openAiClient.responses.create({
-    model: 'gpt-5.1',
+    model: "gpt-5.1",
     input: [
       {
-        role: 'system',
+        role: "system",
         content: [
           {
-            type: 'input_text',
+            type: "input_text",
             text: `1. 사용자가 키워드, 주제, 또는 영상에서 보여주고 싶은 내용을 제시하면 **무조건 가장 먼저 ABCD 제목 공식**을 적용한 5개의 제목 세트를 제시한다. 이 단계는 지침에서 최우선적으로 반영되며, 반드시 아래 구조를 따른다:
 
 썸네일 후킹 텍스트(썸네일 제목) 
@@ -118,8 +118,10 @@ export async function sendTitleResponses(sessionId: string, message: string) {
         ],
       },
       {
-        role: 'user',
-        content: [{ type: 'input_text', text: `먼저 제목 지어줘.\n ${message}` }],
+        role: "user",
+        content: [
+          { type: "input_text", text: `먼저 제목 지어줘.\n ${message}` },
+        ],
       },
     ],
     conversation: sessionId,
@@ -127,51 +129,57 @@ export async function sendTitleResponses(sessionId: string, message: string) {
     text: {
       format: titleTextFormat,
     },
-  })
+  });
   // console.log(responses)
   // fs.writeFileSync('./exportedResponse/firstResponses.json', JSON.stringify(responses, null, 2))
-  const output = responses.output_text
-  const jsonOutput = JSON.parse(output)
-  return jsonOutput
+  const output = responses.output_text;
+  const jsonOutput = JSON.parse(output);
+  return jsonOutput;
 }
 
 export async function sendScriptResponses(sessionId: string) {
   const responses = await openAiClient.responses.create({
-    model: 'gpt-5.1',
-    input: '대본 만들어줘',
+    model: "gpt-5.1",
+    input: "대본 만들어줘",
     conversation: sessionId,
     tools: tools,
-  })
+  });
   // console.log(responses)
   // fs.writeFileSync('./exportedResponse/scriptResponses.json', JSON.stringify(responses, null, 2))
-  return responses.output_text
+  return responses.output_text;
 }
 
 const thumbnailGuideSetSchema = z.object({
-  guideTitle: z.string().describe('markdown 형식으로 작성'),
-  guideDescription: z.string().describe('markdown 형식으로 작성'),
-  guideSummary: z.string().describe('markdown 형식으로 작성'),
-})
+  guideTitle: z.string().describe("markdown 형식으로 작성"),
+  guideDescription: z.string().describe("markdown 형식으로 작성"),
+  guideSummary: z.string().describe("markdown 형식으로 작성"),
+});
 const thumbnailGuideSchema = z.object({
   thumbnailGuides: z.array(thumbnailGuideSetSchema).length(3),
-})
-const thumbnailGuideTextFormat = zodTextFormat(thumbnailGuideSchema, 'thumbnailGuide')
+});
+const thumbnailGuideTextFormat = zodTextFormat(
+  thumbnailGuideSchema,
+  "thumbnailGuide"
+);
 
-export async function sendThumbnailGuideResponses(sessionId: string, selectedTitleIndex: number) {
+export async function sendThumbnailGuideResponses(
+  sessionId: string,
+  selectedTitleIndex: number
+) {
   const responses = await openAiClient.responses.create({
-    model: 'gpt-5.1',
+    model: "gpt-5.1",
     input: `썸네일 가이드 만들어줘. ${selectedTitleIndex + 1}번`,
     conversation: sessionId,
     tools: tools,
     text: {
       format: thumbnailGuideTextFormat,
     },
-  })
+  });
   // console.log(responses)
   // fs.writeFileSync('./exportedResponse/thumbnailResponses.json', JSON.stringify(responses, null, 2))
-  const output = responses.output_text
-  const jsonOutput = JSON.parse(output)
-  return jsonOutput
+  const output = responses.output_text;
+  const jsonOutput = JSON.parse(output);
+  return jsonOutput;
 }
 
 export async function sendThumbnailResponses({
@@ -180,27 +188,27 @@ export async function sendThumbnailResponses({
   videoTitle,
   thumbnailGuide,
 }: {
-  thumbnailTitle: string
-  hookingText: string
-  videoTitle: string
-  thumbnailGuide: string
+  thumbnailTitle: string;
+  hookingText: string;
+  videoTitle: string;
+  thumbnailGuide: string;
 }) {
-  const prompt = `유튜브 썸네일을 만들어줘. 아래의 가이드를 참고해줘. 반환내역은 이미지만 반환 할 것.  \n 썸네일 제목: ${thumbnailTitle}\n 후킹 텍스트: ${hookingText}\n 영상 제목: ${videoTitle}\n 가이드: ${thumbnailGuide}`
+  const prompt = `유튜브 썸네일을 만들어줘. 아래의 가이드를 참고해줘. 반환내역은 이미지만 반환 할 것.  \n 썸네일 제목: ${thumbnailTitle}\n 후킹 텍스트: ${hookingText}\n 영상 제목: ${videoTitle}\n 가이드: ${thumbnailGuide}`;
 
   const response = await geminiClient.models.generateContent({
-    model: 'gemini-3-pro-image-preview', //
+    model: "gemini-3-pro-image-preview", //
     contents: prompt,
     config: {
       imageConfig: {
-        aspectRatio: '16:9',
+        aspectRatio: "16:9",
       },
     },
-  })
+  });
 
   // fs.writeFileSync('./exportedResponse/thumbnailResponse.json', JSON.stringify(response, null, 2))
-  const parts = response?.candidates?.[0]?.content?.parts
-  const output = parts?.[0]?.inlineData?.data || parts?.[1]?.inlineData?.data
-  return output
+  const parts = response?.candidates?.[0]?.content?.parts;
+  const output = parts?.[0]?.inlineData?.data || parts?.[1]?.inlineData?.data;
+  return output;
   // const response = await geminiClient.models.generateImages({
   //   model: 'imagen-4.0-generate-001',
   //   prompt: prompt,
@@ -224,28 +232,29 @@ export async function sendFixThumbnailResponses(
     { text: `유튜브 썸네일을 수정해줘.\n수정 내용: ${thumbnailEditText}` },
     {
       inlineData: {
-        mimeType: 'image/jpeg',
+        mimeType: "image/jpeg",
         data: thumbnailResponses,
       },
     },
-  ]
+  ];
   if (referenceImage && referenceImageMimeType) {
     contents.push({
       inlineData: {
         mimeType: referenceImageMimeType,
         data: referenceImage,
       },
-    })
+    });
   }
   const response = await geminiClient.models.generateContent({
-    model: 'gemini-3-pro-image-preview', //gemini-3-pro-image-preview
+    model: "gemini-3-pro-image-preview", //gemini-3-pro-image-preview
     contents: contents,
     config: {
       imageConfig: {
-        aspectRatio: '16:9',
+        aspectRatio: "16:9",
       },
     },
-  })
-  const output = response?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data
-  return output
+  });
+  const output =
+    response?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+  return output;
 }

@@ -17,10 +17,6 @@
       "schedule": "0 18 * * 6"
     },
     {
-      "path": "/api/cron/youtube-search-category-en",
-      "schedule": "0 19 * * 6"
-    },
-    {
       "path": "/api/cron/youtube-videos",
       "schedule": "*/10 * * * *"
     }
