@@ -6,6 +6,7 @@ import { zodTextFormat } from "openai/helpers/zod";
 import { GoogleGenAI } from "@google/genai";
 import { prisma } from "@repo/database";
 import { requireStudent } from "@/shared/lib/auth-guards";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 const fileIds = [
   "file-SzcgPBAvwrL2ddPtyqjgtX",
@@ -32,6 +33,33 @@ const openAiClient = new OpenAI({
 const geminiClient = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY2,
 });
+
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION!,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
+});
+
+/**
+ * Base64 이미지를 S3에 업로드하고 URL 반환
+ */
+async function uploadThumbnailToS3(base64Data: string): Promise<string> {
+  const buffer = Buffer.from(base64Data, "base64");
+  const fileName = `ai-assistant/thumbnails/${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
+
+  const command = new PutObjectCommand({
+    Bucket: process.env.S3_BUCKET_NAME!,
+    Key: fileName,
+    Body: buffer,
+    ContentType: "image/jpeg",
+  });
+
+  await s3Client.send(command);
+
+  return `${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${fileName}`;
+}
 
 const setSchema = z.object({
   thumbnailTitle: z.string(),
@@ -159,15 +187,25 @@ export async function sendTitleResponses(sessionId: string, message: string) {
 }
 
 const scriptChapterSchema = z.object({
-  title: z.string().describe("📌 이모지로 시작하는 자극적인 챕터 제목 (한 문장)"),
+  title: z
+    .string()
+    .describe("📌 이모지로 시작하는 자극적인 챕터 제목 (한 문장)"),
   content: z.string().describe("약 1분 분량의 바로 읽을 수 있는 대본"),
 });
 
 const scriptSchema = z.object({
-  intro: z.string().describe("🎬 인트로 (초반 30초): 제목과 썸네일에서 끌어낸 후킹과 기대감을 이어가며 놀라운 사실, 중대한 약속, 로드맵을 자연스럽게 녹여낸 30초 분량 대본"),
+  intro: z
+    .string()
+    .describe(
+      "🎬 인트로 (초반 30초): 제목과 썸네일에서 끌어낸 후킹과 기대감을 이어가며 놀라운 사실, 중대한 약속, 로드맵을 자연스럽게 녹여낸 30초 분량 대본"
+    ),
   selfIntro: z.string().describe("자기소개: 간단한 자기소개"),
   chapters: z.array(scriptChapterSchema).length(3).describe("본론 3개 챕터"),
-  outro: z.string().describe("🎬 마무리: 핵심 요약, 구독/좋아요 요청, 다음 영상 예고와 댓글 참여 유도"),
+  outro: z
+    .string()
+    .describe(
+      "🎬 마무리: 핵심 요약, 구독/좋아요 요청, 다음 영상 예고와 댓글 참여 유도"
+    ),
 });
 
 const scriptTextFormat = zodTextFormat(scriptSchema, "script");
@@ -247,7 +285,7 @@ export async function sendThumbnailResponses({
   referenceImages?: Array<{ url: string; title?: string }>;
 }) {
   let prompt = `유튜브 썸네일을 만들어줘. 아래의 가이드를 참고해줘. 반환내역은 이미지만 반환 할 것.  \n 썸네일 제목: ${thumbnailTitle}\n 후킹 텍스트: ${hookingText}\n 영상 제목: ${videoTitle}\n 가이드: ${thumbnailGuide}`;
-  
+
   if (referenceImages.length > 0) {
     prompt += `\n\n참고 썸네일 스타일 (${referenceImages.length}개의 이미지 첨부):`;
     prompt += `\n위 첨부된 참고 이미지들의 스타일, 레이아웃, 색감, 폰트, 텍스트 배치를 분석하여 일관성 있는 썸네일을 제작해줘.`;
@@ -255,18 +293,18 @@ export async function sendThumbnailResponses({
 
   // Build contents array with text and reference images
   const contents: any[] = [{ text: prompt }];
-  
+
   // Fetch and add reference images
   if (referenceImages.length > 0) {
     for (const img of referenceImages) {
       try {
         const response = await fetch(img.url);
         const arrayBuffer = await response.arrayBuffer();
-        const base64 = Buffer.from(arrayBuffer).toString('base64');
-        
+        const base64 = Buffer.from(arrayBuffer).toString("base64");
+
         contents.push({
           inlineData: {
-            mimeType: 'image/jpeg',
+            mimeType: "image/jpeg",
             data: base64,
           },
         });
@@ -287,22 +325,38 @@ export async function sendThumbnailResponses({
   });
 
   const parts = response?.candidates?.[0]?.content?.parts;
-  const output = parts?.[0]?.inlineData?.data || parts?.[1]?.inlineData?.data;
-  return output;
+  const base64Data =
+    parts?.[0]?.inlineData?.data || parts?.[1]?.inlineData?.data;
+
+  if (!base64Data) {
+    throw new Error("Failed to generate thumbnail");
+  }
+
+  // S3에 업로드하고 URL 반환
+  const s3Url = await uploadThumbnailToS3(base64Data);
+  return s3Url;
 }
 
 export async function sendFixThumbnailResponses(
   thumbnailEditText: string,
-  thumbnailResponses: string,
+  thumbnailUrl: string, // S3 URL 또는 base64
   referenceImage?: string,
   referenceImageMimeType?: string
 ) {
+  // thumbnailUrl이 S3 URL인 경우 base64로 변환
+  let thumbnailBase64 = thumbnailUrl;
+  if (thumbnailUrl.startsWith("http")) {
+    const response = await fetch(thumbnailUrl);
+    const arrayBuffer = await response.arrayBuffer();
+    thumbnailBase64 = Buffer.from(arrayBuffer).toString("base64");
+  }
+
   const contents = [
     { text: `유튜브 썸네일을 수정해줘.\n수정 내용: ${thumbnailEditText}` },
     {
       inlineData: {
         mimeType: "image/jpeg",
-        data: thumbnailResponses,
+        data: thumbnailBase64,
       },
     },
   ];
@@ -326,9 +380,16 @@ export async function sendFixThumbnailResponses(
     },
   });
 
-  const output =
+  const base64Data =
     response?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-  return output;
+
+  if (!base64Data) {
+    throw new Error("Failed to fix thumbnail");
+  }
+
+  // S3에 업로드하고 URL 반환
+  const s3Url = await uploadThumbnailToS3(base64Data);
+  return s3Url;
 }
 
 // 메타데이터 스키마 정의

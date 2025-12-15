@@ -61,9 +61,7 @@ export function AIAssistantClient() {
     },
   ]);
   const [chatInput, setChatInput] = useState("");
-  const [thumbnailUrl, setThumbnailUrl] = useState(
-    "https://picsum.photos/seed/thumb1/800/450"
-  );
+  const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
   const [thumbnailEditText, setThumbnailEditText] = useState("");
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -76,7 +74,7 @@ export function AIAssistantClient() {
     selectedTitleIndex?: number | null;
     thumbnailGuideResponses?: any;
     selectedThumbnailGuideIndex?: number | null;
-    thumbnailResponses?: string;
+    thumbnailUrls?: string; // S3 URL
     scriptResponses?: string;
     metadataResponses?: any;
     shortsTitlesResponses?: any;
@@ -113,7 +111,7 @@ export function AIAssistantClient() {
       selectedTitleIndex?: number | null;
       thumbnailGuideResponses?: any;
       selectedThumbnailGuideIndex?: number | null;
-      thumbnailResponses?: string;
+      thumbnailUrls?: string; // S3 URL
       scriptResponses?: string;
       metadataResponses?: any;
       shortsTitlesResponses?: any;
@@ -240,7 +238,7 @@ export function AIAssistantClient() {
 
   const handleTitleNext = async () => {
     if (selectedTitleIndex === null || !currentSessionId) return;
-    
+
     // 썸네일 가이드 생성 후 다음 스텝으로 이동
     setIsThumbnailGuideLoading(true);
     try {
@@ -269,20 +267,27 @@ export function AIAssistantClient() {
   };
 
   const handleGuideNext = async () => {
-    if (selectedGuide === null || selectedTitleIndex === null || !currentSessionId) return;
-    
+    if (
+      selectedGuide === null ||
+      selectedTitleIndex === null ||
+      !currentSessionId
+    )
+      return;
+
     // 썸네일 생성 후 다음 스텝으로 이동
     setIsThumbnailLoading(true);
     try {
-      const selectedTitleSet = sessionData.titleResponses?.sets[selectedTitleIndex];
-      const thumbnailGuide = sessionData.thumbnailGuideResponses?.thumbnailGuides[selectedGuide];
+      const selectedTitleSet =
+        sessionData.titleResponses?.sets[selectedTitleIndex];
+      const thumbnailGuide =
+        sessionData.thumbnailGuideResponses?.thumbnailGuides[selectedGuide];
 
       if (!selectedTitleSet || !thumbnailGuide) {
         toast.error("제목과 썸네일 가이드를 선택해주세요.");
         return;
       }
 
-      const response = await sendThumbnailResponses({
+      const s3Url = await sendThumbnailResponses({
         thumbnailTitle: selectedTitleSet.thumbnailTitle,
         hookingText: selectedTitleSet.hookingText || "",
         videoTitle: selectedTitleSet.videoTitle,
@@ -290,8 +295,8 @@ export function AIAssistantClient() {
         referenceImages: referenceThumbnails,
       });
 
-      setThumbnailUrl(`data:image/jpeg;base64,${response}`);
-      const updates = { thumbnailResponses: response, step: "SCRIPT" };
+      setThumbnailUrl(s3Url);
+      const updates = { thumbnailUrls: s3Url, step: "SCRIPT" };
       await saveSessionData(updates);
       await handleStepChange(5);
       toast.success("썸네일이 생성되었습니다.");
@@ -324,15 +329,15 @@ export function AIAssistantClient() {
         return;
       }
 
-      const response = await sendThumbnailResponses({
+      const s3Url = await sendThumbnailResponses({
         thumbnailTitle: selectedTitleSet.thumbnailTitle,
         hookingText: selectedTitleSet.hookingText || "",
         videoTitle: selectedTitleSet.videoTitle,
         thumbnailGuide: thumbnailGuide.guideDescription,
       });
 
-      setThumbnailUrl(`data:image/jpeg;base64,${response}`);
-      const updates = { thumbnailResponses: response, step: "SCRIPT" };
+      setThumbnailUrl(s3Url);
+      const updates = { thumbnailUrls: s3Url, step: "SCRIPT" };
       await saveSessionData(updates);
       toast.success("썸네일이 생성되었습니다.");
     } catch (error) {
@@ -344,7 +349,7 @@ export function AIAssistantClient() {
   };
 
   const handleFixThumbnail = async () => {
-    if (!sessionData.thumbnailResponses || !currentSessionId) return;
+    if (!sessionData.thumbnailUrls || !currentSessionId) return;
 
     setIsThumbnailLoading(true);
 
@@ -363,15 +368,15 @@ export function AIAssistantClient() {
         mimeType = thumbnailFile.type;
       }
 
-      const response = await sendFixThumbnailResponses(
+      const s3Url = await sendFixThumbnailResponses(
         thumbnailEditText,
-        sessionData.thumbnailResponses,
+        sessionData.thumbnailUrls, // S3 URL 전달
         base64,
         mimeType
       );
 
-      setThumbnailUrl(`data:image/jpeg;base64,${response}`);
-      await saveSessionData({ thumbnailResponses: response });
+      setThumbnailUrl(s3Url);
+      await saveSessionData({ thumbnailUrls: s3Url });
       toast.success("썸네일이 수정되었습니다.");
     } catch (error) {
       console.error("Failed to fix thumbnail:", error);
@@ -419,7 +424,7 @@ export function AIAssistantClient() {
 
   const handleScriptNext = async () => {
     if (!currentSessionId) return;
-    
+
     // 메타데이터 생성 후 다음 스텝으로 이동
     setIsMetadataLoading(true);
     try {
@@ -438,7 +443,7 @@ export function AIAssistantClient() {
 
   const handleMetadataNext = async () => {
     if (!currentSessionId) return;
-    
+
     // 쇼츠 제목 생성 후 다음 스텝으로 이동
     setIsShortsTitlesLoading(true);
     try {
@@ -502,7 +507,7 @@ export function AIAssistantClient() {
 
   const handleConfirm = async () => {
     if (!currentSessionId) return;
-    
+
     // 대본 생성 후 다음 스텝으로 이동
     setIsScriptLoading(true);
     try {
@@ -675,7 +680,7 @@ export function AIAssistantClient() {
             onChatSubmit={handleChatSubmit}
             onStepChange={handleConfirm}
             chatEndRef={chatEndRef}
-            thumbnailResponses={sessionData.thumbnailResponses}
+            thumbnailUrls={sessionData.thumbnailUrls}
             thumbnailEditText={thumbnailEditText}
             onThumbnailEditTextChange={setThumbnailEditText}
             thumbnailFile={thumbnailFile}
@@ -687,7 +692,7 @@ export function AIAssistantClient() {
         )}
         {currentStep === 6 && (
           <Step6Script
-            thumbnailUrl={thumbnailUrl}
+            thumbnailUrl={sessionData.thumbnailUrls || thumbnailUrl}
             selectedTitle={selectedTitle}
             topic={topic}
             scriptResponses={sessionData.scriptResponses}

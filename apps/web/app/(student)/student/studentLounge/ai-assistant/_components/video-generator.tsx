@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import {
   generateVideoWithVeo,
   generateVideoWithVeoMock,
-  downloadVeoVideoAsBase64,
+  downloadAndUploadVeoVideo,
 } from "@/serverActions/ai-assistant/veo.actions";
 
 interface VideoGeneratorProps {
@@ -47,27 +47,21 @@ export function VideoGenerator({
       console.log("result", result);
 
       if (result.success && result.videoUrl) {
-        // Mock 모드는 바로 사용
-        if (useMock) {
-          setGeneratedVideoUrl(result.videoUrl);
-          toast.success("샘플 비디오를 불러왔습니다!");
-        }
-        // 실제 API는 서버에서 다운로드 후 Base64로 변환
-        else {
-          toast.info("비디오를 다운로드하는 중...");
+        const uploadResult = await downloadAndUploadVeoVideo(
+          result.videoUrl,
+          sessionId
+        );
 
-          const downloadResult = await downloadVeoVideoAsBase64(
-            result.videoUrl
-          );
+        if (uploadResult.success && uploadResult.s3Url) {
+          // S3 URL에 https:// 프로토콜 추가
+          const videoUrl = uploadResult.s3Url.startsWith("http")
+            ? uploadResult.s3Url
+            : `https://${uploadResult.s3Url}`;
 
-          if (downloadResult.success && downloadResult.videoBase64) {
-            setGeneratedVideoUrl(downloadResult.videoBase64);
-            toast.success("비디오가 성공적으로 생성되었습니다!");
-          } else {
-            toast.error(
-              downloadResult.error || "비디오 다운로드에 실패했습니다."
-            );
-          }
+          setGeneratedVideoUrl(videoUrl);
+          toast.success("비디오가 성공적으로 생성되었습니다!");
+        } else {
+          toast.error(uploadResult.error || "비디오 저장에 실패했습니다.");
         }
       } else {
         toast.error(
@@ -82,31 +76,23 @@ export function VideoGenerator({
     }
   };
 
-  const handleDownload = async () => {
+  const handleDownload = () => {
     if (!generatedVideoUrl) return;
 
     try {
       toast.info("비디오 다운로드를 준비 중입니다...");
 
-      // Base64 데이터 URL인 경우 (data:video/mp4;base64,...)
-      if (generatedVideoUrl.startsWith("data:")) {
-        const link = document.createElement("a");
-        link.href = generatedVideoUrl;
-        link.download = `veo-generated-${Date.now()}.mp4`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+      // URL에 https:// 추가 (없는 경우)
+      const downloadUrl = generatedVideoUrl.startsWith("http")
+        ? generatedVideoUrl
+        : `https://${generatedVideoUrl}`;
 
-        toast.success("비디오 다운로드가 시작되었습니다!");
-        return;
-      }
+      // 서버 프록시를 통해 다운로드 (CORS 우회 + 실제 다운로드)
+      const proxyUrl = `/api/download-video?url=${encodeURIComponent(downloadUrl)}`;
 
-      // 일반 URL인 경우 (Mock 모드 등)
       const link = document.createElement("a");
-      link.href = generatedVideoUrl;
+      link.href = proxyUrl;
       link.download = `veo-generated-${Date.now()}.mp4`;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
