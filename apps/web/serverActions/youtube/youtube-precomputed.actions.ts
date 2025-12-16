@@ -318,7 +318,7 @@ export async function searchYouTubeVideos(
     if (!searchResponse.ok) {
       const errorData = await searchResponse.json();
       throw new Error(
-        `YouTube 검색 실패: ${errorData.error?.message || searchResponse.statusText}`
+        `YouTube 검색 실패: ${errorData.error?.code}: ${errorData.error?.message || searchResponse.statusText}`
       );
     }
 
