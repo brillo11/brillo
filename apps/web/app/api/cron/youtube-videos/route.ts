@@ -26,6 +26,7 @@ export async function GET(req: NextRequest) {
 
   // 크론 밴 상태 확인
   const banInfo = await isCronBanned(CRON_NAME);
+  console.log("banInfo", banInfo);
   if (banInfo) {
     console.log(
       `[YouTube Videos Cron] Cron is temporarily banned. Remaining: ${banInfo.remainingMinutes} minutes. Skipping cron.`
