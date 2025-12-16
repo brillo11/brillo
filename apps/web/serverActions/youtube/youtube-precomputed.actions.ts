@@ -269,7 +269,7 @@ export async function searchYouTubeVideos(
     }
 
     // 2. YouTube API로 추가 검색
-    const apiKey = process.env.YOUTUBE_DATA_API_KEY2;
+    const apiKey = process.env.YOUTUBE_DATA_API_KEY;
 
     if (!apiKey) {
       // API 키가 없으면 DB 결과만 반환
