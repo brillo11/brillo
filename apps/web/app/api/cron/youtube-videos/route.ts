@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@repo/database";
 import { runYoutubeVideosCron } from "@/serverActions/youtube/youtube-videos-cron-job";
+import { isApiKeyBanned } from "@/lib/utils/api-key-ban";
 
 const CRON_NAME = "youtube-videos";
 const BATCH_SIZE = 200;
@@ -21,6 +22,44 @@ function isAuthorized(req: NextRequest): boolean {
 export async function GET(req: NextRequest) {
   if (!isAuthorized(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // key2 밴 상태 확인
+  const API_KEY_IDENTIFIER = "key2";
+  const banInfo = await isApiKeyBanned(API_KEY_IDENTIFIER);
+  if (banInfo) {
+    console.log(
+      `[YouTube Videos Cron] API Key 2 is temporarily banned. Remaining: ${banInfo.remainingMinutes} minutes. Skipping cron.`
+    );
+
+    // CronState 업데이트 (SKIPPED 상태)
+    try {
+      await prisma.cronState.update({
+        where: { name: CRON_NAME },
+        data: {
+          lastRunStatus: "SKIPPED",
+          lastRunAt: new Date(),
+          lastRunError: `API Key 2 temporarily banned. Remaining: ${banInfo.remainingMinutes} minutes`,
+        },
+      });
+    } catch (updateError) {
+      console.error(
+        "[YouTube Videos Cron] Failed to update skipped state:",
+        updateError
+      );
+    }
+
+    return NextResponse.json({
+      success: false,
+      message: "API Key 2 is temporarily banned",
+      skipped: true,
+      banInfo: {
+        bannedUntil: banInfo.bannedUntil.toISOString(),
+        remainingMinutes: banInfo.remainingMinutes,
+        statusCode: banInfo.statusCode,
+        errorMessage: banInfo.errorMessage,
+      },
+    });
   }
 
   try {
