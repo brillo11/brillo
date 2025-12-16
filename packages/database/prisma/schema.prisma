@@ -358,16 +358,16 @@ model YoutubeChannel {
 }
 
 model YoutubeVideo {
-  id                String    @id // YouTube Video ID
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id                String                 @id // YouTube Video ID
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
   channelId         String
-  title             String    @default("")
-  description       String    @default("")
-  thumbnailUrl      String    @default("")
+  title             String                 @default("")
+  description       String                 @default("")
+  thumbnailUrl      String                 @default("")
   publishedAt       DateTime?
-  duration          String    @default("")
-  viewCount         Int       @default(0)
+  duration          String                 @default("")
+  viewCount         Int                    @default(0)
   likeCount         Int?
   commentCount      Int?
   viewsPerHour      Float?
@@ -376,8 +376,9 @@ model YoutubeVideo {
   outlierSubscriber Float?
   regionCode        String? // 수집 지역 코드
   categoryId        Int? // YouTube 비디오 카테고리 ID
-  crawledAt         DateTime  @default(now())
-  misc              Json      @default("{}")
+  crawledAt         DateTime               @default(now())
+  misc              Json                   @default("{}")
+  searchVector      Unsupported("vector")?
 
   channel YoutubeChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
 
@@ -387,6 +388,7 @@ model YoutubeVideo {
   @@index([viewsPerHour])
   @@index([publishedAt])
   @@index([categoryId])
+  @@index([searchVector], map: "youtube_video_search_vector_embedding_hnsw")
 }
 
 model YoutubeShorts {
