@@ -26,6 +26,10 @@ export async function isCronBanned(cronName: string): Promise<{
     cronState.lastBanned.getTime() + BAN_DURATION_HOURS * 60 * 60 * 1000
   );
 
+  console.log("bannedUntil", bannedUntil);
+  console.log("new Date()", new Date());
+  console.log("new Date() > bannedUntil", new Date() > bannedUntil);
+
   // 밴 시간이 지났으면 해제하고 null 반환
   if (new Date() > bannedUntil) {
     await prisma.cronState.update({
