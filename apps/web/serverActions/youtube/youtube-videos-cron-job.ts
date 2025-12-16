@@ -56,10 +56,15 @@ async function fetchChannelVideos(
     );
 
     if (!res.ok) {
-      console.error(`Failed to fetch playlist items: ${res.statusText}`);
-      // API 에러 발생 - 에러를 throw하여 호출자가 처리하도록
-      hasApiError = true;
-      throw new Error(`API Error: ${res.status} ${res.statusText}`);
+      console.error(
+        `Failed to fetch playlist items: ${res.status} ${res.statusText}`
+      );
+      // API 에러 발생 - 상태 코드를 포함하여 throw
+      const error: any = new Error(
+        `API Error: ${res.status} ${res.statusText}`
+      );
+      error.statusCode = res.status;
+      throw error;
     }
 
     const data = await res.json();
@@ -106,8 +111,15 @@ async function fetchVideoDetails(
     );
 
     if (!res.ok) {
-      console.error(`Failed to fetch video batch: ${res.statusText}`);
-      continue;
+      console.error(
+        `Failed to fetch video batch: ${res.status} ${res.statusText}`
+      );
+      // API 에러 발생 - 상태 코드를 포함하여 throw
+      const error: any = new Error(
+        `API Error: ${res.status} ${res.statusText}`
+      );
+      error.statusCode = res.status;
+      throw error;
     }
 
     const data = await res.json();
