@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@repo/database";
 import { runYoutubeVideosCron } from "@/serverActions/youtube/youtube-videos-cron-job";
-import { isApiKeyBanned } from "@/lib/utils/api-key-ban";
+import { isCronBanned } from "@/lib/utils/cron-ban";
 
 const CRON_NAME = "youtube-videos";
 const BATCH_SIZE = 200;
@@ -24,12 +24,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // key2 밴 상태 확인
-  const API_KEY_IDENTIFIER = "key2";
-  const banInfo = await isApiKeyBanned(API_KEY_IDENTIFIER);
+  // 크론 밴 상태 확인
+  const banInfo = await isCronBanned(CRON_NAME);
   if (banInfo) {
     console.log(
-      `[YouTube Videos Cron] API Key 2 is temporarily banned. Remaining: ${banInfo.remainingMinutes} minutes. Skipping cron.`
+      `[YouTube Videos Cron] Cron is temporarily banned. Remaining: ${banInfo.remainingMinutes} minutes. Skipping cron.`
     );
 
     // CronState 업데이트 (SKIPPED 상태)
@@ -39,7 +38,7 @@ export async function GET(req: NextRequest) {
         data: {
           lastRunStatus: "SKIPPED",
           lastRunAt: new Date(),
-          lastRunError: `API Key 2 temporarily banned. Remaining: ${banInfo.remainingMinutes} minutes`,
+          lastRunError: `Cron temporarily banned. Remaining: ${banInfo.remainingMinutes} minutes`,
         },
       });
     } catch (updateError) {
@@ -51,13 +50,11 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: false,
-      message: "API Key 2 is temporarily banned",
+      message: "Cron is temporarily banned",
       skipped: true,
       banInfo: {
         bannedUntil: banInfo.bannedUntil.toISOString(),
         remainingMinutes: banInfo.remainingMinutes,
-        statusCode: banInfo.statusCode,
-        errorMessage: banInfo.errorMessage,
       },
     });
   }

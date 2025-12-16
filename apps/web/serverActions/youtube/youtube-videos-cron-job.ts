@@ -2,11 +2,9 @@
 
 import { prisma } from "@repo/database";
 import { isShortsVideo, calculateViewsPerHour } from "./youtube-common";
-import {
-  banApiKey,
-  shouldBanApiKey,
-  isApiKeyBanned,
-} from "@/lib/utils/api-key-ban";
+import { banCron, isCronBanned } from "@/lib/utils/cron-ban";
+
+const CRON_NAME = "youtube-videos";
 
 // 상수 정의
 const RECENT_VIDEOS_AVG_COUNT = 10; // 최근 N개 영상의 평균 VPH 계산
@@ -238,12 +236,11 @@ export async function runYoutubeVideosCron(
   take?: number
 ) {
   try {
-    // key2 밴 상태 확인
-    const API_KEY_IDENTIFIER = "key2";
-    const banInfo = await isApiKeyBanned(API_KEY_IDENTIFIER);
+    // 크론 밴 상태 확인
+    const banInfo = await isCronBanned(CRON_NAME);
     if (banInfo) {
       throw new Error(
-        `API Key 2 is temporarily banned. Remaining: ${banInfo.remainingMinutes} minutes`
+        `Cron is temporarily banned. Remaining: ${banInfo.remainingMinutes} minutes`
       );
     }
 
@@ -301,19 +298,14 @@ export async function runYoutubeVideosCron(
           // API 에러 처리
           const statusCode = apiError.statusCode || 0;
 
-          // 밴이 필요한 에러(400, 403)인 경우 key2 밴 처리
+          // 밴이 필요한 에러(400, 403)인 경우 크론 밴 처리
           if (statusCode === 400 || statusCode === 403) {
-            await banApiKey(
-              API_KEY_IDENTIFIER,
-              3,
-              statusCode,
-              apiError.message
-            );
+            await banCron(CRON_NAME);
             console.error(
-              `[YouTube Videos Cron] API Key 2 banned due to ${statusCode} error. Cron will be paused for 3 hours.`
+              `[YouTube Videos Cron] Cron banned due to ${statusCode} error. Cron will be paused for 3 hours.`
             );
             throw new Error(
-              `API Key 2 temporarily banned due to ${statusCode} error. Will retry after 3 hours.`
+              `Cron temporarily banned due to ${statusCode} error. Will retry after 3 hours.`
             );
           }
 
@@ -340,18 +332,13 @@ export async function runYoutubeVideosCron(
         } catch (apiError: any) {
           // fetchVideoDetails에서 밴이 필요한 에러가 발생한 경우
           const statusCode = apiError.statusCode || 0;
-          if (shouldBanApiKey(statusCode)) {
-            await banApiKey(
-              API_KEY_IDENTIFIER,
-              3,
-              statusCode,
-              apiError.message
-            );
+          if (statusCode === 400 || statusCode === 403) {
+            await banCron(CRON_NAME);
             console.error(
-              `[YouTube Videos Cron] API Key 2 banned due to ${statusCode} error. Cron will be paused for 3 hours.`
+              `[YouTube Videos Cron] Cron banned due to ${statusCode} error. Cron will be paused for 3 hours.`
             );
             throw new Error(
-              `API Key 2 temporarily banned due to ${statusCode} error. Will retry after 3 hours.`
+              `Cron temporarily banned due to ${statusCode} error. Will retry after 3 hours.`
             );
           }
           // 그 외 에러는 빈 배열로 처리
