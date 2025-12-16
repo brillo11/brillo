@@ -429,23 +429,11 @@ model CronState {
   lastRunAt       DateTime? // 마지막 실행 시간
   lastRunStatus   String?  // 마지막 실행 상태 (SUCCESS, FAILED, RUNNING)
   lastRunError    String?  // 마지막 실행 에러 메시지
+  lastBanned      DateTime? // 마지막 밴 시간 (3시간 동안 크론 중지)
   updatedAt       DateTime @updatedAt
   createdAt       DateTime @default(now())
 
   @@index([name])
-}
-
-model ApiKeyBan {
-  id            String    @id @default(uuid())
-  keyIdentifier String    @unique // API 키 식별자 (예: "key2", "key_en")
-  bannedUntil   DateTime  // 밴 만료 시간
-  statusCode    Int?      // 밴을 유발한 HTTP 상태 코드 (400, 403 등)
-  errorMessage  String?   // 에러 메시지
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  @@index([keyIdentifier])
-  @@index([bannedUntil])
 }
 
 enum ROLE {
