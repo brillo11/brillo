@@ -311,7 +311,7 @@ export async function runYoutubeVideosCron(
 
           // 그 외 에러는 채널은 유지하고 건너뛰기
           console.log(
-            `[${channel.title}] API 에러로 영상 목록 가져오기 실패: ${apiError.message} - 건너뛰기`
+            `[${channel.title}] API 에러로 영상 목록 가져오기 실패: ${apiError.message} - 건너뛰기. 상태코드: ${statusCode}`
           );
           continue;
         }
