@@ -5,8 +5,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -338,45 +339,45 @@ model Refund {
 }
 
 model YoutubeChannel {
-  id              String         @id // YouTube Channel ID (UC...)
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-  title           String         @default("")
-  thumbnailUrl    String         @default("")
-  regionCode      String?        // 수집 기준 지역 (예: KR)
-  uploadsPlaylist String?        // 업로드 플레이리스트 ID
-  videoCount      Int?           // 채널의 전체 영상 개수
-  subscriberCount Int?           // 채널 구독자 수
-  overallAvgView  Float?         // 전체 평균 조회수 (totalViews / videoCount)
-  recentAvgVph    Float?         // 최근 N개 평균 VPH
+  id              String    @id // YouTube Channel ID (UC...)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  title           String    @default("")
+  thumbnailUrl    String    @default("")
+  regionCode      String? // 수집 기준 지역 (예: KR)
+  uploadsPlaylist String? // 업로드 플레이리스트 ID
+  videoCount      Int? // 채널의 전체 영상 개수
+  subscriberCount Int? // 채널 구독자 수
+  overallAvgView  Float? // 전체 평균 조회수 (totalViews / videoCount)
+  recentAvgVph    Float? // 최근 N개 평균 VPH
   lastCrawledAt   DateTime?
-  misc            Json           @default("{}")
+  misc            Json      @default("{}")
 
   videos YoutubeVideo[]
   shorts YoutubeShorts[]
 }
 
 model YoutubeVideo {
-  id                 String    @id // YouTube Video ID
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-  channelId          String
-  title              String     @default("")
-  description        String     @default("")
-  thumbnailUrl       String     @default("")
-  publishedAt        DateTime?
-  duration           String     @default("")
-  viewCount          Int        @default(0)
-  likeCount          Int?
-  commentCount       Int?
-  viewsPerHour       Float?
-  outlierVph         Float?
-  outlierView        Float?
-  outlierSubscriber  Float?
-  regionCode         String?    // 수집 지역 코드
-  categoryId         Int?       // YouTube 비디오 카테고리 ID
-  crawledAt          DateTime   @default(now())
-  misc               Json       @default("{}")
+  id                String    @id // YouTube Video ID
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  channelId         String
+  title             String    @default("")
+  description       String    @default("")
+  thumbnailUrl      String    @default("")
+  publishedAt       DateTime?
+  duration          String    @default("")
+  viewCount         Int       @default(0)
+  likeCount         Int?
+  commentCount      Int?
+  viewsPerHour      Float?
+  outlierVph        Float?
+  outlierView       Float?
+  outlierSubscriber Float?
+  regionCode        String? // 수집 지역 코드
+  categoryId        Int? // YouTube 비디오 카테고리 ID
+  crawledAt         DateTime  @default(now())
+  misc              Json      @default("{}")
 
   channel YoutubeChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
 
@@ -389,26 +390,26 @@ model YoutubeVideo {
 }
 
 model YoutubeShorts {
-  id                 String    @id // YouTube Video ID
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-  channelId          String
-  title              String     @default("")
-  description        String     @default("")
-  thumbnailUrl       String     @default("")
-  publishedAt        DateTime?
-  duration           String     @default("")
-  viewCount          Int        @default(0)
-  likeCount          Int?
-  commentCount       Int?
-  viewsPerHour       Float?
-  outlierVph         Float?
-  outlierView        Float?
-  outlierSubscriber  Float?
-  regionCode         String?    // 수집 지역 코드
-  categoryId         Int?       // YouTube 비디오 카테고리 ID
-  crawledAt          DateTime   @default(now())
-  misc               Json       @default("{}")
+  id                String    @id // YouTube Video ID
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  channelId         String
+  title             String    @default("")
+  description       String    @default("")
+  thumbnailUrl      String    @default("")
+  publishedAt       DateTime?
+  duration          String    @default("")
+  viewCount         Int       @default(0)
+  likeCount         Int?
+  commentCount      Int?
+  viewsPerHour      Float?
+  outlierVph        Float?
+  outlierView       Float?
+  outlierSubscriber Float?
+  regionCode        String? // 수집 지역 코드
+  categoryId        Int? // YouTube 비디오 카테고리 ID
+  crawledAt         DateTime  @default(now())
+  misc              Json      @default("{}")
 
   channel YoutubeChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
 
@@ -421,17 +422,17 @@ model YoutubeShorts {
 }
 
 model CronState {
-  id              String   @id @default(uuid())
-  name            String   @unique // 크론 작업 이름 (예: "youtube-videos")
-  currentOffset   Int      @default(0) // 현재 처리 중인 offset
-  batchSize       Int      @default(200) // 한 번에 처리할 개수
-  totalProcessed  Int      @default(0) // 총 처리된 개수
-  lastRunAt       DateTime? // 마지막 실행 시간
-  lastRunStatus   String?  // 마지막 실행 상태 (SUCCESS, FAILED, RUNNING)
-  lastRunError    String?  // 마지막 실행 에러 메시지
-  lastBanned      DateTime? // 마지막 밴 시간 (3시간 동안 크론 중지)
-  updatedAt       DateTime @updatedAt
-  createdAt       DateTime @default(now())
+  id             String    @id @default(uuid())
+  name           String    @unique // 크론 작업 이름 (예: "youtube-videos")
+  currentOffset  Int       @default(0) // 현재 처리 중인 offset
+  batchSize      Int       @default(200) // 한 번에 처리할 개수
+  totalProcessed Int       @default(0) // 총 처리된 개수
+  lastRunAt      DateTime? // 마지막 실행 시간
+  lastRunStatus  String? // 마지막 실행 상태 (SUCCESS, FAILED, RUNNING)
+  lastRunError   String? // 마지막 실행 에러 메시지
+  lastBanned     DateTime? // 마지막 밴 시간 (3시간 동안 크론 중지)
+  updatedAt      DateTime  @updatedAt
+  createdAt      DateTime  @default(now())
 
   @@index([name])
 }
@@ -518,41 +519,41 @@ model Product {
 }
 
 model AIAssistantSession {
-  id            String   @id @default(uuid())
-  userId        String
-  conversationId String   // 외부 AI 서비스 conversation ID (OpenAI, Claude 등)
-  title         String?  // 세션 제목 (titleMessage 기반)
-  
+  id             String  @id @default(uuid())
+  userId         String
+  conversationId String // 외부 AI 서비스 conversation ID (OpenAI, Claude 등)
+  title          String? // 세션 제목 (titleMessage 기반)
+
   // Step 2: Topic
-  titleMessage  String?  // 주제/토픽 메시지
-  
+  titleMessage String? // 주제/토픽 메시지
+
   // Step 3: Title
-  titleResponses Json?   // 생성된 제목 세트 (복잡한 구조)
-  selectedTitle  String? // 선택된 영상 제목
+  titleResponses     Json? // 생성된 제목 세트 (복잡한 구조)
+  selectedTitle      String? // 선택된 영상 제목
   selectedTitleIndex Int? // 선택된 제목 인덱스
-  
+
   // Step 4: Thumbnail Guide
-  thumbnailGuideResponses Json? // 생성된 썸네일 가이드 (복잡한 구조)
+  thumbnailGuideResponses     Json? // 생성된 썸네일 가이드 (복잡한 구조)
   selectedThumbnailGuideIndex Int? // 선택된 가이드 인덱스
-  
+
   // Step 5: Thumbnail
-  thumbnailUrls      String? // S3에 저장된 썸네일 이미지 URL
-  
+  thumbnailUrls String? // S3에 저장된 썸네일 이미지 URL
+
   // Step 6: Script
   scriptResponses Json? // 생성된 대본 (구조화된 JSON)
-  
+
   // Step 7: Metadata
   metadataResponses Json? // 메타데이터 (설명, 타임스탬프, 해시태그, 태그)
-  
+
   // Step 8: Shorts Titles
   shortsTitlesResponses Json? // 쇼츠 제목 (각 챕터별 2~3개)
-  
+
   // Progress
-  step          String?  // 현재 단계 (TITLE, THUMBNAIL_GUIDE, THUMBNAIL, SCRIPT, METADATA, SHORTS_TITLES)
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  step String? // 현재 단계 (TITLE, THUMBNAIL_GUIDE, THUMBNAIL, SCRIPT, METADATA, SHORTS_TITLES)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([createdAt])
