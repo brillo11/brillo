@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@repo/database";
+import { prisma, Prisma } from "@repo/database";
 
 interface CreatePaymentSessionRequest {
   orderId: string;
@@ -26,8 +26,8 @@ export async function createPaymentSession(data: CreatePaymentSessionRequest) {
     // 기존 세션 정리 (동일한 orderId가 있다면)
     await prisma.paymentSession.deleteMany({
       where: {
-        orderId: data.orderId
-      }
+        orderId: data.orderId,
+      },
     });
 
     const paymentSession = await prisma.paymentSession.create({
@@ -37,15 +37,15 @@ export async function createPaymentSession(data: CreatePaymentSessionRequest) {
         orderName: data.orderName,
         userId: data.userId,
         expiresAt,
-        status: "PENDING"
-      }
+        status: "PENDING",
+      },
     });
 
     console.log("결제 세션 생성:", paymentSession);
     return {
       success: true,
       sessionId: paymentSession.id,
-      expiresAt: paymentSession.expiresAt
+      expiresAt: paymentSession.expiresAt,
     };
   } catch (error) {
     console.error("결제 세션 생성 오류:", error);
@@ -58,7 +58,7 @@ export async function validatePaymentSession(
 ) {
   try {
     const paymentSession = await prisma.paymentSession.findUnique({
-      where: { orderId: data.orderId }
+      where: { orderId: data.orderId },
     });
 
     if (!paymentSession) {
@@ -69,7 +69,7 @@ export async function validatePaymentSession(
     if (new Date() > paymentSession.expiresAt) {
       await prisma.paymentSession.update({
         where: { id: paymentSession.id },
-        data: { status: "EXPIRED" }
+        data: { status: "EXPIRED" },
       });
       return { valid: false, reason: "결제 세션이 만료되었습니다" };
     }
@@ -100,11 +100,11 @@ export async function completePaymentSession(orderId: string) {
   try {
     await prisma.paymentSession.update({
       where: {
-        orderId: orderId
+        orderId: orderId,
       },
       data: {
-        status: "CONFIRMED"
-      }
+        status: "CONFIRMED",
+      },
     });
 
     console.log("결제 세션 완료:", orderId);
@@ -116,21 +116,21 @@ export async function completePaymentSession(orderId: string) {
 }
 
 // 만료된 세션 정리 (배치 작업용)
-export async function cleanupExpiredSessions() {
+export async function cleanupExpiredSessions(): Promise<Prisma.BatchPayload> {
   try {
     const result = await prisma.paymentSession.deleteMany({
       where: {
         OR: [
           {
             expiresAt: {
-              lt: new Date()
-            }
+              lt: new Date(),
+            },
           },
           {
-            status: "EXPIRED"
-          }
-        ]
-      }
+            status: "EXPIRED",
+          },
+        ],
+      },
     });
     console.log(`만료된 결제 세션 ${result.count}개 정리 완료`);
     return result;

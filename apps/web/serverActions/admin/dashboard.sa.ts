@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma, ORDER_STATUS } from "@repo/database";
+import { prisma, ORDER_STATUS, REFUND_STATUS } from "@repo/database";
 import { requireAdmin } from "@/shared/lib/auth-guards";
 
 /**
@@ -71,7 +71,7 @@ export async function getAdminDashboardStats() {
 
   // 환불 대기 건수
   const pendingRefunds = await prisma.refund.count({
-    where: { status: "PENDING" },
+    where: { status: REFUND_STATUS.PENDING },
   });
 
   return {

@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/shared/lib/auth";
-import { prisma } from "@repo/database";
+import { prisma, USER_STATUS } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
@@ -32,7 +32,7 @@ export async function submitOnboarding(prevState: any, formData: FormData) {
       phoneNumber: formData.get("phoneNumber"),
       nickname: formData.get("nickname"),
       // cohortId: formData.get("cohortId"),
-      bizName: formData.get("bizName"), 
+      bizName: formData.get("bizName"),
     };
 
     const validatedFields = onboardingSchema.safeParse(rawData);
@@ -52,8 +52,8 @@ export async function submitOnboarding(prevState: any, formData: FormData) {
         phoneNumber,
         nickname,
         // cohortId: cohortId ? BigInt(cohortId) : undefined,
-        bizName: bizName || "", 
-        status: "PENDING", // 승인 대기 상태로 변경
+        bizName: bizName || "",
+        status: USER_STATUS.PENDING, // 승인 대기 상태로 변경
       },
     });
 
@@ -61,8 +61,8 @@ export async function submitOnboarding(prevState: any, formData: FormData) {
     revalidatePath("/", "layout"); // 전체 레이아웃 갱신
   } catch (error: any) {
     console.error("Onboarding error:", error);
-    if(error.code === 'P2002') {
-         return { error: "이미 사용중인 닉네임이나 전화번호입니다." };
+    if (error.code === "P2002") {
+      return { error: "이미 사용중인 닉네임이나 전화번호입니다." };
     }
     return { error: "저장 중 오류가 발생했습니다." };
   }

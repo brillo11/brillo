@@ -8,8 +8,8 @@
     "db:migrate:deploy": "prisma migrate deploy",
     "db:migrate:dev": "prisma migrate dev",
     "db:push": "prisma db push",
-    "db:seed": "tsx src/seed.ts",
-    "dev": "tsup src/* --watch",
+    "db:seed": "tsx --env-file=../../.env src/seed.ts",
+    "dev": "tsup src/* --watch --format esm",
     "format": "prisma format",
     "generate": "prisma generate",
     "lint": "eslint . --max-warnings 0",
@@ -18,16 +18,20 @@
     "studio": "prisma studio"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.1.0",
     "@repo/ui": "workspace:*",
     "@types/bcryptjs": "^3.0.0",
-    "bcryptjs": "^3.0.2"
+    "bcryptjs": "^3.0.2",
+    "pg": "^8.13.0"
   },
   "devDependencies": {
-    "@prisma/client": "6.19.0",
+    "@prisma/client": "^7.1.0",
+    "@prisma/config": "^7.1.0",
     "@repo/eslint-config": "workspace:^",
     "@repo/typescript-config": "workspace:*",
+    "@types/pg": "^8.11.0",
     "eslint": "^9.26.0",
-    "prisma": "6.19.0",
+    "prisma": "^7.1.0",
     "rimraf": "^6.0.1",
     "tsup": "^8.5.0",
     "tsx": "4.19.4",

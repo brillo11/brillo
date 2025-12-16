@@ -1,9 +1,7 @@
-import { PrismaClient } from "../../../packages/database/generated/client/index.js";
+import { prisma } from "../../../packages/database/src/client";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-
-// Prisma 클라이언트 초기화
-const prisma = new PrismaClient();
+// Prisma 클라이언트, DB 패키지에서 가져옴
 
 // Better Auth 초기화 (스크립트용 간소화 버전)
 const auth = betterAuth({

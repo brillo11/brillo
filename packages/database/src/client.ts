@@ -1,13 +1,24 @@
-import { PrismaClient } from "../generated/client";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "../generated/client/client";
+
+const connectionString = `${process.env.DATABASE_URL}`;
+console.log("DB Connection:", connectionString.replace(/:[^:]*@/, ":****@"));
+
+const pool = new Pool({
+  connectionString,
+  ssl: { rejectUnauthorized: false }, // RDS often requires SSL
+});
+const adapter = new PrismaPg(pool);
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 export const prisma =
   globalForPrisma.prisma ||
   new PrismaClient({
-    datasourceUrl: process.env.DATABASE_URL,
+    adapter,
   });
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
-export * from "../generated/client";
+export * from "../generated/client/client";

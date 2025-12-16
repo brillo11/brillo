@@ -1,5 +1,5 @@
 import { prisma } from "./client";
-import { ROLE, PROVIDER } from "../generated/client";
+import { ROLE, PROVIDER } from "../generated/client/client";
 import bcrypt from "bcryptjs";
 
 async function main() {
@@ -69,7 +69,7 @@ async function main() {
       create: {
         email: "user@example.com",
         name: "테스트 사용자",
-        role: ROLE.USER,
+        role: ROLE.STUDENT,
       },
     });
 

@@ -1,11 +1,7 @@
 "use server";
 
-import { prisma } from "@repo/database";
+import { prisma, Prisma } from "@repo/database";
 import type { Product } from "@repo/database";
-import {
-  JsonObject,
-  JsonValue,
-} from "../../../packages/database/generated/client/runtime/library";
 
 // Product 테이블에서 데이터를 가져와 ProductList 형식으로 변환
 export async function getProductsForList(): Promise<any[]> {
@@ -27,14 +23,18 @@ export async function getProductsForList(): Promise<any[]> {
       description: product.description || "",
       price: product.price > 0 ? `${product.price.toLocaleString()}원` : "무료",
       href:
-        ((product.specifications as JsonObject)?.slug as string | undefined) ||
-        `/student/products/${product.id.toString()}`,
+        ((product.specifications as Prisma.JsonObject)?.slug as
+          | string
+          | undefined) || `/student/products/${product.id.toString()}`,
       category: product.category || undefined,
-      rating: ((product.specifications as JsonObject)?.rating as number) || 0,
+      rating:
+        ((product.specifications as Prisma.JsonObject)?.rating as number) || 0,
       reviewCount:
-        ((product.specifications as JsonObject)?.reviewCount as number) || 0,
+        ((product.specifications as Prisma.JsonObject)
+          ?.reviewCount as number) || 0,
       badge:
-        ((product.specifications as JsonObject)?.badge as string) || undefined,
+        ((product.specifications as Prisma.JsonObject)?.badge as string) ||
+        undefined,
     };
   });
 }

@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@repo/database";
+import { prisma, ORDER_STATUS } from "@repo/database";
 import { requireStudent } from "@/shared/lib/auth-guards";
 import { revalidatePath } from "next/cache";
 
@@ -61,7 +61,7 @@ export async function createBulkPointOrders(orders: OrderData[]) {
             userId: session.user.id,
             productId: productId,
             amount: 1,
-            status: "PENDING",
+            status: ORDER_STATUS.PENDING,
             orderName: `${order.productCode} - ${order.name}`,
             description: `${order.name} (${order.email})`,
             email: order.email,
@@ -100,7 +100,7 @@ export async function getPointOrders() {
   const orders = await prisma.pointOrder.findMany({
     where: {
       userId: session.user.id,
-      status: "PENDING",
+      status: ORDER_STATUS.PENDING,
     },
     include: {
       product: {
@@ -131,7 +131,7 @@ export async function confirmPointOrders(orderIds: string[]) {
         where: {
           id: { in: bigIntIds },
           userId: session.user.id,
-          status: "PENDING",
+          status: ORDER_STATUS.PENDING,
         },
         include: {
           product: {
@@ -170,10 +170,10 @@ export async function confirmPointOrders(orderIds: string[]) {
         where: {
           id: { in: bigIntIds },
           userId: session.user.id,
-          status: "PENDING",
+          status: ORDER_STATUS.PENDING,
         },
         data: {
-          status: "PAID",
+          status: ORDER_STATUS.PAID,
           updatedAt: new Date(),
         },
       });
@@ -204,7 +204,14 @@ export async function getOrderHistory() {
   const orders = await prisma.pointOrder.findMany({
     where: {
       userId: session.user.id,
-      status: { in: ["PAID", "DELIVERED", "CANCELED", "REFUNDED"] },
+      status: {
+        in: [
+          ORDER_STATUS.PAID,
+          ORDER_STATUS.DELIVERED,
+          ORDER_STATUS.CANCELED,
+          ORDER_STATUS.REFUNDED,
+        ],
+      },
     },
     include: {
       product: {
