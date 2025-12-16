@@ -435,6 +435,19 @@ model CronState {
   @@index([name])
 }
 
+model ApiKeyBan {
+  id            String    @id @default(uuid())
+  keyIdentifier String    @unique // API 키 식별자 (예: "key2", "key_en")
+  bannedUntil   DateTime  // 밴 만료 시간
+  statusCode    Int?      // 밴을 유발한 HTTP 상태 코드 (400, 403 등)
+  errorMessage  String?   // 에러 메시지
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([keyIdentifier])
+  @@index([bannedUntil])
+}
+
 enum ROLE {
   SUPER_ADMIN
   ADMIN
