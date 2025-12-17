@@ -17,59 +17,7 @@ export async function proxy(request: NextRequest) {
     "/favicon.ico",
   ];
 
-  // 공개 경로는 통과
-  // if (
-  //   publicPaths.some((path) => pathname === path || pathname.startsWith(path))
-  // ) {
-  //   // 로그인 페이지에서 이미 로그인된 사용자는 관리자 대시보드로 리다이렉트
-  //   if (pathname === PATH.AUTH_LOGIN && session?.user) {
-  //     console.log("🔄 Already logged in user redirected from login page");
-  //     const redirectUrl = new URL(PATH.ADMIN_ROOT, request.url);
-  //     const response = NextResponse.redirect(redirectUrl);
-  //     response.headers.set(
-  //       "Cache-Control",
-  //       "no-cache, no-store, max-age=0, must-revalidate"
-  //     );
-  //     return response;
-  //   }
-  //   return NextResponse.next();
-  // }
-
-  // 디버깅: /admin 접근 시 세션 로그
-  // if (pathname.startsWith(PATH.ADMIN_ROOT)) {
-  //   console.log("🔍 Middleware - /admin 접근:", {
-  //     pathname,
-  //     hasSession: !!session,
-  //     hasUser: !!session?.user,
-  //     userRole: (session?.user as any)?.role,
-  //     userId: (session?.user as any)?.id,
-  //   });
-  // }
-
-  // 홈 페이지(/) 보호 - 로그인 필요
-  // if (pathname === "/") {
-  //   if (!session || !session.user) {
-  //     console.log("🚫 Unauthenticated user redirected to login from home");
-  //     const loginUrl = new URL(PATH.AUTH_LOGIN, request.url);
-  //     const response = NextResponse.redirect(loginUrl);
-  //     response.headers.set(
-  //       "Cache-Control",
-  //       "no-cache, no-store, max-age=0, must-revalidate"
-  //     );
-  //     return response;
-  //   }
-  //   // 로그인된 사용자는 그대로 통과 (또는 관리자 대시보드로 리다이렉트 가능)
-  //   return NextResponse.next();
-  // }
-
-  // 🔹 ONBOARDING CHECK: UNKNOWN 상태인 유저는 온보딩 페이지로 강제 이동
-  // if (session?.user) {
-  //   console.log("🔍 Middleware Check:", {
-  //     pathname,
-  //     status: (session.user as any).status,
-  //     isUnknown: (session.user as any).status === "UNKNOWN",
-  //   });
-  // }
+  return NextResponse.next();
 
   if (
     session?.user &&
