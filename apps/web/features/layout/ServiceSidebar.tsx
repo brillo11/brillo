@@ -24,6 +24,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@repo/ui/components/avatar";
+import Image from "next/image";
 
 export function ServiceSidebar({ points = 0 }: { points?: number }) {
   const pathname = usePathname();
@@ -57,12 +58,18 @@ export function ServiceSidebar({ points = 0 }: { points?: number }) {
           <div className="h-20 flex items-center px-8">
             {/* Logo */}
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-[#33DB98] rounded flex items-center justify-center font-bold text-black text-base">
+              <Image
+                src="/android-chrome-512x512.png"
+                width={48}
+                height={48}
+                alt="logo"
+              />
+              {/* <div className="w-8 h-8 bg-[#33DB98] rounded flex items-center justify-center font-bold text-black text-base">
                 VZX
-              </div>
-              <span className="font-bold text-base tracking-tight text-white">
+              </div> */}
+              {/* <span className="font-bold text-base tracking-tight text-white">
                 VizionX
-              </span>
+              </span> */}
             </div>
           </div>
         ) : (

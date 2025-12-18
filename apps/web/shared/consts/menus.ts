@@ -312,6 +312,13 @@ export const serviceMenus: MenuItem[] = [
     icon: Wand2,
     subMenus: [
       {
+        id: "퍼스널 브랜딩",
+        title: "퍼스널 브랜딩",
+        baseUrl: PATH.SERVICE_PERSONAL_BRANDING,
+        url: PATH.SERVICE_PERSONAL_BRANDING_WIZARD,
+        icon: PenLine,
+      },
+      {
         id: "blog",
         title: "블로그",
         baseUrl: PATH.SERVICE_PERSONAL_BRANDING,

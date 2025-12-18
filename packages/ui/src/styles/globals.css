@@ -73,7 +73,8 @@
 
 .dark {
   /* LearnFlow 다크 모드 컬러 시스템 */
-  --background: oklch(0.145 0 0); /* Deep Learning Navy 변형 */
+  /* --background: oklch(0.145 0 0); Deep Learning Navy 변형 */
+  --background: rgb(31, 31, 31);
   --foreground: oklch(0.985 0 0); /* Pure White */
   --card: oklch(0.205 0 0); /* Dark Gray */
   --card-foreground: oklch(0.985 0 0); /* Pure White */
@@ -86,6 +87,7 @@
 
   --vzx-card: rgb(30, 30, 30);
   --vzx-accent: rgb(51, 219, 152);
+  --vzx-bg: rgb(18, 18, 18);
 
   /* Secondary: Medium Dark Gray */
   --secondary: oklch(0.269 0 0);
@@ -181,6 +183,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-vzx-card: var(--vzx-card);
+  --color-vzx-bg: var(--vzx-bg);
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
   --animate-blob: blob 7s infinite;
