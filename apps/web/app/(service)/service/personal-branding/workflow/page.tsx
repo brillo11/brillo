@@ -51,10 +51,10 @@ const generateShortsPlan = async (tweets: string[]) => {
 };
 
 const steps = [
-  { id: 1, label: "Topic", icon: Sparkles },
-  { id: 2, label: "Blog", icon: FileText },
-  { id: 3, label: "Thread", icon: Share2 },
-  { id: 4, label: "Assets", icon: Video },
+  { id: 1, label: "인사이트", icon: Sparkles },
+  { id: 2, label: "블로그", icon: FileText },
+  { id: 3, label: "쓰레드", icon: Share2 },
+  { id: 4, label: "영상", icon: Video },
 ];
 
 export default function BrandingWorkflow() {

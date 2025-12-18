@@ -247,7 +247,7 @@ export function ServiceSidebar({ points = 0 }: { points?: number }) {
               className="w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-white transition-colors"
             >
               <Settings size={20} />
-              <span>Settings</span>
+              <span>설정</span>
             </Link>
             <div className="mt-4 flex items-center gap-3 px-4 py-3 bg-vzx-card rounded-xl border border-white/5">
               <Avatar className="w-8 h-8 rounded-full border border-[#33DB98]">
