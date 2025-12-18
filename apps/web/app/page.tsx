@@ -210,7 +210,7 @@ export default function HomePage() {
               <div className="pl-4 flex-1">
                 <input
                   type="text"
-                  placeholder="당신의 인사이트를 여기 적어보세요. (예: 팔리는 숏츠의 비밀)"
+                  placeholder="당신의 인사이트를 여기 적어보세요. (ex. 팔리는 숏츠의 비밀)"
                   className="w-full bg-transparent border-none outline-none text-white placeholder-gray-500"
                 />
               </div>

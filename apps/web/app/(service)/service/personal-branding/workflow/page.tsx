@@ -172,7 +172,7 @@ export default function BrandingWorkflow() {
                 type="text"
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
-                placeholder="e.g., 2026년에 시작하는 유튜브 채널"
+                placeholder="ex. 2026년에 시작하는 유튜브 채널"
                 className="w-full bg-vzx-bg border border-gray-700 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-[#33DB98] focus:ring-1 focus:ring-[#33DB98] outline-none transition-all text-lg"
               />
             </div>
