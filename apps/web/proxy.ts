@@ -28,7 +28,7 @@ export async function proxy(request: NextRequest) {
     // 1. UNKNOWN -> Onboarding
     if (status === "UNKNOWN" && !pathname.startsWith("/auth/onboarding")) {
       if (
-        pathname.startsWith(PATH.STUDENT_ROOT) ||
+        pathname.startsWith(PATH.HOME) ||
         pathname.startsWith(PATH.ADMIN_ROOT)
       ) {
         console.log("⚠️ Unknown user redirect to onboarding");
@@ -39,7 +39,7 @@ export async function proxy(request: NextRequest) {
     // 2. PENDING -> Pending Page
     if (status === "PENDING" && !pathname.startsWith("/auth/pending")) {
       if (
-        pathname.startsWith(PATH.STUDENT_ROOT) ||
+        pathname.startsWith(PATH.HOME) ||
         pathname.startsWith(PATH.ADMIN_ROOT)
       ) {
         console.log("⚠️ Pending user redirect to pending page");
