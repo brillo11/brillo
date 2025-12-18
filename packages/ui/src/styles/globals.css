@@ -20,6 +20,10 @@
   --primary: oklch(0.577 0.245 27.325); /* Red-600 */
   --primary-foreground: oklch(0.985 0 0); /* Pure White */
 
+  --vzx-card: rgb(30, 30, 30);
+  --vzx-accent: rgb(51, 219, 152);
+  --vzx-bg: rgb(18, 18, 18);
+
   /* Secondary: Light Gray */
   --secondary: oklch(0.97 0 0); /* Light Gray */
   --secondary-foreground: oklch(0.145 0 0); /* Deep Black */
@@ -188,6 +192,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-vzx-card: var(--vzx-card);
+  --color-vzx-accent: var(--vzx-accent);
   --color-vzx-bg: var(--vzx-bg);
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
@@ -227,6 +232,26 @@
       transform: translate(0px, 0px) scale(1);
     }
   }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
 .animate-blob {
@@ -235,6 +260,14 @@
 
 .animation-delay-2000 {
   animation-delay: 2s;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
 }
 
 @layer base {

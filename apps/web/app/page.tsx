@@ -3,27 +3,26 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { loginWithEmail, loginWithSocial } from "@/shared/lib/auth-helpers";
-import Image from "next/image";
 import { Card, CardContent } from "@repo/ui/components/card";
-import { Logo } from "@repo/ui/components/proBlocks/logo";
 import { Button } from "@repo/ui/components/button";
 import {
-  PlayCircle,
-  BookOpen,
-  Target,
-  Users,
-  Sparkles,
+  ChevronDown,
   ArrowRight,
-  CheckCircle2,
-  Youtube,
-  GraduationCap,
   Play,
+  Sparkles,
+  FileText,
+  Share2,
+  Video,
+  Zap,
+  Globe,
+  Cpu,
+  Twitter,
+  Youtube,
 } from "lucide-react";
-import Link from "next/link";
-import { MarketingNavbar } from "@/components/marketing-navbar";
 import { useSession } from "@/shared/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { PATH } from "@/shared/consts/path";
+import Image from "next/image";
 
 export default function HomePage() {
   const [credentials, setCredentials] = useState({
@@ -38,9 +37,26 @@ export default function HomePage() {
   const { data: session } = useSession();
   const router = useRouter();
 
-  const handleStartLearning = () => {
+  const [faqOpen, setFaqOpen] = useState<number | null>(null);
+
+  const faqs = [
+    {
+      q: "VZX는 어떤 서비스인가요?",
+      a: "VZX는 지식 창업 강사들을 위한 올인원 AI 브랜딩 자동화 플랫폼입니다. 한 번의 주제 입력만으로 블로그, 쓰레드, 숏츠 기획 및 영상까지 생성합니다.",
+    },
+    {
+      q: "블로그 글만 있으면 영상 제작이 가능한가요?",
+      a: "네, VZX의 AI는 텍스트를 분석하여 가장 바이럴되기 좋은 숏츠 스크립트를 추출하고 AI 아바타가 말하는 영상까지 만들어냅니다.",
+    },
+    // {
+    //   q: "SaaS 툴 제작은 어떻게 진행되나요?",
+    //   a: "강사님이 수강생들에게 제공하고 싶은 툴 아이디어를 제안하면, VZX의 SaaS 빌더 팀과 AI가 즉시 전용 소프트웨어를 구축해드립니다.",
+    // },
+  ];
+
+  const handleStartService = () => {
     if (session?.user) {
-      router.push(PATH.STUDENT_ROOT);
+      router.push(PATH.SERVICE_DASHBOARD);
     } else {
       setIsLoginOpen(true);
     }
@@ -93,175 +109,424 @@ export default function HomePage() {
     }
   };
 
-  const features = [
-    {
-      icon: Youtube,
-      title: "YouTube 기반 학습",
-      description:
-        "인기 YouTube 영상을 학습 자료로 활용하여 실용적인 지식을 습득합니다.",
-      color: "text-red-600",
-      bgColor: "bg-red-50",
-    },
-    {
-      icon: Target,
-      title: "개인화된 미션",
-      description:
-        "나만의 학습 목표에 맞춘 맞춤형 미션을 통해 체계적으로 학습합니다.",
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
-    },
-    {
-      icon: BookOpen,
-      title: "자동 자막 추출",
-      description:
-        "YouTube 영상의 자막을 자동으로 추출하여 학습 자료로 활용합니다.",
-      color: "text-purple-600",
-      bgColor: "bg-purple-50",
-    },
-    {
-      icon: Users,
-      title: "커뮤니티 학습",
-      description:
-        "다른 학습자들과 함께 공지사항을 확인하고 학습 경험을 공유합니다.",
-      color: "text-green-600",
-      bgColor: "bg-green-50",
-    },
-  ];
-
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      {/* Navigation */}
-      <MarketingNavbar onLoginClick={() => setIsLoginOpen(true)} />
-      {/* Hero */}
-      <section className="relative overflow-hidden pt-16 pb-24 lg:pt-32 bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        {/* Background blobs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-20 w-[500px] h-[500px] bg-red-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-          <div className="absolute top-40 right-20 w-[400px] h-[400px] bg-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob delay-[2s]"></div>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-red-50 border border-red-100 text-red-600 text-xs font-bold uppercase tracking-wide mb-8 animate-fade-in-up">
-            <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
-            AI-Powered Personalized Learning
-            {/* YouTube로 시작하는 개인화된 학습 */}
-          </div>
-
-          <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 tracking-tight mb-8 leading-tight">
-            YouTube 인사이트로 <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-orange-500 to-amber-500">
-              학습의 새로운 차원을
-            </span>
-          </h1>
-
-          <p className="max-w-2xl mx-auto text-xl text-gray-600 mb-12 leading-relaxed">
-            인기 YouTube 영상을 활용한 개인화된 학습 플랫폼으로{" "}
-            <br className="hidden sm:block" /> 나만의 학습 자료를 만들고
-            체계적으로 학습하세요.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-xl hover:shadow-red-200 transition-all flex items-center justify-center gap-2 group"
-              onClick={handleStartLearning}
-            >
-              무료로 학습 시작하기
-              <ArrowRight
-                size={20}
-                className="group-hover:translate-x-1 transition-transform"
+    <div className="min-h-screen bg-[#050505] text-white selection:bg-vzx-accent selection:text-black">
+      {/* GNB (Header) */}
+      <header className="fixed top-0 left-0 right-0 h-20 border-b border-white/5 bg-[#050505]/80 backdrop-blur-xl z-[100] px-8">
+        <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
+          <div className="flex items-center gap-8">
+            <div className="flex items-center gap-2">
+              <Image
+                src="/android-chrome-192x192.png"
+                alt="VZX"
+                width={48}
+                height={48}
               />
+              {/* <div className="w-8 h-8 bg-vzx-accent rounded flex items-center justify-center font-bold text-black text-xl">
+                V
+              </div> */}
+              {/* <span className="font-bold text-xl tracking-tighter">VZX</span> */}
+            </div>
+            <nav className="hidden md:flex items-center gap-6">
+              {/* <a
+                href="#"
+                className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
+              >
+                Features
+              </a>
+              <a
+                href="#"
+                className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
+              >
+                Solutions
+              </a> */}
+              <a
+                href="#"
+                className="text-sm font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-1"
+              >
+                퍼스널 브랜딩
+              </a>
+              <a
+                href="#"
+                className="text-sm font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-1"
+              >
+                워크플로우 V.1
+                <span className="bg-vzx-accent/10 text-vzx-accent text-[10px] px-1.5 py-0.5 rounded border border-vzx-accent/20">
+                  NEW
+                </span>
+              </a>
+              <a
+                href="#"
+                className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
+              >
+                요금제
+              </a>
+            </nav>
+          </div>
+          <div className="flex items-center gap-4">
+            {/* <button
+              onClick={handleStartLearning}
+              className="text-sm font-medium text-white hover:text-vzx-accent transition-colors"
+            >
+              대시보드
+            </button> */}
+            <button
+              onClick={handleStartService}
+              className="bg-white text-black font-bold px-5 py-2 rounded-full text-sm hover:bg-gray-200 transition-all"
+            >
+              {session?.user ? "대시보드" : "로그인"}
             </button>
           </div>
+        </div>
+      </header>
 
-          {/* Hero Visual */}
-          <div className="mt-16 relative mx-auto max-w-5xl rounded-2xl border border-gray-200 shadow-2xl overflow-hidden bg-gray-900/5 aspect-video flex items-center justify-center group">
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20 z-10"></div>
-            <img
-              src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1974&auto=format&fit=crop"
-              alt="Dashboard Preview"
-              className="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute z-20 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center text-white shadow-lg">
-                <Play size={24} fill="currentColor" />
+      {/* Hero Section */}
+      <section className="pt-40 pb-20 px-8 relative overflow-hidden">
+        {/* Decorative background glow */}
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-vzx-accent/10 rounded-full blur-[120px] -z-10" />
+
+        <div className="max-w-4xl mx-auto text-center space-y-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-gray-400 animate-fade-in-up">
+            <Sparkles size={14} className="text-vzx-accent" />
+            #1 AI 퍼스널 브랜딩 툴
+          </div>
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.1]">
+            인사이트 하나로, <br />
+            <span className="text-vzx-accent">
+              10개의 바이럴 컨텐츠 만들고,
+            </span>
+            <br />
+            10배 빠르게 성장하기
+          </h1>
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            VisionX 는 당신의 전문성을 눈에 띄는 블로그, 쓰레드, 영상으로 만들어
+            드립니다.
+          </p>
+
+          <div className="max-w-2xl mx-auto relative group">
+            <div className="absolute inset-0 bg-vzx-accent/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative bg-[#1A1A1A] border border-white/10 p-2 rounded-2xl flex items-center gap-2">
+              <div className="pl-4 flex-1">
+                <input
+                  type="text"
+                  placeholder="당신의 인사이트를 여기 적어보세요. (예: 팔리는 숏츠의 비밀)"
+                  className="w-full bg-transparent border-none outline-none text-white placeholder-gray-500"
+                />
               </div>
-              <div className="text-left">
-                <p className="text-white font-bold text-lg">
-                  Analyzing Content...
-                </p>
-                <p className="text-white/80 text-sm">
-                  Extracting key insights from 124 videos
-                </p>
+              <button
+                onClick={handleStartService}
+                className="bg-white text-black font-bold px-6 py-3 rounded-xl hover:bg-vzx-accent transition-colors flex items-center gap-2"
+              >
+                워크플로우 <ArrowRight size={18} />
+              </button>
+            </div>
+            <div className="mt-4 flex items-center justify-center gap-6 text-[10px] text-gray-500 font-medium uppercase tracking-widest">
+              <span className="flex items-center gap-1">
+                <Zap size={10} className="text-vzx-accent" /> AI 기획자
+              </span>
+              <span className="flex items-center gap-1">
+                <FileText size={10} /> 블로그 포스트 작가
+              </span>
+              <span className="flex items-center gap-1">
+                <Share2 size={10} /> 쓰레드 포스트 생성
+              </span>
+              <span className="flex items-center gap-1">
+                <Video size={10} /> 아바타 생성
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Visual Demo Section */}
+      <section className="px-8 pb-32">
+        <div className="max-w-6xl mx-auto">
+          <div className="aspect-video bg-[#111] rounded-3xl border border-white/5 overflow-hidden relative shadow-2xl">
+            <div className="absolute inset-0 bg-gradient-to-tr from-vzx-accent/5 to-transparent" />
+            <div className="h-full w-full flex items-center justify-center p-8">
+              {/* Simulated Interface Showcase */}
+              <div className="grid grid-cols-4 gap-4 w-full h-full opacity-80">
+                <div className="bg-white/5 rounded-2xl border border-white/10 p-4 space-y-3">
+                  <div className="h-4 w-2/3 bg-white/20 rounded" />
+                  <div className="aspect-square bg-vzx-accent/10 rounded-xl flex items-center justify-center">
+                    <FileText size={40} className="text-vzx-accent" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-2 w-full bg-white/10 rounded" />
+                    <div className="h-2 w-full bg-white/10 rounded" />
+                    <div className="h-2 w-4/5 bg-white/10 rounded" />
+                  </div>
+                </div>
+                <div className="bg-white/5 rounded-2xl border border-white/10 p-4 space-y-3 translate-y-4">
+                  <div className="h-4 w-2/3 bg-white/20 rounded" />
+                  <div className="aspect-square bg-blue-500/10 rounded-xl flex items-center justify-center">
+                    <Twitter size={40} className="text-blue-500" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-2 w-full bg-white/10 rounded" />
+                    <div className="h-2 w-full bg-white/10 rounded" />
+                  </div>
+                </div>
+                <div className="bg-white/5 rounded-2xl border border-white/10 p-4 space-y-3">
+                  <div className="h-4 w-2/3 bg-white/20 rounded" />
+                  <div className="aspect-square bg-red-500/10 rounded-xl flex items-center justify-center">
+                    <Youtube size={40} className="text-red-500" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-2 w-full bg-white/10 rounded" />
+                    <div className="h-2 w-full bg-white/10 rounded" />
+                    <div className="h-2 w-full bg-white/10 rounded" />
+                  </div>
+                </div>
+                <div className="bg-white/5 rounded-2xl border border-white/10 p-4 space-y-3 translate-y-4">
+                  <div className="h-4 w-2/3 bg-white/20 rounded" />
+                  <div className="aspect-video bg-vzx-accent/20 rounded-xl relative overflow-hidden flex items-center justify-center">
+                    <Play fill="#33db98" stroke="none" size={32} />
+                  </div>
+                  <div className="h-2 w-full bg-white/10 rounded" />
+                </div>
+              </div>
+              {/* Centered Floating Play Button */}
+              <div className="absolute inset-0 flex items-center justify-center z-10">
+                <div className="w-20 h-20 bg-vzx-accent rounded-full flex items-center justify-center pl-1 shadow-[0_0_50px_rgba(51,219,152,0.5)] cursor-pointer hover:scale-110 transition-transform">
+                  <Play fill="black" stroke="none" size={32} />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
-      {/* Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
-              왜 TubeInsight를 선택해야 할까요?
+
+      {/* Trust Wall */}
+      {/* <section className="px-8 pb-32 text-center opacity-40">
+        <p className="text-xs font-bold uppercase tracking-[0.3em] mb-12">
+          최고의 교육 플랫폼에서 인정받은
+        </p>
+        <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20">
+          {["TITAN CLASS"].map((name) => (
+            <span
+              key={name}
+              className="text-3xl font-black italic tracking-tighter text-gray-500"
+            >
+              {name}
+            </span>
+          ))}
+        </div>
+      </section> */}
+
+      {/* Workflow Section: "Automation on Autopilot" */}
+      <section className="px-8 pb-32">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16 space-y-4">
+            <div className="text-vzx-accent text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2">
+              <Cpu size={16} /> 브랜딩 워크플로우 자동화.
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
+              당신의 퍼스널 브랜딩 워크플로우, AI로 대체되었다.
             </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              YouTube 영상을 활용한 혁신적인 학습 경험을 제공합니다
+            <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+              AI가 당신의 퍼스널 브랜딩 워크플로우를 자동화하여,{" "}
+              <span className="text-vzx-accent">10배 빠르게</span> 바이럴을
+              생성합니다.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-[#111] border border-white/5 p-8 rounded-3xl hover:border-vzx-accent/30 transition-all">
+              <div className="p-3 bg-vzx-accent/10 rounded-xl w-fit mb-6 text-vzx-accent">
+                <Globe size={24} />
+              </div>
+              <h3 className="text-xl font-bold mb-3">
+                인사이트로 블로그 작성기
+              </h3>
+              <p className="text-gray-500 leading-relaxed">
+                AI가 당신의 인사이트를 분석하여 전문성을 반영한 SEO-최적화된
+                블로그를 생성합니다.
+              </p>
+            </div>
+            <div className="bg-[#111] border border-white/5 p-8 rounded-3xl hover:border-vzx-accent/30 transition-all">
+              <div className="p-3 bg-blue-500/10 rounded-xl w-fit mb-6 text-blue-500">
+                <Share2 size={24} />
+              </div>
+              <h3 className="text-xl font-bold mb-3">블로그를 쓰레드로</h3>
+              <p className="text-gray-500 leading-relaxed">
+                당신의 긴 블로그 글을 높은 인게이지먼트의 Threads 포스트로
+                변환해줍니다.
+              </p>
+            </div>
+            <div className="bg-[#111] border border-white/5 p-8 rounded-3xl hover:border-vzx-accent/30 transition-all">
+              <div className="p-3 bg-red-500/10 rounded-xl w-fit mb-6 text-red-500">
+                <Video size={24} />
+              </div>
+              <h3 className="text-xl font-bold mb-3">블로그를 숏츠로</h3>
+              <p className="text-gray-400 leading-relaxed">
+                블로그 글에 기반해 당신의 숏츠를 AI가 기획하고 당신의 아바타
+                에셋을 만들어줍니다.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="px-8 pb-32">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-12">
+            질문 있으신가요?
+          </h2>
+          <div className="space-y-4">
+            {faqs.map((faq, i) => (
               <div
-                key={index}
-                className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                key={i}
+                className="bg-[#111] border border-white/5 rounded-2xl overflow-hidden"
               >
-                <div className="w-14 h-14 bg-gradient-to-br from-red-50 to-orange-50 rounded-2xl flex items-center justify-center text-red-600 mb-6 border border-red-100">
-                  <feature.icon size={28} />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {feature.description}
-                </p>
+                <button
+                  onClick={() => setFaqOpen(faqOpen === i ? null : i)}
+                  className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-white/5 transition-colors"
+                >
+                  <span className="font-semibold">{faq.q}</span>
+                  <ChevronDown
+                    className={`w-5 h-5 transition-transform ${faqOpen === i ? "rotate-180" : ""}`}
+                  />
+                </button>
+                {faqOpen === i && (
+                  <div className="px-6 pb-5 text-gray-400 leading-relaxed animate-fade-in">
+                    {faq.a}
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </div>
       </section>
 
+      {/* Final CTA */}
+      <section className="px-8 pb-32">
+        <div className="max-w-5xl mx-auto bg-gradient-to-b from-[#1A1A1A] to-[#0A0A0A] rounded-[40px] p-12 md:p-20 text-center border border-white/10 relative overflow-hidden">
+          <div className="absolute inset-0 bg-vzx-accent/5 blur-[100px] pointer-events-none" />
+          <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-8 relative z-10">
+            당신이라는 브랜드를 <br />
+            시간낭비 없이 확장하세요
+          </h2>
+          <button
+            onClick={handleStartService}
+            className="relative z-10 bg-white text-black font-bold px-10 py-4 rounded-full text-lg hover:scale-105 transition-transform flex items-center gap-2 mx-auto"
+          >
+            시작하기 <ArrowRight size={20} />
+          </button>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="mb-4 md:mb-0">
-              <Logo variant="full" size="md" />
+      <footer className="px-8 py-20 border-t border-white/5">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-12">
+          <div className="col-span-2">
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-8 h-8 bg-vzx-accent rounded flex items-center justify-center font-bold text-black text-xl">
+                V
+              </div>
+              <span className="font-bold text-xl tracking-tighter">VZX</span>
             </div>
-            <p className="text-sm text-slate-400">
-              © 2024 TubeInsight. All rights reserved.
+            <p className="text-gray-500 text-sm max-w-xs mb-6">
+              The only AI branding engine that understands the value of your
+              knowledge.
             </p>
+            <div className="flex gap-4">
+              <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10" />
+              <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10" />
+              <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10" />
+            </div>
           </div>
+          <div>
+            <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-gray-500">
+              Product
+            </h4>
+            <ul className="space-y-4 text-sm text-gray-400">
+              <li>
+                <a href="#" className="hover:text-vzx-accent">
+                  AI Branding
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-vzx-accent">
+                  SaaS Builder
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-vzx-accent">
+                  Community
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-gray-500">
+              Resources
+            </h4>
+            <ul className="space-y-4 text-sm text-gray-400">
+              <li>
+                <a href="#" className="hover:text-vzx-accent">
+                  Success Stories
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-vzx-accent">
+                  Documentation
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-vzx-accent">
+                  API Docs
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-gray-500">
+              Legal
+            </h4>
+            <ul className="space-y-4 text-sm text-gray-400">
+              <li>
+                <a href="#" className="hover:text-vzx-accent">
+                  Terms
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-vzx-accent">
+                  Privacy
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-vzx-accent">
+                  Security
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/5 text-center text-xs text-gray-600">
+          © 2025 VizionX (VZX) Inc. All rights reserved.
         </div>
       </footer>
 
       {/* Login Modal */}
       {isLoginOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
           onClick={() => setIsLoginOpen(false)}
         >
           <Card
-            className="w-full max-w-md border-none shadow-2xl max-h-[90vh] overflow-y-auto"
+            className="w-full max-w-md border-none shadow-2xl max-h-[90vh] overflow-y-auto bg-vzx-card"
             onClick={(e) => e.stopPropagation()}
           >
-            <CardContent className="p-6">
+            <CardContent className="px-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-slate-900">로그인</h2>
+                <h2 className="text-2xl font-bold text-gray-100">로그인</h2>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsLoginOpen(false)}
-                  className="text-slate-400 hover:text-slate-600"
+                  className="text-gray-400 hover:text-gray-600 bg-transparent"
                 >
                   ✕
                 </Button>
@@ -290,12 +555,12 @@ export default function HomePage() {
                   </svg>
                   {isSocialLoading ? "로그인 중..." : "카카오로 시작하기"}
                 </button>
-                <div className="text-center text-slate-600 text-sm">
+                {/* <div className="text-center text-slate-600 text-sm">
                   수강생 여러분은 위 버튼을 클릭해주세요
-                </div>
+                </div> */}
               </div>
 
-              <div className="text-center mt-6 pt-6 border-t border-slate-100">
+              {/* <div className="text-center mt-6 pt-6 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setIsAdminFormOpen(!isAdminFormOpen)}
@@ -303,9 +568,9 @@ export default function HomePage() {
                 >
                   관리자 로그인 {isAdminFormOpen ? "닫기 ▲" : "열기 ▼"}
                 </button>
-              </div>
+              </div> */}
 
-              {isAdminFormOpen && (
+              {/* {isAdminFormOpen && (
                 <form
                   id="admin-form"
                   onSubmit={handleSubmit}
@@ -398,7 +663,7 @@ export default function HomePage() {
                     {isLoading ? "로그인 중..." : "관리자 로그인"}
                   </button>
                 </form>
-              )}
+              )} */}
             </CardContent>
           </Card>
         </div>
