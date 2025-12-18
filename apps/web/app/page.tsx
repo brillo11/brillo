@@ -23,6 +23,7 @@ import { useSession } from "@/shared/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { PATH } from "@/shared/consts/path";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function HomePage() {
   const [credentials, setCredentials] = useState({
@@ -140,21 +141,21 @@ export default function HomePage() {
               >
                 Solutions
               </a> */}
-              <a
-                href="#"
+              <Link
+                href={PATH.SERVICE_DASHBOARD}
                 className="text-sm font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-1"
               >
                 퍼스널 브랜딩
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                href={PATH.SERVICE_PERSONAL_BRANDING_WORKFLOW}
                 className="text-sm font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-1"
               >
                 워크플로우 V.1
                 <span className="bg-vzx-accent/10 text-vzx-accent text-[10px] px-1.5 py-0.5 rounded border border-vzx-accent/20">
                   NEW
                 </span>
-              </a>
+              </Link>
               <a
                 href="#"
                 className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
