@@ -57,7 +57,7 @@ export function ServiceSidebar({ points = 0 }: { points?: number }) {
         {state === "expanded" ? (
           <div className="h-20 flex items-center px-8">
             {/* Logo */}
-            <div className="flex items-center gap-2">
+            <Link href={PATH.HOME} className="flex items-center gap-2">
               <Image
                 src="/android-chrome-512x512.png"
                 width={48}
@@ -70,7 +70,7 @@ export function ServiceSidebar({ points = 0 }: { points?: number }) {
               {/* <span className="font-bold text-base tracking-tight text-white">
                 VizionX
               </span> */}
-            </div>
+            </Link>
           </div>
         ) : (
           <button

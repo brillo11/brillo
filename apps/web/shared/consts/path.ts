@@ -3,6 +3,8 @@ export const PATH = {
   AUTH_LOGIN: "/",
   // AUTH_SIGNUP: "/auth/signup",
 
+  HOME: "/",
+
   // 학생
   STUDENT_ROOT: "/student",
   STUDENT_COMMUNITY: "/student/community",
