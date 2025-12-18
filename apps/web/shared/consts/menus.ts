@@ -34,6 +34,9 @@ import {
   Bot,
   Wand2,
   Youtube,
+  TrendingUp,
+  Sparkles,
+  Flame,
 } from "lucide-react";
 import { PATH } from "./path";
 
@@ -173,7 +176,7 @@ export const serviceMenus: MenuItem[] = [
         title: "브랜딩 워크플로우",
         baseUrl: PATH.SERVICE_PERSONAL_BRANDING,
         url: PATH.SERVICE_PERSONAL_BRANDING_WORKFLOW,
-        icon: Workflow,
+        icon: Sparkles,
       },
       {
         id: "blog",
@@ -200,17 +203,17 @@ export const serviceMenus: MenuItem[] = [
   },
   {
     id: "outlier",
-    title: "아웃라이어",
+    title: "트렌드 분석",
     baseUrl: PATH.SERVICE_TRENDS,
     url: PATH.SERVICE_TRENDS,
-    icon: Wand2,
+    icon: TrendingUp,
     subMenus: [
       {
         id: "아웃라이어",
         title: "아웃라이어",
         baseUrl: PATH.SERVICE_TRENDS_OUTLIER,
         url: PATH.SERVICE_TRENDS_OUTLIER,
-        icon: Workflow,
+        icon: Flame,
       },
     ],
   },
