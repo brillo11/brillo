@@ -153,150 +153,6 @@ export const adminMenus: MenuItem[] = [
   // },
 ];
 
-export const studentMenus: MenuItem[] = [
-  {
-    id: "home",
-    title: "대시보드",
-    baseUrl: PATH.STUDENT_ROOT,
-    url: PATH.STUDENT_ROOT,
-    icon: Home,
-  },
-  {
-    id: "learning",
-    title: "학습",
-    baseUrl: PATH.STUDENT_LOUNGE,
-    url: PATH.STUDENT_LOUNGE_DASHBOARD,
-    icon: BookOpen,
-    subMenus: [
-      {
-        id: "my-courses",
-        title: "내 강의",
-        baseUrl: PATH.STUDENT_LOUNGE,
-        url: PATH.STUDENT_LOUNGE_DASHBOARD,
-        icon: PlayCircle,
-      },
-      {
-        id: "video-library",
-        title: "영상 라이브러리",
-        baseUrl: PATH.STUDENT_LOUNGE,
-        url: PATH.STUDENT_LOUNGE_LIBRARY,
-        icon: Library,
-      },
-      // {
-      //   id: "study-materials",
-      //   title: "학습 자료",
-      //   baseUrl: PATH.STUDENT_ORDERS,
-      //   url: PATH.STUDENT_ORDERS_LIST,
-      //   icon: FileText,
-      // },
-      {
-        id: "ai-tools-section",
-        title: "AI Tools",
-        baseUrl: "",
-        url: "",
-        section: "AI Tools",
-      },
-      {
-        id: "ai-assistant",
-        title: "AI 어시스턴트",
-        baseUrl: PATH.STUDENT_LOUNGE,
-        url: PATH.STUDENT_LOUNGE_AI_ASSISTANT,
-        icon: Bot,
-      },
-      {
-        id: "ai-history",
-        title: "작업 기록",
-        baseUrl: PATH.STUDENT_LOUNGE,
-        url: `${PATH.STUDENT_LOUNGE_AI_ASSISTANT}/history`,
-        icon: History,
-      },
-      {
-        id: "smart-search",
-        title: "스마트 키워드 검색",
-        baseUrl: PATH.STUDENT_LOUNGE,
-        url: PATH.STUDENT_LOUNGE_SMART_SEARCH,
-        icon: Search,
-      },
-    ],
-  },
-  // {
-  //   id: "assignments",
-  //   title: "과제",
-  //   baseUrl: PATH.STUDENT_LOUNGE,
-  //   url: PATH.STUDENT_LOUNGE_MISSION,
-  //   icon: NotebookPen,
-  //   subMenus: [
-  //     {
-  //       id: "my-missions",
-  //       title: "나의 미션",
-  //       baseUrl: PATH.STUDENT_LOUNGE,
-  //       url: PATH.STUDENT_LOUNGE_MISSION,
-  //       icon: Target,
-  //     },
-  //     {
-  //       id: "submissions",
-  //       title: "제출 내역",
-  //       baseUrl: PATH.STUDENT_ORDERS,
-  //       url: PATH.STUDENT_ORDERS_ENTRY,
-  //       icon: CheckCircle2,
-  //     },
-  //     {
-  //       id: "grades",
-  //       title: "성적 확인",
-  //       baseUrl: PATH.STUDENT_ORDERS,
-  //       url: PATH.STUDENT_ORDERS_HISTORY,
-  //       icon: Award,
-  //     },
-  //   ],
-  // },
-  // {
-  //   id: "community",
-  //   title: "커뮤니티",
-  //   baseUrl: PATH.STUDENT_LOUNGE,
-  //   url: PATH.STUDENT_LOUNGE_ANNOUNCEMENTS,
-  //   icon: Users,
-  //   subMenus: [
-  //     {
-  //       id: "announcements",
-  //       title: "공지사항",
-  //       baseUrl: PATH.STUDENT_LOUNGE,
-  //       url: PATH.STUDENT_LOUNGE_ANNOUNCEMENTS,
-  //       icon: Megaphone,
-  //     },
-  //     {
-  //       id: "qna",
-  //       title: "Q&A",
-  //       baseUrl: PATH.STUDENT_LOUNGE,
-  //       url: PATH.STUDENT_LOUNGE_QNA,
-  //       icon: HelpCircle,
-  //     },
-  //   ],
-  // },
-  // {
-  //   id: "points",
-  //   title: "포인트",
-  //   baseUrl: PATH.STUDENT_POINTS,
-  //   url: PATH.STUDENT_POINTS_CHARGE,
-  //   icon: Coins,
-  //   subMenus: [
-  //     {
-  //       id: "charge",
-  //       title: "포인트 충전",
-  //       baseUrl: PATH.STUDENT_POINTS,
-  //       url: PATH.STUDENT_POINTS_CHARGE,
-  //       icon: Coins,
-  //     },
-  //     {
-  //       id: "history",
-  //       title: "사용 내역",
-  //       baseUrl: PATH.STUDENT_POINTS,
-  //       url: PATH.STUDENT_POINTS_HISTORY,
-  //       icon: History,
-  //     },
-  //   ],
-  // },
-];
-
 export const serviceMenus: MenuItem[] = [
   {
     id: "dashboard",
@@ -339,6 +195,22 @@ export const serviceMenus: MenuItem[] = [
         baseUrl: PATH.SERVICE_PERSONAL_BRANDING,
         url: PATH.SERVICE_PERSONAL_BRANDING_VIDEO,
         icon: Youtube,
+      },
+    ],
+  },
+  {
+    id: "outlier",
+    title: "아웃라이어",
+    baseUrl: PATH.SERVICE_TRENDS,
+    url: PATH.SERVICE_TRENDS,
+    icon: Wand2,
+    subMenus: [
+      {
+        id: "아웃라이어",
+        title: "아웃라이어",
+        baseUrl: PATH.SERVICE_TRENDS_OUTLIER,
+        url: PATH.SERVICE_TRENDS_OUTLIER,
+        icon: Workflow,
       },
     ],
   },

@@ -11,7 +11,7 @@ import {
 } from "@repo/ui/components/sidebar";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { serviceMenus, studentMenus } from "@/shared/consts/menus";
+import { serviceMenus } from "@/shared/consts/menus";
 import {
   Collapsible,
   CollapsibleContent,
@@ -243,7 +243,7 @@ export function ServiceSidebar({ points = 0 }: { points?: number }) {
         {state === "expanded" && user ? (
           <>
             <Link
-              href={PATH.STUDENT_PROFILE}
+              href={PATH.SERVICE_PROFILE}
               className="w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-white transition-colors"
             >
               <Settings size={20} />
@@ -273,7 +273,7 @@ export function ServiceSidebar({ points = 0 }: { points?: number }) {
         ) : (
           <div className="flex flex-col items-center gap-4">
             <Link
-              href={PATH.STUDENT_PROFILE}
+              href={PATH.SERVICE_PROFILE}
               className="text-gray-500 hover:text-white transition-colors"
             >
               <Settings size={20} />

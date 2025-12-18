@@ -5,28 +5,6 @@ export const PATH = {
 
   HOME: "/",
 
-  // 학생
-  STUDENT_ROOT: "/student",
-  STUDENT_COMMUNITY: "/student/community",
-  STUDENT_COMMUNITY_ANNOUNCEMENTS: "/student/community/announcements",
-  STUDENT_PRODUCTS: "/student/products",
-  STUDENT_ORDERS: "/student/orders",
-  STUDENT_ORDERS_ENTRY: "/student/orders/entry",
-  STUDENT_ORDERS_LIST: "/student/orders/list",
-  STUDENT_ORDERS_HISTORY: "/student/orders/history",
-  STUDENT_LOUNGE: "/student/studentLounge",
-  STUDENT_LOUNGE_DASHBOARD: "/student/studentLounge/dashboard",
-  STUDENT_LOUNGE_MISSION: "/student/studentLounge/mission",
-  STUDENT_LOUNGE_ANNOUNCEMENTS: "/student/studentLounge/announcements",
-  STUDENT_LOUNGE_QNA: "/student/studentLounge/qna",
-  STUDENT_LOUNGE_AI_ASSISTANT: "/student/studentLounge/ai-assistant",
-  STUDENT_LOUNGE_SMART_SEARCH: "/student/studentLounge/smart-search",
-  STUDENT_POINTS: "/student/points",
-  STUDENT_POINTS_CHARGE: "/student/points/charge",
-  STUDENT_POINTS_HISTORY: "/student/points/history",
-  STUDENT_PROFILE: "/student/profile",
-  STUDENT_LOUNGE_LIBRARY: "/student/studentLounge/library",
-
   // 서비스
   SERVICE_ROOT: "/service",
   SERVICE_DASHBOARD: "/service/dashboard",
@@ -36,6 +14,11 @@ export const PATH = {
   SERVICE_PERSONAL_BRANDING_BLOG: "/service/personal-branding/blog",
   SERVICE_PERSONAL_BRANDING_THREADS: "/service/personal-branding/threads",
   SERVICE_PERSONAL_BRANDING_VIDEO: "/service/personal-branding/video",
+
+  SERVICE_TRENDS: "/service/trends",
+  SERVICE_TRENDS_OUTLIER: "/service/trends/outlier",
+
+  SERVICE_PROFILE: "/service/profile",
 
   // 어드민
   ADMIN_ROOT: "/admin",
