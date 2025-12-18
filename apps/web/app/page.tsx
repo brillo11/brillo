@@ -320,7 +320,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 space-y-4">
             <div className="text-vzx-accent text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2">
-              <Cpu size={16} /> 브랜딩 워크플로우 자동화.
+              <Cpu size={16} /> 브랜딩 워크플로우 자동화
             </div>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
               당신의 퍼스널 브랜딩 워크플로우, AI로 대체되었다.
