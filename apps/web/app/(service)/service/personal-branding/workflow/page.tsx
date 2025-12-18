@@ -117,7 +117,7 @@ export default function BrandingWorkflow() {
 
       {/* Stepper */}
       <div className="flex justify-between items-center mb-12 relative px-10">
-        <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-800 -z-10 transform -translate-y-1/2" />
+        <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-400 -z-10 transform -translate-y-1/2" />
         {steps.map((step) => {
           const isActive = step.id === currentStep;
           const isCompleted = step.id < currentStep;
@@ -126,10 +126,10 @@ export default function BrandingWorkflow() {
           return (
             <div
               key={step.id}
-              className="flex flex-col items-center bg-[#1f1f1f] px-2 z-10"
+              className="flex flex-col items-center bg-transparent px-2 z-10"
             >
               <div
-                className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                className={`w-12 h-12 rounded-full flex items-center bg-vzx-card justify-center border-2 transition-all duration-300 ${
                   isActive || isCompleted
                     ? "border-[#33DB98] bg-[#33DB98]/10 text-[#33DB98] shadow-[0_0_15px_rgba(51,219,152,0.3)]"
                     : "border-gray-700 bg-vzx-card text-gray-500"
@@ -167,14 +167,14 @@ export default function BrandingWorkflow() {
               <Sparkles className="w-8 h-8 text-[#33DB98]" />
             </div>
             <h2 className="text-2xl font-semibold text-white">
-              What do you want to teach today?
+              오늘 공유하고 싶은 인사이트는 무엇인가요?
             </h2>
             <div className="w-full max-w-lg">
               <input
                 type="text"
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
-                placeholder="e.g., How to start a SaaS business in 2025"
+                placeholder="e.g., 2026년에 시작하는 유튜브 채널"
                 className="w-full bg-vzx-bg border border-gray-700 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-[#33DB98] focus:ring-1 focus:ring-[#33DB98] outline-none transition-all text-lg"
               />
             </div>
@@ -183,7 +183,7 @@ export default function BrandingWorkflow() {
               disabled={!topic}
               className="mt-4 px-8 py-3 bg-[#33DB98] hover:bg-[#2bb880] text-black font-bold rounded-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 flex items-center gap-2"
             >
-              Start Workflow <ArrowRight size={18} />
+              워크플로우 시작하기 <ArrowRight size={18} />
             </button>
           </div>
         )}
