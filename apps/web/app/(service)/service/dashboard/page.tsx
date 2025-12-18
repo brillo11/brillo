@@ -55,7 +55,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8 animate-fade-in p-8 max-w-screen-xl mx-auto">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">Overview</h1>
+        <h1 className="text-3xl font-bold text-white mb-2">대시보드</h1>
         <p className="text-gray-400">
           Welcome back, Instructor. Here&apos;s your growth metrics.
         </p>
