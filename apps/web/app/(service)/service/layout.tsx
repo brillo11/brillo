@@ -1,4 +1,4 @@
-import "@repo/ui/globals.css";
+// import "@repo/ui/globals.css";
 import { ServiceProviders } from "@/features/layout/ServiceProviders";
 
 export default function RootLayout({
