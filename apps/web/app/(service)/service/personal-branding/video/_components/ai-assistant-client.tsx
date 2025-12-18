@@ -525,9 +525,9 @@ export function AIAssistantClient() {
           <span>Start Workflow</span>
           <span>Final Asset</span>
         </div>
-        <div className="h-3 bg-gray-200 rounded-full overflow-hidden relative border border-gray-300 shadow-inner">
+        <div className="h-3 bg-white/10 rounded-full overflow-hidden relative border border-white/5 shadow-inner">
           <div
-            className="h-full bg-gradient-to-r from-red-600 to-orange-500 transition-all duration-700 ease-out shadow-sm"
+            className="h-full bg-[#33DB98] transition-all duration-700 ease-out shadow-sm shadow-[#33DB98]/20"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -540,19 +540,19 @@ export function AIAssistantClient() {
       {/* Progress Header */}
       <div className="mb-8">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Ai 어시스턴트
+          <h1 className="text-3xl font-bold text-white mb-2">
+            AI 어시스턴트
           </h1>
-          <p className="text-gray-500">
+          <p className="text-gray-400">
             AI 파트너와 함께 나만의 콘텐츠를 만들어보세요. 페르소나 선택부터
             제목, 썸네일, 스크립트까지 단계별로 안내해드립니다.
           </p>
         </div>
         <ProgressBar />
         <div className="flex items-center justify-between relative">
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 -z-10 rounded-full"></div>
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-white/10 -z-10 rounded-full"></div>
           <div
-            className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-red-600 -z-10 rounded-full transition-all duration-500"
+            className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#33DB98] -z-10 rounded-full transition-all duration-500"
             style={{ width: `${((currentStep - 1) / 7) * 100}%` }}
           ></div>
 
@@ -568,19 +568,19 @@ export function AIAssistantClient() {
           ].map((s) => (
             <div
               key={s.step}
-              className="flex flex-col items-center gap-2 bg-gray-50 px-2 rounded-lg z-10"
+              className="flex flex-col items-center gap-2 bg-vzx-bg px-2 rounded-lg z-10"
             >
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
                   currentStep >= s.step
-                    ? "bg-red-600 text-white scale-110 shadow-lg shadow-red-200"
-                    : "bg-white border-2 border-gray-200 text-gray-400"
+                    ? "bg-[#33DB98] text-black scale-110 shadow-lg shadow-[#33DB98]/20"
+                    : "bg-vzx-card border-2 border-white/10 text-gray-600"
                 }`}
               >
                 {currentStep > s.step ? <Check size={16} /> : s.step}
               </div>
               <span
-                className={`text-xs font-medium ${currentStep >= s.step ? "text-gray-900" : "text-gray-400"}`}
+                className={`text-xs font-medium ${currentStep >= s.step ? "text-[#33DB98]" : "text-gray-600"}`}
               >
                 {s.label}
               </span>
@@ -590,7 +590,7 @@ export function AIAssistantClient() {
       </div>
 
       {/* Main Content Area */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-10 min-h-[500px] animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm p-6 md:p-10 min-h-[500px] animate-in fade-in slide-in-from-bottom-4 duration-500">
         {currentStep === 1 && (
           <Step1Persona
             selectedPersona={selectedPersona}

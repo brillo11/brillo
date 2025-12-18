@@ -83,7 +83,7 @@ export function Step8ShortsTitles({
                 <Button
                   onClick={onGenerate}
                   disabled={isGenerating}
-                  className="px-10 py-4 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg disabled:opacity-70 transition-all flex items-center gap-2 mx-auto"
+                  className="px-10 py-4 bg-[#33DB98] text-black rounded-xl font-bold text-lg hover:shadow-lg disabled:opacity-70 transition-all flex items-center gap-2 mx-auto hover:bg-[#33DB98]/90"
                 >
                   쇼츠 제목 생성
                 </Button>
@@ -111,30 +111,30 @@ export function Step8ShortsTitles({
       </div>
 
       {/* Section 1: Shorts */}
-      <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
-        <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center">
-            <Video size={16} className="text-white" />
+      <div className="bg-vzx-card rounded-2xl p-8 border border-white/10 shadow-sm">
+        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-[#33DB98] flex items-center justify-center">
+            <Video size={16} className="text-black" />
           </div>
           Shorts Candidates
         </h3>
 
         {isGenerating && shortsTitlesResponses.shortsTitles.length === 0 ? (
           <div className="py-10 text-center">
-            <Loader2 className="animate-spin text-orange-500 inline-block" />
+            <Loader2 className="animate-spin text-[#33DB98] inline-block" />
           </div>
         ) : (
           <div className="grid md:grid-cols-3 gap-6">
             {shortsTitlesResponses.shortsTitles.map((chapter, i) => (
               <div
                 key={i}
-                className="bg-gray-50 border border-gray-200 rounded-xl p-5 hover:border-gray-300 transition-all group shadow-sm"
+                className="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-[#33DB98]/50 transition-all group shadow-sm"
               >
-                <h4 className="font-bold text-slate-800 mb-4 border-b border-gray-200 pb-3 flex justify-between items-center">
+                <h4 className="font-bold text-white mb-4 border-b border-white/10 pb-3 flex justify-between items-center">
                   {chapter.chapterTitle}
                   <Copy
                     size={14}
-                    className="opacity-0 group-hover:opacity-100 cursor-pointer text-slate-400 hover:text-slate-600"
+                    className="opacity-0 group-hover:opacity-100 cursor-pointer text-gray-400 hover:text-white"
                     onClick={() => {
                       navigator.clipboard.writeText(chapter.titles.join("\n"));
                       handleCopy(chapter.titles.join("\n"), "Chapter titles");
@@ -145,13 +145,13 @@ export function Step8ShortsTitles({
                   {chapter.titles.map((title, idx) => (
                     <li
                       key={idx}
-                      className="text-sm text-slate-600 hover:text-orange-600 flex items-start gap-2 cursor-pointer transition-colors"
+                      className="text-sm text-gray-300 hover:text-[#33DB98] flex items-start gap-2 cursor-pointer transition-colors"
                       onClick={() => {
                         navigator.clipboard.writeText(title);
                         handleCopy(title, "Title");
                       }}
                     >
-                      <span className="text-slate-400 mt-1">•</span>
+                      <span className="text-gray-500 mt-1">•</span>
                       {title}
                     </li>
                   ))}

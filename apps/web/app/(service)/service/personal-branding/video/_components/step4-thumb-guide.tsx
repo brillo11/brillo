@@ -166,8 +166,8 @@ export function Step4ThumbGuide({
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">썸네일 전략 선택</h2>
-        <p className="text-gray-500">영상을 시각적으로 어떻게 구성할까요?</p>
+        <h2 className="text-2xl font-bold text-white">썸네일 전략 선택</h2>
+        <p className="text-gray-400">영상을 시각적으로 어떻게 구성할까요?</p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-4">
@@ -179,8 +179,8 @@ export function Step4ThumbGuide({
               onClick={() => !isLoading && onSelectGuide(index)}
               className={`p-6 rounded-xl border-2 cursor-pointer transition-all hover:-translate-y-1 h-full flex flex-col ${
                 selectedGuide === index
-                  ? "border-red-600 bg-red-50 shadow-md"
-                  : "border-gray-100 bg-white hover:shadow-lg"
+                  ? "border-[#33DB98] bg-[#33DB98]/10 shadow-md"
+                  : "border-white/10 bg-white/5 hover:shadow-lg"
               } ${
                 isLoading
                   ? "opacity-50 cursor-not-allowed pointer-events-none"
@@ -188,24 +188,24 @@ export function Step4ThumbGuide({
               }`}
             >
               <div>
-                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4 text-gray-600">
+                <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center mb-4 text-gray-400">
                   <ImageIcon />
                 </div>
-                <h3 className="font-bold text-gray-900 mb-2">
+                <h3 className="font-bold text-white mb-2">
                   <MarkdownRenderer content={guide.guideTitle} />
                 </h3>
-                <div className="text-sm text-gray-600 leading-relaxed mb-2">
+                <div className="text-sm text-gray-400 leading-relaxed mb-2">
                   <MarkdownRenderer content={guide.guideSummary} />
                 </div>
               </div>
 
-              <div className="mt-auto pt-4 border-t border-gray-200">
+              <div className="mt-auto pt-4 border-t border-white/10">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     toggleGuide(index);
                   }}
-                  className="w-full flex items-center justify-between text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                  className="w-full flex items-center justify-between text-sm text-gray-400 hover:text-white transition-colors"
                 >
                   <span>상세 확인하기</span>
                   {isExpanded ? (
@@ -228,12 +228,12 @@ export function Step4ThumbGuide({
 
       {/* YouTube 채널 참고 (선택사항) */}
       <div className="mt-8">
-        <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-6 flex flex-col h-full overflow-y-auto">
+        <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-6 flex flex-col h-full overflow-y-auto">
           <div>
-            <div className="flex items-center gap-2 text-red-600 font-bold text-lg mb-2">
+            <div className="flex items-center gap-2 text-[#33DB98] font-bold text-lg mb-2">
               <PlayCircle className="fill-current" /> 채널 참고 (선택사항)
             </div>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-gray-400">
               원하는 경우, 유튜브 채널 URL을 입력하여 해당 채널의 썸네일
               스타일을 분석하고 참고할 수 있습니다.
             </p>
@@ -243,7 +243,7 @@ export function Step4ThumbGuide({
             <input
               type="text"
               placeholder="https://youtube.com/@channel"
-              className="flex-1 bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-500/50 focus:border-red-500 outline-none transition-all text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 bg-black/20 border border-white/10 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#33DB98]/50 focus:border-[#33DB98] outline-none transition-all text-white disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-gray-600"
               value={youtubeChannelUrl}
               onChange={(e) => setYoutubeChannelUrl(e.target.value)}
               onKeyDown={(e) => {
@@ -256,7 +256,7 @@ export function Step4ThumbGuide({
             <button
               onClick={fetchYoutubeThumbnails}
               disabled={isChannelLoading || isLoading}
-              className="px-5 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-5 py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isChannelLoading ? (
                 <Loader2 size={18} className="animate-spin" />
@@ -289,8 +289,8 @@ export function Step4ThumbGuide({
                         : "cursor-pointer"
                     } ${
                       isSelected
-                        ? "border-red-500 ring-2 ring-red-500/30"
-                        : "border-transparent hover:border-gray-300"
+                        ? "border-[#33DB98] ring-2 ring-[#33DB98]/30"
+                        : "border-transparent hover:border-[#33DB98]/50"
                     }`}
                   >
                     <img
@@ -305,7 +305,7 @@ export function Step4ThumbGuide({
                           : "opacity-0 group-hover:opacity-100"
                       }`}
                     >
-                      <span className="text-white text-xs font-bold bg-red-600 px-2 py-1 rounded">
+                      <span className="text-black text-xs font-bold bg-[#33DB98] px-2 py-1 rounded">
                         {isSelected ? "✓ 선택됨" : "클릭하여 선택"}
                       </span>
                     </div>
@@ -313,7 +313,7 @@ export function Step4ThumbGuide({
                 );
               })
             ) : (
-              <div className="col-span-2 flex flex-col items-center justify-center text-slate-400 h-full border-2 border-dashed border-gray-300 rounded-xl p-8 bg-white/50">
+              <div className="col-span-2 flex flex-col items-center justify-center text-gray-500 h-full border-2 border-dashed border-white/10 rounded-xl p-8 bg-white/5">
                 <ImageIcon size={32} className="mb-2 opacity-50" />
                 <span className="text-sm">No channel fetched yet</span>
               </div>
@@ -326,7 +326,7 @@ export function Step4ThumbGuide({
           <button
             onClick={() => onStepChange(5)}
             disabled={isLoading}
-            className="px-8 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="px-8 py-3 bg-[#33DB98] text-black rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <>

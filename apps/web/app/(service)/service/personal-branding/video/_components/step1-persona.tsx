@@ -20,8 +20,8 @@ export function Step1Persona({
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">AI 파트너 선택</h2>
-        <p className="text-gray-500">
+        <h2 className="text-2xl font-bold text-white">AI 파트너 선택</h2>
+        <p className="text-gray-400">
           다음 영상 제작을 도와줄 페르소나를 선택해주세요.
         </p>
       </div>
@@ -32,8 +32,8 @@ export function Step1Persona({
             onClick={() => onSelectPersona(persona)}
             className={`cursor-pointer border-2 rounded-xl p-6 transition-all duration-200 hover:shadow-md flex items-start gap-4 ${
               selectedPersona?.id === persona.id
-                ? "border-red-600 bg-red-50"
-                : "border-gray-100 bg-white hover:border-red-200"
+                ? "border-[#33DB98] bg-[#33DB98]/10"
+                : "border-white/10 bg-white/5 hover:border-[#33DB98]/50"
             }`}
           >
             {persona.image ? (
@@ -53,13 +53,13 @@ export function Step1Persona({
               </div>
             )}
             <div>
-              <h3 className="font-bold text-gray-900 mb-1">{persona.name}</h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <h3 className="font-bold text-white mb-1">{persona.name}</h3>
+              <p className="text-sm text-gray-400 leading-relaxed">
                 {persona.description}
               </p>
             </div>
             {selectedPersona?.id === persona.id && (
-              <div className="ml-auto text-red-600">
+              <div className="ml-auto text-[#33DB98]">
                 <Check size={24} />
               </div>
             )}
@@ -70,7 +70,7 @@ export function Step1Persona({
         <button
           disabled={!selectedPersona}
           onClick={() => onStepChange(2)}
-          className="px-8 py-3 bg-gray-900 text-white rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-800 transition-colors flex items-center gap-2"
+          className="px-8 py-3 bg-[#33DB98] text-black rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#33DB98]/90 transition-colors flex items-center gap-2"
         >
           Next Step <ArrowRight size={18} />
         </button>
