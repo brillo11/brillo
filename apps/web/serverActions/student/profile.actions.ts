@@ -109,6 +109,6 @@ export async function updateStudentProfile({
     },
   });
 
-  revalidatePath(PATH.STUDENT_PROFILE);
+  revalidatePath(PATH.SERVICE_PROFILE);
   return user;
 }

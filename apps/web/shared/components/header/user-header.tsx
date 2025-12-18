@@ -36,7 +36,7 @@ export function UserHeader({ className }: UserHeaderProps) {
     if (pathname.includes(PATH.ADMIN_ROOT)) {
       return PATH.ADMIN_PROFILE;
     }
-    return PATH.STUDENT_PROFILE;
+    return PATH.SERVICE_PROFILE;
   };
 
   if (isLoading || !user) {
