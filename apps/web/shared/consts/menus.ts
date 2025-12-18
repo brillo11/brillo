@@ -31,6 +31,8 @@ import {
   Library,
   NotebookPen,
   Bot,
+  Wand2,
+  Youtube,
 } from "lucide-react";
 import { PATH } from "./path";
 
@@ -213,6 +215,122 @@ export const studentMenus: MenuItem[] = [
         baseUrl: PATH.STUDENT_LOUNGE,
         url: PATH.STUDENT_LOUNGE_SMART_SEARCH,
         icon: Search,
+      },
+    ],
+  },
+  // {
+  //   id: "assignments",
+  //   title: "과제",
+  //   baseUrl: PATH.STUDENT_LOUNGE,
+  //   url: PATH.STUDENT_LOUNGE_MISSION,
+  //   icon: NotebookPen,
+  //   subMenus: [
+  //     {
+  //       id: "my-missions",
+  //       title: "나의 미션",
+  //       baseUrl: PATH.STUDENT_LOUNGE,
+  //       url: PATH.STUDENT_LOUNGE_MISSION,
+  //       icon: Target,
+  //     },
+  //     {
+  //       id: "submissions",
+  //       title: "제출 내역",
+  //       baseUrl: PATH.STUDENT_ORDERS,
+  //       url: PATH.STUDENT_ORDERS_ENTRY,
+  //       icon: CheckCircle2,
+  //     },
+  //     {
+  //       id: "grades",
+  //       title: "성적 확인",
+  //       baseUrl: PATH.STUDENT_ORDERS,
+  //       url: PATH.STUDENT_ORDERS_HISTORY,
+  //       icon: Award,
+  //     },
+  //   ],
+  // },
+  // {
+  //   id: "community",
+  //   title: "커뮤니티",
+  //   baseUrl: PATH.STUDENT_LOUNGE,
+  //   url: PATH.STUDENT_LOUNGE_ANNOUNCEMENTS,
+  //   icon: Users,
+  //   subMenus: [
+  //     {
+  //       id: "announcements",
+  //       title: "공지사항",
+  //       baseUrl: PATH.STUDENT_LOUNGE,
+  //       url: PATH.STUDENT_LOUNGE_ANNOUNCEMENTS,
+  //       icon: Megaphone,
+  //     },
+  //     {
+  //       id: "qna",
+  //       title: "Q&A",
+  //       baseUrl: PATH.STUDENT_LOUNGE,
+  //       url: PATH.STUDENT_LOUNGE_QNA,
+  //       icon: HelpCircle,
+  //     },
+  //   ],
+  // },
+  // {
+  //   id: "points",
+  //   title: "포인트",
+  //   baseUrl: PATH.STUDENT_POINTS,
+  //   url: PATH.STUDENT_POINTS_CHARGE,
+  //   icon: Coins,
+  //   subMenus: [
+  //     {
+  //       id: "charge",
+  //       title: "포인트 충전",
+  //       baseUrl: PATH.STUDENT_POINTS,
+  //       url: PATH.STUDENT_POINTS_CHARGE,
+  //       icon: Coins,
+  //     },
+  //     {
+  //       id: "history",
+  //       title: "사용 내역",
+  //       baseUrl: PATH.STUDENT_POINTS,
+  //       url: PATH.STUDENT_POINTS_HISTORY,
+  //       icon: History,
+  //     },
+  //   ],
+  // },
+];
+
+export const serviceMenus: MenuItem[] = [
+  {
+    id: "dashboard",
+    title: "대시보드",
+    baseUrl: PATH.SERVICE_DASHBOARD,
+    url: PATH.SERVICE_DASHBOARD,
+    icon: Home,
+  },
+  {
+    id: "personal-branding",
+    title: "퍼스널 브랜딩",
+    baseUrl: PATH.SERVICE_PERSONAL_BRANDING,
+    url: PATH.SERVICE_PERSONAL_BRANDING,
+    icon: Wand2,
+    subMenus: [
+      {
+        id: "blog",
+        title: "블로그",
+        baseUrl: PATH.SERVICE_PERSONAL_BRANDING,
+        url: PATH.SERVICE_PERSONAL_BRANDING_BLOG,
+        icon: PenLine,
+      },
+      {
+        id: "threads",
+        title: "쓰레드",
+        baseUrl: PATH.SERVICE_PERSONAL_BRANDING,
+        url: PATH.SERVICE_PERSONAL_BRANDING_THREADS,
+        icon: MessageCircle,
+      },
+      {
+        id: "video",
+        title: "영상 제작",
+        baseUrl: PATH.SERVICE_PERSONAL_BRANDING,
+        url: PATH.SERVICE_PERSONAL_BRANDING_VIDEO,
+        icon: Youtube,
       },
     ],
   },

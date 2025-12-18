@@ -1,6 +1,6 @@
 import { requireStudent } from "@/shared/lib/auth-guards";
 import { prisma } from "@repo/database";
-import { StudentSidebar } from "@/app/(student)/student/components/student-sidebar";
+import { ServiceSidebar } from "@/features/layout/ServiceSidebar";
 import { ServiceClientProviders } from "@/features/layout/ServiceClientProviders";
 
 export async function ServiceProviders({
@@ -21,7 +21,7 @@ export async function ServiceProviders({
 
   return (
     <ServiceClientProviders>
-      <StudentSidebar points={points} />
+      <ServiceSidebar points={points} />
       <div className="flex flex-col flex-1 w-full min-h-screen">
         <div className="flex-1">{children}</div>
       </div>

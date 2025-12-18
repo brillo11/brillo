@@ -24,6 +24,15 @@ export const PATH = {
   STUDENT_POINTS_HISTORY: "/student/points/history",
   STUDENT_PROFILE: "/student/profile",
   STUDENT_LOUNGE_LIBRARY: "/student/studentLounge/library",
+
+  // 서비스
+  SERVICE_ROOT: "/service",
+  SERVICE_DASHBOARD: "/service/dashboard",
+  SERVICE_PERSONAL_BRANDING: "/service/personal-branding",
+  SERVICE_PERSONAL_BRANDING_BLOG: "/service/personal-branding/blog",
+  SERVICE_PERSONAL_BRANDING_THREADS: "/service/personal-branding/threads",
+  SERVICE_PERSONAL_BRANDING_VIDEO: "/service/personal-branding/video",
+
   // 어드민
   ADMIN_ROOT: "/admin",
   ADMIN_COMMUNITY: "/admin/community",
