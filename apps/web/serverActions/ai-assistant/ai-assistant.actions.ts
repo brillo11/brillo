@@ -420,10 +420,44 @@ const metadataTextFormat = zodTextFormat(metadataSchema, "metadata");
 export async function sendMetadataResponses(sessionId: string) {
   const conversationId = await getConversationId(sessionId);
 
+  // DB에서 대본 가져오기
+  const session = await requireStudent();
+  const userId = session.user.id;
+
+  const aiSession = await prisma.aIAssistantSession.findFirst({
+    where: {
+      id: sessionId,
+      userId,
+    },
+    select: {
+      scriptResponses: true,
+    },
+  });
+
+  if (!aiSession || !aiSession.scriptResponses) {
+    throw new Error("대본이 없습니다. 먼저 대본을 생성해주세요.");
+  }
+
+  // 대본을 문자열로 변환
+  const scriptData = aiSession.scriptResponses as any;
+  const fullScript = `인트로:\n${scriptData.intro}\n\n자기소개:\n${scriptData.selfIntro}\n\n본론:\n${scriptData.chapters?.map((ch: any) => `${ch.title}\n${ch.content}`).join("\n\n") || ""}\n\n마무리:\n${scriptData.outro}`;
+
   const responses = await openAiClient.responses.create({
     model: "gpt-5.1",
-    input: `메타데이터 만들어줘. 이전 응답의 대본 내용을 바탕으로 다음 지침을 따라서 생성해줘.
-- **설명**: 이전에 너가 나에게 보내준 대본 내용을 검색 친화적으로 300자 내외로 요약해 줘. 주제를 벗어나지 말고 대본 내용을 바탕으로 생성해 줘.
+    input: `아래에 제공된 대본의 전체 내용을 읽고, 그 내용을 바탕으로 메타데이터를 생성해줘.
+
+=== 대본 내용 시작 ===
+${fullScript}
+=== 대본 내용 끝 ===
+
+중요: 설명(description) 필드는 반드시 위 대본에 실제로 나온 내용을 바탕으로 작성해야 해. 
+- 대본에서 다룬 구체적인 내용, 팁, 방법론, 사례 등을 포함해야 해.
+- 단순히 제목이나 주제만 요약하는 것이 아니라, 대본에 실제로 나온 내용을 300자 내외로 검색 친화적으로 요약해 줘.
+- 예를 들어, 대본에서 "기획서 작성 시 5가지 체크리스트"를 다뤘다면, 그 5가지가 무엇인지 구체적으로 언급해야 해.
+- 대본에서 "실무 생존 스킬 3가지"를 다뤘다면, 그 3가지가 무엇인지 구체적으로 언급해야 해.
+
+지침:
+- **설명**: 위 대본에 실제로 나온 구체적인 내용을 검색 친화적으로 300자 내외로 요약해 줘. 대본의 핵심 내용, 팁, 방법론, 사례 등을 포함해야 해.
 - **타임스탬프**: 인트로~마무리까지 임의 시간 배치.
 - **해시태그**: 관련 키워드 4개 제시.
 - **태그**: 제목·대본 관련 키워드, 오타 가능성 키워드 포함, 최대 7개.`,
