@@ -22,7 +22,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`mx-auto scroll-smooth font-sans antialiased shadow-sm`}>
+      <head>
+        <link
+          rel="stylesheet"
+          as="style"
+          crossOrigin="anonymous"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.css"
+        />
+      </head>
+      <body
+        className={`mx-auto scroll-smooth font-sans antialiased shadow-sm`}
+        style={{
+          fontFamily:
+            '"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif',
+        }}
+      >
         <Providers>{children}</Providers>
         <Toaster />
       </body>
