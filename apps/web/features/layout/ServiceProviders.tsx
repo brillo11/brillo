@@ -10,15 +10,17 @@ export async function ServiceProviders({
   children: React.ReactNode;
 }) {
   // Get user session
-  const session = await requireStudent();
+  // const session = await requireStudent();
 
   // Fetch user points
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { points: true },
-  });
+  // const user = await prisma.user.findUnique({
+  //   where: { id: session.user.id },
+  //   select: { points: true },
+  // });
 
-  const points = user?.points ?? 0;
+  // const points = user?.points ?? 0;
+
+  const points = 0;
 
   return (
     <ServiceClientProviders>
