@@ -323,7 +323,7 @@ export default function HomePage() {
               <Cpu size={16} /> 브랜딩 워크플로우 자동화
             </div>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
-              당신의 퍼스널 브랜딩, AI로 대체되었다.
+              당신의 퍼스널 브랜딩 노동, AI로 대체되었다.
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto text-lg">
               AI가 당신의 퍼스널 브랜딩 워크플로우를 자동화하여,{" "}
