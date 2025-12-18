@@ -107,11 +107,9 @@ export default function BrandingWorkflow() {
   return (
     <div className="max-w-6xl mx-auto h-full flex flex-col p-8">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-white mb-2">
-          AI Content Studio
-        </h1>
+        <h1 className="text-3xl font-bold text-white mb-2">워크플로우</h1>
         <p className="text-gray-400">
-          Transform one idea into a complete content ecosystem.
+          하나의 아이디어를 시작으로, 완벽한 컨텐츠 생태계를 구축해드립니다.
         </p>
       </div>
 
