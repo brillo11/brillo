@@ -337,9 +337,7 @@ export default function HomePage() {
               <div className="p-3 bg-vzx-accent/10 rounded-xl w-fit mb-6 text-vzx-accent">
                 <Globe size={24} />
               </div>
-              <h3 className="text-xl font-bold mb-3">
-                인사이트로 블로그 작성기
-              </h3>
+              <h3 className="text-xl font-bold mb-3">AI 블로그 작성기</h3>
               <p className="text-gray-500 leading-relaxed">
                 AI가 당신의 인사이트를 분석하여 전문성을 반영한 SEO-최적화된
                 블로그를 생성합니다.
