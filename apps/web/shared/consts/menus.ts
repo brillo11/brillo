@@ -1,4 +1,5 @@
 import {
+  Workflow,
   Calendar,
   Home,
   Inbox,
@@ -313,10 +314,10 @@ export const serviceMenus: MenuItem[] = [
     subMenus: [
       {
         id: "퍼스널 브랜딩",
-        title: "퍼스널 브랜딩",
+        title: "브랜딩 워크플로우",
         baseUrl: PATH.SERVICE_PERSONAL_BRANDING,
-        url: PATH.SERVICE_PERSONAL_BRANDING_WIZARD,
-        icon: PenLine,
+        url: PATH.SERVICE_PERSONAL_BRANDING_WORKFLOW,
+        icon: Workflow,
       },
       {
         id: "blog",
