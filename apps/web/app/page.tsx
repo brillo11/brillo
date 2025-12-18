@@ -406,7 +406,7 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-vzx-accent/5 blur-[100px] pointer-events-none" />
           <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-8 relative z-10">
             당신이라는 브랜드를 <br />
-            시간낭비 없이 확장하세요
+            시행착오 없이 키우세요
           </h2>
           <button
             onClick={handleStartService}
@@ -422,14 +422,14 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-12">
           <div className="col-span-2">
             <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 bg-vzx-accent rounded flex items-center justify-center font-bold text-black text-xl">
+              <Image src="/logo.png" alt="VZX" width={48} height={48} />
+              {/* <div className="w-8 h-8 bg-vzx-accent rounded flex items-center justify-center font-bold text-black text-xl">
                 V
               </div>
-              <span className="font-bold text-xl tracking-tighter">VZX</span>
+              <span className="font-bold text-xl tracking-tighter">VZX</span> */}
             </div>
             <p className="text-gray-500 text-sm max-w-xs mb-6">
-              The only AI branding engine that understands the value of your
-              knowledge.
+              당신이 가진 전문성의 가치를 아는 유일한 AI 브랜딩 툴
             </p>
             <div className="flex gap-4">
               <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10" />
@@ -505,7 +505,7 @@ export default function HomePage() {
           </div>
         </div>
         <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/5 text-center text-xs text-gray-600">
-          © 2025 VizionX (VZX) Inc. All rights reserved.
+          © 2026 TALOSWORKS Inc. All rights reserved.
         </div>
       </footer>
 
