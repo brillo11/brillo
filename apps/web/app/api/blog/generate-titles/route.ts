@@ -1,6 +1,6 @@
 import { generateText } from 'ai';
 import { NextRequest, NextResponse } from 'next/server';
-import { EXCELLENT_TITLES, FORBIDDEN_WORDS, FORBIDDEN_PHRASES } from '@/lib/reference-materials';
+// import { EXCELLENT_TITLES, FORBIDDEN_WORDS, FORBIDDEN_PHRASES } from '@/lib/reference-materials';
 
 export async function POST(req: NextRequest) {
     try {
@@ -13,13 +13,10 @@ export async function POST(req: NextRequest) {
 # 필수 준수 사항
 
 ## ⚠️ 의료법 금칙어 (절대 사용 금지)
-${FORBIDDEN_WORDS.map((word, i) => `${i + 1}. ${word}`).join('\n')}
 
 ## ⚠️ 금지 문구 (절대 사용 금지)
-${FORBIDDEN_PHRASES.map((p, i) => `${i + 1}. ${p}`).join('\n')}
 
 # 우수 제목 참고 예시
-${EXCELLENT_TITLES}
 
 ---
 
