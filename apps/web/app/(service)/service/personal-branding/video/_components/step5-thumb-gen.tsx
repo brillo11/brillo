@@ -4,10 +4,9 @@ import { Loader2, Send, Image, Upload, Edit3 } from "lucide-react";
 import { Button } from "@repo/ui/components/button";
 import { Textarea } from "@repo/ui/components/textarea";
 import { Label } from "@repo/ui/components/label";
-import type { CreatorPersona, ChatMessage, Step } from "./types";
+import type { ChatMessage, Step } from "./types";
 
 interface Step5ThumbGenProps {
-  selectedPersona: CreatorPersona | null;
   selectedTitle: string;
   chatMessages: ChatMessage[];
   chatInput: string;
@@ -27,7 +26,6 @@ interface Step5ThumbGenProps {
 }
 
 export function Step5ThumbGen({
-  selectedPersona,
   selectedTitle,
   thumbnailUrls,
   chatMessages,

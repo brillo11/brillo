@@ -78,7 +78,7 @@ export async function generateVideoWithVeo(
     console.log("📤 Veo API 요청 전송 중...");
 
     let operation = (await genAI.models.generateVideos({
-      model: "veo-3.1-generate-preview",
+      model: "veo-3.1-fast-generate-preview",
       prompt: enhancedPrompt,
     })) as any;
 

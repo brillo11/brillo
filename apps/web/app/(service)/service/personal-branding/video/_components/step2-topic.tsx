@@ -1,11 +1,8 @@
 "use client";
 
 import { Loader2, Sparkles } from "lucide-react";
-import type { CreatorPersona } from "./types";
-import { renderIcon } from "./utils";
 
 interface Step2TopicProps {
-  selectedPersona: CreatorPersona | null;
   topic: string;
   onTopicChange: (topic: string) => void;
   onSubmit: () => void;
@@ -13,7 +10,6 @@ interface Step2TopicProps {
 }
 
 export function Step2Topic({
-  selectedPersona,
   topic,
   onTopicChange,
   onSubmit,
@@ -22,12 +18,6 @@ export function Step2Topic({
   return (
     <div className="max-w-2xl mx-auto text-center space-y-8 py-8">
       <div>
-        <div
-          className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold mb-4 ${selectedPersona?.color}`}
-        >
-          {selectedPersona && renderIcon(selectedPersona.iconName, "w-4 h-4")}
-          <span>{selectedPersona?.name} is ready</span>
-        </div>
         <h2 className="text-3xl font-bold text-white mb-2">
           영상 주제를 입력해주세요
         </h2>
