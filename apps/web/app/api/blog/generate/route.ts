@@ -1,14 +1,14 @@
 import { generateText } from 'ai';
 import 'dotenv/config';
 import { NextRequest, NextResponse } from 'next/server';
-import {
-    FORBIDDEN_WORDS,
-    FORBIDDEN_PHRASES,
-    WRITING_RULES,
-    EXCELLENT_TITLES,
-    MEDICAL_LAW_GUIDELINES,
-    CONVERSION_EXAMPLES,
-} from '@/lib/reference-materials';
+// import {
+//     FORBIDDEN_WORDS,
+//     FORBIDDEN_PHRASES,
+//     WRITING_RULES,
+//     EXCELLENT_TITLES,
+//     MEDICAL_LAW_GUIDELINES,
+//     CONVERSION_EXAMPLES,
+// } from '@/lib/reference-materials';
 import { auth } from "@/shared/lib/auth";
 import { uploadToS3, editImageWithAI } from '@/serverActions/blog/ai-photo';
 import { v4 as uuidv4 } from 'uuid';
@@ -261,41 +261,41 @@ export async function POST(req: NextRequest) {
 function constructPrompt(formData: any): string {
     const { writingType, branding, contentPlanning, options, details, photo } = formData;
 
-    return `
-당신은 전문적인 의료 블로그 작성자입니다. 다음 정보와 규칙을 바탕으로 블로그 글을 작성해주세요.
+    // return `
+// 당신은 전문적인 의료 블로그 작성자입니다. 다음 정보와 규칙을 바탕으로 블로그 글을 작성해주세요.
 
-# 필수 준수 사항 (최우선)
+// # 필수 준수 사항 (최우선)
 
-## 1. 의료법 가이드라인 (반드시 준수)
-${MEDICAL_LAW_GUIDELINES}
+// ## 1. 의료법 가이드라인 (반드시 준수)
+// ${MEDICAL_LAW_GUIDELINES}
 
-## 2. ⚠️ 의료법 금칙어 (절대 사용 금지)
+// ## 2. ⚠️ 의료법 금칙어 (절대 사용 금지)
 
-**다음 단어와 유사한 표현을 절대 사용하지 마세요:**
+// **다음 단어와 유사한 표현을 절대 사용하지 마세요:**
 
-${FORBIDDEN_WORDS.map((word, i) => `${i + 1}. ${word}`).join('\n')}
+// ${FORBIDDEN_WORDS.map((word, i) => `${i + 1}. ${word}`).join('\n')}
 
-**⚠️ 위반 시:** 의료법 제56조 위반으로 1년 이하의 징역 또는 1천만원 이하의 벌금
+// **⚠️ 위반 시:** 의료법 제56조 위반으로 1년 이하의 징역 또는 1천만원 이하의 벌금
 
-## 3. ⚠️ 금지 문구 (절대 사용 금지)
+// ## 3. ⚠️ 금지 문구 (절대 사용 금지)
 
-**다음과 같은 표현을 절대 사용하지 마세요:**
+// **다음과 같은 표현을 절대 사용하지 마세요:**
 
-${FORBIDDEN_PHRASES.map((p, i) => `${i + 1}. ${p}`).join('\n')}
+// ${FORBIDDEN_PHRASES.map((p, i) => `${i + 1}. ${p}`).join('\n')}
 
-## 4. 원고 작성 법칙 (15가지)
-${WRITING_RULES}
+// ## 4. 원고 작성 법칙 (15가지)
+// ${WRITING_RULES}
 
-## 5. 우수 제목 참고 예시
-${EXCELLENT_TITLES}
+// ## 5. 우수 제목 참고 예시
+// ${EXCELLENT_TITLES}
 
-${writingType === 'CONVERSION' ? `
-## 6. 전환용 글쓰기 참고
-${CONVERSION_EXAMPLES}
-` : ''}
+// ${writingType === 'CONVERSION' ? `
+// ## 6. 전환용 글쓰기 참고
+// ${CONVERSION_EXAMPLES}
+// ` : ''}
 
----
-
+// ---
+  return `
 # 작성할 글 정보
 
 ## 글쓰기 유형
