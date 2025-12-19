@@ -2,7 +2,7 @@ import { requireStudent } from "@/shared/lib/auth-guards";
 import {
   getTopPrecomputedVideos,
   getTopPrecomputedShorts,
-} from "@/serverActions/youtube/youtube-precomputed.actions";
+} from "@/serverActions/youtube/youtube-library.actions";
 import { LibraryClient } from "./_components/library-client";
 
 // SSR + Dynamic - 항상 최신 데이터, 캐시 없음
@@ -10,11 +10,11 @@ export const dynamic = "force-dynamic";
 
 export default async function OutlierLibraryPage() {
   // 🛡️ 서버에서 권한 검증 (미들웨어 통과 후 2차 검증)
-  await requireStudent();
+//   await requireStudent();
 
   const [precomputed, shorts] = await Promise.all([
-    getTopPrecomputedVideos(200),
-    getTopPrecomputedShorts(200),
+    getTopPrecomputedVideos(200, "KR", "outlierView", 1.4, 50),
+    getTopPrecomputedShorts(200, "KR", "outlierView", 1.4, 50),
   ]);
 
   return (

@@ -13,7 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import type { VideoForModal } from "@/shared/types/video";
-import type { OutlierType } from "@/serverActions/youtube/youtube-precomputed.actions";
+import type { OutlierType } from "@/serverActions/youtube/youtube-library.actions";
 
 interface PopularVideoModalProps {
   video: VideoForModal | null;
