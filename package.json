@@ -20,12 +20,14 @@
   },
   "dependencies": {
     "@prisma/client": "^7.1.0",
-    "dotenv": "^17.2.3"
+    "ai": "^5.0.115",
+    "dotenv": "^17.2.3",
+    "tsx": "4.19.4"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^22",
+    "@types/node": "^22.18.8",
     "crypto": "latest",
     "prettier": "^3.6.2",
     "turbo": "^2.5.8",
