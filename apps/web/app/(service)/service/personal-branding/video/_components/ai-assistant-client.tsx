@@ -196,13 +196,7 @@ export function AIAssistantClient() {
     const selectedTitleSet = sessionData.titleResponses.sets[index];
     setSelectedTitle(selectedTitleSet.videoTitle);
     setSelectedTitleIndex(index);
-
-    const updates = {
-      selectedTitle: selectedTitleSet.videoTitle,
-      selectedTitleIndex: index,
-      step: "THUMBNAIL_GUIDE",
-    };
-    await saveSessionData(updates);
+    // 다음 스텝으로 넘어갈 때 저장하므로 여기서는 로컬 state만 업데이트
   };
 
   const handleTitleNext = async () => {
@@ -215,7 +209,12 @@ export function AIAssistantClient() {
         currentSessionId,
         selectedTitleIndex
       );
+      // 다음 스텝으로 넘어갈 때 선택된 제목 정보와 함께 저장
       const updates = {
+        selectedTitle:
+          selectedTitle ||
+          sessionData.titleResponses?.sets[selectedTitleIndex]?.videoTitle,
+        selectedTitleIndex: selectedTitleIndex,
         thumbnailGuideResponses: response,
         step: "THUMBNAIL",
       };
@@ -232,7 +231,7 @@ export function AIAssistantClient() {
 
   const handleGuideSelect = async (index: number) => {
     setSelectedGuide(index);
-    await saveSessionData({ selectedThumbnailGuideIndex: index });
+    // 다음 스텝으로 넘어갈 때 저장하므로 여기서는 로컬 state만 업데이트
   };
 
   const handleGuideNext = async () => {
@@ -264,7 +263,12 @@ export function AIAssistantClient() {
         referenceImages: referenceThumbnails,
       });
 
-      const updates = { thumbnailUrls: s3Url, step: "SCRIPT" };
+      // 다음 스텝으로 넘어갈 때 선택된 가이드 정보와 함께 저장
+      const updates = {
+        selectedThumbnailGuideIndex: selectedGuide,
+        thumbnailUrls: s3Url,
+        step: "SCRIPT",
+      };
       await saveSessionData(updates);
       await handleStepChange(5);
       toast.success("썸네일이 생성되었습니다.");
@@ -342,6 +346,7 @@ export function AIAssistantClient() {
         mimeType
       );
 
+      // 썸네일 수정은 즉시 반영되어야 하므로 저장
       await saveSessionData({ thumbnailUrls: s3Url });
       toast.success("썸네일이 수정되었습니다.");
     } catch (error) {
