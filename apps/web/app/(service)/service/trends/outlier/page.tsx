@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export default async function OutlierLibraryPage() {
   // 🛡️ 서버에서 권한 검증 (미들웨어 통과 후 2차 검증)
-  await requireStudent();
+//   await requireStudent();
 
   const [precomputed, shorts] = await Promise.all([
     getTopPrecomputedVideos(200, "KR", "outlierView", 1.4, 50),
