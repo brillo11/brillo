@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
             ContentType: contentType,
         });
 
+        // @ts-expect-error - AWS SDK 버전 간 @smithy/types 호환성 문제
         const presignedUrl = await getSignedUrl(s3Client, command, {
             expiresIn: 900, // 15분
         });
