@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
             defaultInstruction
         );
 
-        if (!editedFile || !editedFile.base64Data) {
+        if (!editedFile || !('base64Data' in editedFile) || !editedFile.base64Data) {
             return NextResponse.json(
                 { success: false, error: '이미지 편집에 실패했습니다.' },
                 { status: 500 }
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
         console.log('📤 Uploading edited image to S3...');
 
         // 편집된 이미지를 S3 /blog/output/photos 폴더에 업로드
-        const editedBuffer = Buffer.from(editedFile.base64Data, 'base64');
+        const editedBuffer = Buffer.from(editedFile.base64Data as string, 'base64');
         const timestamp = Date.now();
         const uuid = uuidv4();
         const editedFilename = `edited_${timestamp}_${uuid}.jpg`;
