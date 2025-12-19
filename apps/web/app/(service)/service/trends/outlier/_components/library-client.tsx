@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { Search, Filter, MonitorPlay, Film, ArrowRight } from "lucide-react";
 import { RecommendedVideoCard } from "@/features/video/RecommendedVideoCard";
 import { ShortsVideoCard } from "./ShortsVideoCard";
-import type { PrecomputedVideo } from "@/serverActions/youtube/youtube-precomputed.actions";
+import type { PrecomputedVideo } from "@/serverActions/youtube/youtube-library.actions";
 
 interface LibraryClientProps {
   videos: PrecomputedVideo[];

@@ -1,11 +1,6 @@
 "use server";
 
 import { prisma } from "@repo/database";
-import OpenAI from "openai";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 export type OutlierType = "outlierVph" | "outlierView" | "outlierSubscriber";
 
@@ -33,27 +28,30 @@ export interface PrecomputedVideo {
 export async function getTopPrecomputedVideos(
   limit = 500,
   regionCode?: string,
-  outlierType: OutlierType = "outlierView"
+  outlierType: OutlierType = "outlierView",
+  minOutlierValue: number = 1.4,
+  minViewsPerHour: number = 10
 ) {
   const videos = await prisma.youtubeVideo.findMany({
     where: {
       ...(regionCode ? { regionCode } : {}),
-    },
+      // outlierType에 해당하는 값이 minOutlierValue 이상인 경우만 필터링
+      [outlierType]: { gte: minOutlierValue },
+      // viewsPerHour가 minViewsPerHour 이상인 경우만 필터링 (DB 레벨에서 처리)
+      viewsPerHour: { gte: minViewsPerHour },
+    } as any,
     orderBy: [
       { [outlierType]: "desc" },
       { viewsPerHour: "desc" },
       { viewCount: "desc" },
     ],
-    take: Math.min(Math.max(limit, 1), 500),
+    take: Math.max(limit, 1),
     include: {
       channel: true,
     },
   });
 
-  const filteredVideos = videos.filter(
-    (v) => v.viewsPerHour && v.viewsPerHour >= 10
-  );
-  return filteredVideos.map((v) => ({
+  return videos.map((v) => ({
     id: v.id,
     title: v.title,
     description: v.description,
@@ -76,20 +74,24 @@ export async function getTopPrecomputedVideos(
 }
 
 export async function getTopPrecomputedShorts(
-  limit = 200,
+  limit = 500,
   regionCode?: string,
-  outlierType: OutlierType = "outlierView"
+  outlierType: OutlierType = "outlierView",
+  minOutlierValue: number = 1.4,
+  minViewsPerHour: number = 10
 ) {
   const shorts = await prisma.youtubeShorts.findMany({
     where: {
       ...(regionCode ? { regionCode } : {}),
+      [outlierType]: { gte: minOutlierValue },
+      viewsPerHour: { gte: minViewsPerHour },
     },
     orderBy: [
       { [outlierType]: "desc" },
       { viewsPerHour: "desc" },
       { viewCount: "desc" },
     ],
-    take: Math.min(Math.max(limit, 1), 200),
+    take: Math.max(limit, 1),
     include: {
       channel: true,
     },

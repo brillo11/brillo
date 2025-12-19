@@ -8,7 +8,7 @@ import { PopularVideoModal } from "./PopularVideoModal";
 import type {
   PrecomputedVideo,
   OutlierType,
-} from "@/serverActions/youtube/youtube-precomputed.actions";
+} from "@/serverActions/youtube/youtube-library.actions";
 import type { VideoForModal } from "@/shared/types/video";
 import { getCategoryName } from "@/shared/lib/utils/youtubeCategory";
 import { formatCount } from "@/shared/lib/utils/numberFormat";
