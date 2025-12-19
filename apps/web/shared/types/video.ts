@@ -6,6 +6,7 @@ export interface VideoForModal {
   title: string;
   description: string;
   channelTitle: string;
+  channelSubscriberCount: number | null;
   publishedAt: string;
   thumbnailUrl: string;
   viewCount: number;

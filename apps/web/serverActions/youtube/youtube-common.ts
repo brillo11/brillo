@@ -53,8 +53,16 @@ export function durationToSeconds(duration: string): number {
  * YouTube Shorts 여부 판단
  * 1. duration이 60초 이하인 경우
  * 2. 제목에 "#shorts" 또는 "#Shorts"가 포함된 경우
+ * 3. 화면 비율이 9:16 (세로형)인 경우
+ * @param duration - ISO 8601 duration 형식 (예: "PT1M30S")
+ * @param title - 비디오 제목
+ * @param dimension - 비디오 해상도 (선택적, 예: "1080x1920" 또는 "1920x1080")
  */
-export function isShortsVideo(duration: string, title: string = ""): boolean {
+export function isShortsVideo(
+  duration: string,
+  title: string = "",
+  dimension?: string
+): boolean {
   // 제목에 #shorts 포함 여부 확인
   const hasShortsTag = /#shorts/i.test(title);
 
@@ -62,7 +70,24 @@ export function isShortsVideo(duration: string, title: string = ""): boolean {
   const durationSeconds = parseDurationToSeconds(duration);
   const isShortDuration = durationSeconds > 0 && durationSeconds <= 60;
 
-  return hasShortsTag || isShortDuration;
+  // 화면 비율이 9:16 (세로형)인지 확인
+  let isVerticalAspectRatio = false;
+  if (dimension) {
+    const match = dimension.match(/(\d+)x(\d+)/);
+    if (match && match[1] && match[2]) {
+      const width = parseInt(match[1], 10);
+      const height = parseInt(match[2], 10);
+      if (width > 0 && height > 0) {
+        // 세로형 비율 확인 (높이가 너비보다 크거나, 비율이 약 9:16)
+        // 9:16 비율은 약 0.5625, 허용 오차를 두고 0.5 ~ 0.6 사이로 판단
+        const aspectRatio = width / height;
+        isVerticalAspectRatio =
+          height > width && aspectRatio >= 0.5 && aspectRatio <= 0.6;
+      }
+    }
+  }
+
+  return hasShortsTag || isShortDuration || isVerticalAspectRatio;
 }
 
 /**
