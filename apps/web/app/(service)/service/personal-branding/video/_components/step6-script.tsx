@@ -58,12 +58,12 @@ export function Step6Script({
             </>
           ) : (
             <>
-              <p className="text-gray-500 mb-4">대본을 생성해주세요.</p>
+              <p className="text-gray-400 mb-4">대본을 생성해주세요.</p>
               {onGenerate && (
                 <Button
                   onClick={onGenerate}
                   disabled={isGenerating}
-                  className="px-10 py-4 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg disabled:opacity-70 transition-all flex items-center gap-2 mx-auto"
+                  className="px-10 py-4 bg-[#33DB98] text-black rounded-xl font-bold text-lg hover:shadow-lg disabled:opacity-70 transition-all flex items-center gap-2 mx-auto hover:bg-[#33DB98]/90"
                 >
                   대본 생성
                 </Button>
@@ -80,8 +80,8 @@ export function Step6Script({
       <div className="grid md:grid-cols-3 gap-6">
         {/* Final Info Card */}
         <div className="space-y-6">
-          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-            <h3 className="text-sm font-bold text-gray-500 uppercase mb-3">
+          <div className="bg-white/5 p-4 rounded-xl border border-white/10 shadow-sm">
+            <h3 className="text-sm font-bold text-gray-400 uppercase mb-3">
               Final Thumbnail
             </h3>
             <img
@@ -94,43 +94,43 @@ export function Step6Script({
             </p>
           </div>
 
-          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-            <h3 className="text-sm font-bold text-gray-500 uppercase mb-3">
+          <div className="bg-white/5 p-4 rounded-xl border border-white/10 shadow-sm">
+            <h3 className="text-sm font-bold text-gray-400 uppercase mb-3">
               Metadata
             </h3>
             <div className="space-y-3">
               <div>
                 <span className="text-xs text-gray-400 block">Title</span>
-                <p className="font-medium text-sm">{selectedTitle}</p>
+                <p className="font-medium text-sm text-white">{selectedTitle}</p>
               </div>
               <div>
                 <span className="text-xs text-gray-400 block">Topic</span>
-                <p className="font-medium text-sm">{topic}</p>
+                <p className="font-medium text-sm text-white">{topic}</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Script Viewer */}
-        <div className="md:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col h-[600px]">
-          <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50 rounded-t-xl">
+        <div className="md:col-span-2 bg-vzx-card rounded-xl border border-white/10 shadow-sm flex flex-col h-[600px]">
+          <div className="p-4 border-b border-white/10 flex items-center justify-between bg-white/5 rounded-t-xl">
             <div className="flex items-center gap-2">
-              <FileText size={18} className="text-gray-500" />
-              <span className="font-bold text-gray-700">Video Script</span>
+              <FileText size={18} className="text-gray-400" />
+              <span className="font-bold text-white">Video Script</span>
             </div>
             <button
               onClick={handleCopy}
-              className="text-gray-500 hover:text-gray-900 p-1"
+              className="text-gray-400 hover:text-white p-1"
             >
               <Copy size={18} />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-6 text-sm leading-loose text-gray-700 space-y-6">
+          <div className="flex-1 overflow-y-auto p-6 text-sm leading-loose text-white space-y-6 bg-black/20">
             {scriptResponses ? (
               <>
                 {/* Intro */}
                 <div className="space-y-2">
-                  <h3 className="text-lg font-bold text-red-600 flex items-center gap-2">
+                  <h3 className="text-lg font-bold text-[#33DB98] flex items-center gap-2">
                     🎬 인트로 (30초)
                   </h3>
                   <p className="whitespace-pre-wrap">{scriptResponses.intro}</p>
@@ -176,7 +176,7 @@ export function Step6Script({
           <button
             onClick={() => onStepChange(7)}
             disabled={isLoading}
-            className="px-8 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="px-8 py-3 bg-[#33DB98] text-black rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed hover:bg-[#33DB98]/90"
           >
             {isLoading ? (
               <>

@@ -54,7 +54,7 @@ export function Step7Metadata({
                 <Button
                   onClick={onGenerate}
                   disabled={isGenerating}
-                  className="px-10 py-4 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg disabled:opacity-70 transition-all flex items-center gap-2 mx-auto"
+                  className="px-10 py-4 bg-[#33DB98] text-black rounded-xl font-bold text-lg hover:shadow-lg disabled:opacity-70 transition-all flex items-center gap-2 mx-auto hover:bg-[#33DB98]/90"
                 >
                   메타데이터 생성
                 </Button>
@@ -68,30 +68,30 @@ export function Step7Metadata({
 
   return (
     <div className="space-y-6 animate-fade-in max-w-5xl mx-auto">
-      <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-        <Hash className="text-orange-600" /> Metadata Optimization
+      <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+        <Hash className="text-[#33DB98]" /> Metadata Optimization
       </h2>
 
       <div className="grid gap-6">
         {/* Description */}
         {metadataResponses.description && (
-          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-gray-300 transition-colors">
+          <div className="bg-white/5 p-6 rounded-2xl border border-white/10 shadow-sm hover:border-[#33DB98]/50 transition-colors">
             <div className="flex justify-between mb-4 items-center">
-              <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">
+              <span className="text-sm font-bold text-gray-400 uppercase tracking-wider">
                 Description
               </span>
               <button
                 onClick={() =>
                   handleCopy(metadataResponses.description || "", "Description")
                 }
-                className="text-slate-400 hover:text-orange-600 transition-colors"
+                className="text-gray-400 hover:text-[#33DB98] transition-colors"
               >
                 <Copy size={18} />
               </button>
             </div>
             <textarea
               readOnly
-              className="w-full bg-gray-50 rounded-xl border border-gray-200 p-4 text-sm h-32 text-slate-800 focus:outline-none focus:ring-1 focus:ring-gray-300 resize-none"
+              className="w-full bg-black/20 rounded-xl border border-white/10 p-4 text-sm h-32 text-gray-300 focus:outline-none focus:ring-1 focus:ring-[#33DB98] resize-none"
               value={metadataResponses.description}
             />
           </div>
@@ -101,9 +101,9 @@ export function Step7Metadata({
           {/* Timestamps */}
           {metadataResponses.timestamps &&
             metadataResponses.timestamps.length > 0 && (
-              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-gray-300 transition-colors">
+              <div className="bg-white/5 p-6 rounded-2xl border border-white/10 shadow-sm hover:border-[#33DB98]/50 transition-colors">
                 <div className="flex justify-between mb-4 items-center">
-                  <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">
+                  <span className="text-sm font-bold text-gray-400 uppercase tracking-wider">
                     Timestamps
                   </span>
                   <button
@@ -113,16 +113,16 @@ export function Step7Metadata({
                         .join("\n");
                       handleCopy(timestampsText || "", "Timestamps");
                     }}
-                    className="text-slate-400 hover:text-orange-600 transition-colors"
+                    className="text-gray-400 hover:text-[#33DB98] transition-colors"
                   >
                     <Copy size={18} />
                   </button>
                 </div>
-                <div className="space-y-2 text-sm text-slate-600 font-mono bg-gray-50 p-4 rounded-xl border border-gray-200 h-48 overflow-y-auto">
+                <div className="space-y-2 text-sm text-gray-400 font-mono bg-black/20 p-4 rounded-xl border border-white/10 h-48 overflow-y-auto">
                   {metadataResponses.timestamps.map((ts, i) => (
                     <div
                       key={i}
-                      className="hover:text-slate-900 transition-colors"
+                      className="hover:text-white transition-colors"
                     >
                       {ts.time} {ts.title}
                     </div>
@@ -135,9 +135,9 @@ export function Step7Metadata({
             {/* Hashtags */}
             {metadataResponses.hashtags &&
               metadataResponses.hashtags.length > 0 && (
-                <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-gray-300 transition-colors">
+                <div className="bg-white/5 p-6 rounded-2xl border border-white/10 shadow-sm hover:border-[#33DB98]/50 transition-colors">
                   <div className="flex justify-between mb-4 items-center">
-                    <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">
+                    <span className="text-sm font-bold text-gray-400 uppercase tracking-wider">
                       Hashtags
                     </span>
                     <button
@@ -146,7 +146,7 @@ export function Step7Metadata({
                           metadataResponses.hashtags?.join(" ");
                         handleCopy(hashtagsText || "", "Hashtags");
                       }}
-                      className="text-slate-400 hover:text-orange-600 transition-colors"
+                      className="text-gray-400 hover:text-[#33DB98] transition-colors"
                     >
                       <Copy size={18} />
                     </button>
@@ -155,7 +155,7 @@ export function Step7Metadata({
                     {metadataResponses.hashtags.map((h) => (
                       <span
                         key={h}
-                        className="text-orange-600 bg-orange-50 px-3 py-1.5 rounded-lg text-sm border border-orange-100"
+                        className="text-[#33DB98] bg-[#33DB98]/10 px-3 py-1.5 rounded-lg text-sm border border-[#33DB98]/20"
                       >
                         {h}
                       </span>
@@ -166,9 +166,9 @@ export function Step7Metadata({
 
             {/* Tags */}
             {metadataResponses.tags && metadataResponses.tags.length > 0 && (
-              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-gray-300 transition-colors">
+              <div className="bg-white/5 p-6 rounded-2xl border border-white/10 shadow-sm hover:border-[#33DB98]/50 transition-colors">
                 <div className="flex justify-between mb-4 items-center">
-                  <span className="text-sm font-bold text-slate-400 uppercase tracking-wider">
+                  <span className="text-sm font-bold text-gray-400 uppercase tracking-wider">
                     Tags
                   </span>
                   <button
@@ -176,7 +176,7 @@ export function Step7Metadata({
                       const tagsText = metadataResponses.tags?.join(",");
                       handleCopy(tagsText || "", "Tags");
                     }}
-                    className="text-slate-400 hover:text-orange-600 transition-colors"
+                    className="text-gray-400 hover:text-[#33DB98] transition-colors"
                   >
                     <Copy size={18} />
                   </button>
@@ -185,7 +185,7 @@ export function Step7Metadata({
                   {metadataResponses.tags.map((t) => (
                     <span
                       key={t}
-                      className="text-slate-600 bg-gray-100 px-3 py-1.5 rounded-lg text-xs border border-gray-200"
+                      className="text-gray-300 bg-white/10 px-3 py-1.5 rounded-lg text-xs border border-white/5"
                     >
                       {t}
                     </span>
@@ -202,7 +202,7 @@ export function Step7Metadata({
           <button
             onClick={() => onStepChange(8)}
             disabled={isLoading}
-            className="px-8 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="px-8 py-3 bg-[#33DB98] text-black rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed hover:bg-[#33DB98]/90"
           >
             {isLoading ? (
               <>

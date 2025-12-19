@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Check } from "lucide-react";
+import { Check, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
-import type { CreatorPersona, Step, ChatMessage } from "./types";
-import { Step1Persona } from "./step1-persona";
+import type { Step, ChatMessage } from "./types";
+import { Step1Dashboard } from "./step1-dashboard";
 import { Step2Topic } from "./step2-topic";
 import { Step3Titles } from "./step3-titles";
 import { Step4ThumbGuide } from "./step4-thumb-guide";
@@ -34,9 +34,8 @@ export function AIAssistantClient() {
 
   const [sessionData, setSessionData] = useState<SessionData>({});
   const [currentStep, setCurrentStep] = useState<Step>(1);
-  const [selectedPersona, setSelectedPersona] = useState<CreatorPersona | null>(
-    null
-  );
+  // Persona logic removed, but keeping types if needed deeply nested, otherwise remove.
+  // const [selectedPersona, setSelectedPersona] = useState<CreatorPersona | null>(null);
   const [topic, setTopic] = useState("");
   const [selectedTitle, setSelectedTitle] = useState("");
   const [selectedTitleIndex, setSelectedTitleIndex] = useState<number | null>(
@@ -196,13 +195,7 @@ export function AIAssistantClient() {
     const selectedTitleSet = sessionData.titleResponses.sets[index];
     setSelectedTitle(selectedTitleSet.videoTitle);
     setSelectedTitleIndex(index);
-
-    const updates = {
-      selectedTitle: selectedTitleSet.videoTitle,
-      selectedTitleIndex: index,
-      step: "THUMBNAIL_GUIDE",
-    };
-    await saveSessionData(updates);
+    // 다음 스텝으로 넘어갈 때 저장하므로 여기서는 로컬 state만 업데이트
   };
 
   const handleTitleNext = async () => {
@@ -215,7 +208,12 @@ export function AIAssistantClient() {
         currentSessionId,
         selectedTitleIndex
       );
+      // 다음 스텝으로 넘어갈 때 선택된 제목 정보와 함께 저장
       const updates = {
+        selectedTitle:
+          selectedTitle ||
+          sessionData.titleResponses?.sets[selectedTitleIndex]?.videoTitle,
+        selectedTitleIndex: selectedTitleIndex,
         thumbnailGuideResponses: response,
         step: "THUMBNAIL",
       };
@@ -232,7 +230,7 @@ export function AIAssistantClient() {
 
   const handleGuideSelect = async (index: number) => {
     setSelectedGuide(index);
-    await saveSessionData({ selectedThumbnailGuideIndex: index });
+    // 다음 스텝으로 넘어갈 때 저장하므로 여기서는 로컬 state만 업데이트
   };
 
   const handleGuideNext = async () => {
@@ -264,7 +262,12 @@ export function AIAssistantClient() {
         referenceImages: referenceThumbnails,
       });
 
-      const updates = { thumbnailUrls: s3Url, step: "SCRIPT" };
+      // 다음 스텝으로 넘어갈 때 선택된 가이드 정보와 함께 저장
+      const updates = {
+        selectedThumbnailGuideIndex: selectedGuide,
+        thumbnailUrls: s3Url,
+        step: "SCRIPT",
+      };
       await saveSessionData(updates);
       await handleStepChange(5);
       toast.success("썸네일이 생성되었습니다.");
@@ -342,6 +345,7 @@ export function AIAssistantClient() {
         mimeType
       );
 
+      // 썸네일 수정은 즉시 반영되어야 하므로 저장
       await saveSessionData({ thumbnailUrls: s3Url });
       toast.success("썸네일이 수정되었습니다.");
     } catch (error) {
@@ -505,7 +509,6 @@ export function AIAssistantClient() {
 
   const ProgressBar = () => {
     const steps = [
-      "Persona",
       "Topic",
       "Title",
       "Style",
@@ -515,7 +518,9 @@ export function AIAssistantClient() {
       "Final",
     ];
 
-    const currentIdx = currentStep - 1;
+    // currentStep 1 is Dashboard (Hidden progress)
+    // currentStep 2 is Topic (Visual Step 1, Index 0)
+    const currentIdx = currentStep - 2;
 
     const progress = (currentIdx / (steps.length - 1)) * 100;
 
@@ -525,10 +530,10 @@ export function AIAssistantClient() {
           <span>Start Workflow</span>
           <span>Final Asset</span>
         </div>
-        <div className="h-3 bg-gray-200 rounded-full overflow-hidden relative border border-gray-300 shadow-inner">
+        <div className="h-3 bg-white/10 rounded-full overflow-hidden relative border border-white/5 shadow-inner">
           <div
-            className="h-full bg-gradient-to-r from-red-600 to-orange-500 transition-all duration-700 ease-out shadow-sm"
-            style={{ width: `${progress}%` }}
+            className="h-full bg-[#33DB98] transition-all duration-700 ease-out shadow-sm shadow-[#33DB98]/20"
+            style={{ width: `${Math.max(0, progress)}%` }}
           />
         </div>
       </div>
@@ -537,70 +542,87 @@ export function AIAssistantClient() {
 
   return (
     <div className="max-w-6xl mx-auto min-h-screen">
-      {/* Progress Header */}
-      <div className="mb-8">
+      <div className="mb-8 relative">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Ai 어시스턴트
-          </h1>
-          <p className="text-gray-500">
-            AI 파트너와 함께 나만의 콘텐츠를 만들어보세요. 페르소나 선택부터
-            제목, 썸네일, 스크립트까지 단계별로 안내해드립니다.
+          <div className="flex items-center gap-2 mb-2">
+            {currentStep > 1 && (
+              <>
+                <button
+                  onClick={() => handleStepChange(1)}
+                  className="absolute -left-12 top-1 p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all hidden xl:flex"
+                  title="Go to Home"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+                <button
+                  onClick={() => handleStepChange(1)}
+                  className="xl:hidden p-1 -ml-1 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+              </>
+            )}
+            <h1 className="text-3xl font-bold text-white">AI 어시스턴트</h1>
+          </div>
+          <p className="text-gray-400">
+            AI 파트너와 함께 나만의 콘텐츠를 만들어보세요. 제목, 썸네일,
+            스크립트까지 단계별로 안내해드립니다.
           </p>
         </div>
-        <ProgressBar />
-        <div className="flex items-center justify-between relative">
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 -z-10 rounded-full"></div>
-          <div
-            className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-red-600 -z-10 rounded-full transition-all duration-500"
-            style={{ width: `${((currentStep - 1) / 7) * 100}%` }}
-          ></div>
 
-          {[
-            { step: 1, label: "Persona" },
-            { step: 2, label: "Topic" },
-            { step: 3, label: "Title" },
-            { step: 4, label: "Style" },
-            { step: 5, label: "Design" },
-            { step: 6, label: "Script" },
-            { step: 7, label: "Metadata" },
-            { step: 8, label: "Shorts" },
-          ].map((s) => (
-            <div
-              key={s.step}
-              className="flex flex-col items-center gap-2 bg-gray-50 px-2 rounded-lg z-10"
-            >
+        {currentStep > 1 && (
+          <>
+            <ProgressBar />
+            <div className="flex items-center justify-between relative">
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-white/10 -z-10 rounded-full"></div>
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-                  currentStep >= s.step
-                    ? "bg-red-600 text-white scale-110 shadow-lg shadow-red-200"
-                    : "bg-white border-2 border-gray-200 text-gray-400"
-                }`}
-              >
-                {currentStep > s.step ? <Check size={16} /> : s.step}
-              </div>
-              <span
-                className={`text-xs font-medium ${currentStep >= s.step ? "text-gray-900" : "text-gray-400"}`}
-              >
-                {s.label}
-              </span>
+                className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#33DB98] -z-10 rounded-full transition-all duration-500"
+                style={{
+                  width: `${((currentStep - 2) / 6) * 100}%`,
+                }}
+              ></div>
+
+              {[
+                { step: 2, label: "Topic" },
+                { step: 3, label: "Title" },
+                { step: 4, label: "Style" },
+                { step: 5, label: "Design" },
+                { step: 6, label: "Script" },
+                { step: 7, label: "Metadata" },
+                { step: 8, label: "Shorts" },
+              ].map((s) => (
+                <div
+                  key={s.step}
+                  className="flex flex-col items-center gap-2 bg-vzx-bg px-2 rounded-lg z-10"
+                >
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
+                      currentStep >= s.step
+                        ? "bg-[#33DB98] text-black scale-110 shadow-lg shadow-[#33DB98]/20"
+                        : "bg-vzx-card border-2 border-white/10 text-gray-600"
+                    }`}
+                  >
+                    {currentStep > s.step ? <Check size={16} /> : s.step - 1}
+                  </div>
+                  <span
+                    className={`text-xs font-medium ${currentStep >= s.step ? "text-[#33DB98]" : "text-gray-600"}`}
+                  >
+                    {s.label}
+                  </span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
 
       {/* Main Content Area */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-10 min-h-[500px] animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm p-6 md:p-10 min-h-[500px] animate-in fade-in slide-in-from-bottom-4 duration-500">
         {currentStep === 1 && (
-          <Step1Persona
-            selectedPersona={selectedPersona}
-            onSelectPersona={setSelectedPersona}
-            onStepChange={handleStepChange}
-          />
+          <Step1Dashboard onStepChange={handleStepChange} />
         )}
         {currentStep === 2 && (
           <Step2Topic
-            selectedPersona={selectedPersona}
             topic={topic}
             onTopicChange={setTopic}
             onSubmit={handleTopicSubmit}
@@ -633,7 +655,6 @@ export function AIAssistantClient() {
         )}
         {currentStep === 5 && sessionData.thumbnailUrls && (
           <Step5ThumbGen
-            selectedPersona={selectedPersona}
             selectedTitle={selectedTitle}
             chatMessages={chatMessages}
             chatInput={chatInput}

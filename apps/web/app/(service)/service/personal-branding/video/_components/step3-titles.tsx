@@ -38,12 +38,12 @@ export function Step3Titles({
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">
+        <h2 className="text-2xl font-bold text-white">
           Select a Winning Title
         </h2>
-        <p className="text-gray-500">
+        <p className="text-gray-400">
           Based on topic:{" "}
-          <span className="font-semibold text-gray-900">"{topic}"</span>
+          <span className="font-semibold text-white">"{topic}"</span>
         </p>
       </div>
 
@@ -56,8 +56,8 @@ export function Step3Titles({
               onClick={() => !isLoading && onSelectTitle(idx)}
               className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex items-start gap-4 group ${
                 isSelected
-                  ? "border-red-600 bg-red-50"
-                  : "border-gray-100 bg-white hover:border-gray-300"
+                  ? "border-[#33DB98] bg-[#33DB98]/10"
+                  : "border-white/10 bg-white/5 hover:border-[#33DB98]/50"
               } ${
                 isLoading ? "opacity-50 cursor-not-allowed pointer-events-none" : ""
               }`}
@@ -65,8 +65,8 @@ export function Step3Titles({
               <div
                 className={`w-8 h-8 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
                   isSelected
-                    ? "border-orange-500 bg-orange-500 text-white"
-                    : "border-gray-300 text-transparent"
+                    ? "border-[#33DB98] bg-[#33DB98] text-black"
+                    : "border-white/20 text-transparent"
                 }`}
               >
                 <Check size={16} strokeWidth={4} />
@@ -74,7 +74,7 @@ export function Step3Titles({
               <div className="flex-1">
                 <h4
                   className={`font-bold text-lg ${
-                    isSelected ? "text-slate-900" : "text-slate-700"
+                    isSelected ? "text-white" : "text-gray-300"
                   }`}
                 >
                   <MarkdownRenderer content={set.videoTitle} />
@@ -86,8 +86,8 @@ export function Step3Titles({
                   <span
                     className={`text-sm font-medium px-2 py-0.5 rounded ${
                       isSelected
-                        ? "bg-orange-100 text-orange-700"
-                        : "bg-gray-100 text-slate-600"
+                        ? "bg-[#33DB98]/20 text-[#33DB98]"
+                        : "bg-white/10 text-gray-400"
                     }`}
                   >
                     "{set.thumbnailTitle || set.thumbnailText}"
@@ -104,7 +104,7 @@ export function Step3Titles({
           <button
             onClick={() => onStepChange(4)}
             disabled={isLoading}
-            className="px-8 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="px-8 py-3 bg-[#33DB98] text-black rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <>
