@@ -12,6 +12,7 @@ export const PATH = {
   SERVICE_PERSONAL_BRANDING_WORKFLOW: "/service/personal-branding/workflow",
   SERVICE_PERSONAL_BRANDING_WIZARD: "/service/personal-branding/wizard",
   SERVICE_PERSONAL_BRANDING_BLOG: "/service/personal-branding/blog",
+  SERVICE_PERSONAL_BRANDING_INSTAGRAM: "/service/personal-branding/instagram",
   SERVICE_PERSONAL_BRANDING_THREADS: "/service/personal-branding/threads",
   SERVICE_PERSONAL_BRANDING_VIDEO: "/service/personal-branding/video",
 
