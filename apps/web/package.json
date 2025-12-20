@@ -52,6 +52,7 @@
   },
   "devDependencies": {
     "@repo/database": "workspace:*",
+    "@repo/longform-database": "workspace:*",
     "@repo/eslint-config": "workspace:^",
     "@repo/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4.1.14",
