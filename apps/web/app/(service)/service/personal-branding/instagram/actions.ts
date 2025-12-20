@@ -11,9 +11,9 @@ export async function generateInstagramImage(
   aspectRatio: InstagramAspectRatio,
 ) {
   try {
-    const apiKey = process.env.VERCEL_AI_GATEWAY_API_KEY;
+    const apiKey = process.env.AI_GATEWAY_API_KEY;
     if (!apiKey) {
-      throw new Error("VERCEL_AI_GATEWAY_API_KEY is not set");
+      throw new Error("AI_GATEWAY_API_KEY is not set");
     }
 
     const client = new GoogleGenAI({
