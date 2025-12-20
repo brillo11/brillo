@@ -1,45 +1,47 @@
-'use client';
+"use client";
 
-import React, { useEffect } from 'react';
-import { useBlogForm } from './BlogFormContext';
+import React, { useEffect } from "react";
+import { useBlogForm } from "./BlogFormContext";
 
 const WritingTypeSelector: React.FC = () => {
   const { formData, updateFormData } = useBlogForm();
   const selectedType = formData.writingType;
 
-  const setSelectedType = (type: 'CONVERSION' | 'INFORMATIONAL') => {
-    updateFormData('writingType', type);
+  const setSelectedType = (type: "CONVERSION" | "INFORMATIONAL") => {
+    updateFormData("writingType", type);
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-      <div className="flex items-center gap-4 mb-2">
-        <span className="font-bold text-slate-900">글쓰기 유형</span>
+    <div className="bg-vzx-card p-6 rounded-2xl border border-white/5 shadow-sm">
+      <div className="flex items-center gap-4 mb-3">
+        <span className="font-bold text-white text-lg">글쓰기 유형</span>
       </div>
-      <div className="flex bg-slate-100 p-1 rounded-lg mb-3 w-fit">
-        <button 
-          onClick={() => setSelectedType('CONVERSION')}
-          className={`px-4 py-1.5 rounded-md text-sm transition-all duration-200 ${
-            selectedType === 'CONVERSION' 
-              ? 'bg-white text-blue-500 font-bold shadow-sm border border-slate-200/50' 
-              : 'text-slate-500 font-medium hover:text-slate-700'
+      <div className="flex bg-white/5 p-1 rounded-xl mb-4 w-fit border border-white/5">
+        <button
+          onClick={() => setSelectedType("CONVERSION")}
+          className={`px-5 py-2 rounded-lg text-sm transition-all duration-300 ${
+            selectedType === "CONVERSION"
+              ? "bg-[#33DB98] text-black font-bold shadow-lg shadow-[#33DB98]/10"
+              : "text-gray-500 font-medium hover:text-white hover:bg-white/5"
           }`}
         >
           전환용
         </button>
-        <button 
-          onClick={() => setSelectedType('INFORMATIONAL')}
-          className={`px-4 py-1.5 rounded-md text-sm transition-all duration-200 ${
-            selectedType === 'INFORMATIONAL' 
-              ? 'bg-white text-blue-500 font-bold shadow-sm border border-slate-200/50' 
-              : 'text-slate-500 font-medium hover:text-slate-700'
+        <button
+          onClick={() => setSelectedType("INFORMATIONAL")}
+          className={`px-5 py-2 rounded-lg text-sm transition-all duration-300 ${
+            selectedType === "INFORMATIONAL"
+              ? "bg-[#33DB98] text-black font-bold shadow-lg shadow-[#33DB98]/10"
+              : "text-gray-500 font-medium hover:text-white hover:bg-white/5"
           }`}
         >
           정보성
         </button>
       </div>
-      <p className="text-xs text-slate-500 font-medium">
-        전환용: 문의/예약 유도 중심 <br /> 정보성: 교육/안내 중심
+      <p className="text-xs text-gray-500 font-medium leading-relaxed">
+        <span className="text-[#33DB98]/80">전환용</span>: 문의/예약 유도 중심{" "}
+        <br />
+        <span className="text-[#33DB98]/80">정보성</span>: 교육/안내 중심
       </p>
     </div>
   );

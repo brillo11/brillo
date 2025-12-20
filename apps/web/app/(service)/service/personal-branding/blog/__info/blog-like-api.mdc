@@ -1,0 +1,162 @@
+---
+alwaysApply: false
+---
+
+## 엔드포인트
+
+https://apis.naver.com/blogserver/like/v1/search/contents?suppress_response_codes=true&pool=blogid&q=BLOG%5B${blog_id}_${log_id}%5D&isDuplication=false&cssIds=MULTI_MOBILE%2CBLOG_MOBILE&displayId=BLOG
+
+## 응답
+
+https://apis.naver.com/blogserver/like/v1/search/contents?suppress_response_codes=true&pool=blogid&q=BLOG%5Bbongbong_bubu_224069430465%5D&isDuplication=false&cssIds=MULTI_MOBILE%2CBLOG_MOBILE&displayId=BLOG
+
+{
+"contents": [
+{
+"serviceId": "BLOG",
+"contentsId": "bongbong_bubu_224069430465",
+"isDisplay": true,
+"categoryId": null,
+"countType": "DEFAULT",
+"reactions": [
+{
+"reactionType": "like",
+"count": 8,
+"isReacted": false,
+"periodUser": null,
+"reactionTypeCode": {
+"name": "like",
+"messageCode": "reaction.type.like",
+"description": "좋아요"
+}
+}
+],
+"reactionMap": {
+"com.naver.react.core.nbasearc.common.ReactionType@2efbb232": {
+"reactionType": "like",
+"count": 8,
+"isReacted": false,
+"periodUser": null,
+"reactionTypeCode": {
+"name": "like",
+"messageCode": "reaction.type.like",
+"description": "좋아요"
+}
+}
+},
+"reactionTextMap": {
+"ko": {
+"thanks": "감사",
+"haha": "웃김",
+"like": "공감",
+"sad": "슬픔",
+"impressive": "칭찬",
+"wow": "놀람"
+},
+"zh-hant": {
+"thanks": "thanks",
+"haha": "haha",
+"like": "like",
+"sad": "sad",
+"impressive": "impressive",
+"wow": "wow"
+},
+"zh-tw": {
+"thanks": "thanks",
+"haha": "haha",
+"like": "like",
+"sad": "sad",
+"impressive": "impressive",
+"wow": "wow"
+},
+"zh-hans": {
+"thanks": "thanks",
+"haha": "haha",
+"like": "like",
+"sad": "sad",
+"impressive": "impressive",
+"wow": "wow"
+},
+"ja": {
+"thanks": "thanks",
+"haha": "haha",
+"like": "like",
+"sad": "sad",
+"impressive": "impressive",
+"wow": "wow"
+},
+"en": {
+"thanks": "thanks",
+"haha": "haha",
+"like": "like",
+"sad": "sad",
+"impressive": "impressive",
+"wow": "wow"
+},
+"fr": {
+"thanks": "thanks",
+"haha": "haha",
+"like": "like",
+"sad": "sad",
+"impressive": "impressive",
+"wow": "wow"
+},
+"zh-cn": {
+"thanks": "thanks",
+"haha": "haha",
+"like": "like",
+"sad": "sad",
+"impressive": "impressive",
+"wow": "wow"
+},
+"es": {
+"thanks": "thanks",
+"haha": "haha",
+"like": "like",
+"sad": "sad",
+"impressive": "impressive",
+"wow": "wow"
+},
+"es-mx": {
+"thanks": "thanks",
+"haha": "haha",
+"like": "like",
+"sad": "sad",
+"impressive": "impressive",
+"wow": "wow"
+}
+},
+"isLogin": false,
+"customized": false,
+"differentPlatform": false
+}
+],
+"serviceOptionType": {
+"BLOG": {
+"012": true,
+"026": true,
+"027": true,
+"006": false
+}
+},
+"timestamp": 1762620928855,
+"isLogin": true,
+"cssConfs": [
+{
+"cssId": "MULTI_MOBILE",
+"assignId": "96df73bf-37ba-42a2-a647-6fdd5c1a8b3c",
+"staticId": "0f848d92-d73a-49ce-9451-6e83c2c13847",
+"envType": "MOBILE",
+"applyYn": "Y",
+"url": null
+},
+{
+"cssId": "BLOG_MOBILE",
+"assignId": "19df4c26-76aa-4c7c-8bb0-f9875301db6f",
+"staticId": "782159f8-a981-49ed-b152-71482902370e",
+"envType": "mobile",
+"applyYn": "Y",
+"url": null
+}
+]
+}

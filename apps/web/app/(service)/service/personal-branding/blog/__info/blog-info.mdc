@@ -1,0 +1,14 @@
+---
+description: 블로그 정보 얻어오는 api
+alwaysApply: false
+---
+
+# 블로그 정보 얻어오는 api
+
+## fetchBlogInfo
+
+## 엔드포인트
+
+https://m.blog.naver.com/api/blogs/${blogId}
+
+## 응답

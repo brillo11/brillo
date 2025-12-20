@@ -184,6 +184,15 @@ export const serviceMenus: MenuItem[] = [
         baseUrl: PATH.SERVICE_PERSONAL_BRANDING,
         url: PATH.SERVICE_PERSONAL_BRANDING_BLOG,
         icon: PenLine,
+
+        
+      },
+      {
+        id: "blog",
+        title: "블로그키워드",
+        baseUrl: PATH.SERVICE_PERSONAL_BRANDING,
+        url: PATH.SERVICE_PERSONAL_BRANDING_BLOG_KEYWORD,
+        icon: PenLine,
       },
       {
         id: "threads",

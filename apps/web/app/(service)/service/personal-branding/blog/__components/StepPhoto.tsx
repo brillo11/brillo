@@ -104,7 +104,7 @@ const StepPhoto: React.FC = () => {
   return (
     <AccordionItem title="5단계: 원장님 사진 업로드 (선택)" defaultOpen={false}>
       <div className="space-y-4">
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-gray-400 leading-relaxed">
           원장님 얼굴이 포함된 이미지를 업로드해주세요.
           <br />
           블로그 글 생성 시, AI가 내용을 파악하여 가장 자연스러운 위치에 사진을
@@ -112,10 +112,10 @@ const StepPhoto: React.FC = () => {
         </p>
 
         <div
-          className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors relative ${
+          className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all relative group ${
             previewUrl
-              ? "border-blue-200 bg-blue-50/30"
-              : "border-slate-300 hover:border-blue-400"
+              ? "border-[#33DB98]/30 bg-[#33DB98]/5"
+              : "border-white/10 hover:border-[#33DB98]/40 hover:bg-white/5"
           }`}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
@@ -130,45 +130,47 @@ const StepPhoto: React.FC = () => {
 
           {!previewUrl ? (
             <div
-              className="cursor-pointer flex flex-col items-center py-4"
+              className="cursor-pointer flex flex-col items-center py-6"
               onClick={() => fileInputRef.current?.click()}
             >
-              <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center mb-3">
-                <Upload className="w-6 h-6 text-slate-400" />
+              <div className="w-14 h-14 bg-white/5 rounded-full shadow-inner flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <Upload className="w-7 h-7 text-gray-500 group-hover:text-[#33DB98]" />
               </div>
-              <p className="text-sm font-medium text-slate-700">
+              <p className="text-sm font-bold text-gray-300 group-hover:text-white transition-colors">
                 클릭하여 사진 업로드
               </p>
-              <p className="text-xs text-slate-500 mt-1">최대 10MB 권장</p>
+              <p className="text-xs text-gray-500 mt-2 font-medium">
+                최대 10MB 권장 (드래그 앤 드롭 지원)
+              </p>
             </div>
           ) : (
-            <div className="relative inline-block">
+            <div className="relative inline-block animate-in zoom-in-95 duration-300">
               <img
                 src={previewUrl}
                 alt="Preview"
-                className="h-40 object-cover rounded-lg shadow-sm"
+                className="h-48 object-cover rounded-xl shadow-2xl border border-white/10"
               />
               <button
                 onClick={handleReset}
-                className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md hover:bg-slate-100"
+                className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full p-1.5 shadow-xl hover:bg-red-600 transition-colors border-2 border-[#0A0A0A]"
               >
-                <X className="w-4 h-4 text-slate-600" />
+                <X className="w-4 h-4" />
               </button>
 
               {/* Status Indicator */}
-              <div className="absolute bottom-2 right-2">
+              <div className="absolute bottom-3 right-3">
                 {uploadStatus === "uploading" && (
-                  <div className="bg-black/70 text-white text-xs px-2 py-1 rounded-full animate-pulse">
+                  <div className="bg-black/80 backdrop-blur-md text-white text-[10px] px-3 py-1.5 rounded-full animate-pulse border border-white/10 font-bold">
                     업로드 중...
                   </div>
                 )}
                 {uploadStatus === "completed" && (
-                  <div className="bg-green-500 text-white text-xs px-2 py-1 rounded-full shadow-sm flex items-center gap-1">
+                  <div className="bg-[#33DB98] text-black text-[10px] px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 font-bold border border-white/20">
                     <ImageIcon className="w-3 h-3" /> 완료
                   </div>
                 )}
                 {uploadStatus === "error" && (
-                  <div className="bg-red-500 text-white text-xs px-2 py-1 rounded-full shadow-sm">
+                  <div className="bg-red-500 text-white text-[10px] px-3 py-1.5 rounded-full shadow-lg font-bold border border-white/20">
                     실패
                   </div>
                 )}

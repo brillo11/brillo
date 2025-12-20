@@ -1,0 +1,198 @@
+---
+alwaysApply: true
+---
+
+# 댓글 수 가져오는 알고리즘 분석
+
+## 📊 데이터 흐름
+
+### 1. 네이버 검색 API 호출
+
+```typescript
+export async function callNaverSearchAPI(query: string, start: number);
+```
+
+**API 엔드포인트:**
+
+```
+https://s.search.naver.com/p/review/search.naver?where=m_view&start=1&query=키워드&mode=normal&sm=mtb_jum&api_type=1
+```
+
+### 2. API 응답 구조
+
+```json
+{
+  "result": {
+    "section": [{
+      "data": {
+        "document": [
+          {
+            "body": "{\"IsBlog\":true,\"LikeCount\":12,\"CommentCount\":1,...}",  // JSON 문자열
+            "common": { ... },
+            "render": { ... }
+          }
+        ]
+      }
+    }]
+  }
+}
+```
+
+**핵심:** `body` 필드가 **JSON 문자열**로 되어 있음
+
+### 3. Body JSON 파싱
+
+```typescript
+// apps/web/serverActions/blog/blog-keyword-search.actions.ts:867-875
+// body JSON 파싱
+let bodyData: BlogBodyData = {};
+try {
+  if (doc.body) {
+    bodyData = JSON.parse(doc.body) as BlogBodyData;
+  }
+} catch (e) {
+  console.error("body 파싱 실패:", e);
+}
+```
+
+### 4. 댓글 수 추출
+
+```typescript
+// apps/web/serverActions/blog/blog-keyword-search.actions.ts:916
+const commentCount = bodyData.CommentCount || 0;
+```
+
+**타입 정의:**
+
+```typescript
+// apps/web/serverActions/blog/blog-keyword-search.actions.ts:211-266
+interface BlogBodyData {
+  // ...
+  CommentCount?: number; // 옵셔널 필드
+  // ...
+}
+```
+
+### 5. BlogPost 객체에 할당
+
+```typescript
+// apps/web/serverActions/blog/blog-keyword-search.actions.ts:921-941
+posts.push({
+  // ...
+  commentCount, // bodyData.CommentCount || 0
+  // ...
+});
+```
+
+### 6. UI에서 사용
+
+```typescript
+// apps/web/features/blog/components/BlogSection.tsx:209-223
+const blogPostsData = blogPosts.map((post) => ({
+  // ...
+  comments: post.commentCount, // 댓글 수
+  // ...
+}));
+```
+
+---
+
+## 🔍 실제 데이터 예시
+
+### 예시 1: 댓글 수 있음
+
+```json
+{
+  "body": "{\"IsBlog\":true,\"LikeCount\":3,\"CommentCount\":1,\"Date\":\"2주 전\"}"
+}
+```
+
+→ `CommentCount: 1`
+
+### 예시 2: 댓글 수 없음
+
+```json
+{
+  "body": "{\"IsBlog\":true,\"LikeCount\":12,\"Date\":\"1일 전\"}"
+}
+```
+
+→ `CommentCount: 0` (기본값)
+
+---
+
+## ⚠️ 주의사항
+
+### 1. **데이터 소스**
+
+- 네이버 검색 API의 `body` 필드에서 가져옴
+- 네이버가 제공하는 데이터에 의존
+- **실시간 데이터가 아닐 수 있음** (캐시된 데이터일 가능성)
+
+### 2. **데이터 누락 가능성**
+
+- `CommentCount` 필드가 없을 수 있음 → 기본값 `0` 사용
+- 모든 블로그 포스트에 댓글 수가 포함되지 않을 수 있음
+
+### 3. **데이터 정확도**
+
+- 네이버 검색 API가 제공하는 값
+- 실제 블로그 포스트의 댓글 수와 다를 수 있음
+- API 응답 시점의 데이터
+
+### 4. **에러 처리**
+
+```typescript
+const commentCount = bodyData.CommentCount || 0;
+```
+
+- `CommentCount`가 `undefined`이거나 `null`이면 `0` 사용
+- 타입 안정성 보장
+
+---
+
+## 📝 코드 위치 요약
+
+| 단계            | 파일                             | 라인    | 설명                           |
+| --------------- | -------------------------------- | ------- | ------------------------------ |
+| 1. API 호출     | `blog-keyword-search.actions.ts` | 405-445 | 네이버 검색 API 호출           |
+| 2. Body 파싱    | `blog-keyword-search.actions.ts` | 867-875 | JSON 문자열 → 객체             |
+| 3. 댓글 수 추출 | `blog-keyword-search.actions.ts` | 916     | `bodyData.CommentCount \|\| 0` |
+| 4. 객체 생성    | `blog-keyword-search.actions.ts` | 934     | `commentCount` 할당            |
+| 5. UI 표시      | `BlogSection.tsx`                | 215     | `post.commentCount` 사용       |
+
+---
+
+## 🔄 전체 플로우
+
+```
+1. 네이버 검색 API 호출
+   ↓
+2. 응답 받기 (document 배열)
+   ↓
+3. 각 document의 body 필드 파싱 (JSON.parse)
+   ↓
+4. bodyData.CommentCount 추출
+   ↓
+5. 없으면 0, 있으면 그 값 사용
+   ↓
+6. BlogKeywordSearchPost 객체에 할당
+   ↓
+7. UI에서 post.commentCount로 표시
+```
+
+---
+
+## 💡 개선 가능한 부분
+
+### 현재 방식의 한계
+
+- 네이버 검색 API에 의존
+- 실시간 데이터가 아닐 수 있음
+- 일부 포스트에 댓글 수가 없을 수 있음
+
+### 대안 (필요시)
+
+1. **직접 크롤링**: 블로그 포스트 페이지에서 직접 댓글 수 가져오기
+2. **별도 API**: 네이버 블로그 API 사용 (제한적)
+3. **캐싱**: 댓글 수를 DB에 저장하고 주기적으로 갱신
