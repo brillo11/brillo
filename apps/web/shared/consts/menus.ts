@@ -37,6 +37,7 @@ import {
   TrendingUp,
   Sparkles,
   Flame,
+  Instagram,
 } from "lucide-react";
 import { PATH } from "./path";
 
@@ -173,7 +174,7 @@ export const serviceMenus: MenuItem[] = [
     subMenus: [
       {
         id: "퍼스널 브랜딩",
-        title: "브랜딩 워크플로우",
+        title: "워크플로우",
         baseUrl: PATH.SERVICE_PERSONAL_BRANDING,
         url: PATH.SERVICE_PERSONAL_BRANDING_WORKFLOW,
         icon: Sparkles,
@@ -191,6 +192,13 @@ export const serviceMenus: MenuItem[] = [
         baseUrl: PATH.SERVICE_PERSONAL_BRANDING,
         url: PATH.SERVICE_PERSONAL_BRANDING_THREADS,
         icon: MessageCircle,
+      },
+      {
+        id: "instagram",
+        title: "인스타그램",
+        baseUrl: PATH.SERVICE_PERSONAL_BRANDING,
+        url: PATH.SERVICE_PERSONAL_BRANDING_INSTAGRAM,
+        icon: Instagram,
       },
       {
         id: "video",
@@ -217,82 +225,6 @@ export const serviceMenus: MenuItem[] = [
       },
     ],
   },
-  // {
-  //   id: "assignments",
-  //   title: "과제",
-  //   baseUrl: PATH.STUDENT_LOUNGE,
-  //   url: PATH.STUDENT_LOUNGE_MISSION,
-  //   icon: NotebookPen,
-  //   subMenus: [
-  //     {
-  //       id: "my-missions",
-  //       title: "나의 미션",
-  //       baseUrl: PATH.STUDENT_LOUNGE,
-  //       url: PATH.STUDENT_LOUNGE_MISSION,
-  //       icon: Target,
-  //     },
-  //     {
-  //       id: "submissions",
-  //       title: "제출 내역",
-  //       baseUrl: PATH.STUDENT_ORDERS,
-  //       url: PATH.STUDENT_ORDERS_ENTRY,
-  //       icon: CheckCircle2,
-  //     },
-  //     {
-  //       id: "grades",
-  //       title: "성적 확인",
-  //       baseUrl: PATH.STUDENT_ORDERS,
-  //       url: PATH.STUDENT_ORDERS_HISTORY,
-  //       icon: Award,
-  //     },
-  //   ],
-  // },
-  // {
-  //   id: "community",
-  //   title: "커뮤니티",
-  //   baseUrl: PATH.STUDENT_LOUNGE,
-  //   url: PATH.STUDENT_LOUNGE_ANNOUNCEMENTS,
-  //   icon: Users,
-  //   subMenus: [
-  //     {
-  //       id: "announcements",
-  //       title: "공지사항",
-  //       baseUrl: PATH.STUDENT_LOUNGE,
-  //       url: PATH.STUDENT_LOUNGE_ANNOUNCEMENTS,
-  //       icon: Megaphone,
-  //     },
-  //     {
-  //       id: "qna",
-  //       title: "Q&A",
-  //       baseUrl: PATH.STUDENT_LOUNGE,
-  //       url: PATH.STUDENT_LOUNGE_QNA,
-  //       icon: HelpCircle,
-  //     },
-  //   ],
-  // },
-  // {
-  //   id: "points",
-  //   title: "포인트",
-  //   baseUrl: PATH.STUDENT_POINTS,
-  //   url: PATH.STUDENT_POINTS_CHARGE,
-  //   icon: Coins,
-  //   subMenus: [
-  //     {
-  //       id: "charge",
-  //       title: "포인트 충전",
-  //       baseUrl: PATH.STUDENT_POINTS,
-  //       url: PATH.STUDENT_POINTS_CHARGE,
-  //       icon: Coins,
-  //     },
-  //     {
-  //       id: "history",
-  //       title: "사용 내역",
-  //       baseUrl: PATH.STUDENT_POINTS,
-  //       url: PATH.STUDENT_POINTS_HISTORY,
-  //       icon: History,
-  //     },
-  //   ],
-  // },
 ];
 
 export const snsMenus = [
@@ -319,71 +251,5 @@ export const snsMenus = [
     href: "#",
     iconBlack: "/images/layout/youtube_black.svg",
     iconWhite: "/images/layout/youtube.svg",
-  },
-];
-
-// 특정 언어로 메뉴 제목 가져오기
-// export const getMenuTitle = (menu: MenuItem, lang: Language = "ko"): string => {
-//   return menu.title[lang] || menu.title.ko;
-// };
-
-// 메뉴 ID로 메뉴 찾기
-// export const findMenuById = (
-//   id: string,
-//   menus: MenuItem[] = mainMenus
-// ): MenuItem | undefined => {
-//   for (const menu of menus) {
-//     if (menu.id === id) return menu;
-//     if (menu.subMenus) {
-//       const found = findMenuById(id, menu.subMenus);
-//       if (found) return found;
-//     }
-//   }
-//   return undefined;
-// };
-
-// 경로로 메뉴 찾기
-// export const findMenuByPath = (
-//   path: string,
-//   menus: MenuItem[] = mainMenus
-// ): MenuItem | undefined => {
-//   for (const menu of menus) {
-//     if (menu.href === path) return menu;
-//     if (menu.subMenus) {
-//       const found = findMenuByPath(path, menu.subMenus);
-//       if (found) return found;
-//     }
-//   }
-//   return undefined;
-// };
-
-// 기존 코드와의 호환성을 위한 변수
-// export const subMenus =
-//   mainMenus.find((menu) => menu.id === "about")?.subMenus || [];
-
-export const surgeries = [
-  {
-    name: "얼굴 지방흡입",
-  },
-  {
-    name: "가슴 지방이식",
-  },
-  {
-    name: "복부 지방흡입",
-  },
-  {
-    name: "여유증",
-  },
-  {
-    name: "팔뚝 지방흡입",
-  },
-  {
-    name: "골반&엉덩이 지방흡입",
-  },
-  {
-    name: "지방흡입 재수술",
-  },
-  {
-    name: "허벅지 지방흡입",
   },
 ];

@@ -26,7 +26,7 @@ import {
 } from "@repo/ui/components/avatar";
 import Image from "next/image";
 
-export function ServiceSidebar({ points = 0 }: { points?: number }) {
+export function ServiceSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { state, toggleSidebar } = useSidebar();
@@ -110,7 +110,7 @@ export function ServiceSidebar({ points = 0 }: { points?: number }) {
                   if (item.subMenus && item.subMenus.length > 0) {
                     // 자식 메뉴 중 하나가 정확히 매칭되는지 확인
                     isActive = item.subMenus.some(
-                      (subItem) => pathname === subItem.url
+                      (subItem) => pathname === subItem.url,
                     );
                   } else {
                     // subMenu가 없는 경우, 정확한 URL 매칭만 사용
