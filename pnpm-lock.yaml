@@ -12,8 +12,8 @@ importers:
         specifier: ^7.1.0
         version: 7.1.0(prisma@7.1.0(@types/react@19.0.10)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3))(typescript@5.9.3)
       ai:
-        specifier: ^5.0.115
-        version: 5.0.115(zod@4.1.12)
+        specifier: ^5.0.116
+        version: 5.0.116(zod@4.1.12)
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3
@@ -82,8 +82,8 @@ importers:
         specifier: ^34.3.1
         version: 34.3.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       ai:
-        specifier: ^5.0.115
-        version: 5.0.115(zod@4.1.12)
+        specifier: ^5.0.116
+        version: 5.0.116(zod@4.1.12)
       bcryptjs:
         specifier: ^3.0.2
         version: 3.0.2
@@ -513,8 +513,8 @@ importers:
 
 packages:
 
-  '@ai-sdk/gateway@2.0.22':
-    resolution: {integrity: sha512-6fHjDfCbjfj4vyMExuLei7ir2///E5sNwNZaobdJsJIxJjDSsjzSLGO/aUI7p9eOnB8XctDrDSF5ilwDGpi6eg==}
+  '@ai-sdk/gateway@2.0.23':
+    resolution: {integrity: sha512-qmX7afPRszUqG5hryHF3UN8ITPIRSGmDW6VYCmByzjoUkgm3MekzSx2hMV1wr0P+llDeuXb378SjqUfpvWJulg==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -2878,8 +2878,8 @@ packages:
     resolution: {integrity: sha512-4I7Td01quW/RpocfNayFdFVk1qSuoh0E7JrbRJ16nH01HhKFQ88INq9Sd+nd72zqRySlr9BmDA8xlEJ6vJMrYA==}
     engines: {node: '>=8'}
 
-  ai@5.0.115:
-    resolution: {integrity: sha512-aVuHx0orGxXvhyL7oXUyW8TnWQE6Al8f3Bl6VZjz0WHMV+WaACHPkSyvQ3wje2QCUGzdl5DBF5d+OaXyghPQyg==}
+  ai@5.0.116:
+    resolution: {integrity: sha512-+2hYJ80/NcDWuv9K2/MLP3cTCFgwWHmHlS1tOpFUKKcmLbErAAlE/S2knsKboc3PNAu8pQkDr2N3K/Vle7ENgQ==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -6036,7 +6036,7 @@ packages:
 
 snapshots:
 
-  '@ai-sdk/gateway@2.0.22(zod@4.1.12)':
+  '@ai-sdk/gateway@2.0.23(zod@4.1.12)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
       '@ai-sdk/provider-utils': 3.0.19(zod@4.1.12)
@@ -8913,9 +8913,9 @@ snapshots:
       clean-stack: 2.2.0
       indent-string: 4.0.0
 
-  ai@5.0.115(zod@4.1.12):
+  ai@5.0.116(zod@4.1.12):
     dependencies:
-      '@ai-sdk/gateway': 2.0.22(zod@4.1.12)
+      '@ai-sdk/gateway': 2.0.23(zod@4.1.12)
       '@ai-sdk/provider': 2.0.0
       '@ai-sdk/provider-utils': 3.0.19(zod@4.1.12)
       '@opentelemetry/api': 1.9.0
