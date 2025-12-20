@@ -6,7 +6,7 @@ export const PATH = {
   HOME: "/",
 
   // 서비스
-  SERVICE_ROOT: "/service",
+  SERVICE_ROOT: "/service/dashboard",
   SERVICE_DASHBOARD: "/service/dashboard",
   SERVICE_PERSONAL_BRANDING: "/service/personal-branding",
   SERVICE_PERSONAL_BRANDING_WORKFLOW: "/service/personal-branding/workflow",
