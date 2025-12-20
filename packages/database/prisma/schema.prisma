@@ -1,92 +1,42 @@
 generator client {
-  provider      = "prisma-client"
-  output        = "../generated/client"
-  binaryTargets   = ["native", "rhel-openssl-3.0.x"]
+  provider        = "prisma-client"
+  output          = "../generated/client"
   previewFeatures = ["postgresqlExtensions"]
+  binaryTargets   = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
-  provider   = "postgresql"
-  extensions = [vector]
+  provider = "postgresql"
 }
 
-model User {
-  id                          String      @id @default(uuid())
-  createdAt                   DateTime    @default(now())
-  name                        String      @default("")
-  nickname                    String      @unique @default("")
-  role                        ROLE        @default(STUDENT)
-  status                      USER_STATUS @default(UNKNOWN)
-  bizName                     String      @default("")
-  bizNumber                   String      @default("")
-  expiredAt                   DateTime    @default(now())
-  lastLoginAt                 DateTime    @default(now())
-  lastPaidAt                  DateTime    @default(now())
-  maxProductCount             Int         @default(200)
-  maxUploadProductCount       Int         @default(0)
-  memo                        String      @default("")
-  points                      Int         @default(0)
-  remainingProductCount       Int         @default(200)
-  remainingUploadProductCount Int         @default(0)
-  email                       String?     @unique
-  emailVerified               Boolean     @default(false)
-  image                       String?
-  updatedAt                   DateTime    @default(now()) @updatedAt
-  phoneNumber                 String?
+model AIAssistantSession {
+  id                          String   @id
+  userId                      String
+  conversationId              String
+  title                       String?
+  titleMessage                String?
+  titleResponses              Json?
+  selectedTitle               String?
+  selectedTitleIndex          Int?
+  thumbnailGuideResponses     Json?
+  selectedThumbnailGuideIndex Int?
+  thumbnailUrls               String?
+  scriptResponses             Json?
+  metadataResponses           Json?
+  shortsTitlesResponses       Json?
+  step                        String?
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime
+  User                        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // 학습 프로필 필드
-  learningLevel   String? // 초급, 중급, 고급 등
-  learningGoals   String? // 학습 목표 텍스트
-  learningHistory Json?   @default("{}") // 학습 이력
-
-  misc Json @default("{}")
-
-  accounts    Account[]
-  sessions    Session[]
-  posts       Post[]       @relation("AuthoredPosts")
-  postLikes   PostLike[]
-  comments    Comment[]
-  pointOrders PointOrder[]
-  orders      Order[]
-
-  submissions Submission[]
-
-  cohortId BigInt?
-  cohort   Cohort? @relation(fields: [cohortId], references: [id])
-
-  aiAssistantSessions AIAssistantSession[]
-
-  @@index([email])
-}
-
-model Session {
-  id        String   @id @default(uuid())
-  userId    String
-  expiresAt DateTime
-  token     String   @unique
-  ipAddress String?
-  userAgent String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  @@index([conversationId])
+  @@index([createdAt])
+  @@index([step])
   @@index([userId])
-  @@index([token])
-}
-
-model Verification {
-  id         String   @id @default(uuid())
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@index([identifier])
 }
 
 model Account {
-  id                    String    @id @default(uuid())
+  id                    String    @id
   userId                String
   accountId             String
   refreshToken          String?
@@ -94,139 +44,62 @@ model Account {
   scope                 String?
   idToken               String?
   createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  updatedAt             DateTime
   accessTokenExpiresAt  DateTime?
   password              String?
   providerId            String
   refreshTokenExpiresAt DateTime?
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([providerId, accountId])
-  @@index([userId])
-}
-
-model Class {
-  id        BigInt   @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @default("")
-  slug      String   @unique
-  misc      Json     @default("{}")
-
-  cohorts Cohort[]
-
-  @@index([slug])
-}
-
-model Cohort {
-  id          BigInt   @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  title       String   @default("")
-  totalWeek   Int      @default(0)
-  startDate   DateTime
-  endDate     DateTime
-  cohortOrder Int      @default(0)
-
-  slug String @unique
-  misc Json   @default("{}")
-
-  users    User[]
-  missions Mission[]
-
-  classId BigInt
-  class   Class? @relation(fields: [classId], references: [id])
-
-  @@index([slug])
-}
-
-model Mission {
-  id          BigInt   @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  title       String   @default("")
-  description String   @default("")
-  dueDate     DateTime
-  misc        Json     @default("{}")
-  week        Int      @default(0)
-
-  // YouTube 연동 필드
-  youtubeUrl      String? // YouTube 영상 URL
-  youtubeVideoId  String? // 추출된 YouTube Video ID
-  autoPersonalize Boolean @default(false) // 자동 개인화 여부
-
-  submissions Submission[]
-
-  cohortId BigInt
-  cohort   Cohort? @relation(fields: [cohortId], references: [id])
-}
-
-model Submission {
-  id        BigInt   @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  content   String   @default("")
-  misc      Json     @default("{}")
-
-  missionId BigInt
-  mission   Mission? @relation(fields: [missionId], references: [id])
-  userId    String
-  user      User?    @relation(fields: [userId], references: [id])
-
-  @@index([missionId])
   @@index([userId])
 }
 
 model Board {
   id        BigInt   @id @default(autoincrement())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime
   title     String   @default("")
   slug      String   @unique
   misc      Json     @default("{}")
-
-  posts Post[]
+  Post      Post[]
 }
 
-model Post {
+model Class {
   id        BigInt   @id @default(autoincrement())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  thumbnail String   @default("")
+  updatedAt DateTime
   title     String   @default("")
-  content   String   @default("")
-  slug      String   @unique @default("")
-  views     Int      @default(0)
-  tags      String[] @default([])
-  files     Json     @default("[]")
-  authorId  String
-  boardId   BigInt
+  slug      String   @unique
   misc      Json     @default("{}")
+  Cohort    Cohort[]
 
-  comments Comment[]
-  author   User       @relation("AuthoredPosts", fields: [authorId], references: [id])
-  board    Board      @relation(fields: [boardId], references: [id])
-  likes    PostLike[]
-
-  @@index([authorId])
-  @@index([boardId])
+  @@index([slug])
 }
 
-model PostLike {
-  id        BigInt   @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Cohort {
+  id          BigInt    @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime
+  title       String    @default("")
+  totalWeek   Int       @default(0)
+  startDate   DateTime
+  endDate     DateTime
+  cohortOrder Int       @default(0)
+  slug        String    @unique
+  misc        Json      @default("{}")
+  classId     BigInt
+  Class       Class     @relation(fields: [classId], references: [id])
+  Mission     Mission[]
+  User        User[]
 
-  postId BigInt
-  userId String
-  post   Post   @relation(fields: [postId], references: [id])
-  user   User   @relation(fields: [userId], references: [id])
+  @@index([slug])
 }
 
 model Comment {
   id             BigInt    @id @default(autoincrement())
   createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  updatedAt      DateTime
   content        String    @default("")
   authorId       String
   postId         BigInt
@@ -234,14 +107,30 @@ model Comment {
   deleted        Boolean   @default(false)
   deletedContent String    @default("삭제된 댓글입니다.")
   misc           Json      @default("{}")
-  author         User      @relation(fields: [authorId], references: [id])
-  parent         Comment?  @relation("CommentParent", fields: [parentId], references: [id])
-  replies        Comment[] @relation("CommentParent")
-  post           Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  User           User      @relation(fields: [authorId], references: [id])
+  Comment        Comment?  @relation("CommentToComment", fields: [parentId], references: [id])
+  other_Comment  Comment[] @relation("CommentToComment")
+  Post           Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@index([authorId])
-  @@index([postId])
   @@index([parentId])
+  @@index([postId])
+}
+
+model CronState {
+  id             String    @id
+  name           String    @unique
+  currentOffset  Int       @default(0)
+  batchSize      Int       @default(200)
+  totalProcessed Int       @default(0)
+  lastRunAt      DateTime?
+  lastRunStatus  String?
+  lastRunError   String?
+  lastBanned     DateTime?
+  updatedAt      DateTime
+  createdAt      DateTime  @default(now())
+
+  @@index([name])
 }
 
 model Log {
@@ -250,38 +139,27 @@ model Log {
   content   Json     @default("{}")
 }
 
-model PointOrder {
-  id          BigInt       @id @default(autoincrement())
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  amount      Int
-  status      ORDER_STATUS
-  orderName   String       @default("") // 주문명
-  description String? // 결제 설명
-
-  email       String   @default("")
-  name        String   @default("")
-  calendar    CALENDAR
-  birthYear   Int
-  birthMonth  Int
-  birthDay    Int
-  birthHour   Int
-  birthMinute Int
-  gender      GENDER
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  productId BigInt
-  product   Product @relation(fields: [productId], references: [id])
-
-  @@index([userId])
+model Mission {
+  id              BigInt       @id @default(autoincrement())
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime
+  title           String       @default("")
+  description     String       @default("")
+  dueDate         DateTime
+  misc            Json         @default("{}")
+  week            Int          @default(0)
+  youtubeUrl      String?
+  youtubeVideoId  String?
+  autoPersonalize Boolean      @default(false)
+  cohortId        BigInt
+  Cohort          Cohort       @relation(fields: [cohortId], references: [id])
+  Submission      Submission[]
 }
 
 model Order {
   id           BigInt       @id @default(autoincrement())
   createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  updatedAt    DateTime
   amount       Int
   status       ORDER_STATUS
   method       String
@@ -294,15 +172,15 @@ model Order {
   receiptUrl   String?
   paymentKey   String?      @unique
   isTest       Boolean      @default(false)
-  orderName    String       @default("서비스 이용료") // 주문명
-  description  String? // 결제 설명
+  orderName    String       @default("서비스 이용료")
+  description  String?
   userId       String
-  user         User         @relation(fields: [userId], references: [id])
-  refunds      Refund[]
+  User         User         @relation(fields: [userId], references: [id])
+  Refund       Refund[]
 
-  @@index([userId])
   @@index([merchantUid])
   @@index([paymentKey])
+  @@index([userId])
 }
 
 model PaymentSession {
@@ -315,140 +193,191 @@ model PaymentSession {
   userId    BigInt?
   status    String   @default("PENDING")
 
-  @@index([orderId])
   @@index([expiresAt])
+  @@index([orderId])
   @@index([userId])
+}
+
+model PointOrder {
+  id          BigInt       @id @default(autoincrement())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime
+  amount      Int
+  status      ORDER_STATUS
+  orderName   String       @default("")
+  description String?
+  email       String       @default("")
+  name        String       @default("")
+  calendar    CALENDAR
+  birthYear   Int
+  birthMonth  Int
+  birthDay    Int
+  birthHour   Int
+  birthMinute Int
+  gender      GENDER
+  userId      String
+  productId   BigInt
+  Product     Product      @relation(fields: [productId], references: [id])
+  User        User         @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Post {
+  id        BigInt     @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime
+  thumbnail String     @default("")
+  title     String     @default("")
+  content   String     @default("")
+  slug      String     @unique @default("")
+  views     Int        @default(0)
+  tags      String[]   @default([])
+  files     Json       @default("[]")
+  authorId  String
+  boardId   BigInt
+  misc      Json       @default("{}")
+  Comment   Comment[]
+  User      User       @relation(fields: [authorId], references: [id])
+  Board     Board      @relation(fields: [boardId], references: [id])
+  PostLike  PostLike[]
+
+  @@index([authorId])
+  @@index([boardId])
+}
+
+model PostLike {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  postId    BigInt
+  userId    String
+  Post      Post     @relation(fields: [postId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+model Product {
+  id             BigInt       @id @default(autoincrement())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime
+  icon           String       @default("")
+  name           String
+  description    String       @default("")
+  price          Int
+  originalPrice  Int?
+  images         Json         @default("[]")
+  category       String       @default("일반")
+  inStock        Boolean      @default(true)
+  featured       Boolean      @default(false)
+  specifications Json         @default("{}")
+  tags           String[]     @default([])
+  viewCount      Int          @default(0)
+  PointOrder     PointOrder[]
+
+  @@index([category])
+  @@index([featured])
+  @@index([inStock])
 }
 
 model Refund {
   id            BigInt        @id @default(autoincrement())
   createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  amount        Int // 환불 금액
-  reason        String // 환불 사유
+  updatedAt     DateTime
+  amount        Int
+  reason        String
   status        REFUND_STATUS @default(PENDING)
-  refundMethod  String? // 환불 방법 (카드취소, 계좌이체 등)
-  processedAt   DateTime? // 환불 처리 완료 시각
-  tossRefundKey String? // 토스페이먼츠 환불 키
-  orderId       BigInt // 원본 주문 ID
-  order         Order         @relation(fields: [orderId], references: [id])
+  refundMethod  String?
+  processedAt   DateTime?
+  tossRefundKey String?
+  orderId       BigInt
+  Order         Order         @relation(fields: [orderId], references: [id])
 
+  @@index([createdAt])
   @@index([orderId])
   @@index([status])
-  @@index([createdAt])
 }
 
-model YoutubeChannel {
-  id              String    @id // YouTube Channel ID (UC...)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  title           String    @default("")
-  thumbnailUrl    String    @default("")
-  regionCode      String? // 수집 기준 지역 (예: KR)
-  uploadsPlaylist String? // 업로드 플레이리스트 ID
-  videoCount      Int? // 채널의 전체 영상 개수
-  subscriberCount Int? // 채널 구독자 수
-  overallAvgView  Float? // 전체 평균 조회수 (totalViews / videoCount)
-  recentAvgVph    Float? // 최근 N개 평균 VPH
-  lastCrawledAt   DateTime?
-  misc            Json      @default("{}")
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  videos YoutubeVideo[]
-  shorts YoutubeShorts[]
+  @@index([token])
+  @@index([userId])
 }
 
-model YoutubeVideo {
-  id                String                 @id // YouTube Video ID
-  createdAt         DateTime               @default(now())
-  updatedAt         DateTime               @updatedAt
-  channelId         String
-  title             String                 @default("")
-  description       String                 @default("")
-  thumbnailUrl      String                 @default("")
-  publishedAt       DateTime?
-  duration          String                 @default("")
-  viewCount         Int                    @default(0)
-  likeCount         Int?
-  commentCount      Int?
-  viewsPerHour      Float?
-  outlierVph        Float?
-  outlierView       Float?
-  outlierSubscriber Float?
-  regionCode        String? // 수집 지역 코드
-  categoryId        Int? // YouTube 비디오 카테고리 ID
-  crawledAt         DateTime               @default(now())
-  misc              Json                   @default("{}")
-  searchVector      Unsupported("vector")?
+model Submission {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  content   String   @default("")
+  misc      Json     @default("{}")
+  missionId BigInt
+  userId    String
+  Mission   Mission  @relation(fields: [missionId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
 
-  channel YoutubeChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
-
-  @@index([channelId])
-  @@index([regionCode])
-  @@index([outlierVph])
-  @@index([viewsPerHour])
-  @@index([publishedAt])
-  @@index([categoryId])
-  @@index([searchVector], map: "youtube_video_search_vector_embedding_hnsw")
+  @@index([missionId])
+  @@index([userId])
 }
 
-model YoutubeShorts {
-  id                String    @id // YouTube Video ID
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  channelId         String
-  title             String    @default("")
-  description       String    @default("")
-  thumbnailUrl      String    @default("")
-  publishedAt       DateTime?
-  duration          String    @default("")
-  viewCount         Int       @default(0)
-  likeCount         Int?
-  commentCount      Int?
-  viewsPerHour      Float?
-  outlierVph        Float?
-  outlierView       Float?
-  outlierSubscriber Float?
-  regionCode        String? // 수집 지역 코드
-  categoryId        Int? // YouTube 비디오 카테고리 ID
-  crawledAt         DateTime  @default(now())
-  misc              Json      @default("{}")
+model User {
+  id                          String               @id
+  createdAt                   DateTime             @default(now())
+  name                        String               @default("")
+  nickname                    String               @unique @default("")
+  role                        ROLE                 @default(STUDENT)
+  status                      USER_STATUS          @default(UNKNOWN)
+  bizName                     String               @default("")
+  bizNumber                   String               @default("")
+  expiredAt                   DateTime             @default(now())
+  lastLoginAt                 DateTime             @default(now())
+  lastPaidAt                  DateTime             @default(now())
+  maxProductCount             Int                  @default(200)
+  maxUploadProductCount       Int                  @default(0)
+  memo                        String               @default("")
+  points                      Int                  @default(0)
+  remainingProductCount       Int                  @default(200)
+  remainingUploadProductCount Int                  @default(0)
+  email                       String?              @unique
+  emailVerified               Boolean              @default(false)
+  image                       String?
+  updatedAt                   DateTime             @default(now())
+  phoneNumber                 String?
+  learningLevel               String?
+  learningGoals               String?
+  learningHistory             Json?                @default("{}")
+  misc                        Json                 @default("{}")
+  cohortId                    BigInt?
+  AIAssistantSession          AIAssistantSession[]
+  Account                     Account[]
+  Comment                     Comment[]
+  Order                       Order[]
+  PointOrder                  PointOrder[]
+  Post                        Post[]
+  PostLike                    PostLike[]
+  Session                     Session[]
+  Submission                  Submission[]
+  Cohort                      Cohort?              @relation(fields: [cohortId], references: [id])
 
-  channel YoutubeChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
-
-  @@index([channelId])
-  @@index([regionCode])
-  @@index([outlierVph])
-  @@index([viewsPerHour])
-  @@index([publishedAt])
-  @@index([categoryId])
+  @@index([email])
 }
 
-model CronState {
-  id             String    @id @default(uuid())
-  name           String    @unique // 크론 작업 이름 (예: "youtube-videos")
-  currentOffset  Int       @default(0) // 현재 처리 중인 offset
-  batchSize      Int       @default(200) // 한 번에 처리할 개수
-  totalProcessed Int       @default(0) // 총 처리된 개수
-  lastRunAt      DateTime? // 마지막 실행 시간
-  lastRunStatus  String? // 마지막 실행 상태 (SUCCESS, FAILED, RUNNING)
-  lastRunError   String? // 마지막 실행 에러 메시지
-  lastBanned     DateTime? // 마지막 밴 시간 (3시간 동안 크론 중지)
-  updatedAt      DateTime  @updatedAt
-  createdAt      DateTime  @default(now())
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
 
-  @@index([name])
-}
-
-enum ROLE {
-  SUPER_ADMIN
-  ADMIN
-  STUDENT
-  USER
-}
-
-enum GENDER {
-  MALE
-  FEMALE
+  @@index([identifier])
 }
 
 enum CALENDAR {
@@ -456,21 +385,9 @@ enum CALENDAR {
   LUNAR
 }
 
-enum USER_STATUS {
-  UNKNOWN
-  PENDING
-  ACTIVE
-  INACTIVE
-}
-
-enum PROVIDER {
-  CREDENTIALS
-  KAKAO
-  GOOGLE
-  APPLE
-  NAVER
-  GITHUB
-  FACEBOOK
+enum GENDER {
+  MALE
+  FEMALE
 }
 
 enum ORDER_STATUS {
@@ -484,6 +401,16 @@ enum ORDER_STATUS {
   FAILED           @map("결제실패")
 }
 
+enum PROVIDER {
+  CREDENTIALS
+  KAKAO
+  GOOGLE
+  APPLE
+  NAVER
+  GITHUB
+  FACEBOOK
+}
+
 enum REFUND_STATUS {
   PENDING    @map("환불대기")
   PROCESSING @map("환불처리중")
@@ -492,74 +419,16 @@ enum REFUND_STATUS {
   CANCELED   @map("환불취소")
 }
 
-model Product {
-  id        BigInt   @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  icon          String @default("") // 아이콘
-  name          String // 제품명
-  description   String @default("") // 제품 설명
-  price         Int // 판매가격 (원)
-  originalPrice Int? // 원가 (할인 표시용)
-
-  images   Json   @default("[]") // 이미지 URL 배열
-  category String @default("일반") // 카테고리
-
-  inStock  Boolean @default(true) // 재고 여부
-  featured Boolean @default(false) // 추천 제품 여부
-
-  specifications Json     @default("{}") // 제품 규격 (JSON)
-  tags           String[] @default([]) // 태그 배열
-
-  viewCount Int @default(0) // 조회수
-
-  pointOrders PointOrder[]
-
-  @@index([category])
-  @@index([featured])
-  @@index([inStock])
+enum ROLE {
+  SUPER_ADMIN
+  ADMIN
+  STUDENT
+  USER
 }
 
-model AIAssistantSession {
-  id             String  @id @default(uuid())
-  userId         String
-  conversationId String // 외부 AI 서비스 conversation ID (OpenAI, Claude 등)
-  title          String? // 세션 제목 (titleMessage 기반)
-
-  // Step 2: Topic
-  titleMessage String? // 주제/토픽 메시지
-
-  // Step 3: Title
-  titleResponses     Json? // 생성된 제목 세트 (복잡한 구조)
-  selectedTitle      String? // 선택된 영상 제목
-  selectedTitleIndex Int? // 선택된 제목 인덱스
-
-  // Step 4: Thumbnail Guide
-  thumbnailGuideResponses     Json? // 생성된 썸네일 가이드 (복잡한 구조)
-  selectedThumbnailGuideIndex Int? // 선택된 가이드 인덱스
-
-  // Step 5: Thumbnail
-  thumbnailUrls String? // S3에 저장된 썸네일 이미지 URL
-
-  // Step 6: Script
-  scriptResponses Json? // 생성된 대본 (구조화된 JSON)
-
-  // Step 7: Metadata
-  metadataResponses Json? // 메타데이터 (설명, 타임스탬프, 해시태그, 태그)
-
-  // Step 8: Shorts Titles
-  shortsTitlesResponses Json? // 쇼츠 제목 (각 챕터별 2~3개)
-
-  // Progress
-  step String? // 현재 단계 (TITLE, THUMBNAIL_GUIDE, THUMBNAIL, SCRIPT, METADATA, SHORTS_TITLES)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([createdAt])
-  @@index([conversationId])
-  @@index([step])
+enum USER_STATUS {
+  UNKNOWN
+  PENDING
+  ACTIVE
+  INACTIVE
 }

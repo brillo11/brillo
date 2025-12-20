@@ -559,7 +559,7 @@ export default function HomePage() {
                 </div> */}
               </div>
 
-              {/* <div className="text-center mt-6 pt-6 border-t border-slate-100">
+              <div className="text-center mt-6 pt-6 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setIsAdminFormOpen(!isAdminFormOpen)}
@@ -567,9 +567,9 @@ export default function HomePage() {
                 >
                   관리자 로그인 {isAdminFormOpen ? "닫기 ▲" : "열기 ▼"}
                 </button>
-              </div> */}
+              </div>
 
-              {/* {isAdminFormOpen && (
+              {isAdminFormOpen && (
                 <form
                   id="admin-form"
                   onSubmit={handleSubmit}
@@ -662,7 +662,7 @@ export default function HomePage() {
                     {isLoading ? "로그인 중..." : "관리자 로그인"}
                   </button>
                 </form>
-              )} */}
+              )}
             </CardContent>
           </Card>
         </div>
