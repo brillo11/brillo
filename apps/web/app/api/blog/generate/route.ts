@@ -517,12 +517,22 @@ ${
 }
 
 /**
- * Vercel AI Gateway를 사용하여 이미지 생성
  * 사용 모델: google/gemini-2.5-flash (Nanobanana)
  * 참고: Nanobanana는 Google Gemini 2.5 Flash Image 모델의 내부 코드명/별칭으로 알려져 있습니다.
  */
 async function generateImageWithAI(
   prompt: string,
+  aspectRatio:
+    | "1:1"
+    | "2:3"
+    | "3:2"
+    | "3:4"
+    | "4:3"
+    | "4:5"
+    | "5:4"
+    | "9:16"
+    | "16:9"
+    | "21:9" = "16:9",
 ): Promise<{ success: boolean; imageUrl?: string; error?: string }> {
   try {
     // Nano Banana (Gemini 2.5 Flash Image) 모델 사용
@@ -531,6 +541,13 @@ async function generateImageWithAI(
     const result: any = await generateText({
       model: "google/gemini-2.5-flash-image",
       prompt: `Generate an image of: ${prompt}`, // 이미지 생성을 명시적으로 요청
+      providerOptions: {
+        google: {
+          imageConfig: {
+            aspectRatio: aspectRatio,
+          },
+        },
+      },
     });
 
     // result.files에서 이미지 확인 (Vercel AI SDK 최신 버전 기능)
