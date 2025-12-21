@@ -277,7 +277,7 @@ export default function Instagram() {
   };
 
   return (
-    <div className="container mx-auto p-6 max-w-5xl space-y-8 animate-fade-in">
+    <div className="container mx-auto p-6 max-w-5xl space-y-8 animate-fade-in selection:bg-[var(--vzx-accent)] selection:text-black">
       <div>
         <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">
           인스타그램 카드 뉴스 기획
@@ -299,7 +299,7 @@ export default function Instagram() {
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               disabled={isPending}
-              className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)]/50"
+              className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)]"
             />
           </div>
 
@@ -314,7 +314,7 @@ export default function Instagram() {
                 value={targetAudience}
                 onChange={(e) => setTargetAudience(e.target.value)}
                 disabled={isPending}
-                className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)]"
+                className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)]"
               />
             </div>
 
@@ -329,7 +329,7 @@ export default function Instagram() {
                 value={keyInsights}
                 onChange={(e) => setKeyInsights(e.target.value)}
                 disabled={isPending}
-                className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)]"
+                className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)]"
               />
             </div>
           </div>
@@ -522,7 +522,7 @@ export default function Instagram() {
                           onChange={(e) =>
                             updatePage(index, "visual", e.target.value)
                           }
-                          className="bg-black/30 border-white/10 text-white focus-visible:border-[var(--vzx-accent)]"
+                          className="bg-black/30 border-white/10 text-white focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)]"
                           placeholder="이미지/비주얼 설명"
                         />
                       </div>
@@ -537,7 +537,7 @@ export default function Instagram() {
                           onChange={(e) =>
                             updatePage(index, "mainText", e.target.value)
                           }
-                          className="bg-black/30 border-white/10 text-white focus-visible:border-[var(--vzx-accent)] min-h-[80px]"
+                          className="bg-black/30 border-white/10 text-white focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)] min-h-[80px]"
                           placeholder="메인 텍스트 (큰 글씨)"
                         />
                       </div>
@@ -552,7 +552,7 @@ export default function Instagram() {
                           onChange={(e) =>
                             updatePage(index, "miniTexts", e.target.value)
                           }
-                          className="bg-black/30 border-white/10 text-gray-300 focus-visible:border-[var(--vzx-accent)] min-h-[60px]"
+                          className="bg-black/30 border-white/10 text-gray-300 focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)] min-h-[60px]"
                           placeholder="보조 텍스트 (작은 글씨)"
                         />
                       </div>
@@ -567,7 +567,7 @@ export default function Instagram() {
                           onChange={(e) =>
                             updatePage(index, "directions", e.target.value)
                           }
-                          className="bg-black/30 border-white/10 text-gray-400 focus-visible:border-[var(--vzx-accent)]"
+                          className="bg-black/30 border-white/10 text-gray-400 focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)]"
                           placeholder="디자인 및 배치 가이드"
                         />
                       </div>
