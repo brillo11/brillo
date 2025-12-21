@@ -26,7 +26,6 @@ import { PATH } from "@/shared/consts/path";
 import Image from "next/image";
 import Link from "next/link";
 import { ThreadsIcon } from "@/shared/icons/ThreadsIcon";
-import { XIcon } from "@/shared/icons/XIcon";
 import { NaverBlogIcon } from "@/shared/icons/NaverBlogIcon";
 
 export default function HomePage() {
@@ -223,7 +222,7 @@ export default function HomePage() {
               <div className="pl-4 flex-1">
                 <input
                   type="text"
-                  placeholder="당신의 인사이트를 여기 적어보세요. (ex. 팔리는 숏츠의 비밀)"
+                  placeholder="당신의 아이디어를 여기 적어보세요. (ex. 팔리는 숏츠의 비밀)"
                   className="w-full bg-transparent border-none outline-none text-white placeholder-gray-500"
                 />
               </div>
@@ -245,7 +244,7 @@ export default function HomePage() {
                 <ThreadsIcon size={10} /> 쓰레드 포스트
               </span>
               <span className="flex items-center gap-1">
-                <Instagram size={10} /> 인스타그램 카드
+                <Instagram size={10} /> 인스타그램 캐러셀
               </span>
               <span className="flex items-center gap-1">
                 <Video size={10} /> 아바타 영상
@@ -471,7 +470,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-bold mb-3">AI 블로그 작성기</h3>
               <p className="text-gray-500 leading-relaxed">
-                AI가 당신의 인사이트를 분석하여 전문성을 반영한 SEO-최적화된
+                AI가 당신의 아이디어를 분석하여 전문성을 반영한 SEO-최적화된
                 블로그를 생성합니다.
               </p>
             </div>
@@ -489,9 +488,9 @@ export default function HomePage() {
               <div className="p-3 bg-pink-500/10 rounded-xl w-fit mb-6 text-pink-500">
                 <Instagram size={24} />
               </div>
-              <h3 className="text-xl font-bold mb-3">카드뉴스와 영상</h3>
+              <h3 className="text-xl font-bold mb-3">캐러셀과 영상</h3>
               <p className="text-gray-400 leading-relaxed">
-                당신의 인사이트를 함께 디벨롭하고 AI가 카드뉴스와 영상 에셋을
+                당신의 인사이트를 함께 디벨롭하고 AI가 캐러셀과 영상 에셋을
                 만들어줍니다.
               </p>
             </div>
@@ -536,8 +535,9 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto bg-gradient-to-b from-[#1A1A1A] to-[#0A0A0A] rounded-[40px] p-12 md:p-20 text-center border border-white/10 relative overflow-hidden">
           <div className="absolute inset-0 bg-vzx-accent/5 blur-[100px] pointer-events-none" />
           <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-8 relative z-10">
-            당신이라는 브랜드를 <br />
-            시행착오 없이 키우세요
+            퍼스널 브랜드
+            <br />
+            이제 시행착오 없이 키우세요
           </h2>
           <button
             onClick={handleStartService}

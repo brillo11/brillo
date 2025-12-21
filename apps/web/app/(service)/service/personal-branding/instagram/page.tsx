@@ -280,7 +280,7 @@ export default function Instagram() {
     <div className="container mx-auto p-6 max-w-5xl space-y-8 animate-fade-in selection:bg-[var(--vzx-accent)] selection:text-black">
       <div>
         <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">
-          인스타그램 카드 뉴스 기획
+          인스타그램 캐러셀 기획
         </h1>
         <p className="text-gray-400">
           주제와 스타일을 선택하여 전문적인 카드 뉴스 스크립트를 생성해보세요.
