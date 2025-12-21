@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { loginWithEmail, loginWithSocial } from "@/shared/lib/auth-helpers";
 import { Card, CardContent } from "@repo/ui/components/card";
@@ -58,6 +58,37 @@ export default function HomePage() {
     //   a: "강사님이 수강생들에게 제공하고 싶은 툴 아이디어를 제안하면, VZX의 SaaS 빌더 팀과 AI가 즉시 전용 소프트웨어를 구축해드립니다.",
     // },
   ];
+
+  /* Demo Animation State */
+  const [isDemoPlaying, setIsDemoPlaying] = useState(false);
+  const [demoStep, setDemoStep] = useState(0); // 0: Idle, 1: Blog, 2: Threads, 3: Instagram, 4: Youtube, 5: Done
+
+  const handlePlayDemo = () => {
+    if (isDemoPlaying) return;
+    setIsDemoPlaying(true);
+    setDemoStep(1);
+  };
+
+  useEffect(() => {
+    if (!isDemoPlaying) return;
+
+    let timeout: NodeJS.Timeout;
+    const stepDuration = 2000; // 2 seconds per step
+
+    if (demoStep > 0 && demoStep < 5) {
+      timeout = setTimeout(() => {
+        setDemoStep((prev) => prev + 1);
+      }, stepDuration);
+    } else if (demoStep === 5) {
+      // Optional: Reset after some time or keep it done
+      timeout = setTimeout(() => {
+        setIsDemoPlaying(false);
+        setDemoStep(0);
+      }, 5000);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [isDemoPlaying, demoStep]);
 
   const handleStartService = () => {
     if (session?.user) {
@@ -127,24 +158,8 @@ export default function HomePage() {
                 width={48}
                 height={48}
               />
-              {/* <div className="w-8 h-8 bg-vzx-accent rounded flex items-center justify-center font-bold text-black text-xl">
-                V
-              </div> */}
-              {/* <span className="font-bold text-xl tracking-tighter">VZX</span> */}
             </div>
             <nav className="hidden md:flex items-center gap-6">
-              {/* <a
-                href="#"
-                className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
-              >
-                Features
-              </a>
-              <a
-                href="#"
-                className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
-              >
-                Solutions
-              </a> */}
               <Link
                 href={PATH.SERVICE_DASHBOARD}
                 className="text-sm font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-1"
@@ -169,12 +184,6 @@ export default function HomePage() {
             </nav>
           </div>
           <div className="flex items-center gap-4">
-            {/* <button
-              onClick={handleStartLearning}
-              className="text-sm font-medium text-white hover:text-vzx-accent transition-colors"
-            >
-              대시보드
-            </button> */}
             <button
               onClick={handleStartService}
               className="bg-white text-black font-bold px-5 py-2 rounded-full text-sm hover:bg-gray-200 transition-all"
@@ -253,54 +262,169 @@ export default function HomePage() {
             <div className="absolute inset-0 bg-gradient-to-tr from-vzx-accent/5 to-transparent" />
             <div className="h-full w-full flex items-center justify-center p-8">
               {/* Simulated Interface Showcase */}
-              <div className="grid grid-cols-4 gap-4 w-full h-full opacity-80">
-                <div className="bg-white/5 rounded-2xl border border-white/10 p-4 space-y-3">
+              <div
+                className={`grid grid-cols-4 gap-4 w-full h-full transition-opacity duration-500 ${isDemoPlaying ? "opacity-100" : "opacity-80"}`}
+              >
+                {/* 1. Blog Card (Green) */}
+                <div
+                  className={`bg-white/5 rounded-2xl border p-4 space-y-3 transition-all duration-500 ${
+                    demoStep >= 1
+                      ? demoStep >= 2
+                        ? "border-[#03C75A] bg-[#03C75A]/10 shadow-[0_0_20px_rgba(3,199,90,0.15)]"
+                        : "border-[#03C75A]/50 bg-[#03C75A]/5"
+                      : "border-white/10"
+                  }`}
+                >
                   <div className="h-4 w-2/3 bg-white/20 rounded" />
                   <div className="aspect-square bg-[#03C75A]/10 rounded-xl flex items-center justify-center border border-[#03C75A]/20">
                     <NaverBlogIcon size={40} className="text-[#03C75A]" />
                   </div>
                   <div className="space-y-2">
-                    <div className="h-2 w-full bg-white/10 rounded" />
-                    <div className="h-2 w-full bg-white/10 rounded" />
-                    <div className="h-2 w-4/5 bg-white/10 rounded" />
+                    <div
+                      className={`h-2 bg-white/10 rounded transition-all duration-[2000ms] ease-out ${demoStep >= 1 ? "w-full opacity-100" : "w-0 opacity-50"}`}
+                    />
+                    <div
+                      className={`h-2 bg-white/10 rounded transition-all duration-[2000ms] delay-[200ms] ease-out ${demoStep >= 1 ? "w-full opacity-100" : "w-0 opacity-50"}`}
+                    />
+                    <div
+                      className={`h-2 bg-white/10 rounded transition-all duration-[2000ms] delay-[400ms] ease-out ${demoStep >= 1 ? "w-4/5 opacity-100" : "w-0 opacity-50"}`}
+                    />
                   </div>
                 </div>
-                <div className="bg-white/5 rounded-2xl border border-white/10 p-4 space-y-3 translate-y-4">
+
+                {/* 2. Threads Card (Black/White) - Originally Top Right */}
+                <div
+                  className={`bg-white/5 rounded-2xl border p-4 space-y-3 translate-y-4 transition-all duration-500 ${
+                    demoStep >= 2
+                      ? demoStep >= 3
+                        ? "border-white bg-white/10 shadow-[0_0_20px_rgba(255,255,255,0.15)]"
+                        : "border-white/50 bg-white/5"
+                      : "border-white/10"
+                  }`}
+                >
                   <div className="h-4 w-2/3 bg-white/20 rounded" />
-                  <div className="aspect-square bg-black rounded-xl flex items-center justify-center">
+                  <div className="aspect-square bg-black rounded-xl flex items-center justify-center border border-white/20">
                     <ThreadsIcon size={32} className="text-white" />
                   </div>
                   <div className="space-y-2">
-                    <div className="h-2 w-full bg-white/10 rounded" />
-                    <div className="h-2 w-full bg-white/10 rounded" />
+                    <div
+                      className={`h-2 bg-white/10 rounded transition-all duration-[2000ms] ease-out ${demoStep >= 2 ? "w-full opacity-100" : "w-0 opacity-50"}`}
+                    />
+                    <div
+                      className={`h-2 bg-white/10 rounded transition-all duration-[2000ms] delay-[200ms] ease-out ${demoStep >= 2 ? "w-full opacity-100" : "w-0 opacity-50"}`}
+                    />
                   </div>
                 </div>
-                <div className="bg-white/5 rounded-2xl border border-white/10 p-4 space-y-3">
+
+                {/* 3. Instagram Card (Pink) - Originally Bottom Left? Wait order check */}
+                {/* 
+                  Original Top Left: Blog
+                  Original Top Right: Grid Item 2 (Threads was moved here?)
+                  Original Bottom Left: Grid Item 3 (Instagram) 
+                  Original Bottom Right: Grid Item 4 (Youtube)
+                  
+                  Let's check the previous snippet again. 
+                  Grid Item 1 (Top Left): NaverBlog
+                  Grid Item 2 (Top Right): Threads (using ThreadsIcon) - CORRECT
+                  Grid Item 3 (Bottom Left): Instagram (using InstagramIcon) - CORRECT
+                  Grid Item 4 (Bottom Right): Youtube (using YoutubeIcon) - CORRECT
+                  
+                  Wait, step 556:
+                  Replaced XIcon (Top Right) with Instagram (Pink).
+                  Wait, did I mess up my own memory?
+                  Let's re-read step 556 output.
+                  It replaced lines 266-269.
+                  Line 268 was `XIcon` inside `div`. 
+                  And that `div` (Grid Item 2) had `translate-y-4`.
+                  Wait, Grid Item 2 has `translate-y-4`.
+                  Grid Item 4 has `translate-y-4`.
+                  
+                  Actually, let's look at the file content in Step 607 again.
+                  Line 257: Item 1. NaverBlog.
+                  Line 268: Item 2. ThreadsIcon (Black).
+                  Line 278: Item 3. Instagram (Pink).
+                  Line 290: Item 4. Youtube (Red).
+                  
+                  So layout is:
+                  1 (TL)  |  2 (TR)
+                  3 (BL)  |  4 (BR)
+                  
+                  Order of flow: Blog (1) -> Threads (2) -> Instagram (3) -> Youtube (4).
+                  This perfectly follows columns? No, rows.
+                  Wait, Grid layout `grid-cols-4`.
+                  So they are all on one row?
+                  `grid-cols-4` = 4 columns.
+                  So:
+                  [1] [2] [3] [4]
+                  All in one row.
+                  Item 2 and 4 have `translate-y-4`.
+                  So it looks like a staggered row.
+                  [1]     [3]
+                      [2]     [4]
+                  
+                  Okay, so flow is 1 -> 2 -> 3 -> 4. Right.
+                  
+                  My code matches this order.
+                */}
+
+                <div
+                  className={`bg-white/5 rounded-2xl border p-4 space-y-3 transition-all duration-500 ${
+                    demoStep >= 3
+                      ? demoStep >= 4
+                        ? "border-pink-500 bg-pink-500/10 shadow-[0_0_20px_rgba(236,72,153,0.15)]"
+                        : "border-pink-500/50 bg-pink-500/5"
+                      : "border-white/10"
+                  }`}
+                >
                   <div className="h-4 w-2/3 bg-white/20 rounded" />
                   <div className="aspect-square bg-pink-500/10 rounded-xl flex items-center justify-center border border-pink-500/20">
                     <Instagram size={32} className="text-pink-500" />
                   </div>
 
                   <div className="space-y-2">
-                    <div className="h-2 w-full bg-white/10 rounded" />
-                    <div className="h-2 w-full bg-white/10 rounded" />
-                    <div className="h-2 w-full bg-white/10 rounded" />
+                    <div
+                      className={`h-2 bg-white/10 rounded transition-all duration-[2000ms] ease-out ${demoStep >= 3 ? "w-full opacity-100" : "w-0 opacity-50"}`}
+                    />
+                    <div
+                      className={`h-2 bg-white/10 rounded transition-all duration-[2000ms] delay-[200ms] ease-out ${demoStep >= 3 ? "w-full opacity-100" : "w-0 opacity-50"}`}
+                    />
+                    <div
+                      className={`h-2 bg-white/10 rounded transition-all duration-[2000ms] delay-[400ms] ease-out ${demoStep >= 3 ? "w-full opacity-100" : "w-0 opacity-50"}`}
+                    />
                   </div>
                 </div>
-                <div className="bg-white/5 rounded-2xl border border-white/10 p-4 space-y-3 translate-y-4">
+
+                {/* 4. Youtube Card (Red) */}
+                <div
+                  className={`bg-white/5 rounded-2xl border p-4 space-y-3 translate-y-4 transition-all duration-500 ${
+                    demoStep >= 4
+                      ? demoStep >= 5
+                        ? "border-red-500 bg-red-500/10 shadow-[0_0_20px_rgba(239,68,68,0.15)]"
+                        : "border-red-500/50 bg-red-500/5"
+                      : "border-white/10"
+                  }`}
+                >
                   <div className="h-4 w-2/3 bg-white/20 rounded" />
                   <div className="aspect-video bg-red-500/10 rounded-xl relative overflow-hidden flex items-center justify-center border border-red-500/20">
                     <Youtube size={40} className="text-red-500" />
                   </div>
-                  <div className="h-2 w-full bg-white/10 rounded" />
+                  <div
+                    className={`h-2 bg-white/10 rounded transition-all duration-[2000ms] ease-out ${demoStep >= 4 ? "w-full opacity-100" : "w-0 opacity-50"}`}
+                  />
                 </div>
               </div>
-              {/* Centered Floating Play Button */}
-              <div className="absolute inset-0 flex items-center justify-center z-10">
-                <div className="w-20 h-20 bg-vzx-accent rounded-full flex items-center justify-center pl-1 shadow-[0_0_50px_rgba(51,219,152,0.5)] cursor-pointer hover:scale-110 transition-transform">
-                  <Play fill="black" stroke="none" size={32} />
+
+              {/* Centered Floating Play Button - Only show if not playing */}
+              {!isDemoPlaying && (
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <div
+                    onClick={handlePlayDemo}
+                    className="w-20 h-20 bg-vzx-accent rounded-full flex items-center justify-center pl-1 shadow-[0_0_50px_rgba(51,219,152,0.5)] cursor-pointer hover:scale-110 transition-transform"
+                  >
+                    <Play fill="black" stroke="none" size={32} />
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
