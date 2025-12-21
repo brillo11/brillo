@@ -1,8 +1,7 @@
 import { generateText } from "ai";
 
 /**
- * 사용 모델: google/gemini-2.5-flash (Nanobanana)
- * 참고: Nanobanana는 Google Gemini 2.5 Flash Image 모델의 내부 코드명/별칭으로 알려져 있습니다.
+ * 사용 모델: google/gemini-3-pro-image (Nanobanana Pro)
  */
 export async function generateImageWithAI(
   prompt: string,
@@ -19,7 +18,6 @@ export async function generateImageWithAI(
     | "21:9" = "16:9",
 ): Promise<{ success: boolean; imageUrl?: string; error?: string }> {
   try {
-    // Nano Banana (Gemini 2.5 Flash Image) 모델 사용
     // 문서에 따라 generateText를 사용하고 result.files에서 이미지를 확인합니다.
     console.log("이미지 프롬포트 : ", prompt);
     const result: any = await generateText({
