@@ -17,7 +17,7 @@ import {
   generateContentPlansFromKeywords,
   generateContentPlanFromUrl,
   generateContentPlanFromYoutube,
-} from "@/serverActions/blog/blog-keyword-search";
+} from "@/serverActions/blog/keyword-search";
 
 interface GeneratedPlan {
   subject: string;

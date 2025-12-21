@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useBlogForm } from "./BlogFormContext";
 import AccordionItem from "./AccordionItem";
 import { Search, Link, FileText, Loader2, Sparkles } from "lucide-react";
-import { analyzeStyleFromSource } from "@/serverActions/blog/blog-keyword-search";
+import { analyzeStyleFromSource } from "@/serverActions/blog/keyword-search";
 
 const StepDetails: React.FC = () => {
   const { formData, updateFormData } = useBlogForm();

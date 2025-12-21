@@ -12,10 +12,7 @@ import {
   ArrowRight,
   TrendingUp,
 } from "lucide-react";
-import {
-  searchBlogPosts,
-  BlogPost,
-} from "@/serverActions/blog/blog-keyword-search";
+import { searchBlogPosts, BlogPost } from "@/serverActions/blog/keyword-search";
 
 export default function BlogKeywordSearchPage() {
   const [keyword, setKeyword] = useState("");

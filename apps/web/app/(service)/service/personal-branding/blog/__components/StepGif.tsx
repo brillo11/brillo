@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Download, Plus, Info, Play, Loader2, Sparkles } from "lucide-react";
 import { useBlogForm, BlogFormData } from "./BlogFormContext";
 import AccordionItem from "./AccordionItem";
-import { generateYoutubeGifs } from "@/serverActions/blog/blog-gif.actions";
+import { generateYoutubeGifs } from "@/serverActions/blog/gif.actions";
 import Image from "next/image";
 
 const StepGif: React.FC = () => {
