@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   Loader2,
   Play,
+  Instagram,
 } from "lucide-react";
 
 // Mock Services
@@ -17,7 +18,7 @@ const generateBlogPost = async (topic: string) => {
   return new Promise<string>((resolve) => {
     setTimeout(() => {
       resolve(
-        `# Introduction to ${topic}\n\nThis is a generated blog post content about ${topic}.\n\n## Key Takeaway\nThis is the main point of the article.\n\n## Conclusion\nWrap up of the concept.`
+        `# Introduction to ${topic}\n\nThis is a generated blog post content about ${topic}.\n\n## Key Takeaway\nThis is the main point of the article.\n\n## Conclusion\nWrap up of the concept.`,
       );
     }, 1500);
   });
@@ -37,7 +38,22 @@ const generateThreadFromBlog = async (content: string) => {
   });
 };
 
-const generateShortsPlan = async (tweets: string[]) => {
+const generateInstagramPlan = async (tweets: string[]) => {
+  return new Promise<string>((resolve) => {
+    setTimeout(() => {
+      resolve(
+        "📸 [Instagram Carousel Plan]\n\n" +
+          "Slide 1: Hook - Catchy Title\n" +
+          "Slide 2: Context - Why this matters\n" +
+          "Slide 3: Insight 1 - Detailed point\n" +
+          "Slide 4: Insight 2 - Another point\n" +
+          "Slide 5: Summary & CTA - Save this post!",
+      );
+    }, 1500);
+  });
+};
+
+const generateShortsPlan = async (instagramContent: string) => {
   return new Promise<{ script: string; visualPrompt: string }>((resolve) => {
     setTimeout(() => {
       resolve({
@@ -54,7 +70,8 @@ const steps = [
   { id: 1, label: "인사이트", icon: Sparkles },
   { id: 2, label: "블로그", icon: FileText },
   { id: 3, label: "쓰레드", icon: Share2 },
-  { id: 4, label: "영상", icon: Video },
+  { id: 4, label: "인스타그램", icon: Instagram },
+  { id: 5, label: "영상", icon: Video },
 ];
 
 export default function BrandingWorkflow() {
@@ -65,6 +82,7 @@ export default function BrandingWorkflow() {
   const [topic, setTopic] = useState("");
   const [blogContent, setBlogContent] = useState("");
   const [threadTweets, setThreadTweets] = useState<string[]>([]);
+  const [instagramContent, setInstagramContent] = useState("");
   const [videoAssets, setVideoAssets] = useState<{
     script: string;
     visualPrompt: string;
@@ -96,9 +114,20 @@ export default function BrandingWorkflow() {
   const handleStep3Submit = async () => {
     setIsLoading(true);
     try {
-      const result = await generateShortsPlan(threadTweets);
-      setVideoAssets(result);
+      const result = await generateInstagramPlan(threadTweets);
+      setInstagramContent(result);
       setCurrentStep(4);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleStep4Submit = async () => {
+    setIsLoading(true);
+    try {
+      const result = await generateShortsPlan(instagramContent);
+      setVideoAssets(result);
+      setCurrentStep(5);
     } finally {
       setIsLoading(false);
     }
@@ -248,8 +277,30 @@ export default function BrandingWorkflow() {
           </div>
         )}
 
-        {/* Step 4: Assets */}
-        {currentStep === 4 && videoAssets && (
+        {/* Step 4: Instagram */}
+        {currentStep === 4 && (
+          <div className="h-full flex flex-col">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-white">
+                Review Instagram Plan
+              </h2>
+              <button
+                onClick={handleStep4Submit}
+                className="text-sm font-bold text-black bg-[#33DB98] px-4 py-2 rounded-lg hover:bg-[#2bb880] transition flex items-center gap-2"
+              >
+                Generate Video Assets <ArrowRight size={16} />
+              </button>
+            </div>
+            <textarea
+              value={instagramContent}
+              onChange={(e) => setInstagramContent(e.target.value)}
+              className="flex-1 w-full bg-vzx-bg border border-white/10 rounded-xl p-6 text-gray-300 font-mono text-sm leading-relaxed resize-none focus:border-[#33DB98] outline-none min-h-[400px]"
+            />
+          </div>
+        )}
+
+        {/* Step 5: Assets */}
+        {currentStep === 5 && videoAssets && (
           <div className="h-full flex flex-col">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold text-white">Final Assets</h2>
