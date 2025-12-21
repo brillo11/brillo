@@ -77,9 +77,9 @@ const ASPECT_RATIOS: {
   label: string;
   icon: typeof Smartphone;
 }[] = [
+  { id: "1:1", label: "정방형 (1:1)", icon: Square },
   { id: "9:16", label: "세로형 (9:16)", icon: Smartphone },
   { id: "4:5", label: "세로형 (4:5)", icon: Smartphone },
-  { id: "1:1", label: "정방형 (1:1)", icon: Square },
 ];
 
 interface InstagramPageContent {
@@ -98,7 +98,7 @@ export default function Instagram() {
   const [pages, setPages] = useState<InstagramPageContent[]>([]);
   const [isPending, startTransition] = useTransition();
 
-  const [aspectRatio, setAspectRatio] = useState<InstagramAspectRatio>("9:16");
+  const [aspectRatio, setAspectRatio] = useState<InstagramAspectRatio>("1:1");
 
   const [isGeneratingImages, setIsGeneratingImages] = useState(false);
 
