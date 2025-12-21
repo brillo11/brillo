@@ -67,19 +67,23 @@ const generateShortsPlan = async (instagramContent: string) => {
 };
 
 const steps = [
-  { id: 1, label: "인사이트", icon: Sparkles },
+  { id: 1, label: "아이디어", icon: Sparkles },
   { id: 2, label: "블로그", icon: FileText },
   { id: 3, label: "쓰레드", icon: Share2 },
   { id: 4, label: "인스타그램", icon: Instagram },
   { id: 5, label: "영상", icon: Video },
 ];
 
+import { useSearchParams } from "next/navigation";
+
 export default function BrandingWorkflow() {
+  const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
   // Data State
-  const [topic, setTopic] = useState("");
+  const [topic, setTopic] = useState(searchParams.get("topic") || "");
+  const [insight, setInsight] = useState("");
   const [blogContent, setBlogContent] = useState("");
   const [threadTweets, setThreadTweets] = useState<string[]>([]);
   const [instagramContent, setInstagramContent] = useState("");
@@ -194,16 +198,34 @@ export default function BrandingWorkflow() {
               <Sparkles className="w-8 h-8 text-[#33DB98]" />
             </div>
             <h2 className="text-2xl font-semibold text-white">
-              오늘 공유하고 싶은 인사이트는 무엇인가요?
+              오늘 공유하고 싶은 아이디어는 무엇인가요?
             </h2>
-            <div className="w-full max-w-lg">
-              <input
-                type="text"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                placeholder="ex. 2026년에 시작하는 유튜브 채널"
-                className="w-full bg-vzx-bg border border-gray-700 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-[#33DB98] focus:ring-1 focus:ring-[#33DB98] outline-none transition-all text-lg"
-              />
+            <div className="w-full max-w-lg space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2 ml-1">
+                  주제
+                </label>
+                <input
+                  type="text"
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                  placeholder="ex. 2026년에 시작하는 유튜브 채널"
+                  className="w-full bg-vzx-bg border border-gray-700 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-[#33DB98] focus:ring-1 focus:ring-[#33DB98] outline-none transition-all text-lg"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2 ml-1">
+                  인사이트
+                </label>
+                <input
+                  type="text"
+                  value={insight}
+                  onChange={(e) => setInsight(e.target.value)}
+                  placeholder="(선택) ex. 그 어느때보다 중요해진 진정성의 가치"
+                  className="w-full bg-vzx-bg border border-gray-700 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-[#33DB98] focus:ring-1 focus:ring-[#33DB98] outline-none transition-all text-lg"
+                />
+              </div>
             </div>
             <button
               onClick={handleStep1Submit}
