@@ -3,10 +3,12 @@
 import { generateText } from "ai";
 
 export type ThreadsStyle = "EMPATHY" | "TIPS" | "DEBATE" | "NETWORKING";
+export type ThreadsTone = "AUTO" | "POLITE" | "CASUAL" | "MIXED";
 
 export async function generateThreadsContent(
   topic: string,
   style: ThreadsStyle,
+  tone: ThreadsTone = "AUTO",
   targetAudience?: string,
   insight?: string,
 ) {
@@ -48,6 +50,27 @@ export async function generateThreadsContent(
         break;
     }
 
+    let toneGuide = "";
+    switch (tone) {
+      case "POLITE":
+        toneGuide =
+          "John-daet-mal (존댓말 모드): Polite, respectful, Soft spoken but witty.";
+        break;
+      case "CASUAL":
+        toneGuide =
+          "Ban-mal (반말 모드): Casual, friendly, direct, like talking to a close friend.";
+        break;
+      case "MIXED":
+        toneGuide =
+          "Ban-jon-dae (반존대 모드): Mix of polite and casual. E.g., starting with polite but ending with casual, or vice versa, to create a unique charming vibe.";
+        break;
+      case "AUTO":
+      default:
+        toneGuide =
+          "Automatic: Choose the most appropriate tone based on the Style and Topic. For Empathy/Networking, prefer Casual/Mixed. For Tips/Debate, prefer Polite/Mixed.";
+        break;
+    }
+
     const prompt = `
     You are an expert content creator for Korean Threads (쓰레드).
     Create a highly engaging Threads post series (Main post + replies/follow-ups) based on the following inputs:
@@ -57,13 +80,17 @@ export async function generateThreadsContent(
     User Insight (Optional): "${insight || "None provided"}"
 
     Selected Style: ${style}
+    Selected Tone: ${tone}
     
     [Style Guide]
     ${styleGuide}
 
+    [Tone Guide]
+    ${toneGuide}
+
     [General Threads Culture Tips]
     - First Sentence is Critical: It must hook the reader immediately.
-    - Tone: Can be casual (Banmal) or polite (Jondaetmal) but must be AUTHENTIC. Avoid corporate stiff tone. Use "Text-Hip" vibe.
+    - Tone: Must be AUTHENTIC. Avoid corporate stiff tone. Use "Text-Hip" vibe.
     - Line Breaks: Use frequent line breaks for readability (Enter key).
     - Length: Main post should be punchy. Follow-up posts (replies) can elaborate.
     

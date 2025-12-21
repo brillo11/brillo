@@ -83,6 +83,7 @@ export default function BrandingWorkflow() {
 
   // Data State
   const [topic, setTopic] = useState(searchParams.get("topic") || "");
+  const [targetAudience, setTargetAudience] = useState("");
   const [insight, setInsight] = useState("");
   const [blogContent, setBlogContent] = useState("");
   const [threadTweets, setThreadTweets] = useState<string[]>([]);
@@ -214,17 +215,31 @@ export default function BrandingWorkflow() {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2 ml-1">
-                  인사이트
-                </label>
-                <input
-                  type="text"
-                  value={insight}
-                  onChange={(e) => setInsight(e.target.value)}
-                  placeholder="(선택) ex. 그 어느때보다 중요해진 진정성의 가치"
-                  className="w-full bg-vzx-bg border border-gray-700 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-[#33DB98] focus:ring-1 focus:ring-[#33DB98] outline-none transition-all text-lg"
-                />
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-400 mb-2 ml-1">
+                    대상 고객
+                  </label>
+                  <input
+                    type="text"
+                    value={targetAudience}
+                    onChange={(e) => setTargetAudience(e.target.value)}
+                    placeholder="(선택) ex. 취준생"
+                    className="w-full bg-vzx-bg border border-gray-700 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-[#33DB98] focus:ring-1 focus:ring-[#33DB98] outline-none transition-all text-lg"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-400 mb-2 ml-1">
+                    핵심 인사이트
+                  </label>
+                  <input
+                    type="text"
+                    value={insight}
+                    onChange={(e) => setInsight(e.target.value)}
+                    placeholder="(선택) ex. 진정성의 가치"
+                    className="w-full bg-vzx-bg border border-gray-700 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-[#33DB98] focus:ring-1 focus:ring-[#33DB98] outline-none transition-all text-lg"
+                  />
+                </div>
               </div>
             </div>
             <button

@@ -15,7 +15,7 @@ import {
   Users,
   HelpCircle,
 } from "lucide-react";
-import { generateThreadsContent, ThreadsStyle } from "./actions";
+import { generateThreadsContent, ThreadsStyle, ThreadsTone } from "./actions";
 
 const STYLES: {
   id: ThreadsStyle;
@@ -54,11 +54,22 @@ const STYLES: {
   },
 ];
 
+const TONES: {
+  id: ThreadsTone;
+  label: string;
+}[] = [
+  { id: "AUTO", label: "자동" },
+  { id: "POLITE", label: "존댓말 모드" },
+  { id: "CASUAL", label: "반말 모드" },
+  { id: "MIXED", label: "반존대 모드" },
+];
+
 export default function ThreadsGenerator() {
   const [topic, setTopic] = useState("");
   const [targetAudience, setTargetAudience] = useState("");
   const [insight, setInsight] = useState("");
   const [selectedStyle, setSelectedStyle] = useState<ThreadsStyle | null>(null);
+  const [selectedTone, setSelectedTone] = useState<ThreadsTone>("AUTO");
 
   const [posts, setPosts] = useState<string[]>([]);
   const [isPending, startTransition] = useTransition();
@@ -78,6 +89,7 @@ export default function ThreadsGenerator() {
         const result = await generateThreadsContent(
           topic,
           selectedStyle,
+          selectedTone,
           targetAudience,
           insight,
         );
@@ -157,53 +169,77 @@ export default function ThreadsGenerator() {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label className="text-gray-300">스타일 선택</Label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {STYLES.map((style) => (
-                <div
-                  key={style.id}
-                  onClick={() => setSelectedStyle(style.id)}
-                  className={`
-                    relative cursor-pointer transition-all duration-300 border rounded-2xl p-4
-                    ${
-                      selectedStyle === style.id
-                        ? "bg-[var(--vzx-accent)]/10 border-[var(--vzx-accent)] ring-1 ring-[var(--vzx-accent)]/50"
-                        : "bg-vzx-card border-white/5 hover:border-[var(--vzx-accent)]/50 text-gray-400 hover:text-white"
-                    }
-                  `}
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <div
-                      className={`p-2 rounded-lg transition-colors ${
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <Label className="text-gray-300">스타일 선택</Label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {STYLES.map((style) => (
+                  <div
+                    key={style.id}
+                    onClick={() => setSelectedStyle(style.id)}
+                    className={`
+                      relative cursor-pointer transition-all duration-300 border rounded-2xl p-4
+                      ${
                         selectedStyle === style.id
-                          ? "bg-[var(--vzx-accent)] text-black"
-                          : "bg-white/5 text-gray-400"
+                          ? "bg-[var(--vzx-accent)]/10 border-[var(--vzx-accent)] ring-1 ring-[var(--vzx-accent)]/50"
+                          : "bg-vzx-card border-white/5 hover:border-[var(--vzx-accent)]/50 text-gray-400 hover:text-white"
+                      }
+                    `}
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div
+                        className={`p-2 rounded-lg transition-colors ${
+                          selectedStyle === style.id
+                            ? "bg-[var(--vzx-accent)] text-black"
+                            : "bg-white/5 text-gray-400"
+                        }`}
+                      >
+                        <style.icon size={20} />
+                      </div>
+                      {selectedStyle === style.id && (
+                        <div className="w-2 h-2 rounded-full bg-[var(--vzx-accent)] animate-pulse" />
+                      )}
+                    </div>
+                    <h3
+                      className={`font-bold mb-1 transition-colors ${
+                        selectedStyle === style.id
+                          ? "text-[var(--vzx-accent)]"
+                          : "text-gray-200"
                       }`}
                     >
-                      <style.icon size={20} />
-                    </div>
-                    {selectedStyle === style.id && (
-                      <div className="w-2 h-2 rounded-full bg-[var(--vzx-accent)] animate-pulse" />
-                    )}
+                      {style.title}
+                    </h3>
+                    <p className="text-xs text-gray-500 leading-relaxed font-medium mb-1">
+                      {style.desc}
+                    </p>
+                    <p className="text-[10px] text-gray-500 leading-tight border-t border-white/5 pt-2 mt-2">
+                      {style.detail}
+                    </p>
                   </div>
-                  <h3
-                    className={`font-bold mb-1 transition-colors ${
-                      selectedStyle === style.id
-                        ? "text-[var(--vzx-accent)]"
-                        : "text-gray-200"
-                    }`}
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-gray-300">소통방식</Label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {TONES.map((tone) => (
+                  <div
+                    key={tone.id}
+                    onClick={() => setSelectedTone(tone.id)}
+                    className={`
+                      cursor-pointer text-center py-3 rounded-xl border transition-all duration-200 text-sm font-medium
+                      ${
+                        selectedTone === tone.id
+                          ? "bg-[var(--vzx-accent)] text-black border-[var(--vzx-accent)]"
+                          : "bg-vzx-card border-white/5 text-gray-400 hover:text-white hover:border-white/20"
+                      }
+                    `}
                   >
-                    {style.title}
-                  </h3>
-                  <p className="text-xs text-gray-500 leading-relaxed font-medium mb-1">
-                    {style.desc}
-                  </p>
-                  <p className="text-[10px] text-gray-500 leading-tight border-t border-white/5 pt-2 mt-2">
-                    {style.detail}
-                  </p>
-                </div>
-              ))}
+                    {tone.label}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -246,7 +282,7 @@ export default function ThreadsGenerator() {
                     {/* Avatar */}
                     <div className="absolute left-0 top-0 w-14 h-14 flex items-start justify-center">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-700 to-gray-600 border border-white/10 flex items-center justify-center text-xs font-bold text-white z-10 shadow-lg">
-                        VZX
+                        V
                       </div>
                       {index < posts.length - 1 && (
                         <div className="absolute top-10 bottom-[-24px] w-0.5 bg-gray-700 z-0" />
@@ -257,7 +293,7 @@ export default function ThreadsGenerator() {
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-white text-sm">
-                          user_name
+                          vizion_x
                         </span>
                         <div className="flex items-center gap-2">
                           <span className="text-gray-500 text-xs">
