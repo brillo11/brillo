@@ -228,7 +228,6 @@ export default function ThreadsGenerator() {
         <div className="space-y-6">
           <div className="bg-[#101010] border border-white/10 rounded-3xl p-8 min-h-[600px] relative overflow-hidden">
             {/* Background Pattern */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
 
             <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2 relative z-10">
               <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
