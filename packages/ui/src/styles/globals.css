@@ -81,7 +81,7 @@
 
   /* Primary: TubeInsight Red/Orange (밝기 조정) */
   --primary: rgb(51, 219, 152); /* Red-500 */
-  --primary-foreground: oklch(0.985 0 0); /* Pure White */
+  --primary-foreground: rgb(18, 18, 18); /* Pure White */
 
   --vzx-card: rgb(30, 30, 30);
   --vzx-accent: rgb(51, 219, 152);
@@ -97,7 +97,7 @@
 
   /* Accent: YouTube Red (밝기 조정) */
   --accent: rgb(51, 219, 152); /* YouTube Red (밝게) */
-  --accent-foreground: oklch(0.985 0 0);
+  --accent-foreground: rgb(18, 18, 18);
 
   /* Destructive: Error Red */
   --destructive: oklch(0.396 0.141 25.723);
