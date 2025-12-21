@@ -65,11 +65,6 @@
   --sidebar-ring: oklch(0.577 0.245 27.325); /* Red-600 */
 
   /* TubeInsight Custom Colors */
-  --tubeinsight-red: oklch(0.577 0.245 27.325); /* #DC2626 */
-  --tubeinsight-red-dark: oklch(0.488 0.243 25.331); /* #B91C1C */
-  --tubeinsight-orange: oklch(0.627 0.257 25.331); /* #EA580C */
-  --tubeinsight-orange-light: oklch(0.828 0.189 84.429); /* #F97316 */
-  --youtube-red: oklch(0.627 0.257 25.331); /* #FF0000 */
   --success-green: oklch(0.696 0.17 162.48); /* #10B981 */
   --warning-amber: oklch(0.828 0.189 84.429); /* #F59E0B */
   --info-cyan: oklch(0.769 0.188 70.08); /* #06B6D4 */
@@ -132,11 +127,6 @@
   --sidebar-ring: oklch(0.577 0.245 27.325); /* Red-600 */
 
   /* TubeInsight Custom Colors (다크 모드) */
-  --tubeinsight-red: oklch(0.637 0.237 25.331); /* 밝게 조정 */
-  --tubeinsight-red-dark: oklch(0.488 0.243 25.331);
-  --tubeinsight-orange: oklch(0.627 0.257 25.331);
-  --tubeinsight-orange-light: oklch(0.828 0.189 84.429);
-  --youtube-red: oklch(0.637 0.237 25.331); /* 밝게 조정 */
   --success-green: oklch(0.696 0.17 162.48);
   --warning-amber: oklch(0.627 0.265 303.9);
   --info-cyan: oklch(0.645 0.246 16.439);
@@ -175,7 +165,6 @@
   --color-learnflow-blue: var(--learnflow-blue);
   --color-learnflow-blue-dark: var(--learnflow-blue-dark);
   --color-learnflow-blue-light: var(--learnflow-blue-light);
-  --color-youtube-red: var(--youtube-red);
   --color-success-green: var(--success-green);
   --color-warning-amber: var(--warning-amber);
   --color-info-cyan: var(--info-cyan);
