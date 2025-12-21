@@ -224,7 +224,7 @@ export default function BrandingWorkflow() {
                     type="text"
                     value={targetAudience}
                     onChange={(e) => setTargetAudience(e.target.value)}
-                    placeholder="(선택) ex. 취준생"
+                    placeholder="(선택) ex. 직장인 부업러"
                     className="w-full bg-vzx-bg border border-gray-700 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-[#33DB98] focus:ring-1 focus:ring-[#33DB98] outline-none transition-all text-lg"
                   />
                 </div>

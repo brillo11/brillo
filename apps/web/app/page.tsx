@@ -233,6 +233,11 @@ export default function HomePage() {
                   type="text"
                   value={landingTopic}
                   onChange={(e) => setLandingTopic(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleStartService();
+                    }
+                  }}
                   placeholder="당신의 아이디어를 여기 적어보세요. (ex. 팔리는 숏츠의 비밀)"
                   className="w-full bg-transparent border-none outline-none text-white placeholder-gray-500"
                 />
