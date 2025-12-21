@@ -143,6 +143,9 @@ const BlogAiPageContent: React.FC = () => {
     setGeneratedContent("");
     setError("");
 
+    // 생성이 시작되면 페이지 최상단으로 부드럽게 스크롤
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
     try {
       const response = await fetch("/api/blog/generate", {
         method: "POST",
@@ -415,8 +418,7 @@ const BlogAiPageContent: React.FC = () => {
                 disabled={isGenerating}
                 className="flex-1 bg-[#33DB98] hover:bg-[#33DB98]/90 disabled:bg-gray-700 disabled:cursor-not-allowed text-black py-4 rounded-xl font-bold text-lg shadow-lg shadow-[#33DB98]/10 transition-all flex items-center justify-center gap-2 transform active:scale-[0.99] hover:shadow-xl hover:-translate-y-0.5"
               >
-                <Rocket size={20} />{" "}
-                {isGenerating ? "생성 중..." : "블로그 글 생성하기"}
+                <Rocket size={20} /> {isGenerating ? "생성 중..." : "생성하기"}
               </button>
               <button
                 onClick={handleSaveTemplate}
@@ -459,6 +461,7 @@ const BlogAiPageContent: React.FC = () => {
             isGeneratingTitles={isGeneratingTitles}
             selectedTitle={selectedTitle}
             onSelectTitle={setSelectedTitle}
+            onGenerateTitles={handleGenerateTitles}
             isLeftPanelCollapsed={isLeftPanelCollapsed}
           />
         </div>

@@ -102,13 +102,17 @@ const StepPhoto: React.FC = () => {
   };
 
   return (
-    <AccordionItem title="5단계: 원장님 사진 업로드 (선택)" defaultOpen={false}>
+    <AccordionItem
+      title="5단계: 프로필/인물 사진 업로드 (선택)"
+      defaultOpen={false}
+    >
       <div className="space-y-4">
         <p className="text-sm text-gray-400 leading-relaxed">
-          원장님 얼굴이 포함된 이미지를 업로드해주세요.
+          본인의 전문성이 드러나거나 신뢰감을 줄 수 있는 인물 사진을
+          업로드해주세요.
           <br />
           블로그 글 생성 시, AI가 내용을 파악하여 가장 자연스러운 위치에 사진을
-          합성해드립니다. (자동 보정 포함)
+          배치해드립니다. (자동 보정 및 최적화 포함)
         </p>
 
         <div

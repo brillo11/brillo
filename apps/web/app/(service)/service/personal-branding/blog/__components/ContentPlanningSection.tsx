@@ -15,6 +15,8 @@ import {
   searchBlogPosts,
   BlogPost,
   generateContentPlansFromKeywords,
+  generateContentPlanFromUrl,
+  generateContentPlanFromYoutube,
 } from "@/serverActions/blog/blog-keyword-search";
 
 interface GeneratedPlan {
@@ -51,6 +53,10 @@ const ContentPlanningSection: React.FC = () => {
   const [isGeneratingPlans, setIsGeneratingPlans] = useState(false);
   const [generatedPlans, setGeneratedPlans] = useState<GeneratedPlan[]>([]);
   const [selectedBlogIdx, setSelectedBlogIdx] = useState<number | null>(null);
+
+  // 블로그 URL 자동 입력 관련 상태
+  const [isGeneratingFromBlog, setIsGeneratingFromBlog] = useState(false);
+  const [isGeneratingFromYoutube, setIsGeneratingFromYoutube] = useState(false);
 
   // Sync local states when formData changes
   useEffect(() => {
@@ -162,6 +168,44 @@ const ContentPlanningSection: React.FC = () => {
     // setSearchKeyword("");
   };
 
+  // 블로그 URL을 기반으로 기획안 생성 및 자동 채우기
+  const handleBlogUrlAnalysis = async () => {
+    if (!blogUrl.trim()) return;
+    setIsGeneratingFromBlog(true);
+    try {
+      const result = await generateContentPlanFromUrl(blogUrl);
+      if (result.success && result.plan) {
+        applyContentPlan(result.plan);
+      } else {
+        alert(result.error || "블로그 분석 중 오류가 발생했습니다.");
+      }
+    } catch (error) {
+      console.error("블로그 URL 분석 오류:", error);
+      alert("기획안 생성 중 오류가 발생했습니다.");
+    } finally {
+      setIsGeneratingFromBlog(false);
+    }
+  };
+
+  // YouTube URL을 기반으로 기획안 생성 및 자동 채우기
+  const handleYoutubeUrlAnalysis = async () => {
+    if (!youtubeUrl.trim()) return;
+    setIsGeneratingFromYoutube(true);
+    try {
+      const result = await generateContentPlanFromYoutube(youtubeUrl);
+      if (result.success && result.plan) {
+        applyContentPlan(result.plan);
+      } else {
+        alert(result.error || "YouTube 분석 중 오류가 발생했습니다.");
+      }
+    } catch (error) {
+      console.error("YouTube URL 분석 오류:", error);
+      alert("기획안 생성 중 오류가 발생했습니다.");
+    } finally {
+      setIsGeneratingFromYoutube(false);
+    }
+  };
+
   const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setKeywordInput(value);
@@ -255,7 +299,7 @@ const ContentPlanningSection: React.FC = () => {
                   노출 블로그 키워드 (클릭하여 기획 생성)
                 </p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[280px] overflow-y-auto pr-2 custom-scrollbar">
+              <div className="grid grid-cols-1 gap-3 max-h-[280px] overflow-y-auto pr-2 custom-scrollbar">
                 {blogResults.map(
                   (post, idx) =>
                     post.keywords &&
@@ -265,7 +309,7 @@ const ContentPlanningSection: React.FC = () => {
                         onClick={() =>
                           handleSelectBlogAndGeneratePlans(idx, post.keywords!)
                         }
-                        className={`w-full text-left p-4 rounded-xl border transition-all relative overflow-hidden group ${
+                        className={`w-full text-left p-4 rounded-xl border transition-all relative overflow-hidden group cursor-pointer ${
                           selectedBlogIdx === idx
                             ? "bg-[#33DB98]/10 border-[#33DB98] shadow-inner shadow-[#33DB98]/10"
                             : "bg-white/5 border-white/5 hover:border-[#33DB98]/40 hover:bg-[#33DB98]/5"
@@ -317,7 +361,7 @@ const ContentPlanningSection: React.FC = () => {
                     <button
                       key={idx}
                       onClick={() => applyContentPlan(plan)}
-                      className="w-full text-left p-5 rounded-2xl bg-gradient-to-br from-white/[0.07] to-white/[0.02] border border-white/10 hover:border-[#33DB98]/50 hover:from-[#33DB98]/10 hover:to-transparent transition-all group relative overflow-hidden"
+                      className="w-full text-left p-5 rounded-2xl bg-gradient-to-br from-white/[0.07] to-white/[0.02] border border-white/10 hover:border-[#33DB98]/50 hover:from-[#33DB98]/10 hover:to-transparent transition-all group relative overflow-hidden cursor-pointer"
                     >
                       <div className="flex justify-between items-start mb-3">
                         <h4 className="font-bold text-white group-hover:text-[#33DB98] transition-colors leading-snug">
@@ -389,10 +433,21 @@ const ContentPlanningSection: React.FC = () => {
               placeholder="https://www.youtube.com/watch?v=..."
               className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#33DB98]/30 transition-all text-white"
             />
-            <button className="bg-[#33DB98] hover:bg-[#33DB98]/90 text-black px-6 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap active:scale-95">
-              자동 입력
+            <button
+              onClick={handleYoutubeUrlAnalysis}
+              disabled={isGeneratingFromYoutube || !youtubeUrl.trim()}
+              className="bg-[#33DB98] hover:bg-[#33DB98]/90 disabled:bg-[#33DB98]/20 disabled:text-white/20 text-black px-6 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap active:scale-95 flex items-center justify-center min-w-[100px]"
+            >
+              {isGeneratingFromYoutube ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                "자동 입력"
+              )}
             </button>
           </div>
+          <span className="text-xs text-gray-400">
+            예시) https://www.youtube.com/watch?v=tuH1ZTl9s9Q
+          </span>
         </div>
 
         <div className="pt-2">
@@ -408,10 +463,21 @@ const ContentPlanningSection: React.FC = () => {
               placeholder="https://blog.naver.com/계정명/글번호"
               className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#33DB98]/30 transition-all text-white"
             />
-            <button className="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 px-6 py-3 rounded-xl text-sm font-bold transition-all border border-emerald-500/30 active:scale-95">
-              확인
+            <button
+              onClick={handleBlogUrlAnalysis}
+              disabled={isGeneratingFromBlog || !blogUrl.trim()}
+              className="bg-[#33DB98] hover:bg-[#33DB98]/90 disabled:bg-[#33DB98]/20 disabled:text-white/20 text-black px-6 py-3 rounded-xl text-sm font-bold transition-all active:scale-95 flex items-center justify-center min-w-[80px]"
+            >
+              {isGeneratingFromBlog ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                "확인"
+              )}
             </button>
           </div>
+          <span className="text-xs text-gray-400">
+            예시) https://blog.naver.com/whathappylife/224076460020
+          </span>
         </div>
 
         {/* Subject */}
@@ -423,7 +489,7 @@ const ContentPlanningSection: React.FC = () => {
             type="text"
             value={subject}
             onChange={(e) => handleSubjectChange(e.target.value)}
-            placeholder="예: 임플란트 수명 늘리는 법, 목 디스크와 거북목 증후군 차이"
+            placeholder="예: 2024년 생산성 향상을 위한 필수 앱 TOP 5, 나만 알고 싶은 유럽 여행지"
             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:border-[#33DB98] transition-all text-white"
           />
         </div>
@@ -437,7 +503,7 @@ const ContentPlanningSection: React.FC = () => {
             type="text"
             value={targetAudience}
             onChange={(e) => handleTargetAudienceChange(e.target.value)}
-            placeholder="예: 40-50대 남성 직장인, 자녀의 충치 때문에 걱정인 30대 부모"
+            placeholder="예: 업무 효율을 높이고 싶은 직장인, 퇴사 후 세계 여행을 꿈꾸는 예비 여행가"
             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:border-[#33DB98] transition-all text-white"
           />
         </div>
@@ -450,7 +516,7 @@ const ContentPlanningSection: React.FC = () => {
           <textarea
             value={keyMessage}
             onChange={(e) => handleKeyMessageChange(e.target.value)}
-            placeholder="예: 임플란트는 초기 관리만 잘하면 반영구적으로 쓸 수 있다는 점을 강조해 줘"
+            placeholder="예: 누구나 쉽게 따라 할 수 있는 실용적인 팁 위주로 작성해주고, 마지막엔 저의 전자책 링크를 자연스럽게 언급해 주세요."
             className="w-full h-32 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:border-[#33DB98] transition-all text-white placeholder:text-gray-600 resize-none leading-relaxed"
           />
         </div>

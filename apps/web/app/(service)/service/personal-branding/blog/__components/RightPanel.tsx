@@ -10,6 +10,7 @@ import {
   Download,
   FileText,
   BarChart3,
+  RefreshCw,
 } from "lucide-react";
 import { useBlogForm } from "./BlogFormContext";
 
@@ -21,6 +22,7 @@ interface RightPanelProps {
   isGeneratingTitles?: boolean;
   selectedTitle?: string;
   onSelectTitle?: (title: string) => void;
+  onGenerateTitles?: () => void;
   isLeftPanelCollapsed?: boolean;
 }
 
@@ -32,6 +34,7 @@ const RightPanel: React.FC<RightPanelProps> = ({
   isGeneratingTitles = false,
   selectedTitle = "",
   onSelectTitle,
+  onGenerateTitles,
   isLeftPanelCollapsed = false,
 }) => {
   const { getSavedTemplates, loadTemplate } = useBlogForm();
@@ -149,7 +152,7 @@ const RightPanel: React.FC<RightPanelProps> = ({
 
           {/* Blog Title Suggestion */}
           <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm overflow-hidden min-h-[150px] transition-all duration-300 hover:border-[#33DB98]/20">
-            <div className="p-4 border-b border-white/5">
+            <div className="p-4 border-b border-white/5 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="text-yellow-500">💡</div>
                 <h3 className="font-bold text-white">블로그 제목 추천</h3>
@@ -159,6 +162,17 @@ const RightPanel: React.FC<RightPanelProps> = ({
                   </span>
                 )}
               </div>
+              <button
+                onClick={onGenerateTitles}
+                disabled={isGeneratingTitles}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#33DB98]/10 hover:bg-[#33DB98]/20 border border-[#33DB98]/20 rounded-lg text-[#33DB98] text-xs font-bold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <RefreshCw
+                  size={14}
+                  className={isGeneratingTitles ? "animate-spin" : ""}
+                />
+                {generatedTitles.length > 0 ? "다시 생성" : "제목 추천받기"}
+              </button>
             </div>
 
             {isGeneratingTitles ? (
@@ -295,12 +309,12 @@ const RightPanel: React.FC<RightPanelProps> = ({
               <div className="space-y-4">
                 <div className="bg-[#33DB98]/5 rounded-2xl p-4 border border-[#33DB98]/10">
                   <div className="text-xs text-[#33DB98] font-medium mb-1">
-                    본문 글자수
+                    본문 글자수 (공백 포함)
                   </div>
                   <div className="text-2xl font-bold text-white">
                     {stats.characterCount.toLocaleString()}
+                    <span className="text-xs text-gray-500 mt-1 pl-1">자</span>
                   </div>
-                  <div className="text-xs text-gray-500 mt-1">자</div>
                 </div>
                 <div className="bg-blue-500/5 rounded-2xl p-4 border border-blue-500/10">
                   <div className="text-xs text-blue-400 font-medium mb-1">
@@ -308,8 +322,8 @@ const RightPanel: React.FC<RightPanelProps> = ({
                   </div>
                   <div className="text-2xl font-bold text-white">
                     {stats.imageCount}
+                    <span className="text-xs text-gray-500 mt-1 pl-1">개</span>
                   </div>
-                  <div className="text-xs text-gray-500 mt-1">개</div>
                 </div>
               </div>
             </div>

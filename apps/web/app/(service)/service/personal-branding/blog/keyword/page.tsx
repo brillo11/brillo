@@ -363,6 +363,33 @@ export default function BlogKeywordSearchPage() {
                         </div>
                       )} */}
                     </div>
+
+                    {/* Debug: Parsed Content */}
+                    <div className="mt-4 pt-4 border-t border-white/5">
+                      <details className="group/debug">
+                        <summary className="text-[10px] text-gray-500 cursor-pointer hover:text-[#33DB98] transition-colors font-bold uppercase tracking-wider list-none flex items-center gap-1 outline-none">
+                          <span className="group-open/debug:rotate-90 transition-transform duration-200">
+                            ▶
+                          </span>
+                          DEBUG: PARSED CONTENT (HTML)
+                        </summary>
+                        <div className="mt-3 p-4 bg-black/40 rounded-xl border border-white/5 overflow-hidden">
+                          <div className="max-h-[300px] overflow-y-auto custom-scrollbar text-[11px] text-gray-400 prose prose-invert prose-xs max-w-none">
+                            {post.fullContent ? (
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html: post.fullContent,
+                                }}
+                              />
+                            ) : (
+                              <p className="italic text-gray-600">
+                                본문 내용이 파싱되지 않았습니다.
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </details>
+                    </div>
                   </div>
                 </div>
               ))}

@@ -118,9 +118,9 @@ const StepOptions: React.FC = () => {
         {/* Disclaimer */}
         <div className="flex items-center justify-between py-2">
           <div>
-            <div className="text-sm font-bold text-white">필수 고지 사항</div>
+            <div className="text-sm font-bold text-white">표기 사항 추가</div>
             <div className="text-[11px] text-gray-500 mt-1">
-              2025 의료법 가이드라인 기반 안내 문구 자동 포함
+              광고성 포스팅 문구 또는 법적 면책 조항 자동 포함
             </div>
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
