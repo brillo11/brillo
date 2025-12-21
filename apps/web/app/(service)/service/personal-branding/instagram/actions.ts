@@ -49,12 +49,23 @@ export async function generateInstagramImage(
 export async function generateInstagramContent(
   topic: string,
   style: InstagramStyle,
+  keyInsights?: string,
+  targetAudience?: string,
 ) {
   try {
     let prompt = `You are an expert Instagram content creator. Create a card news script for the topic: "${topic}".
     
-    Style: ${style}
-    
+    Style: ${style}`;
+
+    if (targetAudience) {
+      prompt += `\n    Target Audience: ${targetAudience} (Tailor the tone and language specifically for this audience)`;
+    }
+
+    if (keyInsights) {
+      prompt += `\n    Key Insights to Emphasize: ${keyInsights}`;
+    }
+
+    prompt += `\n    
     Structure Guide:
     `;
 

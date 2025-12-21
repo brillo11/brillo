@@ -99,7 +99,11 @@ export default function Instagram() {
   const [isPending, startTransition] = useTransition();
 
   const [aspectRatio, setAspectRatio] = useState<InstagramAspectRatio>("9:16");
+
   const [isGeneratingImages, setIsGeneratingImages] = useState(false);
+
+  const [targetAudience, setTargetAudience] = useState("");
+  const [keyInsights, setKeyInsights] = useState("");
 
   const getFormattedFilename = (pageIndex: number, extension = "png") => {
     const safeTopic = topic.trim().replace(/[^a-zA-Z0-9가-힣]/g, "_");
@@ -162,7 +166,12 @@ export default function Instagram() {
 
     startTransition(async () => {
       try {
-        const result = await generateInstagramContent(topic, selectedStyle);
+        const result = await generateInstagramContent(
+          topic,
+          selectedStyle,
+          keyInsights,
+          targetAudience,
+        );
         if (result.success && result.pages) {
           setPages(result.pages as InstagramPageContent[]);
           toast.success("카드 뉴스 기획이 생성되었습니다.");
@@ -292,6 +301,37 @@ export default function Instagram() {
               disabled={isPending}
               className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)]/50"
             />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="targetAudience" className="text-gray-300">
+                대상 고객 <span className="text-gray-500 text-xs">(선택)</span>
+              </Label>
+              <Input
+                id="targetAudience"
+                placeholder="예: 30대 직장인, 워킹맘"
+                value={targetAudience}
+                onChange={(e) => setTargetAudience(e.target.value)}
+                disabled={isPending}
+                className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)]"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="keyInsights" className="text-gray-300">
+                핵심 인사이트{" "}
+                <span className="text-gray-500 text-xs">(선택)</span>
+              </Label>
+              <Input
+                id="keyInsights"
+                placeholder="예: 꾸준함이 정답이다, 결국 기본기"
+                value={keyInsights}
+                onChange={(e) => setKeyInsights(e.target.value)}
+                disabled={isPending}
+                className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)]"
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
