@@ -31,7 +31,7 @@ const openAiClient = new OpenAI({
 });
 
 const geminiClient = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY2,
+  apiKey: process.env.GEMINI_API_KEY,
 });
 
 const s3Client = new S3Client({
@@ -197,14 +197,14 @@ const scriptSchema = z.object({
   intro: z
     .string()
     .describe(
-      "🎬 인트로 (초반 30초): 제목과 썸네일에서 끌어낸 후킹과 기대감을 이어가며 놀라운 사실, 중대한 약속, 로드맵을 자연스럽게 녹여낸 30초 분량 대본"
+      "🎬 인트로 (초반 30초): 제목과 썸네일에서 끌어낸 후킹과 기대감을 이어가며 놀라운 사실, 중대한 약속, 로드맵을 자연스럽게 녹여낸 30초 분량 대본",
     ),
   selfIntro: z.string().describe("자기소개: 간단한 자기소개"),
   chapters: z.array(scriptChapterSchema).length(3).describe("본론 3개 챕터"),
   outro: z
     .string()
     .describe(
-      "🎬 마무리: 핵심 요약, 구독/좋아요 요청, 다음 영상 예고와 댓글 참여 유도"
+      "🎬 마무리: 핵심 요약, 구독/좋아요 요청, 다음 영상 예고와 댓글 참여 유도",
     ),
 });
 
@@ -247,12 +247,12 @@ const thumbnailGuideSchema = z.object({
 
 const thumbnailGuideTextFormat = zodTextFormat(
   thumbnailGuideSchema,
-  "thumbnailGuide"
+  "thumbnailGuide",
 );
 
 export async function sendThumbnailGuideResponses(
   sessionId: string,
-  selectedTitleIndex: number
+  selectedTitleIndex: number,
 ) {
   const conversationId = await getConversationId(sessionId);
 
@@ -341,7 +341,7 @@ export async function sendFixThumbnailResponses(
   thumbnailEditText: string,
   thumbnailUrl: string, // S3 URL 또는 base64
   referenceImage?: string,
-  referenceImageMimeType?: string
+  referenceImageMimeType?: string,
 ) {
   // thumbnailUrl이 S3 URL인 경우 base64로 변환
   let thumbnailBase64 = thumbnailUrl;
@@ -402,7 +402,7 @@ const metadataSchema = z.object({
       z.object({
         time: z.string().describe("타임스탬프 시간 (예: 0:00, 1:30)"),
         title: z.string().describe("해당 시간의 제목"),
-      })
+      }),
     )
     .describe("인트로~마무리까지 임의 시간 배치된 타임스탬프"),
   hashtags: z.array(z.string()).length(4).describe("관련 키워드 4개"),
@@ -489,7 +489,7 @@ const shortsTitlesSchema = z.object({
 
 const shortsTitlesTextFormat = zodTextFormat(
   shortsTitlesSchema,
-  "shortsTitles"
+  "shortsTitles",
 );
 
 /**

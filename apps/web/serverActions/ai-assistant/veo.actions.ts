@@ -29,7 +29,7 @@ interface VeoVideoResponse {
  */
 async function uploadVideoToS3(
   videoBuffer: Buffer,
-  sessionId?: string
+  sessionId?: string,
 ): Promise<string> {
   const fileName = `ai-assistant/videos/${sessionId || Date.now()}_${Math.random().toString(36).substring(7)}.mp4`;
 
@@ -55,10 +55,10 @@ async function uploadVideoToS3(
  * @returns 생성된 비디오 URL 또는 에러
  */
 export async function generateVideoWithVeo(
-  prompt: string
+  prompt: string,
 ): Promise<VeoVideoResponse> {
   try {
-    const apiKey = process.env.GEMINI_API_KEY2;
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
       return {
@@ -200,10 +200,10 @@ export async function generateVideoWithVeo(
  */
 export async function downloadAndUploadVeoVideo(
   videoUrl: string,
-  sessionId?: string
+  sessionId?: string,
 ): Promise<{ success: boolean; s3Url?: string; error?: string }> {
   try {
-    const apiKey = process.env.GEMINI_API_KEY2;
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
       return {
@@ -223,7 +223,7 @@ export async function downloadAndUploadVeoVideo(
 
     if (!response.ok) {
       throw new Error(
-        `Download failed: ${response.status} ${response.statusText}`
+        `Download failed: ${response.status} ${response.statusText}`,
       );
     }
 
@@ -232,7 +232,7 @@ export async function downloadAndUploadVeoVideo(
     const videoBuffer = Buffer.from(arrayBuffer);
 
     console.log(
-      `📊 다운로드 완료 - 파일 크기: ${(arrayBuffer.byteLength / 1024 / 1024).toFixed(2)} MB`
+      `📊 다운로드 완료 - 파일 크기: ${(arrayBuffer.byteLength / 1024 / 1024).toFixed(2)} MB`,
     );
 
     // S3에 업로드
