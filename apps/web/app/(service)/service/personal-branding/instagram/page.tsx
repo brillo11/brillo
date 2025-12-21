@@ -140,7 +140,15 @@ export default function Instagram() {
       const promises = newPages.map(async (page, index) => {
         if (!page.visual) return null;
 
-        const result = await generateInstagramImage(page.visual, aspectRatio);
+        const result = await generateInstagramImage(
+          {
+            visual: page.visual,
+            mainText: page.mainText,
+            miniTexts: page.miniTexts,
+            directions: page.directions,
+          },
+          aspectRatio,
+        );
         if (result.success && result.url) {
           return { index, url: result.url };
         }

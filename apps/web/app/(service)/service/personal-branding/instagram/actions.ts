@@ -7,11 +7,30 @@ export type InstagramStyle = "RETENTION" | "AIDA" | "PAS" | "BAB";
 export type InstagramAspectRatio = "9:16" | "4:5" | "1:1";
 
 export async function generateInstagramImage(
-  prompt: string,
+  context: {
+    visual: string;
+    mainText: string;
+    miniTexts: string;
+    directions: string;
+  },
   aspectRatio: InstagramAspectRatio,
 ) {
   try {
-    const result = await generateImageWithAI(prompt, aspectRatio);
+    const finalPrompt = `
+    Context for Instagram Card News Design:
+    - Visual Background/Concept: ${context.visual}
+    - Main Headline (Big & Bold): "${context.mainText}"
+    - Subtext/Body (Smaller, Readable): "${context.miniTexts}"
+    - Design Style/Directions: ${context.directions}
+    
+    Design a professional Instagram Card News image. 
+    1. LAYOUT: Clear typographic hierarchy. The Main Headline should be prominent and readable. The Subtext should be balanced and legible.
+    2. BACKGROUND: High-quality visual based on the description, darkened or overlayed if necessary to ensure text readability. 
+    3. STYLE: Modern, clean, and aesthetic. Follow the design directions.
+    4. TEXT RENDERING: You MUST render the text onto the image. Ensure the spelling is correct and the font style matches the vibe.
+    `;
+
+    const result = await generateImageWithAI(finalPrompt, aspectRatio);
 
     if (result.success && result.imageUrl) {
       return { success: true, url: result.imageUrl };
