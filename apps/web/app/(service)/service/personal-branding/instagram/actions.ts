@@ -25,9 +25,9 @@ export async function generateInstagramImage(
     
     Design a professional Instagram Card News image. 
     1. LAYOUT: Clear typographic hierarchy. The Main Headline should be prominent and readable. The Subtext should be balanced and legible.
-    2. BACKGROUND: High-quality visual based on the description, darkened or overlayed if necessary to ensure text readability. 
+    2. BACKGROUND: High-quality visual based on the description, darkened or overlayed if necessary to ensure text readability. If characters or places appear, the background/setting MUST be Korea. 
     3. STYLE: Modern, clean, and aesthetic. Follow the design directions.
-    4. TEXT RENDERING: You MUST render the text onto the image. Ensure the spelling is correct and the font style matches the vibe.
+    4. TEXT RENDERING: You MUST render the text onto the image. Ensure the spelling is correct and the font style matches the vibe. Do NOT display any other text except the Main Headline and Subtext/Body.
     `;
 
     const result = await generateImageWithAI(finalPrompt, aspectRatio);
