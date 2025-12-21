@@ -31,6 +31,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
+    "jszip": "^3.10.1",
     "latest": "^0.2.0",
     "lucide-react": "^0.544.0",
     "lunar-javascript": "^1.7.7",
@@ -54,8 +55,8 @@
   },
   "devDependencies": {
     "@repo/database": "workspace:*",
-    "@repo/longform-database": "workspace:*",
     "@repo/eslint-config": "workspace:^",
+    "@repo/longform-database": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4.1.14",
     "@types/node": "^22",

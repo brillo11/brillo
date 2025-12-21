@@ -1,5 +1,7 @@
 "use client";
 
+import JSZip from "jszip";
+import dayjs from "dayjs";
 import { useState, useTransition } from "react";
 import { Button } from "@repo/ui/components/button";
 import { Textarea } from "@repo/ui/components/textarea";
@@ -30,6 +32,7 @@ import {
   Monitor,
   Square,
   Sparkles,
+  Download,
 } from "lucide-react";
 
 const STYLES: {
@@ -97,6 +100,55 @@ export default function Instagram() {
 
   const [aspectRatio, setAspectRatio] = useState<InstagramAspectRatio>("9:16");
   const [isGeneratingImages, setIsGeneratingImages] = useState(false);
+
+  const getFormattedFilename = (pageIndex: number, extension = "png") => {
+    const safeTopic = topic.trim().replace(/[^a-zA-Z0-9가-힣]/g, "_");
+    const timestamp = dayjs().format("YYYYMMDDHHmm");
+    return `${safeTopic}_${timestamp}_Page${pageIndex + 1}.${extension}`;
+  };
+
+  const handleDownloadAll = async () => {
+    if (pages.length === 0) return;
+
+    const zip = new JSZip();
+    let count = 0;
+
+    const promises = pages.map(async (page, index) => {
+      if (!page.imageUrl) return;
+
+      try {
+        const response = await fetch(page.imageUrl);
+        const blob = await response.blob();
+        const filename = getFormattedFilename(index, "jpg");
+        zip.file(filename, blob);
+        count++;
+      } catch (err) {
+        console.error("Failed to add file to zip", err);
+      }
+    });
+
+    await Promise.all(promises);
+
+    if (count === 0) {
+      toast.error("다운로드할 이미지가 없습니다.");
+      return;
+    }
+
+    const safeTopic = topic.trim().replace(/[^a-zA-Z0-9가-힣]/g, "_");
+    const timestamp = dayjs().format("YYYYMMDDHHmm");
+    const zipFilename = `${safeTopic}_${timestamp}_All.zip`;
+
+    const content = await zip.generateAsync({ type: "blob" });
+
+    const url = URL.createObjectURL(content);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = zipFilename;
+    link.click();
+    URL.revokeObjectURL(url);
+
+    toast.success("이미지 전체 다운로드가 시작되었습니다.");
+  };
 
   const handleGenerate = () => {
     if (!topic.trim()) {
@@ -340,23 +392,38 @@ export default function Instagram() {
                 </div>
               </div>
 
-              <Button
-                onClick={handleGenerateImages}
-                disabled={isGeneratingImages || pages.length === 0}
-                className="w-full h-12 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-medium"
-              >
-                {isGeneratingImages ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    이미지 생성 중...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-2 h-5 w-5 text-yellow-400" />
-                    캐러셀 이미지 생성
-                  </>
-                )}
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleGenerateImages}
+                  disabled={isGeneratingImages || pages.length === 0}
+                  className="flex-1 h-12 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-medium"
+                >
+                  {isGeneratingImages ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      이미지 생성 중...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="mr-2 h-5 w-5 text-yellow-400" />
+                      캐러셀 이미지 생성
+                    </>
+                  )}
+                </Button>
+
+                <Button
+                  onClick={handleDownloadAll}
+                  disabled={
+                    isGeneratingImages ||
+                    pages.length === 0 ||
+                    !pages.some((p) => p.imageUrl)
+                  }
+                  className="h-12 px-6 bg-[var(--vzx-accent)] text-black hover:bg-[var(--vzx-accent)]/90 font-bold border-none"
+                >
+                  <Download className="h-5 w-5 mr-2" />
+                  전체 다운로드
+                </Button>
+              </div>
             </div>
           )}
         </div>
@@ -483,9 +550,13 @@ export default function Instagram() {
                                 size="sm"
                                 className="border-white/20 text-white hover:bg-white/20"
                                 onClick={() => {
+                                  const filename = getFormattedFilename(
+                                    index,
+                                    "jpg",
+                                  );
                                   const link = document.createElement("a");
                                   link.href = pageContent.imageUrl!;
-                                  link.download = `page-${index + 1}-image.jpg`;
+                                  link.download = filename;
                                   link.click();
                                 }}
                               >
