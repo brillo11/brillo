@@ -18,12 +18,16 @@ import {
   Cpu,
   Twitter,
   Youtube,
+  Instagram,
 } from "lucide-react";
 import { useSession } from "@/shared/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { PATH } from "@/shared/consts/path";
 import Image from "next/image";
 import Link from "next/link";
+import { ThreadsIcon } from "@/shared/icons/ThreadsIcon";
+import { XIcon } from "@/shared/icons/XIcon";
+import { NaverBlogIcon } from "@/shared/icons/NaverBlogIcon";
 
 export default function HomePage() {
   const [credentials, setCredentials] = useState({
@@ -93,7 +97,7 @@ export default function HomePage() {
     try {
       const result = await loginWithEmail(
         credentials.email,
-        credentials.password
+        credentials.password,
       );
 
       if (!result.success) {
@@ -226,13 +230,16 @@ export default function HomePage() {
                 <Zap size={10} className="text-vzx-accent" /> AI 기획자
               </span>
               <span className="flex items-center gap-1">
-                <FileText size={10} /> 블로그 포스트 작가
+                <FileText size={10} /> 블로그 포스트
               </span>
               <span className="flex items-center gap-1">
-                <Share2 size={10} /> 쓰레드 포스트 생성
+                <ThreadsIcon size={10} /> 쓰레드 포스트
               </span>
               <span className="flex items-center gap-1">
-                <Video size={10} /> 아바타 생성
+                <Instagram size={10} /> 인스타그램 카드
+              </span>
+              <span className="flex items-center gap-1">
+                <Video size={10} /> 아바타 영상
               </span>
             </div>
           </div>
@@ -249,8 +256,8 @@ export default function HomePage() {
               <div className="grid grid-cols-4 gap-4 w-full h-full opacity-80">
                 <div className="bg-white/5 rounded-2xl border border-white/10 p-4 space-y-3">
                   <div className="h-4 w-2/3 bg-white/20 rounded" />
-                  <div className="aspect-square bg-vzx-accent/10 rounded-xl flex items-center justify-center">
-                    <FileText size={40} className="text-vzx-accent" />
+                  <div className="aspect-square bg-[#03C75A]/10 rounded-xl flex items-center justify-center border border-[#03C75A]/20">
+                    <NaverBlogIcon size={40} className="text-[#03C75A]" />
                   </div>
                   <div className="space-y-2">
                     <div className="h-2 w-full bg-white/10 rounded" />
@@ -260,8 +267,8 @@ export default function HomePage() {
                 </div>
                 <div className="bg-white/5 rounded-2xl border border-white/10 p-4 space-y-3 translate-y-4">
                   <div className="h-4 w-2/3 bg-white/20 rounded" />
-                  <div className="aspect-square bg-blue-500/10 rounded-xl flex items-center justify-center">
-                    <Twitter size={40} className="text-blue-500" />
+                  <div className="aspect-square bg-black rounded-xl flex items-center justify-center">
+                    <ThreadsIcon size={32} className="text-white" />
                   </div>
                   <div className="space-y-2">
                     <div className="h-2 w-full bg-white/10 rounded" />
@@ -270,9 +277,10 @@ export default function HomePage() {
                 </div>
                 <div className="bg-white/5 rounded-2xl border border-white/10 p-4 space-y-3">
                   <div className="h-4 w-2/3 bg-white/20 rounded" />
-                  <div className="aspect-square bg-red-500/10 rounded-xl flex items-center justify-center">
-                    <Youtube size={40} className="text-red-500" />
+                  <div className="aspect-square bg-pink-500/10 rounded-xl flex items-center justify-center border border-pink-500/20">
+                    <Instagram size={32} className="text-pink-500" />
                   </div>
+
                   <div className="space-y-2">
                     <div className="h-2 w-full bg-white/10 rounded" />
                     <div className="h-2 w-full bg-white/10 rounded" />
@@ -281,8 +289,8 @@ export default function HomePage() {
                 </div>
                 <div className="bg-white/5 rounded-2xl border border-white/10 p-4 space-y-3 translate-y-4">
                   <div className="h-4 w-2/3 bg-white/20 rounded" />
-                  <div className="aspect-video bg-vzx-accent/20 rounded-xl relative overflow-hidden flex items-center justify-center">
-                    <Play fill="#33db98" stroke="none" size={32} />
+                  <div className="aspect-video bg-red-500/10 rounded-xl relative overflow-hidden flex items-center justify-center border border-red-500/20">
+                    <Youtube size={40} className="text-red-500" />
                   </div>
                   <div className="h-2 w-full bg-white/10 rounded" />
                 </div>
@@ -334,8 +342,8 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-[#111] border border-white/5 p-8 rounded-3xl hover:border-vzx-accent/30 transition-all">
-              <div className="p-3 bg-vzx-accent/10 rounded-xl w-fit mb-6 text-vzx-accent">
-                <Globe size={24} />
+              <div className="p-3 bg-[#03C75A]/10 rounded-xl w-fit mb-6 text-[#03C75A]">
+                <NaverBlogIcon size={24} />
               </div>
               <h3 className="text-xl font-bold mb-3">AI 블로그 작성기</h3>
               <p className="text-gray-500 leading-relaxed">
@@ -344,8 +352,8 @@ export default function HomePage() {
               </p>
             </div>
             <div className="bg-[#111] border border-white/5 p-8 rounded-3xl hover:border-vzx-accent/30 transition-all">
-              <div className="p-3 bg-blue-500/10 rounded-xl w-fit mb-6 text-blue-500">
-                <Share2 size={24} />
+              <div className="p-3 bg-white/10 rounded-xl w-fit mb-6 text-white">
+                <ThreadsIcon size={24} />
               </div>
               <h3 className="text-xl font-bold mb-3">블로그를 쓰레드로</h3>
               <p className="text-gray-500 leading-relaxed">
@@ -354,13 +362,13 @@ export default function HomePage() {
               </p>
             </div>
             <div className="bg-[#111] border border-white/5 p-8 rounded-3xl hover:border-vzx-accent/30 transition-all">
-              <div className="p-3 bg-red-500/10 rounded-xl w-fit mb-6 text-red-500">
-                <Video size={24} />
+              <div className="p-3 bg-pink-500/10 rounded-xl w-fit mb-6 text-pink-500">
+                <Instagram size={24} />
               </div>
-              <h3 className="text-xl font-bold mb-3">블로그를 숏츠로</h3>
+              <h3 className="text-xl font-bold mb-3">카드뉴스와 영상</h3>
               <p className="text-gray-400 leading-relaxed">
-                블로그 글에 기반해 당신의 숏츠를 AI가 기획하고 당신의 아바타
-                에셋을 만들어줍니다.
+                당신의 인사이트를 함께 디벨롭하고 AI가 카드뉴스와 영상 에셋을
+                만들어줍니다.
               </p>
             </div>
           </div>
