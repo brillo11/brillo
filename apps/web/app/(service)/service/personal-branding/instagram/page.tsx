@@ -75,7 +75,7 @@ const ASPECT_RATIOS: {
   icon: typeof Smartphone;
 }[] = [
   { id: "9:16", label: "세로형 (9:16)", icon: Smartphone },
-  { id: "16:9", label: "가로형 (16:9)", icon: Monitor },
+  { id: "4:5", label: "세로형 (4:5)", icon: Smartphone },
   { id: "1:1", label: "정방형 (1:1)", icon: Square },
 ];
 

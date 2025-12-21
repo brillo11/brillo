@@ -1,47 +1,23 @@
 "use server";
 
 import { generateText } from "ai";
-import { GoogleGenAI } from "@google/genai";
+import { generateImageWithAI } from "@/shared/serverActions/aiGateway";
 
 export type InstagramStyle = "RETENTION" | "AIDA" | "PAS" | "BAB";
-export type InstagramAspectRatio = "9:16" | "16:9" | "1:1";
+export type InstagramAspectRatio = "9:16" | "4:5" | "1:1";
 
 export async function generateInstagramImage(
   prompt: string,
   aspectRatio: InstagramAspectRatio,
 ) {
   try {
-    const apiKey = process.env.AI_GATEWAY_API_KEY;
-    if (!apiKey) {
-      throw new Error("AI_GATEWAY_API_KEY is not set");
+    const result = await generateImageWithAI(prompt, aspectRatio);
+
+    if (result.success && result.imageUrl) {
+      return { success: true, url: result.imageUrl };
+    } else {
+      throw new Error(result.error || "Image generation failed");
     }
-
-    const client = new GoogleGenAI({
-      apiKey,
-    });
-
-    const response = await client.models.generateContent({
-      model: "gemini-3-pro-image-preview",
-      contents: prompt,
-      config: {
-        imageConfig: {
-          aspectRatio: aspectRatio,
-        },
-      },
-    });
-
-    const parts = response?.candidates?.[0]?.content?.parts;
-    const base64Data =
-      parts?.[0]?.inlineData?.data || parts?.[1]?.inlineData?.data;
-
-    if (!base64Data) {
-      throw new Error("No image data received from Gemini");
-    }
-
-    // Convert base64 to data URL
-    const imageUrl = `data:image/jpeg;base64,${base64Data}`;
-
-    return { success: true, url: imageUrl };
   } catch (error) {
     console.error("Image Generation API error:", error);
     return {
