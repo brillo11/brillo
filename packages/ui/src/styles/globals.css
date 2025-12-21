@@ -17,7 +17,7 @@
   --popover-foreground: oklch(0.145 0 0); /* Deep Black */
 
   /* Primary: TubeInsight Red/Orange (#DC2626 / #EA580C) */
-  --primary: oklch(0.577 0.245 27.325); /* Red-600 */
+  --primary: rgb(51, 219, 152); /* Red-600 */
   --primary-foreground: oklch(0.985 0 0); /* Pure White */
 
   --vzx-card: rgb(30, 30, 30);
@@ -32,8 +32,7 @@
   --muted: oklch(0.97 0 0); /* Light Gray */
   --muted-foreground: oklch(0.556 0 0); /* Medium Gray */
 
-  /* Accent: YouTube Red (#FF0000) - YouTube 관련 요소에 사용 */
-  --accent: oklch(0.627 0.257 25.331); /* YouTube Red */
+  --accent: rgb(51, 219, 152);
   --accent-foreground: oklch(0.985 0 0); /* Pure White */
 
   /* Destructive: Error Red */
@@ -81,7 +80,7 @@
   --popover-foreground: oklch(0.985 0 0); /* Pure White */
 
   /* Primary: TubeInsight Red/Orange (밝기 조정) */
-  --primary: oklch(0.637 0.237 25.331); /* Red-500 */
+  --primary: rgb(51, 219, 152); /* Red-500 */
   --primary-foreground: oklch(0.985 0 0); /* Pure White */
 
   --vzx-card: rgb(30, 30, 30);
@@ -97,7 +96,7 @@
   --muted-foreground: oklch(0.708 0 0);
 
   /* Accent: YouTube Red (밝기 조정) */
-  --accent: oklch(0.637 0.237 25.331); /* YouTube Red (밝게) */
+  --accent: rgb(51, 219, 152); /* YouTube Red (밝게) */
   --accent-foreground: oklch(0.985 0 0);
 
   /* Destructive: Error Red */
