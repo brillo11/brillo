@@ -14,3 +14,11 @@ export interface ChatMessage {
   role: "user" | "ai";
   text: string;
 }
+
+export type VideoStyle = "INFO" | "MOTIVATION" | "STORY" | "REVIEW";
+
+export interface ThumbnailReference {
+  id: string;
+  url: string;
+  title?: string;
+}

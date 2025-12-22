@@ -10,9 +10,7 @@ export default async function AIAssistantPage() {
 
   return (
     <div className="min-h-screen bg-vzx-bg">
-      <div className="w-full max-w-7xl mx-auto px-6 py-6">
         <AIAssistantClient />
-      </div>
     </div>
   );
 }
