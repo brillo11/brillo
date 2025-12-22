@@ -1,8 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { ChevronUp, ChevronDown, ArrowLeft, Loader2, Copy, Download, FileText } from 'lucide-react';
-import { useBlogForm } from './BlogFormContext';
+import React, { useState, useEffect, useMemo } from "react";
+import {
+  ChevronUp,
+  ChevronDown,
+  ArrowLeft,
+  Loader2,
+  Copy,
+  Download,
+  FileText,
+  BarChart3,
+  RefreshCw,
+} from "lucide-react";
+import { useBlogForm } from "./BlogFormContext";
 
 interface RightPanelProps {
   generatedContent?: string;
@@ -12,29 +22,54 @@ interface RightPanelProps {
   isGeneratingTitles?: boolean;
   selectedTitle?: string;
   onSelectTitle?: (title: string) => void;
+  onGenerateTitles?: () => void;
+  isLeftPanelCollapsed?: boolean;
 }
 
-const RightPanel: React.FC<RightPanelProps> = ({ 
-  generatedContent = '', 
-  isGenerating = false, 
-  error = '',
+const RightPanel: React.FC<RightPanelProps> = ({
+  generatedContent = "",
+  isGenerating = false,
+  error = "",
   generatedTitles = [],
   isGeneratingTitles = false,
-  selectedTitle = '',
-  onSelectTitle
+  selectedTitle = "",
+  onSelectTitle,
+  onGenerateTitles,
+  isLeftPanelCollapsed = false,
 }) => {
   const { getSavedTemplates, loadTemplate } = useBlogForm();
   const [isRecentOpen, setIsRecentOpen] = useState(true);
-  const [templates, setTemplates] = useState<ReturnType<typeof getSavedTemplates>>([]);
+  const [templates, setTemplates] = useState<
+    ReturnType<typeof getSavedTemplates>
+  >([]);
 
   useEffect(() => {
     setTemplates(getSavedTemplates());
   }, [getSavedTemplates]);
 
+  // 통계 정보 계산
+  const stats = useMemo(() => {
+    if (!generatedContent) {
+      return { characterCount: 0, imageCount: 0 };
+    }
+
+    // HTML 태그 제거하여 텍스트만 추출
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = generatedContent;
+    const textContent = tempDiv.textContent || tempDiv.innerText || "";
+    const characterCount = textContent.length;
+
+    // 이미지 태그 개수 계산
+    const imageMatches = generatedContent.match(/<img[^>]*>/gi);
+    const imageCount = imageMatches ? imageMatches.length : 0;
+
+    return { characterCount, imageCount };
+  }, [generatedContent]);
+
   const handleLoadTemplate = (id: string) => {
     loadTemplate(id);
     // 템플릿 적용 알림
-    const template = templates.find(t => t.id === id);
+    const template = templates.find((t) => t.id === id);
     if (template) {
       alert(`"${template.name}" 템플릿이 적용되었습니다!`);
     }
@@ -44,30 +79,288 @@ const RightPanel: React.FC<RightPanelProps> = ({
     navigator.clipboard.writeText(generatedContent);
   };
 
+  // B와 C 영역을 가로로 배치 (2:1 비율)
+  if (isLeftPanelCollapsed && generatedContent) {
+    return (
+      <div className="grid grid-cols-3 gap-6 animate-fade-in">
+        {/* B 영역: 템플릿/제목/본문 (넓게, 2/3) */}
+        <div className="col-span-2 space-y-6">
+          {/* Recent Templates */}
+          <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm overflow-hidden transition-all duration-300 hover:border-[#33DB98]/20">
+            <button
+              onClick={() => setIsRecentOpen(!isRecentOpen)}
+              className="w-full flex items-center justify-between p-4 bg-vzx-card hover:bg-white/5 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-[#33DB98]"></div>
+                <h3 className="font-bold text-white">최근 템플릿</h3>
+                {templates.length > 0 && (
+                  <span className="text-xs bg-[#33DB98]/10 text-[#33DB98] px-2 py-0.5 rounded-full font-medium">
+                    {templates.length}
+                  </span>
+                )}
+              </div>
+              {isRecentOpen ? (
+                <ChevronUp size={20} className="text-gray-500" />
+              ) : (
+                <ChevronDown size={20} className="text-gray-500" />
+              )}
+            </button>
+            {isRecentOpen && (
+              <div className="border-t border-white/5">
+                {templates.length === 0 ? (
+                  <div className="p-4 min-h-[60px] flex items-center justify-center text-sm text-gray-500">
+                    저장된 템플릿이 없습니다.
+                  </div>
+                ) : (
+                  <div className="p-3 space-y-2 max-h-[300px] overflow-y-auto">
+                    {templates.slice(0, 5).map((template) => (
+                      <button
+                        key={template.id}
+                        onClick={() => handleLoadTemplate(template.id)}
+                        className="w-full text-left p-3 rounded-xl border border-white/5 hover:border-[#33DB98]/30 hover:bg-[#33DB98]/5 transition-all group"
+                      >
+                        <div className="flex items-start gap-2">
+                          <FileText
+                            size={16}
+                            className="text-gray-500 group-hover:text-[#33DB98] mt-0.5 shrink-0"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-gray-300 text-sm truncate group-hover:text-white">
+                              {template.name}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {new Date(template.createdAt).toLocaleDateString(
+                                "ko-KR",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                }
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Blog Title Suggestion */}
+          <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm overflow-hidden min-h-[150px] transition-all duration-300 hover:border-[#33DB98]/20">
+            <div className="p-4 border-b border-white/5 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="text-yellow-500">💡</div>
+                <h3 className="font-bold text-white">블로그 제목 추천</h3>
+                {generatedTitles.length > 0 && (
+                  <span className="text-xs bg-yellow-500/10 text-yellow-500 px-2 py-0.5 rounded-full font-medium">
+                    {generatedTitles.length}개
+                  </span>
+                )}
+              </div>
+              <button
+                onClick={onGenerateTitles}
+                disabled={isGeneratingTitles}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#33DB98]/10 hover:bg-[#33DB98]/20 border border-[#33DB98]/20 rounded-lg text-[#33DB98] text-xs font-bold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <RefreshCw
+                  size={14}
+                  className={isGeneratingTitles ? "animate-spin" : ""}
+                />
+                {generatedTitles.length > 0 ? "다시 생성" : "제목 추천받기"}
+              </button>
+            </div>
+
+            {isGeneratingTitles ? (
+              <div className="p-8 flex flex-col items-center justify-center text-center gap-3">
+                <Loader2 size={32} className="text-yellow-500 animate-spin" />
+                <span className="text-sm text-gray-400">제목 생성 중...</span>
+              </div>
+            ) : generatedTitles.length > 0 ? (
+              <div className="p-4 space-y-2">
+                {generatedTitles.map((title, index) => (
+                  <button
+                    key={index}
+                    onClick={() => onSelectTitle?.(title)}
+                    className={`w-full text-left p-3 rounded-xl border transition-all ${
+                      selectedTitle === title
+                        ? "border-yellow-500/50 bg-yellow-500/5 shadow-sm"
+                        : "border-white/5 hover:border-yellow-500/30 hover:bg-yellow-500/5"
+                    }`}
+                  >
+                    <div className="flex items-start gap-2">
+                      <span className="text-xs font-medium text-gray-500 mt-0.5">
+                        {index + 1}
+                      </span>
+                      <span
+                        className={`text-sm flex-1 ${
+                          selectedTitle === title
+                            ? "text-yellow-200 font-medium"
+                            : "text-gray-300"
+                        }`}
+                      >
+                        {title}
+                      </span>
+                      {selectedTitle === title && (
+                        <span className="text-yellow-500 text-xs">✓</span>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="p-8 flex flex-col items-center justify-center text-center text-gray-500 gap-2 h-full">
+                <ArrowLeft size={24} />
+                <span className="text-sm">
+                  좌측 폼을 작성하고 생성 버튼을 눌러주세요
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Generated Blog Post */}
+          <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm overflow-hidden min-h-[300px] transition-all duration-300 hover:border-[#33DB98]/20">
+            <div className="p-4 border-b border-white/5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="text-[#33DB98]">📄</div>
+                  <h3 className="font-bold text-white">생성된 블로그 글</h3>
+                </div>
+                {generatedContent && (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleCopy}
+                      className="p-2 hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-white"
+                      title="복사"
+                    >
+                      <Copy size={16} />
+                    </button>
+                    <button
+                      className="p-2 hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-white"
+                      title="다운로드"
+                    >
+                      <Download size={16} />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="p-6">
+              {isGenerating && !generatedContent && (
+                <div className="flex flex-col items-center justify-center text-center text-gray-500 gap-3 h-60">
+                  <Loader2 size={32} className="animate-spin text-[#33DB98]" />
+                  <span className="text-sm">
+                    AI가 블로그 글을 생성하고 있습니다...
+                  </span>
+                </div>
+              )}
+              {error && (
+                <div className="flex flex-col items-center justify-center text-center text-red-400 gap-2 h-60">
+                  <span className="text-sm font-medium">
+                    오류가 발생했습니다
+                  </span>
+                  <span className="text-xs text-red-500/70">{error}</span>
+                </div>
+              )}
+              {!isGenerating && !generatedContent && !error && (
+                <div className="flex flex-col items-center justify-center text-center text-gray-500 gap-2 h-60">
+                  <ArrowLeft size={24} />
+                  <span className="text-sm">
+                    좌측 폼을 작성하고 생성 버튼을 눌러주세요
+                  </span>
+                </div>
+              )}
+              {generatedContent && (
+                <>
+                  <div className="prose prose-invert prose-emerald max-w-none">
+                    <div
+                      className="text-gray-300 text-sm leading-relaxed"
+                      dangerouslySetInnerHTML={{ __html: generatedContent }}
+                    />
+                  </div>
+                  <button
+                    className="mt-8 px-4 py-2 bg-white/5 hover:bg-white/10 text-gray-400 rounded-lg text-xs transition-colors"
+                    onClick={() => {
+                      console.log(generatedContent);
+                    }}
+                  >
+                    내용 로그 출력 (개발용)
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* C 영역: 통계 정보 (좁게, 1/3) */}
+        <div className="col-span-1">
+          <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm overflow-hidden sticky top-8 transition-all duration-300 hover:border-[#33DB98]/20">
+            <div className="p-4 border-b border-white/5">
+              <div className="flex items-center gap-2">
+                <BarChart3 size={20} className="text-[#33DB98]" />
+                <h3 className="font-bold text-white">콘텐츠 통계</h3>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                <div className="bg-[#33DB98]/5 rounded-2xl p-4 border border-[#33DB98]/10">
+                  <div className="text-xs text-[#33DB98] font-medium mb-1">
+                    본문 글자수 (공백 포함)
+                  </div>
+                  <div className="text-2xl font-bold text-white">
+                    {stats.characterCount.toLocaleString()}
+                    <span className="text-xs text-gray-500 mt-1 pl-1">자</span>
+                  </div>
+                </div>
+                <div className="bg-blue-500/5 rounded-2xl p-4 border border-blue-500/10">
+                  <div className="text-xs text-blue-400 font-medium mb-1">
+                    본문 이미지 수
+                  </div>
+                  <div className="text-2xl font-bold text-white">
+                    {stats.imageCount}
+                    <span className="text-xs text-gray-500 mt-1 pl-1">개</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 초기 상태: 세로 배치
   return (
-    <div className="space-y-6">
-      
+    <div className="space-y-6 animate-fade-in">
       {/* Recent Templates */}
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
-        <button 
+      <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm overflow-hidden transition-all duration-300 hover:border-[#33DB98]/20">
+        <button
           onClick={() => setIsRecentOpen(!isRecentOpen)}
-          className="w-full flex items-center justify-between p-4 bg-white hover:bg-slate-50 transition-colors"
+          className="w-full flex items-center justify-between p-4 bg-vzx-card hover:bg-white/5 transition-colors"
         >
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-            <h3 className="font-bold text-slate-800">최근 템플릿</h3>
+            <div className="w-2 h-2 rounded-full bg-[#33DB98]"></div>
+            <h3 className="font-bold text-white">최근 템플릿</h3>
             {templates.length > 0 && (
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">
+              <span className="text-xs bg-[#33DB98]/10 text-[#33DB98] px-2 py-0.5 rounded-full font-medium">
                 {templates.length}
               </span>
             )}
           </div>
-          {isRecentOpen ? <ChevronUp size={20} className="text-slate-400" /> : <ChevronDown size={20} className="text-slate-400" />}
+          {isRecentOpen ? (
+            <ChevronUp size={20} className="text-gray-500" />
+          ) : (
+            <ChevronDown size={20} className="text-gray-500" />
+          )}
         </button>
         {isRecentOpen && (
-          <div className="border-t border-slate-100">
+          <div className="border-t border-white/5">
             {templates.length === 0 ? (
-              <div className="p-4 min-h-[60px] flex items-center justify-center text-sm text-slate-400">
+              <div className="p-4 min-h-[60px] flex items-center justify-center text-sm text-gray-500">
                 저장된 템플릿이 없습니다.
               </div>
             ) : (
@@ -76,21 +369,27 @@ const RightPanel: React.FC<RightPanelProps> = ({
                   <button
                     key={template.id}
                     onClick={() => handleLoadTemplate(template.id)}
-                    className="w-full text-left p-3 rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all group"
+                    className="w-full text-left p-3 rounded-xl border border-white/5 hover:border-[#33DB98]/30 hover:bg-[#33DB98]/5 transition-all group"
                   >
                     <div className="flex items-start gap-2">
-                      <FileText size={16} className="text-slate-400 group-hover:text-blue-500 mt-0.5 shrink-0" />
+                      <FileText
+                        size={16}
+                        className="text-gray-500 group-hover:text-[#33DB98] mt-0.5 shrink-0"
+                      />
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-slate-800 text-sm truncate group-hover:text-blue-700">
+                        <p className="font-medium text-gray-300 text-sm truncate group-hover:text-white">
                           {template.name}
                         </p>
-                        <p className="text-xs text-slate-500 mt-1">
-                          {new Date(template.createdAt).toLocaleDateString('ko-KR', {
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
+                        <p className="text-xs text-gray-500 mt-1">
+                          {new Date(template.createdAt).toLocaleDateString(
+                            "ko-KR",
+                            {
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }
+                          )}
                         </p>
                       </div>
                     </div>
@@ -103,23 +402,23 @@ const RightPanel: React.FC<RightPanelProps> = ({
       </div>
 
       {/* Blog Title Suggestion */}
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden min-h-[150px]">
-        <div className="p-4 border-b border-slate-100">
+      <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm overflow-hidden min-h-[150px] transition-all duration-300 hover:border-[#33DB98]/20">
+        <div className="p-4 border-b border-white/5">
           <div className="flex items-center gap-2">
-             <div className="text-yellow-500">💡</div>
-             <h3 className="font-bold text-slate-800">블로그 제목 추천</h3>
-             {generatedTitles.length > 0 && (
-               <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">
-                 {generatedTitles.length}개
-               </span>
-             )}
+            <div className="text-yellow-500">💡</div>
+            <h3 className="font-bold text-white">블로그 제목 추천</h3>
+            {generatedTitles.length > 0 && (
+              <span className="text-xs bg-yellow-500/10 text-yellow-500 px-2 py-0.5 rounded-full font-medium">
+                {generatedTitles.length}개
+              </span>
+            )}
           </div>
         </div>
-        
+
         {isGeneratingTitles ? (
           <div className="p-8 flex flex-col items-center justify-center text-center gap-3">
             <Loader2 size={32} className="text-yellow-500 animate-spin" />
-            <span className="text-sm text-slate-600">제목 생성 중...</span>
+            <span className="text-sm text-gray-400">제목 생성 중...</span>
           </div>
         ) : generatedTitles.length > 0 ? (
           <div className="p-4 space-y-2">
@@ -127,19 +426,23 @@ const RightPanel: React.FC<RightPanelProps> = ({
               <button
                 key={index}
                 onClick={() => onSelectTitle?.(title)}
-                className={`w-full text-left p-3 rounded-lg border transition-all ${
+                className={`w-full text-left p-3 rounded-xl border transition-all ${
                   selectedTitle === title
-                    ? 'border-yellow-500 bg-yellow-50 shadow-sm'
-                    : 'border-slate-200 hover:border-yellow-300 hover:bg-yellow-50/50'
+                    ? "border-yellow-500/50 bg-yellow-500/5 shadow-sm"
+                    : "border-white/5 hover:border-yellow-500/30 hover:bg-yellow-500/5"
                 }`}
               >
                 <div className="flex items-start gap-2">
-                  <span className="text-xs font-medium text-slate-400 mt-0.5">
+                  <span className="text-xs font-medium text-gray-500 mt-0.5">
                     {index + 1}
                   </span>
-                  <span className={`text-sm flex-1 ${
-                    selectedTitle === title ? 'text-yellow-900 font-medium' : 'text-slate-700'
-                  }`}>
+                  <span
+                    className={`text-sm flex-1 ${
+                      selectedTitle === title
+                        ? "text-yellow-200 font-medium"
+                        : "text-gray-300"
+                    }`}
+                  >
                     {title}
                   </span>
                   {selectedTitle === title && (
@@ -150,72 +453,85 @@ const RightPanel: React.FC<RightPanelProps> = ({
             ))}
           </div>
         ) : (
-          <div className="p-8 flex flex-col items-center justify-center text-center text-slate-400 gap-2 h-full">
-             <ArrowLeft size={24} />
-             <span className="text-sm">좌측 폼을 작성하고 생성 버튼을 눌러주세요</span>
+          <div className="p-8 flex flex-col items-center justify-center text-center text-gray-500 gap-2 h-full">
+            <ArrowLeft size={24} />
+            <span className="text-sm">
+              좌측 폼을 작성하고 생성 버튼을 눌러주세요
+            </span>
           </div>
         )}
       </div>
 
       {/* Generated Blog Post */}
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden min-h-[300px]">
-         <div className="p-4 border-b border-slate-100">
+      <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm overflow-hidden min-h-[300px] transition-all duration-300 hover:border-[#33DB98]/20">
+        <div className="p-4 border-b border-white/5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-               <div className="text-blue-500">📄</div>
-               <h3 className="font-bold text-slate-800">생성된 블로그 글</h3>
+              <div className="text-[#33DB98]">📄</div>
+              <h3 className="font-bold text-white">생성된 블로그 글</h3>
             </div>
             {generatedContent && (
               <div className="flex gap-2">
-                <button onClick={handleCopy} className="p-2 hover:bg-slate-100 rounded-lg transition-colors" title="복사">
-                  <Copy size={16} className="text-slate-600" />
+                <button
+                  onClick={handleCopy}
+                  className="p-2 hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-white"
+                  title="복사"
+                >
+                  <Copy size={16} />
                 </button>
-                <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors" title="다운로드">
-                  <Download size={16} className="text-slate-600" />
+                <button
+                  className="p-2 hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-white"
+                  title="다운로드"
+                >
+                  <Download size={16} />
                 </button>
               </div>
             )}
           </div>
         </div>
-         <div className="p-6">
-           {isGenerating && !generatedContent && (
-             <div className="flex flex-col items-center justify-center text-center text-slate-400 gap-3 h-60">
-               <Loader2 size={32} className="animate-spin text-blue-500" />
-               <span className="text-sm">AI가 블로그 글을 생성하고 있습니다...</span>
-             </div>
-           )}
-           {error && (
-             <div className="flex flex-col items-center justify-center text-center text-red-500 gap-2 h-60">
-               <span className="text-sm font-medium">오류가 발생했습니다</span>
-               <span className="text-xs text-red-400">{error}</span>
-             </div>
-           )}
-           {!isGenerating && !generatedContent && !error && (
-             <div className="flex flex-col items-center justify-center text-center text-slate-400 gap-2 h-60">
-               <ArrowLeft size={24} />
-               <span className="text-sm">좌측 폼을 작성하고 생성 버튼을 눌러주세요</span>
-             </div>
-           )}
-           {generatedContent && (
+        <div className="p-6">
+          {isGenerating && !generatedContent && (
+            <div className="flex flex-col items-center justify-center text-center text-gray-500 gap-3 h-60">
+              <Loader2 size={32} className="animate-spin text-[#33DB98]" />
+              <span className="text-sm">
+                AI가 블로그 글을 생성하고 있습니다...
+              </span>
+            </div>
+          )}
+          {error && (
+            <div className="flex flex-col items-center justify-center text-center text-red-400 gap-2 h-60">
+              <span className="text-sm font-medium">오류가 발생했습니다</span>
+              <span className="text-xs text-red-500/70">{error}</span>
+            </div>
+          )}
+          {!isGenerating && !generatedContent && !error && (
+            <div className="flex flex-col items-center justify-center text-center text-gray-500 gap-2 h-60">
+              <ArrowLeft size={24} />
+              <span className="text-sm">
+                좌측 폼을 작성하고 생성 버튼을 눌러주세요
+              </span>
+            </div>
+          )}
+          {generatedContent && (
             <>
-             <div className="prose prose-slate max-w-none">
-              {/* <div className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
-                 {generatedContent}
-               </div> */}
-               <div 
-                 className="text-sm leading-relaxed"
-                 dangerouslySetInnerHTML={{ __html: generatedContent }}
-               />
-               
-             </div>
-             <button onClick={() => {console.log(generatedContent)}}>
-              테스트
-             </button>
-             </>
-           )}
+              <div className="prose prose-invert prose-emerald max-w-none">
+                <div
+                  className="text-gray-300 text-sm leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: generatedContent }}
+                />
+              </div>
+              <button
+                className="mt-8 px-4 py-2 bg-white/5 hover:bg-white/10 text-gray-400 rounded-lg text-xs transition-colors"
+                onClick={() => {
+                  console.log(generatedContent);
+                }}
+              >
+                내용 로그 출력 (개발용)
+              </button>
+            </>
+          )}
         </div>
       </div>
-
     </div>
   );
 };
