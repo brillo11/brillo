@@ -258,3 +258,14 @@ export async function downloadAndUploadVeoVideo(
     };
   }
 }
+
+/**
+ * 아바타 인트로 비디오 생성 (Veo 3.1)
+ * @param introScript 아바타가 읽을 인트로 대본
+ */
+export async function generateAvatarIntroVideo(introScript: string): Promise<VeoVideoResponse> {
+  // 프롬프트 구성
+  const prompt = `Cinematic shot of a friendly Korean AI avatar presenter speaking to the camera. Professional studio lighting, 4k resolution. The presenter is introducing a video. Meaningful gesture, engaging expression. The presenter is saying: "${introScript.slice(0, 300)}"`;
+  
+  return generateVideoWithVeo(prompt);
+}
