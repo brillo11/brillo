@@ -11,6 +11,7 @@ import {
   FileText,
   BarChart3,
   RefreshCw,
+  Trash2,
 } from "lucide-react";
 import { useBlogForm } from "./BlogFormContext";
 
@@ -37,11 +38,16 @@ const RightPanel: React.FC<RightPanelProps> = ({
   onGenerateTitles,
   isLeftPanelCollapsed = false,
 }) => {
-  const { getSavedTemplates, loadTemplate } = useBlogForm();
+  const { getSavedTemplates, loadTemplate, deleteTemplate } = useBlogForm();
   const [isRecentOpen, setIsRecentOpen] = useState(true);
   const [templates, setTemplates] = useState<
     ReturnType<typeof getSavedTemplates>
   >([]);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     setTemplates(getSavedTemplates());
@@ -75,6 +81,14 @@ const RightPanel: React.FC<RightPanelProps> = ({
     }
   };
 
+  const handleDeleteTemplate = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (confirm("정말 이 템플릿을 삭제하시겠습니까?")) {
+      deleteTemplate(id);
+      setTemplates(getSavedTemplates());
+    }
+  };
+
   const handleCopy = () => {
     navigator.clipboard.writeText(generatedContent);
   };
@@ -94,7 +108,7 @@ const RightPanel: React.FC<RightPanelProps> = ({
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-[#33DB98]"></div>
                 <h3 className="font-bold text-white">최근 템플릿</h3>
-                {templates.length > 0 && (
+                {mounted && templates.length > 0 && (
                   <span className="text-xs bg-[#33DB98]/10 text-[#33DB98] px-2 py-0.5 rounded-full font-medium">
                     {templates.length}
                   </span>
@@ -115,34 +129,41 @@ const RightPanel: React.FC<RightPanelProps> = ({
                 ) : (
                   <div className="p-3 space-y-2 max-h-[300px] overflow-y-auto">
                     {templates.slice(0, 5).map((template) => (
-                      <button
-                        key={template.id}
-                        onClick={() => handleLoadTemplate(template.id)}
-                        className="w-full text-left p-3 rounded-xl border border-white/5 hover:border-[#33DB98]/30 hover:bg-[#33DB98]/5 transition-all group"
-                      >
-                        <div className="flex items-start gap-2">
-                          <FileText
-                            size={16}
-                            className="text-gray-500 group-hover:text-[#33DB98] mt-0.5 shrink-0"
-                          />
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-gray-300 text-sm truncate group-hover:text-white">
-                              {template.name}
-                            </p>
-                            <p className="text-xs text-gray-500 mt-1">
-                              {new Date(template.createdAt).toLocaleDateString(
-                                "ko-KR",
-                                {
+                      <div key={template.id} className="group relative">
+                        <button
+                          onClick={() => handleLoadTemplate(template.id)}
+                          className="w-full text-left p-3 rounded-xl border border-white/5 hover:border-[#33DB98]/30 hover:bg-[#33DB98]/5 transition-all"
+                        >
+                          <div className="flex items-start gap-2 pr-8">
+                            <FileText
+                              size={16}
+                              className="text-gray-500 group-hover:text-[#33DB98] mt-0.5 shrink-0"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-gray-300 text-sm truncate group-hover:text-white">
+                                {template.name}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {new Date(
+                                  template.createdAt,
+                                ).toLocaleDateString("ko-KR", {
                                   month: "short",
                                   day: "numeric",
                                   hour: "2-digit",
                                   minute: "2-digit",
-                                }
-                              )}
-                            </p>
+                                })}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      </button>
+                        </button>
+                        <button
+                          onClick={(e) => handleDeleteTemplate(e, template.id)}
+                          className="absolute top-1/2 -translate-y-1/2 right-2 p-2 text-gray-600 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                          title="삭제"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     ))}
                   </div>
                 )}
@@ -366,34 +387,42 @@ const RightPanel: React.FC<RightPanelProps> = ({
             ) : (
               <div className="p-3 space-y-2 max-h-[300px] overflow-y-auto">
                 {templates.slice(0, 5).map((template) => (
-                  <button
-                    key={template.id}
-                    onClick={() => handleLoadTemplate(template.id)}
-                    className="w-full text-left p-3 rounded-xl border border-white/5 hover:border-[#33DB98]/30 hover:bg-[#33DB98]/5 transition-all group"
-                  >
-                    <div className="flex items-start gap-2">
-                      <FileText
-                        size={16}
-                        className="text-gray-500 group-hover:text-[#33DB98] mt-0.5 shrink-0"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-gray-300 text-sm truncate group-hover:text-white">
-                          {template.name}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {new Date(template.createdAt).toLocaleDateString(
-                            "ko-KR",
-                            {
-                              month: "short",
-                              day: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                        </p>
+                  <div key={template.id} className="group relative">
+                    <button
+                      onClick={() => handleLoadTemplate(template.id)}
+                      className="w-full text-left p-3 rounded-xl border border-white/5 hover:border-[#33DB98]/30 hover:bg-[#33DB98]/5 transition-all"
+                    >
+                      <div className="flex items-start gap-2 pr-8">
+                        <FileText
+                          size={16}
+                          className="text-gray-500 group-hover:text-[#33DB98] mt-0.5 shrink-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-gray-300 text-sm truncate group-hover:text-white">
+                            {template.name}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {new Date(template.createdAt).toLocaleDateString(
+                              "ko-KR",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              },
+                            )}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </button>
+                    </button>
+                    <button
+                      onClick={(e) => handleDeleteTemplate(e, template.id)}
+                      className="absolute top-1/2 -translate-y-1/2 right-2 p-2 text-gray-600 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                      title="삭제"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 ))}
               </div>
             )}

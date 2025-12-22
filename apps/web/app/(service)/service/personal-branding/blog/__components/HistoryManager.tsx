@@ -1,15 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  History,
-  FileText,
-  Trash2,
-  X,
-  Clock,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
+import { History, FileText, Trash2, X, Clock } from "lucide-react";
 
 export interface HistoryItem {
   id: string;
@@ -31,6 +23,11 @@ const HistoryManager: React.FC<HistoryManagerProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<HistoryItem | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleString("ko-KR", {
@@ -44,25 +41,27 @@ const HistoryManager: React.FC<HistoryManagerProps> = ({
   return (
     <>
       {/* Floating Button / Panel - 사이드바보다 오른쪽에 위치 (사이드바 폭 고려) */}
-      <div className="fixed top-[88px] left-[280px] z-40 flex flex-col items-start gap-2 ml-6">
+      <div className="flex flex-col items-start gap-2 relative">
         {/* Toggle Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-2 bg-vzx-card px-4 py-3 rounded-xl border border-white/10 shadow-lg hover:bg-white/5 transition-all text-white font-bold group backdrop-blur-md"
+          className="flex items-center gap-2 bg-vzx-card px-4 py-3 rounded-full border border-white/10 shadow-lg hover:bg-white/5 transition-all text-white font-bold group backdrop-blur-md text-[14px]"
         >
           <History
             size={20}
             className="text-[#33DB98] group-hover:rotate-180 transition-transform duration-500"
           />
           <span>히스토리</span>
-          <span className="bg-[#33DB98]/10 text-[#33DB98] text-xs px-2 py-0.5 rounded-full min-w-[24px] text-center border border-[#33DB98]/20">
-            {history.length}
-          </span>
+          {mounted && (
+            <span className="bg-[#33DB98]/10 text-[#33DB98] text-xs px-2 py-0.5 rounded-full min-w-[24px] text-center border border-[#33DB98]/20">
+              {history.length}
+            </span>
+          )}
         </button>
 
         {/* Dropdown List */}
         {isOpen && (
-          <div className="bg-vzx-card rounded-2xl border border-white/10 shadow-2xl w-80 max-h-[60vh] overflow-hidden flex flex-col animate-accordion-down origin-top-left backdrop-blur-xl">
+          <div className="bg-vzx-card rounded-2xl border border-white/10 shadow-2xl w-80 max-h-[60vh] overflow-hidden flex flex-col animate-accordion-down origin-top-left backdrop-blur-xl absolute top-full mt-2 right-0">
             <div className="p-4 bg-white/5 border-b border-white/5 flex justify-between items-center">
               <span className="text-xs font-semibold text-gray-400">
                 최근 생성 기록
