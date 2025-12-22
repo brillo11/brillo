@@ -1,15 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  History,
-  FileText,
-  Trash2,
-  X,
-  Clock,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
+import { History, FileText, Trash2, X, Clock } from "lucide-react";
 
 export interface HistoryItem {
   id: string;
@@ -31,6 +23,11 @@ const HistoryManager: React.FC<HistoryManagerProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<HistoryItem | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleString("ko-KR", {
@@ -55,9 +52,11 @@ const HistoryManager: React.FC<HistoryManagerProps> = ({
             className="text-[#33DB98] group-hover:rotate-180 transition-transform duration-500"
           />
           <span>히스토리</span>
-          <span className="bg-[#33DB98]/10 text-[#33DB98] text-xs px-2 py-0.5 rounded-full min-w-[24px] text-center border border-[#33DB98]/20">
-            {history.length}
-          </span>
+          {mounted && (
+            <span className="bg-[#33DB98]/10 text-[#33DB98] text-xs px-2 py-0.5 rounded-full min-w-[24px] text-center border border-[#33DB98]/20">
+              {history.length}
+            </span>
+          )}
         </button>
 
         {/* Dropdown List */}

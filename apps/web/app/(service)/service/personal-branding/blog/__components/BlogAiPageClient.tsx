@@ -6,7 +6,6 @@ import {
   Search,
   Palette,
   Brain,
-  History,
   Rocket,
   Save,
   AlertTriangle,
@@ -33,7 +32,6 @@ const BlogAiPageContent: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [generatedContent, setGeneratedContent] = useState("");
   const [error, setError] = useState("");
-  const [isTemplateManagerOpen, setIsTemplateManagerOpen] = useState(false);
 
   // 제목 생성 관련 상태
   const [generatedTitles, setGeneratedTitles] = useState<string[]>([]);
@@ -331,12 +329,8 @@ const BlogAiPageContent: React.FC = () => {
             <div className="bg-[#33DB98]/10 text-[#33DB98] px-4 py-2 rounded-full text-sm font-bold flex items-center gap-1.5 border border-[#33DB98]/20">
               🎫 보유 크레딧: 3.0
             </div>
-            <button
-              onClick={() => setIsTemplateManagerOpen(true)}
-              className="bg-vzx-card hover:bg-white/5 text-white px-4 py-2 rounded-full text-sm font-medium flex items-center gap-1.5 transition-colors border border-white/10"
-            >
-              <History size={16} /> 템플릿 관리
-            </button>
+            {/* Template Manager */}
+            <TemplateManager />
             {/* History Manager */}
             <HistoryManager
               history={history}
@@ -416,13 +410,13 @@ const BlogAiPageContent: React.FC = () => {
               <button
                 onClick={handleGenerateBlog}
                 disabled={isGenerating}
-                className="flex-1 bg-[#33DB98] hover:bg-[#33DB98]/90 disabled:bg-gray-700 disabled:cursor-not-allowed text-black py-4 rounded-xl font-bold text-lg shadow-lg shadow-[#33DB98]/10 transition-all flex items-center justify-center gap-2 transform active:scale-[0.99] hover:shadow-xl hover:-translate-y-0.5"
+                className="flex-1 bg-[#33DB98] hover:bg-[#33DB98]/90 disabled:bg-gray-700 disabled:cursor-not-allowed text-black py-4 rounded-xl font-bold text-lg shadow-lg shadow-[#33DB98]/10 transition-all flex items-center justify-center gap-2 transform active:scale-[0.99] hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
               >
                 <Rocket size={20} /> {isGenerating ? "생성 중..." : "생성하기"}
               </button>
               <button
                 onClick={handleSaveTemplate}
-                className="px-6 border border-white/10 hover:bg-white/5 bg-vzx-card text-white rounded-xl font-bold transition-colors flex items-center gap-2"
+                className="px-6 border border-white/10 hover:bg-white/5 bg-vzx-card text-white rounded-xl font-bold transition-colors flex items-center gap-2 cursor-pointer"
               >
                 <Save size={20} /> 템플릿 저장
               </button>
@@ -466,12 +460,6 @@ const BlogAiPageContent: React.FC = () => {
           />
         </div>
       </div>
-
-      {/* Template Manager Modal */}
-      <TemplateManager
-        isOpen={isTemplateManagerOpen}
-        onClose={() => setIsTemplateManagerOpen(false)}
-      />
     </div>
   );
 };
