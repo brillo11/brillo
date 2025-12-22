@@ -95,11 +95,11 @@ export function VideoGenerator({ sessionId }: VideoGeneratorProps) {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+    <div className="bg-[#1c1c1c] rounded-2xl p-6 border border-white/5 shadow-xl shadow-black/20">
       {/* Header */}
       <div className="flex items-center gap-2 mb-4">
-        <Video size={18} className="text-red-600" />
-        <h3 className="font-bold text-slate-900">AI 비디오 생성 (3.1)</h3>
+        <Video size={18} className="text-[#33DB98]" />
+        <h3 className="font-bold text-white">AI 비디오 생성 (3.1)</h3>
       </div>
 
       {/* Input Section */}
@@ -107,7 +107,7 @@ export function VideoGenerator({ sessionId }: VideoGeneratorProps) {
         <div>
           <label
             htmlFor="video-prompt"
-            className="block text-sm font-medium text-slate-700 mb-2"
+            className="block text-sm font-medium text-gray-400 mb-2"
           >
             비디오 프롬프트
           </label>
@@ -116,15 +116,15 @@ export function VideoGenerator({ sessionId }: VideoGeneratorProps) {
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="생성하고 싶은 비디오를 설명해주세요. 예: 'A serene beach at sunset with gentle waves'"
-            className={`w-full px-4 py-3 border rounded-xl focus:outline-none resize-none text-sm transition-all ${
+            className={`w-full px-4 py-3 border rounded-xl focus:outline-none resize-none text-sm transition-all text-white placeholder:text-gray-600 ${
               isGenerating
-                ? "bg-gray-100 border-gray-300 cursor-not-allowed text-gray-500"
-                : "bg-gray-50 border-gray-200 focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                ? "bg-white/5 border-white/5 cursor-not-allowed text-gray-500"
+                : "bg-black/40 border-white/10 focus:ring-2 focus:ring-[#33DB98]/50 focus:border-transparent"
             }`}
             rows={4}
             disabled={isGenerating}
           />
-          <p className="mt-2 text-xs text-slate-400">
+          <p className="mt-2 text-xs text-gray-500">
             💡 팁: 구체적이고 상세한 설명을 제공하면 더 좋은 결과를 얻을 수
             있습니다.
           </p>
@@ -134,10 +134,10 @@ export function VideoGenerator({ sessionId }: VideoGeneratorProps) {
         <button
           onClick={handleGenerate}
           disabled={isGenerating || !prompt.trim()}
-          className={`w-full px-6 py-3 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg ${
+          className={`w-full px-6 py-3 font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg ${
             isGenerating || !prompt.trim()
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 hover:shadow-xl"
+              ? "bg-white/10 text-gray-500 cursor-not-allowed"
+              : "bg-[#33DB98] text-black hover:bg-[#33DB98]/90 hover:shadow-[#33DB98]/20"
           }`}
         >
           {isGenerating ? (
@@ -156,24 +156,24 @@ export function VideoGenerator({ sessionId }: VideoGeneratorProps) {
         {/* Loading Progress */}
         {isGenerating && (
           <div className="mt-2 space-y-2 animate-fade-in">
-            <div className="flex items-center justify-center gap-2 text-sm text-slate-600">
+            <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
               <div className="flex gap-1">
                 <div
-                  className="w-2 h-2 bg-red-600 rounded-full animate-bounce"
+                  className="w-2 h-2 bg-[#33DB98] rounded-full animate-bounce"
                   style={{ animationDelay: "0ms" }}
                 ></div>
                 <div
-                  className="w-2 h-2 bg-red-600 rounded-full animate-bounce"
+                  className="w-2 h-2 bg-[#33DB98] rounded-full animate-bounce"
                   style={{ animationDelay: "150ms" }}
                 ></div>
                 <div
-                  className="w-2 h-2 bg-red-600 rounded-full animate-bounce"
+                  className="w-2 h-2 bg-[#33DB98] rounded-full animate-bounce"
                   style={{ animationDelay: "300ms" }}
                 ></div>
               </div>
-              <span>AI가 비디오를 생성하고 있습니다"</span>
+              <span>AI가 비디오를 생성하고 있습니다...</span>
             </div>
-            <p className="text-xs text-center text-slate-400">
+            <p className="text-xs text-center text-gray-600">
               약 1-2분 소요됩니다. 잠시만 기다려주세요...
             </p>
           </div>
@@ -183,17 +183,17 @@ export function VideoGenerator({ sessionId }: VideoGeneratorProps) {
         {generatedVideoUrl && (
           <div className="mt-6 space-y-4 animate-fade-in">
             <div className="flex items-center justify-between">
-              <h4 className="font-semibold text-slate-900">생성된 비디오</h4>
+              <h4 className="font-semibold text-white">생성된 비디오</h4>
               <button
                 onClick={handleDownload}
-                className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors text-sm font-medium"
+                className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white rounded-lg transition-colors text-sm font-medium"
               >
                 <Download size={16} />
                 다운로드
               </button>
             </div>
 
-            <div className="relative aspect-video bg-black rounded-xl overflow-hidden border border-gray-200 shadow-lg group">
+            <div className="relative aspect-video bg-black rounded-xl overflow-hidden border border-white/10 shadow-lg group">
               <video
                 src={generatedVideoUrl}
                 controls
@@ -206,10 +206,10 @@ export function VideoGenerator({ sessionId }: VideoGeneratorProps) {
               </video>
 
               {/* Play Overlay - 재생 전 힌트 */}
-              <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                <div className="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2">
-                  <Play size={16} className="text-red-600" />
-                  <span className="text-sm font-medium text-slate-700">
+              <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-full flex items-center gap-2 border border-white/20">
+                  <Play size={16} className="text-[#33DB98]" />
+                  <span className="text-sm font-medium text-white">
                     재생하기
                   </span>
                 </div>
@@ -217,31 +217,31 @@ export function VideoGenerator({ sessionId }: VideoGeneratorProps) {
             </div>
 
             <div className="flex items-center justify-between px-2">
-              <div className="flex items-center gap-2 text-xs text-slate-500">
-                <Play size={14} className="text-red-600" />
+              <div className="flex items-center gap-2 text-xs text-gray-500">
+                <Play size={14} className="text-[#33DB98]" />
                 <span>비디오 컨트롤로 재생/일시정지 할 수 있습니다</span>
               </div>
-              <div className="text-xs text-slate-400">AI 생성 비디오</div>
+              <div className="text-xs text-gray-600">AI 생성 비디오</div>
             </div>
           </div>
         )}
 
         {/* Info Box */}
         {!generatedVideoUrl && (
-          <div className="mt-4 p-4 border rounded-xl bg-blue-50 border-blue-100">
+          <div className="mt-4 p-4 border rounded-xl bg-blue-500/10 border-blue-500/20">
             <div className="flex gap-3">
               <div className="flex-shrink-0">
-                <Video size={20} className="text-blue-600" />
+                <Video size={20} className="text-blue-400" />
               </div>
               <div className="space-y-1">
-                <h4 className="text-sm font-semibold text-blue-900">
+                <h4 className="text-sm font-semibold text-blue-400">
                   Google Veo 3.1 소개
                 </h4>
-                <p className="text-xs leading-relaxed text-blue-700">
+                <p className="text-xs leading-relaxed text-blue-300/80">
                   Veo 3.1은 Google의 최신 AI 비디오 생성 모델입니다. 텍스트
                   프롬프트만으로 고품질 비디오를 생성할 수 있습니다.
                 </p>
-                <ul className="mt-2 space-y-1 text-xs text-blue-600">
+                <ul className="mt-2 space-y-1 text-xs text-blue-400/80">
                   <li>• 최대 해상도: 4K</li>
                   <li>• 생성 시간: 약 1-2분</li>
                   <li>• 다양한 스타일 지원</li>

@@ -39,6 +39,10 @@ model User {
   learningGoals   String? // 학습 목표 텍스트
   learningHistory Json?   @default("{}") // 학습 이력
 
+  // HeyGen 설정
+  heygenAvatarId String? // HeyGen Avatar ID
+  heygenVoiceId  String? // HeyGen Voice ID
+
   misc Json @default("{}")
 
   accounts    Account[]
@@ -462,8 +466,12 @@ model AIAssistantSession {
   // Step 7: Metadata
   metadataResponses Json? // 메타데이터 (설명, 타임스탬프, 해시태그, 태그)
   
-  // Step 8: Shorts Titles
+  // Step 8: Shorts Titles (Legacy but kept for compatibility) / Video Generation
   shortsTitlesResponses Json? // 쇼츠 제목 (각 챕터별 2~3개)
+  
+  // Step 8: Generated Video
+  generatedVideoUrl     String? // 생성된 영상 URL (S3 or External)
+  generatedVideoType    String? // 'VEO' | 'HEYGEN'
   
   // Progress
   step String? // 현재 단계 (TITLE, THUMBNAIL_GUIDE, THUMBNAIL, SCRIPT, METADATA, SHORTS_TITLES)
