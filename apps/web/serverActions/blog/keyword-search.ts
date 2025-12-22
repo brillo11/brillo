@@ -40,7 +40,7 @@ export async function generateContentPlanFromYoutube(url: string): Promise<{
 }`;
 
     const result = await generateText({
-      model: "google/gemini-2.5-flash" as any,
+      model: "google/gemini-3-flash" as any,
       messages: [{ role: "user", content: prompt }],
     });
 
@@ -96,7 +96,7 @@ export async function generateContentPlanFromUrl(url: string): Promise<{
   }`;
   
       const result = await generateText({
-        model: "google/gemini-2.5-flash" as any,
+        model: "google/gemini-3-flash" as any,
         messages: [{ role: "user", content: prompt }],
       });
   
@@ -213,7 +213,7 @@ export async function generateContentPlansFromKeywords(keywords: string[]): Prom
 ]`;
 
     const result = await generateText({
-      model: "google/gemini-2.5-flash" as any,
+      model: "google/gemini-3-flash" as any,
       messages: [{ role: "user", content: prompt }],
     });
 
@@ -370,7 +370,7 @@ ${contentsToAnalyze.substring(0, 4000)}
 최대한 구체적이고 실용적인 가이드를 만들어주세요.`;
 
     const result = await generateText({
-      model: "google/gemini-2.5-flash" as any,
+      model: "google/gemini-3-flash" as any,
       messages: [{ role: "user", content: prompt }],
     });
 
@@ -624,7 +624,7 @@ async function extractKeywordsFromContent(content: string): Promise<string[]> {
     if (cleanText.length < 50) return [];
 
     const result = await generateText({
-      model: "google/gemini-2.5-flash" as any,
+      model: "google/gemini-3-flash" as any,
       messages: [
         { 
           role: "user", 
