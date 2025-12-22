@@ -631,6 +631,16 @@ export function AIAssistantClient() {
                  ? undefined
                  : (sessionData.metadataResponses as any)
             }
+            onVideoGenerated={async (url, type) => {
+              if (currentSessionId) {
+                await saveSessionData({
+                  generatedVideoUrl: url,
+                  generatedVideoType: type
+                });
+              }
+            }}
+            initialVideoUrl={sessionData.generatedVideoUrl || undefined}
+            initialVideoType={sessionData.generatedVideoType as "VEO" | "HEYGEN" || undefined}
           />
         )}
       </div>

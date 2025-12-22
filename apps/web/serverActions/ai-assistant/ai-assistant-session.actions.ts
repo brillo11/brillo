@@ -22,6 +22,8 @@ export interface AIAssistantSessionData {
   metadataResponses: any | null;
   shortsTitlesResponses: any | null;
   step: string | null;
+  generatedVideoUrl: string | null;
+  generatedVideoType: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -77,6 +79,8 @@ export async function getAIAssistantSessions(): Promise<
       metadataResponses: true,
       shortsTitlesResponses: true,
       step: true,
+      generatedVideoUrl: true,
+      generatedVideoType: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -113,6 +117,8 @@ export async function getAIAssistantSession(
       metadataResponses: true,
       shortsTitlesResponses: true,
       step: true,
+      generatedVideoUrl: true,
+      generatedVideoType: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -138,6 +144,8 @@ export async function updateAIAssistantSession(
     metadataResponses?: any;
     shortsTitlesResponses?: any;
     step?: string;
+    generatedVideoUrl?: string;
+    generatedVideoType?: string;
   },
   title?: string
 ): Promise<void> {
