@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { loginWithEmail, loginWithSocial } from "@/shared/lib/auth-helpers";
 import { Card, CardContent } from "@repo/ui/components/card";
@@ -18,12 +18,15 @@ import {
   Cpu,
   Twitter,
   Youtube,
+  Instagram,
 } from "lucide-react";
 import { useSession } from "@/shared/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { PATH } from "@/shared/consts/path";
 import Image from "next/image";
 import Link from "next/link";
+import { ThreadsIcon } from "@/shared/icons/ThreadsIcon";
+import { NaverBlogIcon } from "@/shared/icons/NaverBlogIcon";
 
 export default function HomePage() {
   const [credentials, setCredentials] = useState({
@@ -55,9 +58,49 @@ export default function HomePage() {
     // },
   ];
 
+  /* Demo Animation State */
+  const [isDemoPlaying, setIsDemoPlaying] = useState(false);
+  const [demoStep, setDemoStep] = useState(0); // 0: Idle, 1: Blog, 2: Threads, 3: Instagram, 4: Youtube, 5: Done
+
+  const handlePlayDemo = () => {
+    if (isDemoPlaying) return;
+    setIsDemoPlaying(true);
+    setDemoStep(1);
+  };
+
+  useEffect(() => {
+    if (!isDemoPlaying) return;
+
+    let timeout: NodeJS.Timeout;
+    const stepDuration = 2000; // 2 seconds per step
+
+    if (demoStep > 0 && demoStep < 5) {
+      timeout = setTimeout(() => {
+        setDemoStep((prev) => prev + 1);
+      }, stepDuration);
+    } else if (demoStep === 5) {
+      // Optional: Reset after some time or keep it done
+      timeout = setTimeout(() => {
+        setIsDemoPlaying(false);
+        setDemoStep(0);
+      }, 5000);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [isDemoPlaying, demoStep]);
+
+  /* Landing Input State */
+  const [landingTopic, setLandingTopic] = useState("");
+
   const handleStartService = () => {
     if (session?.user) {
-      router.push(PATH.SERVICE_DASHBOARD);
+      if (landingTopic) {
+        router.push(
+          `${PATH.SERVICE_PERSONAL_BRANDING_WORKFLOW}?topic=${encodeURIComponent(landingTopic)}`,
+        );
+      } else {
+        router.push(PATH.SERVICE_DASHBOARD);
+      }
     } else {
       setIsLoginOpen(true);
     }
@@ -93,7 +136,7 @@ export default function HomePage() {
     try {
       const result = await loginWithEmail(
         credentials.email,
-        credentials.password
+        credentials.password,
       );
 
       if (!result.success) {
@@ -123,24 +166,8 @@ export default function HomePage() {
                 width={48}
                 height={48}
               />
-              {/* <div className="w-8 h-8 bg-vzx-accent rounded flex items-center justify-center font-bold text-black text-xl">
-                V
-              </div> */}
-              {/* <span className="font-bold text-xl tracking-tighter">VZX</span> */}
             </div>
             <nav className="hidden md:flex items-center gap-6">
-              {/* <a
-                href="#"
-                className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
-              >
-                Features
-              </a>
-              <a
-                href="#"
-                className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
-              >
-                Solutions
-              </a> */}
               <Link
                 href={PATH.SERVICE_DASHBOARD}
                 className="text-sm font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-1"
@@ -165,12 +192,6 @@ export default function HomePage() {
             </nav>
           </div>
           <div className="flex items-center gap-4">
-            {/* <button
-              onClick={handleStartLearning}
-              className="text-sm font-medium text-white hover:text-vzx-accent transition-colors"
-            >
-              대시보드
-            </button> */}
             <button
               onClick={handleStartService}
               className="bg-white text-black font-bold px-5 py-2 rounded-full text-sm hover:bg-gray-200 transition-all"
@@ -210,7 +231,14 @@ export default function HomePage() {
               <div className="pl-4 flex-1">
                 <input
                   type="text"
-                  placeholder="당신의 인사이트를 여기 적어보세요. (ex. 팔리는 숏츠의 비밀)"
+                  value={landingTopic}
+                  onChange={(e) => setLandingTopic(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleStartService();
+                    }
+                  }}
+                  placeholder="당신의 아이디어를 여기 적어보세요. (ex. 팔리는 숏츠의 비밀)"
                   className="w-full bg-transparent border-none outline-none text-white placeholder-gray-500"
                 />
               </div>
@@ -226,13 +254,16 @@ export default function HomePage() {
                 <Zap size={10} className="text-vzx-accent" /> AI 기획자
               </span>
               <span className="flex items-center gap-1">
-                <FileText size={10} /> 블로그 포스트 작가
+                <FileText size={10} /> 블로그 포스트
               </span>
               <span className="flex items-center gap-1">
-                <Share2 size={10} /> 쓰레드 포스트 생성
+                <ThreadsIcon size={10} /> 쓰레드 포스트
               </span>
               <span className="flex items-center gap-1">
-                <Video size={10} /> 아바타 생성
+                <Instagram size={10} /> 인스타그램 캐러셀
+              </span>
+              <span className="flex items-center gap-1">
+                <Video size={10} /> 아바타 영상
               </span>
             </div>
           </div>
@@ -246,53 +277,169 @@ export default function HomePage() {
             <div className="absolute inset-0 bg-gradient-to-tr from-vzx-accent/5 to-transparent" />
             <div className="h-full w-full flex items-center justify-center p-8">
               {/* Simulated Interface Showcase */}
-              <div className="grid grid-cols-4 gap-4 w-full h-full opacity-80">
-                <div className="bg-white/5 rounded-2xl border border-white/10 p-4 space-y-3">
+              <div
+                className={`grid grid-cols-4 gap-4 w-full h-full transition-opacity duration-500 ${isDemoPlaying ? "opacity-100" : "opacity-80"}`}
+              >
+                {/* 1. Blog Card (Green) */}
+                <div
+                  className={`bg-white/5 rounded-2xl border p-4 space-y-3 transition-all duration-500 ${
+                    demoStep >= 1
+                      ? demoStep >= 2
+                        ? "border-[#03C75A] bg-[#03C75A]/10 shadow-[0_0_20px_rgba(3,199,90,0.15)]"
+                        : "border-[#03C75A]/50 bg-[#03C75A]/5"
+                      : "border-white/10"
+                  }`}
+                >
                   <div className="h-4 w-2/3 bg-white/20 rounded" />
-                  <div className="aspect-square bg-vzx-accent/10 rounded-xl flex items-center justify-center">
-                    <FileText size={40} className="text-vzx-accent" />
+                  <div className="aspect-square bg-[#03C75A]/10 rounded-xl flex items-center justify-center border border-[#03C75A]/20">
+                    <NaverBlogIcon size={40} className="text-[#03C75A]" />
                   </div>
                   <div className="space-y-2">
-                    <div className="h-2 w-full bg-white/10 rounded" />
-                    <div className="h-2 w-full bg-white/10 rounded" />
-                    <div className="h-2 w-4/5 bg-white/10 rounded" />
+                    <div
+                      className={`h-2 bg-white/10 rounded transition-all duration-[2000ms] ease-out ${demoStep >= 1 ? "w-full opacity-100" : "w-0 opacity-50"}`}
+                    />
+                    <div
+                      className={`h-2 bg-white/10 rounded transition-all duration-[2000ms] delay-[200ms] ease-out ${demoStep >= 1 ? "w-full opacity-100" : "w-0 opacity-50"}`}
+                    />
+                    <div
+                      className={`h-2 bg-white/10 rounded transition-all duration-[2000ms] delay-[400ms] ease-out ${demoStep >= 1 ? "w-4/5 opacity-100" : "w-0 opacity-50"}`}
+                    />
                   </div>
                 </div>
-                <div className="bg-white/5 rounded-2xl border border-white/10 p-4 space-y-3 translate-y-4">
+
+                {/* 2. Threads Card (Black/White) - Originally Top Right */}
+                <div
+                  className={`bg-white/5 rounded-2xl border p-4 space-y-3 translate-y-4 transition-all duration-500 ${
+                    demoStep >= 2
+                      ? demoStep >= 3
+                        ? "border-white bg-white/10 shadow-[0_0_20px_rgba(255,255,255,0.15)]"
+                        : "border-white/50 bg-white/5"
+                      : "border-white/10"
+                  }`}
+                >
                   <div className="h-4 w-2/3 bg-white/20 rounded" />
-                  <div className="aspect-square bg-blue-500/10 rounded-xl flex items-center justify-center">
-                    <Twitter size={40} className="text-blue-500" />
+                  <div className="aspect-square bg-black rounded-xl flex items-center justify-center border border-white/20">
+                    <ThreadsIcon size={32} className="text-white" />
                   </div>
                   <div className="space-y-2">
-                    <div className="h-2 w-full bg-white/10 rounded" />
-                    <div className="h-2 w-full bg-white/10 rounded" />
+                    <div
+                      className={`h-2 bg-white/10 rounded transition-all duration-[2000ms] ease-out ${demoStep >= 2 ? "w-full opacity-100" : "w-0 opacity-50"}`}
+                    />
+                    <div
+                      className={`h-2 bg-white/10 rounded transition-all duration-[2000ms] delay-[200ms] ease-out ${demoStep >= 2 ? "w-full opacity-100" : "w-0 opacity-50"}`}
+                    />
                   </div>
                 </div>
-                <div className="bg-white/5 rounded-2xl border border-white/10 p-4 space-y-3">
+
+                {/* 3. Instagram Card (Pink) - Originally Bottom Left? Wait order check */}
+                {/* 
+                  Original Top Left: Blog
+                  Original Top Right: Grid Item 2 (Threads was moved here?)
+                  Original Bottom Left: Grid Item 3 (Instagram) 
+                  Original Bottom Right: Grid Item 4 (Youtube)
+                  
+                  Let's check the previous snippet again. 
+                  Grid Item 1 (Top Left): NaverBlog
+                  Grid Item 2 (Top Right): Threads (using ThreadsIcon) - CORRECT
+                  Grid Item 3 (Bottom Left): Instagram (using InstagramIcon) - CORRECT
+                  Grid Item 4 (Bottom Right): Youtube (using YoutubeIcon) - CORRECT
+                  
+                  Wait, step 556:
+                  Replaced XIcon (Top Right) with Instagram (Pink).
+                  Wait, did I mess up my own memory?
+                  Let's re-read step 556 output.
+                  It replaced lines 266-269.
+                  Line 268 was `XIcon` inside `div`. 
+                  And that `div` (Grid Item 2) had `translate-y-4`.
+                  Wait, Grid Item 2 has `translate-y-4`.
+                  Grid Item 4 has `translate-y-4`.
+                  
+                  Actually, let's look at the file content in Step 607 again.
+                  Line 257: Item 1. NaverBlog.
+                  Line 268: Item 2. ThreadsIcon (Black).
+                  Line 278: Item 3. Instagram (Pink).
+                  Line 290: Item 4. Youtube (Red).
+                  
+                  So layout is:
+                  1 (TL)  |  2 (TR)
+                  3 (BL)  |  4 (BR)
+                  
+                  Order of flow: Blog (1) -> Threads (2) -> Instagram (3) -> Youtube (4).
+                  This perfectly follows columns? No, rows.
+                  Wait, Grid layout `grid-cols-4`.
+                  So they are all on one row?
+                  `grid-cols-4` = 4 columns.
+                  So:
+                  [1] [2] [3] [4]
+                  All in one row.
+                  Item 2 and 4 have `translate-y-4`.
+                  So it looks like a staggered row.
+                  [1]     [3]
+                      [2]     [4]
+                  
+                  Okay, so flow is 1 -> 2 -> 3 -> 4. Right.
+                  
+                  My code matches this order.
+                */}
+
+                <div
+                  className={`bg-white/5 rounded-2xl border p-4 space-y-3 transition-all duration-500 ${
+                    demoStep >= 3
+                      ? demoStep >= 4
+                        ? "border-pink-500 bg-pink-500/10 shadow-[0_0_20px_rgba(236,72,153,0.15)]"
+                        : "border-pink-500/50 bg-pink-500/5"
+                      : "border-white/10"
+                  }`}
+                >
                   <div className="h-4 w-2/3 bg-white/20 rounded" />
-                  <div className="aspect-square bg-red-500/10 rounded-xl flex items-center justify-center">
+                  <div className="aspect-square bg-pink-500/10 rounded-xl flex items-center justify-center border border-pink-500/20">
+                    <Instagram size={32} className="text-pink-500" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div
+                      className={`h-2 bg-white/10 rounded transition-all duration-[2000ms] ease-out ${demoStep >= 3 ? "w-full opacity-100" : "w-0 opacity-50"}`}
+                    />
+                    <div
+                      className={`h-2 bg-white/10 rounded transition-all duration-[2000ms] delay-[200ms] ease-out ${demoStep >= 3 ? "w-full opacity-100" : "w-0 opacity-50"}`}
+                    />
+                    <div
+                      className={`h-2 bg-white/10 rounded transition-all duration-[2000ms] delay-[400ms] ease-out ${demoStep >= 3 ? "w-full opacity-100" : "w-0 opacity-50"}`}
+                    />
+                  </div>
+                </div>
+
+                {/* 4. Youtube Card (Red) */}
+                <div
+                  className={`bg-white/5 rounded-2xl border p-4 space-y-3 translate-y-4 transition-all duration-500 ${
+                    demoStep >= 4
+                      ? demoStep >= 5
+                        ? "border-red-500 bg-red-500/10 shadow-[0_0_20px_rgba(239,68,68,0.15)]"
+                        : "border-red-500/50 bg-red-500/5"
+                      : "border-white/10"
+                  }`}
+                >
+                  <div className="h-4 w-2/3 bg-white/20 rounded" />
+                  <div className="aspect-video bg-red-500/10 rounded-xl relative overflow-hidden flex items-center justify-center border border-red-500/20">
                     <Youtube size={40} className="text-red-500" />
                   </div>
-                  <div className="space-y-2">
-                    <div className="h-2 w-full bg-white/10 rounded" />
-                    <div className="h-2 w-full bg-white/10 rounded" />
-                    <div className="h-2 w-full bg-white/10 rounded" />
-                  </div>
-                </div>
-                <div className="bg-white/5 rounded-2xl border border-white/10 p-4 space-y-3 translate-y-4">
-                  <div className="h-4 w-2/3 bg-white/20 rounded" />
-                  <div className="aspect-video bg-vzx-accent/20 rounded-xl relative overflow-hidden flex items-center justify-center">
-                    <Play fill="#33db98" stroke="none" size={32} />
-                  </div>
-                  <div className="h-2 w-full bg-white/10 rounded" />
+                  <div
+                    className={`h-2 bg-white/10 rounded transition-all duration-[2000ms] ease-out ${demoStep >= 4 ? "w-full opacity-100" : "w-0 opacity-50"}`}
+                  />
                 </div>
               </div>
-              {/* Centered Floating Play Button */}
-              <div className="absolute inset-0 flex items-center justify-center z-10">
-                <div className="w-20 h-20 bg-vzx-accent rounded-full flex items-center justify-center pl-1 shadow-[0_0_50px_rgba(51,219,152,0.5)] cursor-pointer hover:scale-110 transition-transform">
-                  <Play fill="black" stroke="none" size={32} />
+
+              {/* Centered Floating Play Button - Only show if not playing */}
+              {!isDemoPlaying && (
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <div
+                    onClick={handlePlayDemo}
+                    className="w-20 h-20 bg-vzx-accent rounded-full flex items-center justify-center pl-1 shadow-[0_0_50px_rgba(51,219,152,0.5)] cursor-pointer hover:scale-110 transition-transform"
+                  >
+                    <Play fill="black" stroke="none" size={32} />
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
@@ -334,18 +481,18 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-[#111] border border-white/5 p-8 rounded-3xl hover:border-vzx-accent/30 transition-all">
-              <div className="p-3 bg-vzx-accent/10 rounded-xl w-fit mb-6 text-vzx-accent">
-                <Globe size={24} />
+              <div className="p-3 bg-[#03C75A]/10 rounded-xl w-fit mb-6 text-[#03C75A]">
+                <NaverBlogIcon size={24} />
               </div>
               <h3 className="text-xl font-bold mb-3">AI 블로그 작성기</h3>
               <p className="text-gray-500 leading-relaxed">
-                AI가 당신의 인사이트를 분석하여 전문성을 반영한 SEO-최적화된
+                AI가 당신의 아이디어를 분석하여 전문성을 반영한 SEO-최적화된
                 블로그를 생성합니다.
               </p>
             </div>
             <div className="bg-[#111] border border-white/5 p-8 rounded-3xl hover:border-vzx-accent/30 transition-all">
-              <div className="p-3 bg-blue-500/10 rounded-xl w-fit mb-6 text-blue-500">
-                <Share2 size={24} />
+              <div className="p-3 bg-white/10 rounded-xl w-fit mb-6 text-white">
+                <ThreadsIcon size={24} />
               </div>
               <h3 className="text-xl font-bold mb-3">블로그를 쓰레드로</h3>
               <p className="text-gray-500 leading-relaxed">
@@ -354,13 +501,13 @@ export default function HomePage() {
               </p>
             </div>
             <div className="bg-[#111] border border-white/5 p-8 rounded-3xl hover:border-vzx-accent/30 transition-all">
-              <div className="p-3 bg-red-500/10 rounded-xl w-fit mb-6 text-red-500">
-                <Video size={24} />
+              <div className="p-3 bg-pink-500/10 rounded-xl w-fit mb-6 text-pink-500">
+                <Instagram size={24} />
               </div>
-              <h3 className="text-xl font-bold mb-3">블로그를 숏츠로</h3>
+              <h3 className="text-xl font-bold mb-3">캐러셀과 영상</h3>
               <p className="text-gray-400 leading-relaxed">
-                블로그 글에 기반해 당신의 숏츠를 AI가 기획하고 당신의 아바타
-                에셋을 만들어줍니다.
+                당신의 인사이트를 함께 디벨롭하고 AI가 캐러셀과 영상 에셋을
+                만들어줍니다.
               </p>
             </div>
           </div>
@@ -404,8 +551,9 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto bg-gradient-to-b from-[#1A1A1A] to-[#0A0A0A] rounded-[40px] p-12 md:p-20 text-center border border-white/10 relative overflow-hidden">
           <div className="absolute inset-0 bg-vzx-accent/5 blur-[100px] pointer-events-none" />
           <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-8 relative z-10">
-            당신이라는 브랜드를 <br />
-            시행착오 없이 키우세요
+            퍼스널 브랜드
+            <br />
+            이제 시행착오 없이 키우세요
           </h2>
           <button
             onClick={handleStartService}

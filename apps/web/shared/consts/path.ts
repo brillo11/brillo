@@ -6,13 +6,14 @@ export const PATH = {
   HOME: "/",
 
   // 서비스
-  SERVICE_ROOT: "/service",
+  SERVICE_ROOT: "/service/dashboard",
   SERVICE_DASHBOARD: "/service/dashboard",
   SERVICE_PERSONAL_BRANDING: "/service/personal-branding",
   SERVICE_PERSONAL_BRANDING_WORKFLOW: "/service/personal-branding/workflow",
   SERVICE_PERSONAL_BRANDING_WIZARD: "/service/personal-branding/wizard",
   SERVICE_PERSONAL_BRANDING_BLOG: "/service/personal-branding/blog",
   SERVICE_PERSONAL_BRANDING_BLOG_KEYWORD: "/service/personal-branding/blog/keyword",
+  SERVICE_PERSONAL_BRANDING_INSTAGRAM: "/service/personal-branding/instagram",
   SERVICE_PERSONAL_BRANDING_THREADS: "/service/personal-branding/threads",
   SERVICE_PERSONAL_BRANDING_VIDEO: "/service/personal-branding/video",
 

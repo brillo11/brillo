@@ -163,10 +163,10 @@ export function LibraryClient({ videos, shorts }: LibraryClientProps) {
       </div>
 
       {/* Results Count */}
-       <div className="flex items-center gap-2 text-sm text-gray-500 px-1">
+       {/* <div className="flex items-center gap-2 text-sm text-gray-500 px-1">
           <span className="w-1.5 h-1.5 rounded-full bg-[#33DB98]"></span>
           <span>총 <strong className="text-white">{filteredVideos.length.toLocaleString()}</strong>개의 아웃라이어 발견</span>
-       </div>
+       </div> */}
 
       {/* Grid Content */}
       {videoType === "long" ? (

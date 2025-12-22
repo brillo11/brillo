@@ -1,6 +1,6 @@
-import { generateText } from 'ai';
-import 'dotenv/config';
-import { NextRequest, NextResponse } from 'next/server';
+import { generateText } from "ai";
+import "dotenv/config";
+import { NextRequest, NextResponse } from "next/server";
 // import {
 //     FORBIDDEN_WORDS,
 //     FORBIDDEN_PHRASES,
@@ -10,26 +10,25 @@ import { NextRequest, NextResponse } from 'next/server';
 //     CONVERSION_EXAMPLES,
 // } from '@/lib/reference-materials';
 import { auth } from "@/shared/lib/auth";
-import { uploadToS3, editImageWithAI } from '@/serverActions/blog/ai-photo';
-import { v4 as uuidv4 } from 'uuid';
-
+import { uploadToS3, editImageWithAI } from "@/serverActions/blog/ai-photo";
+import { v4 as uuidv4 } from "uuid";
 
 export async function POST(req: NextRequest) {
-    try {
-        const session = await auth.api.getSession({
-            headers: req.headers
-        });
+  try {
+    const session = await auth.api.getSession({
+      headers: req.headers,
+    });
 
-        if (!session?.user?.id) {
-            return NextResponse.json(
-                { success: false, error: 'Unauthorized' },
-                { status: 401 }
-            );
-        }
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
 
-        const userId = session.user.id;
-        // console.log('✅ User ID:', userId);
-        const formData = await req.json();
+    const userId = session.user.id;
+    // console.log('✅ User ID:', userId);
+    const formData = await req.json();
 
         // Step 1: 요청 접수
         const encoder = new TextEncoder();
@@ -160,31 +159,36 @@ export async function POST(req: NextRequest) {
                     controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'progress', step: 6, message: '완성' })}\n\n`));
                     controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done', content: textContent })}\n\n`));
 
-                    controller.close();
-                } catch (error) {
-                    controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'error', message: error instanceof Error ? error.message : 'Unknown error' })}\n\n`));
-                    controller.close();
-                }
-            },
-        });
+          controller.close();
+        } catch (error) {
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({ type: "error", message: error instanceof Error ? error.message : "Unknown error" })}\n\n`,
+            ),
+          );
+          controller.close();
+        }
+      },
+    });
 
-        return new NextResponse(stream, {
-            headers: {
-                'Content-Type': 'text/event-stream',
-                'Cache-Control': 'no-cache',
-                'Connection': 'keep-alive',
-            },
-        });
-    } catch (error) {
-        return NextResponse.json(
-            { error: error instanceof Error ? error.message : 'Unknown error' },
-            { status: 500 }
-        );
-    }
+    return new NextResponse(stream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+      },
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Unknown error" },
+      { status: 500 },
+    );
+  }
 }
 
 function constructPrompt(formData: any): string {
-    const { writingType, branding, contentPlanning, options, details, photo } = formData;
+  const { writingType, branding, contentPlanning, options, details, photo } =
+    formData;
 
     return `
 # 당신의 역할
@@ -224,7 +228,9 @@ ${branding.brandingText}
 - ## 글 옵션
 **말투 (매우 중요!):** ${options.styleReference}
 
-${options.styleReference === '친절형' ? `
+${
+  options.styleReference === "친절형"
+    ? `
 **말투 예시:**
 - "이런 고민을 하고 계신가요?" (O)
 - "이런 고민을 하고 계십니까?" (X)
@@ -309,69 +315,92 @@ ${photo?.originalUrl ? `
 `;
 }
 
-
 /**
- * Vercel AI Gateway를 사용하여 이미지 생성
  * 사용 모델: google/gemini-2.5-flash (Nanobanana)
  * 참고: Nanobanana는 Google Gemini 2.5 Flash Image 모델의 내부 코드명/별칭으로 알려져 있습니다.
  */
 async function generateImageWithAI(
-    prompt: string,
+  prompt: string,
+  aspectRatio:
+    | "1:1"
+    | "2:3"
+    | "3:2"
+    | "3:4"
+    | "4:3"
+    | "4:5"
+    | "5:4"
+    | "9:16"
+    | "16:9"
+    | "21:9" = "16:9",
 ): Promise<{ success: boolean; imageUrl?: string; error?: string }> {
-    try {
-        // Nano Banana (Gemini 2.5 Flash Image) 모델 사용
-        // 문서에 따라 generateText를 사용하고 result.files에서 이미지를 확인합니다.
-        console.log('이미지 프롬포트 : ', prompt);
-        const result: any = await generateText({
-            model: 'google/gemini-2.5-flash-image',
-            prompt: `Generate an image of: ${prompt}`, // 이미지 생성을 명시적으로 요청
-        });
+  try {
+    // Nano Banana (Gemini 2.5 Flash Image) 모델 사용
+    // 문서에 따라 generateText를 사용하고 result.files에서 이미지를 확인합니다.
+    console.log("이미지 프롬포트 : ", prompt);
+    const result: any = await generateText({
+      model: "google/gemini-2.5-flash-image",
+      prompt: `Generate an image of: ${prompt}`, // 이미지 생성을 명시적으로 요청
+      providerOptions: {
+        google: {
+          imageConfig: {
+            aspectRatio: aspectRatio,
+          },
+        },
+      },
+    });
 
-        // result.files에서 이미지 확인 (Vercel AI SDK 최신 버전 기능)
-        // 문서: Images are available in result.files
-        if (result.files && result.files.length > 0) {
-            console.log(`Gemini Image Gen Files Found: ${result.files.length}`);
-            const firstFile = result.files[0];
+    // result.files에서 이미지 확인 (Vercel AI SDK 최신 버전 기능)
+    // 문서: Images are available in result.files
+    if (result.files && result.files.length > 0) {
+      console.log(`Gemini Image Gen Files Found: ${result.files.length}`);
+      const firstFile = result.files[0];
 
-            // console.log(`이미지 파일:`, firstFile);
+      // console.log(`이미지 파일:`, firstFile);
 
-            // DefaultGeneratedFile 객체에서 정보 추출
-            const base64Data = firstFile.base64Data;
-            const mimeType = firstFile.mediaType; // 'image/png'
+      // DefaultGeneratedFile 객체에서 정보 추출
+      const base64Data = firstFile.base64Data;
+      const mimeType = firstFile.mediaType; // 'image/png'
 
-            // 데이터 URL 생성
-            const dataUrl = `data:${mimeType};base64,${base64Data}`;
+      // 데이터 URL 생성
+      const dataUrl = `data:${mimeType};base64,${base64Data}`;
 
-            // contentType 확인
-            // const mimeType = firstFile.contentType || firstFile.mimeType || 'image/png';
+      // contentType 확인
+      // const mimeType = firstFile.contentType || firstFile.mimeType || 'image/png';
 
-            if (base64Data) {
-                const imageDataUrl = dataUrl;
-                return {
-                    success: true,
-                    imageUrl: imageDataUrl,
-                };
-            }
-        } else {
-            console.log('Gemini Image Gen: No files found in result.files');
-        }
-
-        // 만약 result.files가 비어있다면, steps를 확인 (fallback)
-        if (result.steps && result.steps.length > 0) {
-            console.log('Gemini Image Gen: Checking steps...');
-            // const step = result.steps[0];
-        }
-
-        console.warn('이미지가 생성되지 않았습니다.');
+      if (base64Data) {
+        const imageDataUrl = dataUrl;
         return {
-            success: false,
-            error: '이미지 생성 결과가 없습니다. (모델이 텍스트만 반환했을 수 있습니다)',
+          success: true,
+          imageUrl: imageDataUrl,
         };
-    } catch (error) {
-        console.error('이미지 생성 오류 (Nanobanana/Gemini 2.5 Flash Image):', error);
-        return {
-            success: false,
-            error: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.',
-        };
+      }
+    } else {
+      console.log("Gemini Image Gen: No files found in result.files");
     }
+
+    // 만약 result.files가 비어있다면, steps를 확인 (fallback)
+    if (result.steps && result.steps.length > 0) {
+      console.log("Gemini Image Gen: Checking steps...");
+      // const step = result.steps[0];
+    }
+
+    console.warn("이미지가 생성되지 않았습니다.");
+    return {
+      success: false,
+      error:
+        "이미지 생성 결과가 없습니다. (모델이 텍스트만 반환했을 수 있습니다)",
+    };
+  } catch (error) {
+    console.error(
+      "이미지 생성 오류 (Nanobanana/Gemini 2.5 Flash Image):",
+      error,
+    );
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "알 수 없는 오류가 발생했습니다.",
+    };
+  }
 }

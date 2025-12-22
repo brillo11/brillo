@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@repo/database";
+import { prismaLongform } from "@repo/longform-database";
 
 export type OutlierType = "outlierVph" | "outlierView" | "outlierSubscriber";
 
@@ -32,7 +32,7 @@ export async function getTopPrecomputedVideos(
   minOutlierValue: number = 1.4,
   minViewsPerHour: number = 10
 ) {
-  const videos = await prisma.youtubeVideo.findMany({
+  const videos = await prismaLongform.youtubeVideo.findMany({
     where: {
       ...(regionCode ? { regionCode } : {}),
       // outlierType에 해당하는 값이 minOutlierValue 이상인 경우만 필터링
@@ -80,7 +80,7 @@ export async function getTopPrecomputedShorts(
   minOutlierValue: number = 1.4,
   minViewsPerHour: number = 10
 ) {
-  const shorts = await prisma.youtubeShorts.findMany({
+  const shorts = await prismaLongform.youtubeShorts.findMany({
     where: {
       ...(regionCode ? { regionCode } : {}),
       [outlierType]: { gte: minOutlierValue },

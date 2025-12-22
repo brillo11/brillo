@@ -20,11 +20,9 @@ export async function ServiceProviders({
 
   // const points = user?.points ?? 0;
 
-  const points = 0;
-
   return (
     <ServiceClientProviders>
-      <ServiceSidebar points={points} />
+      <ServiceSidebar />
       <div className="flex flex-col flex-1 w-full min-h-screen">
         <ServiceHeader />
         <div className="flex-1 bg-vzx-bg/80">{children}</div>

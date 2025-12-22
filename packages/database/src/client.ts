@@ -3,7 +3,6 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/client/client";
 
 const connectionString = `${process.env.DATABASE_URL}`;
-console.log("DB Connection:", connectionString.replace(/:[^:]*@/, ":****@"));
 
 const pool = new Pool({
   connectionString,
