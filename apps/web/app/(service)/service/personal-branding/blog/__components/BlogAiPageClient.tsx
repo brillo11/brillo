@@ -87,7 +87,7 @@ const BlogAiPageContent: React.FC = () => {
     setHistory(updatedHistory);
     localStorage.setItem(
       "blog-generation-history",
-      JSON.stringify(updatedHistory)
+      JSON.stringify(updatedHistory),
     );
   };
 
@@ -96,7 +96,7 @@ const BlogAiPageContent: React.FC = () => {
     setHistory(updatedHistory);
     localStorage.setItem(
       "blog-generation-history",
-      JSON.stringify(updatedHistory)
+      JSON.stringify(updatedHistory),
     );
   };
 
@@ -191,17 +191,17 @@ const BlogAiPageContent: React.FC = () => {
                     finalContent += data.content;
                   } else if (data.type === "image-data") {
                     setGeneratedContent((prev) =>
-                      prev.replace(data.placeholder, data.imageUrl)
+                      prev.replace(data.placeholder, data.imageUrl),
                     );
                     finalContent = finalContent.replace(
                       data.placeholder,
-                      data.imageUrl
+                      data.imageUrl,
                     );
                   } else if (data.type === "gif-result") {
                     const gifHtml = data.urls
                       .map(
                         (url: string) =>
-                          `<img src="${url}" alt="GIF" style="width: 100%; max-width: 600px; margin: 20px auto; display: block; border-radius: 8px;" />`
+                          `<img src="${url}" alt="GIF" style="width: 100%; max-width: 600px; margin: 20px auto; display: block; border-radius: 8px;" />`,
                       )
                       .join("");
                     setGeneratedContent((prev) => gifHtml + prev);
@@ -212,7 +212,7 @@ const BlogAiPageContent: React.FC = () => {
                     // Save to history when done
                     saveToHistory(
                       finalContent,
-                      selectedTitle || formData.contentPlanning.subject
+                      selectedTitle || formData.contentPlanning.subject,
                     );
                   } else if (data.type === "error") {
                     setError(data.message);
@@ -245,17 +245,17 @@ const BlogAiPageContent: React.FC = () => {
                 finalContent += data.content;
               } else if (data.type === "image-data") {
                 setGeneratedContent((prev) =>
-                  prev.replace(data.placeholder, data.imageUrl)
+                  prev.replace(data.placeholder, data.imageUrl),
                 );
                 finalContent = finalContent.replace(
                   data.placeholder,
-                  data.imageUrl
+                  data.imageUrl,
                 );
               } else if (data.type === "gif-result") {
                 const gifHtml = data.urls
                   .map(
                     (url: string) =>
-                      `<img src="${url}" alt="GIF" style="width: 100%; max-width: 600px; margin: 20px auto; display: block; border-radius: 8px;" />`
+                      `<img src="${url}" alt="GIF" style="width: 100%; max-width: 600px; margin: 20px auto; display: block; border-radius: 8px;" />`,
                   )
                   .join("");
                 setGeneratedContent((prev) => gifHtml + prev);
@@ -266,7 +266,7 @@ const BlogAiPageContent: React.FC = () => {
                 // Save to history when done
                 saveToHistory(
                   finalContent,
-                  selectedTitle || formData.contentPlanning.subject
+                  selectedTitle || formData.contentPlanning.subject,
                 );
               } else if (data.type === "error") {
                 setError(data.message);
@@ -297,13 +297,7 @@ const BlogAiPageContent: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#0A0A0A] relative text-white">
       {/* Current State */}
-      <CurrentState />
-      {/* History Manager (Floating below CurrentState) */}
-      <HistoryManager
-        history={history}
-        onLoad={() => {}}
-        onDelete={deleteHistoryItem}
-      />
+      {/* <CurrentState /> */}
       {/* Page Title & Hero */}
       <div className="bg-[#0A0A0A] border-b border-white/5 px-4 py-8 lg:px-8 relative z-10">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 max-w-screen-xl mx-auto">
@@ -343,6 +337,12 @@ const BlogAiPageContent: React.FC = () => {
             >
               <History size={16} /> 템플릿 관리
             </button>
+            {/* History Manager */}
+            <HistoryManager
+              history={history}
+              onLoad={() => {}}
+              onDelete={deleteHistoryItem}
+            />
           </div>
         </div>
       </div>
