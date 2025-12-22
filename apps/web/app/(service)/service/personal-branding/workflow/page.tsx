@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import {
   Sparkles,
   FileText,
@@ -76,7 +76,7 @@ const steps = [
 
 import { useSearchParams } from "next/navigation";
 
-export default function BrandingWorkflow() {
+function BrandingWorkflowContent() {
   const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -420,5 +420,19 @@ export default function BrandingWorkflow() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function BrandingWorkflow() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen text-white">
+          <Loader2 className="w-8 h-8 animate-spin" />
+        </div>
+      }
+    >
+      <BrandingWorkflowContent />
+    </Suspense>
   );
 }
