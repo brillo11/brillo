@@ -17,6 +17,7 @@ import {
   useBlogForm,
 } from "../blog/__components/BlogFormContext";
 import { BlogAiPageContent } from "../blog/__components/BlogAiPageClient";
+import { AIAssistantClient } from "../video/_components/ai-assistant-client";
 
 // Mock Services
 const generateBlogPost = async (topic: string) => {
@@ -137,14 +138,7 @@ function BrandingWorkflowContent() {
   };
 
   const handleStep4Submit = async () => {
-    setIsLoading(true);
-    try {
-      const result = await generateShortsPlan(instagramContent);
-      setVideoAssets(result);
-      setCurrentStep(5);
-    } finally {
-      setIsLoading(false);
-    }
+    setCurrentStep(5);
   };
 
   return (
@@ -191,7 +185,7 @@ function BrandingWorkflowContent() {
       </div>
 
       {/* Main Content Area */}
-      <div className="bg-vzx-card border border-white/10 rounded-3xl p-8 flex-1 shadow-2xl relative overflow-hidden min-h-[500px]">
+      <div className="bg-vzx-bg border border-white/10 rounded-3xl p-8 flex-1 shadow-2xl relative overflow-hidden min-h-[500px]">
         {isLoading && (
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 flex flex-col items-center justify-center">
             <Loader2 className="w-12 h-12 text-[#33DB98] animate-spin mb-4" />
@@ -344,85 +338,25 @@ function BrandingWorkflowContent() {
           </div>
         )}
 
-        {/* Step 5: Assets */}
-        {currentStep === 5 && videoAssets && (
+        {/* Step 5: Video (AI Assistant) */}
+        {currentStep === 5 && (
           <div className="h-full flex flex-col">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-white">Final Assets</h2>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setCurrentStep(1)}
-                  className="text-sm font-medium text-white border border-white/20 px-4 py-2 rounded-lg hover:bg-white/5 transition"
-                >
-                  Start New
-                </button>
-                <button className="text-sm font-bold text-black bg-[#33DB98] px-4 py-2 rounded-lg hover:bg-[#2bb880] transition shadow-[0_0_15px_rgba(51,219,152,0.4)]">
-                  Export All
-                </button>
-              </div>
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <Video className="text-[#33DB98]" /> 영상 생성
+              </h2>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
-              {/* Script Column */}
-              <div className="bg-vzx-bg border border-white/5 rounded-xl p-4 flex flex-col">
-                <h3 className="text-[#33DB98] font-medium mb-3 flex items-center gap-2">
-                  <FileText size={16} /> Shorts Script
-                </h3>
-                <div className="flex-1 overflow-y-auto text-sm text-gray-400 leading-relaxed max-h-[400px]">
-                  {videoAssets.script}
-                </div>
-              </div>
-
-              {/* Thumbnail Column */}
-              <div className="bg-vzx-bg border border-white/5 rounded-xl p-4 flex flex-col">
-                <h3 className="text-[#33DB98] font-medium mb-3 flex items-center gap-2">
-                  <Sparkles size={16} /> AI Thumbnail
-                </h3>
-                <div className="flex-1 bg-gray-800 rounded-lg flex items-center justify-center relative overflow-hidden group h-[300px]">
-                  {/* <img
-                    src="https://picsum.photos/400/600"
-                    alt="Generated Thumbnail"
-                    className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500"
-                  /> */}
-                  <div className="text-gray-500 flex flex-col items-center">
-                    <span>Thumbnail Preview</span>
-                    <span className="text-xs mt-2 text-gray-600">
-                      (Mock Image)
-                    </span>
-                  </div>
-                  <div className="absolute bottom-4 left-4 right-4 bg-black/70 p-2 rounded text-xs text-white">
-                    Prompt: {videoAssets.visualPrompt.substring(0, 50)}...
-                  </div>
-                </div>
-              </div>
-
-              {/* HeyGen Footage Column */}
-              <div className="bg-vzx-bg border border-white/5 rounded-xl p-4 flex flex-col">
-                <h3 className="text-[#33DB98] font-medium mb-3 flex items-center gap-2">
-                  <Video size={16} /> HeyGen Avatar
-                </h3>
-                <div className="flex-1 bg-gray-800 rounded-lg flex items-center justify-center relative group cursor-pointer h-[300px]">
-                  {/* <img
-                    src="https://picsum.photos/401/601"
-                    alt="HeyGen Avatar"
-                    className="w-full h-full object-cover opacity-60"
-                  /> */}
-                  <div className="text-gray-500 flex flex-col items-center">
-                    <span>Avatar Preview</span>
-                    <span className="text-xs mt-2 text-gray-600">
-                      (Mock Video)
-                    </span>
-                  </div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-16 h-16 bg-[#33DB98] rounded-full flex items-center justify-center pl-1 shadow-lg group-hover:scale-110 transition-transform">
-                      <Play fill="black" stroke="none" size={24} />
-                    </div>
-                  </div>
-                  <div className="absolute top-2 right-2 px-2 py-1 bg-black/50 text-[#33DB98] text-xs rounded border border-[#33DB98]/30">
-                    Generating Lip Sync...
-                  </div>
-                </div>
-              </div>
+            {/* 
+              Wrap AIAssistantClient in a container similar to Step 2 
+              Use negative margins to extend to full width of the parent padding
+            */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar -mx-8 -mb-8 px-4 pb-8">
+              <AIAssistantClient
+                initialTopic={topic}
+                initialTargetAudience={targetAudience}
+                initialKeyInsights={insight}
+                hideHeader={true}
+              />
             </div>
           </div>
         )}

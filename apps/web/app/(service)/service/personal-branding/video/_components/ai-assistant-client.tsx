@@ -25,7 +25,19 @@ import {
   sendThumbnailGuideResponses,
 } from "@/serverActions/ai-assistant/ai-assistant.actions";
 
-export function AIAssistantClient() {
+interface AIAssistantClientProps {
+  initialTopic?: string;
+  initialTargetAudience?: string;
+  initialKeyInsights?: string;
+  hideHeader?: boolean;
+}
+
+export function AIAssistantClient({
+  initialTopic = "",
+  initialTargetAudience = "",
+  initialKeyInsights = "",
+  hideHeader = false,
+}: AIAssistantClientProps) {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   type SessionData = Partial<AIAssistantSessionData> & { topic?: string };
   type SessionUpdates = Parameters<typeof updateAIAssistantSession>[1];
@@ -34,9 +46,9 @@ export function AIAssistantClient() {
   const [currentStep, setCurrentStep] = useState<Step>(1);
   
   // Inputs
-  const [topic, setTopic] = useState("");
-  const [targetAudience, setTargetAudience] = useState("");
-  const [keyInsights, setKeyInsights] = useState("");
+  const [topic, setTopic] = useState(initialTopic);
+  const [targetAudience, setTargetAudience] = useState(initialTargetAudience);
+  const [keyInsights, setKeyInsights] = useState(initialKeyInsights);
   const [videoStyle, setVideoStyle] = useState<VideoStyle | null>(null);
 
   const [selectedTitle, setSelectedTitle] = useState("");
@@ -485,15 +497,17 @@ export function AIAssistantClient() {
 
   return (
     <div className="container mx-auto p-6 max-w-5xl space-y-8 animate-fade-in selection:bg-[var(--vzx-accent)] selection:text-black min-h-screen">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">
-          유튜브 영상 제작
-        </h1>
-        <p className="text-gray-400">
-          나만의 유튜브 콘텐츠를 만들어보세요. 제목, 썸네일,
-          스크립트까지 단계별로 안내해드립니다.
-        </p>
-      </div>
+      {!hideHeader && (
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight mb-2 text-white">
+            유튜브 영상 제작
+          </h1>
+          <p className="text-gray-400">
+            나만의 유튜브 콘텐츠를 만들어보세요. 제목, 썸네일,
+            스크립트까지 단계별로 안내해드립니다.
+          </p>
+        </div>
+      )}
       <div className="relative">
 
             <ProgressBar />
