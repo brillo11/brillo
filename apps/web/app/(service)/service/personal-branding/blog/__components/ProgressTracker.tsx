@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { Check, Loader2 } from "lucide-react";
+import { useBlogForm } from "./BlogFormContext";
 
 interface ProgressStep {
-  step: number;
+  id: number;
   message: string;
 }
 
@@ -13,19 +14,35 @@ interface ProgressTrackerProps {
   isGenerating: boolean;
 }
 
-const STEPS: ProgressStep[] = [
-  { step: 1, message: "요청 접수" },
-  { step: 2, message: "프롬프트 생성" },
-  { step: 3, message: "본문 생성" },
-  { step: 4, message: "유튜브 GIF 생성" },
-  { step: 5, message: "인물 사진 처리" },
-  { step: 6, message: "완성" },
+const ALL_STEPS: ProgressStep[] = [
+  { id: 1, message: "요청 접수" },
+  { id: 2, message: "프롬프트 생성" },
+  { id: 3, message: "본문 생성" },
+  { id: 4, message: "유튜브 GIF 생성" },
+  { id: 5, message: "인물 사진 처리" },
+  { id: 6, message: "완성" },
 ];
 
 const ProgressTracker: React.FC<ProgressTrackerProps> = ({
   currentStep,
   isGenerating,
 }) => {
+  const { formData } = useBlogForm();
+
+  const activeSteps = useMemo(() => {
+    return ALL_STEPS.filter((step) => {
+      if (step.id === 4) {
+        return !!(
+          formData.gif?.youtubeUrl && formData.gif?.startTimes?.length > 0
+        );
+      }
+      if (step.id === 5) {
+        return !!formData.photo?.originalUrl;
+      }
+      return true;
+    });
+  }, [formData.gif, formData.photo]);
+
   if (!isGenerating && currentStep === 0) return null;
 
   return (
@@ -35,14 +52,13 @@ const ProgressTracker: React.FC<ProgressTrackerProps> = ({
         생성 진행 상황
       </h3>
       <div className="space-y-4">
-        {STEPS.map((step) => {
+        {activeSteps.map((step, index) => {
           const isCompleted =
-            currentStep > step.step ||
-            (currentStep === step.step && !isGenerating);
-          const isCurrent = currentStep === step.step && isGenerating;
+            currentStep > step.id || (currentStep === step.id && !isGenerating);
+          const isCurrent = currentStep === step.id && isGenerating;
 
           return (
-            <div key={step.step} className="flex items-center gap-4 group">
+            <div key={step.id} className="flex items-center gap-4 group">
               <div
                 className={`flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-500 border ${
                   isCompleted
@@ -57,7 +73,7 @@ const ProgressTracker: React.FC<ProgressTrackerProps> = ({
                 ) : isCurrent ? (
                   <Loader2 size={18} className="animate-spin" />
                 ) : (
-                  <span className="text-sm font-bold">{step.step}</span>
+                  <span className="text-sm font-bold">{index + 1}</span>
                 )}
               </div>
               <div className="flex flex-col">

@@ -31,19 +31,19 @@ const ContentPlanningSection: React.FC = () => {
 
   // 기본 입력 필드 상태
   const [youtubeUrl, setYoutubeUrl] = useState(
-    formData.contentPlanning.youtubeUrl
+    formData.contentPlanning.youtubeUrl,
   );
   const [blogUrl, setBlogUrl] = useState(formData.contentPlanning.blogUrl);
   const [subject, setSubject] = useState(formData.contentPlanning.subject);
   const [targetAudience, setTargetAudience] = useState(
-    formData.contentPlanning.targetAudience
+    formData.contentPlanning.targetAudience,
   );
   const [keyMessage, setKeyMessage] = useState(
-    formData.contentPlanning.keyMessage
+    formData.contentPlanning.keyMessage,
   );
   const [keywordInput, setKeywordInput] = useState("");
   const [keywords, setKeywords] = useState<string[]>(
-    formData.contentPlanning.keywords || []
+    formData.contentPlanning.keywords || [],
   );
 
   // 상위 노출 분석 및 AI 기획 관련 상태
@@ -53,6 +53,7 @@ const ContentPlanningSection: React.FC = () => {
   const [isGeneratingPlans, setIsGeneratingPlans] = useState(false);
   const [generatedPlans, setGeneratedPlans] = useState<GeneratedPlan[]>([]);
   const [selectedBlogIdx, setSelectedBlogIdx] = useState<number | null>(null);
+  const [selectedPlanIdx, setSelectedPlanIdx] = useState<number | null>(null);
 
   // 블로그 URL 자동 입력 관련 상태
   const [isGeneratingFromBlog, setIsGeneratingFromBlog] = useState(false);
@@ -115,6 +116,7 @@ const ContentPlanningSection: React.FC = () => {
     setBlogResults([]);
     setGeneratedPlans([]);
     setSelectedBlogIdx(null);
+    setSelectedPlanIdx(null);
     try {
       const result = await searchBlogPosts(searchKeyword, 7);
       if (result.success) {
@@ -130,11 +132,12 @@ const ContentPlanningSection: React.FC = () => {
   // 2. 선택한 블로그 키워드를 기반으로 AI 기획안 생성
   const handleSelectBlogAndGeneratePlans = async (
     idx: number,
-    blogKeywords: string[]
+    blogKeywords: string[],
   ) => {
     setSelectedBlogIdx(idx);
     setIsGeneratingPlans(true);
     setGeneratedPlans([]);
+    setSelectedPlanIdx(null);
     try {
       const result = await generateContentPlansFromKeywords(blogKeywords);
       if (result.success) {
@@ -148,7 +151,8 @@ const ContentPlanningSection: React.FC = () => {
   };
 
   // 3. 기획안 최종 선택 및 적용
-  const applyContentPlan = (plan: GeneratedPlan) => {
+  const applyContentPlan = (plan: GeneratedPlan, idx: number | null = null) => {
+    setSelectedPlanIdx(idx);
     setSubject(plan.subject);
     setTargetAudience(plan.targetAudience);
     setKeyMessage(plan.keyMessage);
@@ -216,7 +220,7 @@ const ContentPlanningSection: React.FC = () => {
         .map((k) => k.trim().replace(/^#+/, ""))
         .filter((k) => k.length > 0);
       const mergedKeywords = Array.from(
-        new Set([...keywords, ...completedKeywords])
+        new Set([...keywords, ...completedKeywords]),
       ).slice(0, 5);
       setKeywords(mergedKeywords);
       setKeywordInput(parts[parts.length - 1] || "");
@@ -334,7 +338,7 @@ const ContentPlanningSection: React.FC = () => {
                           )}
                         </div>
                       </button>
-                    )
+                    ),
                 )}
               </div>
             </div>
@@ -360,31 +364,75 @@ const ContentPlanningSection: React.FC = () => {
                   {generatedPlans.map((plan, idx) => (
                     <button
                       key={idx}
-                      onClick={() => applyContentPlan(plan)}
-                      className="w-full text-left p-5 rounded-2xl bg-gradient-to-br from-white/[0.07] to-white/[0.02] border border-white/10 hover:border-[#33DB98]/50 hover:from-[#33DB98]/10 hover:to-transparent transition-all group relative overflow-hidden cursor-pointer"
+                      onClick={() => applyContentPlan(plan, idx)}
+                      className={`w-full text-left p-5 rounded-2xl transition-all group relative overflow-hidden cursor-pointer border ${
+                        selectedPlanIdx === idx
+                          ? "bg-[#33DB98]/10 border-[#33DB98] shadow-inner shadow-[#33DB98]/10"
+                          : "bg-gradient-to-br from-white/[0.07] to-white/[0.02] border-white/10 hover:border-[#33DB98]/50 hover:from-[#33DB98]/10 hover:to-transparent"
+                      }`}
                     >
                       <div className="flex justify-between items-start mb-3">
-                        <h4 className="font-bold text-white group-hover:text-[#33DB98] transition-colors leading-snug">
+                        <h4
+                          className={`font-bold transition-colors leading-snug ${
+                            selectedPlanIdx === idx
+                              ? "text-[#33DB98]"
+                              : "text-white group-hover:text-[#33DB98]"
+                          }`}
+                        >
                           {plan.subject}
                         </h4>
-                        <div className="shrink-0 p-1.5 bg-[#33DB98] text-black rounded-lg opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
-                          <ArrowRight size={14} />
+                        <div
+                          className={`shrink-0 p-1.5 rounded-lg transition-all ${
+                            selectedPlanIdx === idx
+                              ? "bg-[#33DB98] text-black scale-110"
+                              : "bg-[#33DB98] text-black opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0"
+                          }`}
+                        >
+                          {selectedPlanIdx === idx ? (
+                            <Check size={14} />
+                          ) : (
+                            <ArrowRight size={14} />
+                          )}
                         </div>
                       </div>
                       <div className="space-y-2">
                         <div className="flex items-start gap-2">
-                          <span className="text-[10px] bg-white/5 text-gray-500 px-1.5 py-0.5 rounded shrink-0 mt-0.5 uppercase font-bold">
+                          <span
+                            className={`text-[10px] px-1.5 py-0.5 rounded shrink-0 mt-0.5 uppercase font-bold ${
+                              selectedPlanIdx === idx
+                                ? "bg-[#33DB98]/20 text-[#33DB98]"
+                                : "bg-white/5 text-gray-500"
+                            }`}
+                          >
                             Target
                           </span>
-                          <span className="text-xs text-gray-400 line-clamp-1">
+                          <span
+                            className={`text-xs line-clamp-1 ${
+                              selectedPlanIdx === idx
+                                ? "text-gray-300"
+                                : "text-gray-400"
+                            }`}
+                          >
                             {plan.targetAudience}
                           </span>
                         </div>
                         <div className="flex items-start gap-2">
-                          <span className="text-[10px] bg-white/5 text-gray-500 px-1.5 py-0.5 rounded shrink-0 mt-0.5 uppercase font-bold">
+                          <span
+                            className={`text-[10px] px-1.5 py-0.5 rounded shrink-0 mt-0.5 uppercase font-bold ${
+                              selectedPlanIdx === idx
+                                ? "bg-[#33DB98]/20 text-[#33DB98]"
+                                : "bg-white/5 text-gray-500"
+                            }`}
+                          >
                             Message
                           </span>
-                          <span className="text-xs text-gray-400 line-clamp-2 leading-relaxed">
+                          <span
+                            className={`text-xs line-clamp-2 leading-relaxed ${
+                              selectedPlanIdx === idx
+                                ? "text-gray-300"
+                                : "text-gray-400"
+                            }`}
+                          >
                             {plan.keyMessage}
                           </span>
                         </div>
@@ -392,14 +440,24 @@ const ContentPlanningSection: React.FC = () => {
                           {plan.keywords.map((kw, i) => (
                             <span
                               key={i}
-                              className="text-[10px] text-[#33DB98]/70 font-medium"
+                              className={`text-[10px] font-medium ${
+                                selectedPlanIdx === idx
+                                  ? "text-[#33DB98]"
+                                  : "text-[#33DB98]/70"
+                              }`}
                             >
                               #{kw}
                             </span>
                           ))}
                         </div>
                       </div>
-                      <div className="absolute top-0 right-0 p-2 bg-[#33DB98]/10 text-[#33DB98] text-[9px] font-black rounded-bl-xl opacity-50">
+                      <div
+                        className={`absolute top-0 right-0 p-2 text-[9px] font-black rounded-bl-xl ${
+                          selectedPlanIdx === idx
+                            ? "bg-[#33DB98] text-black"
+                            : "bg-[#33DB98]/10 text-[#33DB98] opacity-50"
+                        }`}
+                      >
                         OPTION {idx + 1}
                       </div>
                     </button>
@@ -436,12 +494,12 @@ const ContentPlanningSection: React.FC = () => {
             <button
               onClick={handleYoutubeUrlAnalysis}
               disabled={isGeneratingFromYoutube || !youtubeUrl.trim()}
-              className="bg-[#33DB98] hover:bg-[#33DB98]/90 disabled:bg-[#33DB98]/20 disabled:text-white/20 text-black px-6 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap active:scale-95 flex items-center justify-center min-w-[100px]"
+              className="bg-[#33DB98] hover:bg-[#33DB98]/90 disabled:bg-[#33DB98]/20 disabled:text-white/20 text-black px-6 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap active:scale-95 flex items-center justify-center min-w-[80px]"
             >
               {isGeneratingFromYoutube ? (
                 <Loader2 size={18} className="animate-spin" />
               ) : (
-                "자동 입력"
+                "확인"
               )}
             </button>
           </div>

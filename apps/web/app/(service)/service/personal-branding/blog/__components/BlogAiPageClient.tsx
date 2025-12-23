@@ -297,7 +297,7 @@ const BlogAiPageContent: React.FC = () => {
       {/* Current State */}
       {/* <CurrentState /> */}
       {/* Page Title & Hero */}
-      <div className="bg-[#0A0A0A] border-b border-white/5 px-4 py-8 lg:px-8 relative z-10">
+      <div className="bg-[#0A0A0A] border-b border-white/5 px-4 py-8 lg:px-8 relative z-[30]">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 max-w-screen-xl mx-auto">
           <div className="flex items-start gap-4">
             <div className="p-3 bg-vzx-card rounded-2xl border border-white/5 text-[#33DB98]">
@@ -334,7 +334,11 @@ const BlogAiPageContent: React.FC = () => {
             {/* History Manager */}
             <HistoryManager
               history={history}
-              onLoad={() => {}}
+              onLoad={(item) => {
+                setGeneratedContent(item.content);
+                setSelectedTitle(item.title);
+                setIsLeftPanelCollapsed(true);
+              }}
               onDelete={deleteHistoryItem}
             />
           </div>
@@ -351,7 +355,7 @@ const BlogAiPageContent: React.FC = () => {
         {isLeftPanelCollapsed && isLeftPanelExpanded && (
           <div
             onClick={handleCollapsePanel}
-            className="fixed inset-0 bg-black/60 z-30 lg:block hidden backdrop-blur-sm"
+            className="fixed inset-0 bg-black/60 z-40 lg:block hidden backdrop-blur-sm"
             aria-hidden="true"
           />
         )}
@@ -360,7 +364,7 @@ const BlogAiPageContent: React.FC = () => {
         {isLeftPanelCollapsed && !isLeftPanelExpanded && (
           <button
             onClick={handleExpandPanel}
-            className="fixed left-[280px] top-1/2 -translate-y-1/2 z-50 bg-[#33DB98] hover:bg-[#33DB98]/90 text-black p-3 rounded-full shadow-lg transition-all hover:scale-110 flex items-center gap-2 pr-5 font-bold ml-6"
+            className="fixed left-[240px] top-1/2 -translate-y-1/2 z-[45] bg-[#33DB98] hover:bg-[#33DB98]/90 text-black p-3 rounded-full shadow-lg transition-all hover:scale-110 flex items-center gap-2 pr-5 font-bold ml-6"
             aria-label="입력 영역 펼치기"
           >
             <ChevronRight size={20} />

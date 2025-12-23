@@ -1,7 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { History, FileText, Trash2, X, Clock } from "lucide-react";
+import React, { useState, useEffect, memo, useRef } from "react";
+import { History, FileText, Trash2, X, Clock, Copy } from "lucide-react";
+
+// 콘텐츠 표시 컴포넌트 메모화하여 이미지 깜빡임 방지
+const HistoryContentDisplay = memo(({ content }: { content: string }) => {
+  return <div dangerouslySetInnerHTML={{ __html: content }} />;
+});
+
+HistoryContentDisplay.displayName = "HistoryContentDisplay";
 
 export interface HistoryItem {
   id: string;
@@ -24,10 +31,31 @@ const HistoryManager: React.FC<HistoryManagerProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<HistoryItem | null>(null);
   const [mounted, setMounted] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleCopy = () => {
+    if (!contentRef.current) return;
+
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(contentRef.current);
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+
+    try {
+      document.execCommand("copy");
+      alert("복사가 완료되었습니다!");
+    } catch (err) {
+      console.error("복사 실패:", err);
+      alert("복사 중 오류가 발생했습니다.");
+    } finally {
+      selection?.removeAllRanges();
+    }
+  };
 
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleString("ko-KR", {
@@ -85,7 +113,10 @@ const HistoryManager: React.FC<HistoryManagerProps> = ({
                   <div
                     key={item.id}
                     className="group relative bg-white/5 border border-white/5 hover:border-[#33DB98]/30 rounded-xl p-3 transition-all cursor-pointer hover:bg-white/10"
-                    onClick={() => setSelectedItem(item)}
+                    onClick={() => {
+                      setSelectedItem(item);
+                      onLoad(item);
+                    }}
                   >
                     <div className="pr-6">
                       <h4 className="text-sm font-semibold text-gray-200 line-clamp-1 mb-1">
@@ -116,7 +147,7 @@ const HistoryManager: React.FC<HistoryManagerProps> = ({
 
       {/* Detail Modal */}
       {selectedItem && (
-        <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4 backdrop-blur-md">
+        <div className="fixed inset-0 bg-black/80 z-[999] flex items-center justify-center p-4 backdrop-blur-md">
           <div className="bg-vzx-card rounded-3xl w-full max-w-4xl h-[85vh] flex flex-col shadow-2xl border border-white/10 animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-white/5 flex items-center justify-between">
               <div>
@@ -138,15 +169,22 @@ const HistoryManager: React.FC<HistoryManagerProps> = ({
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-8 bg-[#0A0A0A]">
-              <div className="bg-vzx-card shadow-xl border border-white/5 rounded-2xl p-10 max-w-3xl mx-auto prose prose-invert prose-emerald">
-                <div
-                  dangerouslySetInnerHTML={{ __html: selectedItem.content }}
-                />
+            <div className="flex-1 overflow-y-auto p-8 bg-gray-100/50">
+              <div
+                ref={contentRef}
+                className="bg-white shadow-xl border border-gray-200 rounded-2xl p-10 max-w-3xl mx-auto prose prose-slate"
+              >
+                <HistoryContentDisplay content={selectedItem.content} />
               </div>
             </div>
 
             <div className="p-4 border-t border-white/5 flex justify-end gap-3 bg-vzx-card rounded-b-3xl">
+              <button
+                onClick={handleCopy}
+                className="px-4 py-2 bg-[#33DB98] text-black rounded-xl text-sm font-bold hover:bg-[#33DB98]/90 transition-colors flex items-center gap-1.5"
+              >
+                <Copy size={16} /> 복사
+              </button>
               <button
                 onClick={() => handleDelete(selectedItem.id)}
                 className="px-4 py-2 text-red-400 hover:bg-red-400/10 rounded-xl text-sm font-medium flex items-center gap-1.5 transition-colors"

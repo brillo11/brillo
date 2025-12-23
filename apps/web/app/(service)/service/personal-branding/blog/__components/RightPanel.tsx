@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, memo, useRef } from "react";
 import {
   ChevronUp,
   ChevronDown,
@@ -14,6 +14,22 @@ import {
   Trash2,
 } from "lucide-react";
 import { useBlogForm } from "./BlogFormContext";
+import {
+  getCompetitorStats,
+  CompetitorStats,
+} from "@/serverActions/blog/competitor-stats";
+
+// 콘텐츠 표시 컴포넌트를 별도로 분리하고 memo 처리하여 불필요한 재렌더링 방지 (이미지 깜빡임 방지)
+const ContentDisplay = memo(({ content }: { content: string }) => {
+  return (
+    <div
+      className="text-black text-[15px] leading-[1.8] tracking-tight"
+      dangerouslySetInnerHTML={{ __html: content }}
+    />
+  );
+});
+
+ContentDisplay.displayName = "ContentDisplay";
 
 interface RightPanelProps {
   generatedContent?: string;
@@ -38,12 +54,18 @@ const RightPanel: React.FC<RightPanelProps> = ({
   onGenerateTitles,
   isLeftPanelCollapsed = false,
 }) => {
-  const { getSavedTemplates, loadTemplate, deleteTemplate } = useBlogForm();
+  const { formData, getSavedTemplates, loadTemplate, deleteTemplate } =
+    useBlogForm();
   const [isRecentOpen, setIsRecentOpen] = useState(true);
   const [templates, setTemplates] = useState<
     ReturnType<typeof getSavedTemplates>
   >([]);
   const [mounted, setMounted] = useState(false);
+
+  // 경쟁사 통계 상태
+  const [competitorStats, setCompetitorStats] =
+    useState<CompetitorStats | null>(null);
+  const [isAnalyzingCompetitors, setIsAnalyzingCompetitors] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -52,6 +74,39 @@ const RightPanel: React.FC<RightPanelProps> = ({
   useEffect(() => {
     setTemplates(getSavedTemplates());
   }, [getSavedTemplates]);
+
+  // 키워드 기반 상위 블로그 통계 분석
+  useEffect(() => {
+    const analyzeCompetitors = async () => {
+      const keyword = formData.contentPlanning.keywords[0];
+      if (
+        !keyword ||
+        !generatedContent ||
+        isAnalyzingCompetitors ||
+        competitorStats?.keyword === keyword
+      )
+        return;
+
+      setIsAnalyzingCompetitors(true);
+      try {
+        const stats = await getCompetitorStats(keyword);
+        if (stats.success) {
+          setCompetitorStats(stats);
+        }
+      } catch (error) {
+        console.error("Competitor analysis failed:", error);
+      } finally {
+        setIsAnalyzingCompetitors(false);
+      }
+    };
+
+    analyzeCompetitors();
+  }, [
+    generatedContent,
+    formData.contentPlanning.keywords,
+    isAnalyzingCompetitors,
+    competitorStats,
+  ]);
 
   // 통계 정보 계산
   const stats = useMemo(() => {
@@ -89,8 +144,34 @@ const RightPanel: React.FC<RightPanelProps> = ({
     }
   };
 
+  const contentRef = useRef<HTMLDivElement>(null);
+
   const handleCopy = () => {
-    navigator.clipboard.writeText(generatedContent);
+    if (!contentRef.current) return;
+
+    // 1. 현재의 선택 영역을 저장
+    const selection = window.getSelection();
+    const range = document.createRange();
+
+    // 2. 본문 영역을 범위로 지정
+    range.selectNodeContents(contentRef.current);
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+
+    try {
+      // 3. 복사 실행 (마우스 드래그 후 Ctrl+C와 동일)
+      document.execCommand("copy");
+      alert(
+        "전체 내용이 드래그된 상태로 복사되었습니다. 네이버 블로그에 붙여넣어 보세요!",
+      );
+    } catch (err) {
+      console.error("복사 실패:", err);
+      // 폴백: 기존 방식 (텍스트만)
+      navigator.clipboard.writeText(generatedContent.replace(/<[^>]*>/g, ""));
+    } finally {
+      // 4. 선택 해제 (사용자 화면에서 블록 표시 제거)
+      selection?.removeAllRanges();
+    }
   };
 
   // B와 C 영역을 가로로 배치 (2:1 비율)
@@ -270,7 +351,7 @@ const RightPanel: React.FC<RightPanelProps> = ({
                 )}
               </div>
             </div>
-            <div className="p-6">
+            <div className={generatedContent ? "p-0" : "p-6"}>
               {isGenerating && !generatedContent && (
                 <div className="flex flex-col items-center justify-center text-center text-gray-500 gap-3 h-60">
                   <Loader2 size={32} className="animate-spin text-[#33DB98]" />
@@ -280,7 +361,7 @@ const RightPanel: React.FC<RightPanelProps> = ({
                 </div>
               )}
               {error && (
-                <div className="flex flex-col items-center justify-center text-center text-red-400 gap-2 h-60">
+                <div className="flex flex-col items-center justify-center text-center text-red-400 gap-2 h-60 p-6">
                   <span className="text-sm font-medium">
                     오류가 발생했습니다
                   </span>
@@ -288,7 +369,7 @@ const RightPanel: React.FC<RightPanelProps> = ({
                 </div>
               )}
               {!isGenerating && !generatedContent && !error && (
-                <div className="flex flex-col items-center justify-center text-center text-gray-500 gap-2 h-60">
+                <div className="flex flex-col items-center justify-center text-center text-gray-500 gap-2 h-60 p-6">
                   <ArrowLeft size={24} />
                   <span className="text-sm">
                     좌측 폼을 작성하고 생성 버튼을 눌러주세요
@@ -296,22 +377,22 @@ const RightPanel: React.FC<RightPanelProps> = ({
                 </div>
               )}
               {generatedContent && (
-                <>
-                  <div className="prose prose-invert prose-emerald max-w-none">
-                    <div
-                      className="text-gray-300 text-sm leading-relaxed"
-                      dangerouslySetInnerHTML={{ __html: generatedContent }}
-                    />
+                <div className="bg-gray-100/80 p-6 sm:p-10 border-t border-white/5">
+                  <div
+                    className="bg-white shadow-xl border border-gray-200 rounded-xl p-8 sm:p-12 prose prose-slate max-w-none"
+                    ref={contentRef}
+                  >
+                    <ContentDisplay content={generatedContent} />
                   </div>
-                  <button
+                  {/* <button
                     className="mt-8 px-4 py-2 bg-white/5 hover:bg-white/10 text-gray-400 rounded-lg text-xs transition-colors"
                     onClick={() => {
                       console.log(generatedContent);
                     }}
                   >
                     내용 로그 출력 (개발용)
-                  </button>
-                </>
+                  </button> */}
+                </div>
               )}
             </div>
           </div>
@@ -321,31 +402,108 @@ const RightPanel: React.FC<RightPanelProps> = ({
         <div className="col-span-1">
           <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm overflow-hidden sticky top-8 transition-all duration-300 hover:border-[#33DB98]/20">
             <div className="p-4 border-b border-white/5">
-              <div className="flex items-center gap-2">
-                <BarChart3 size={20} className="text-[#33DB98]" />
-                <h3 className="font-bold text-white">콘텐츠 통계</h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <BarChart3 size={20} className="text-[#33DB98]" />
+                  <h3 className="font-bold text-white">콘텐츠 통계</h3>
+                </div>
+                {isAnalyzingCompetitors && (
+                  <Loader2 size={14} className="animate-spin text-gray-500" />
+                )}
               </div>
             </div>
             <div className="p-6">
               <div className="space-y-4">
                 <div className="bg-[#33DB98]/5 rounded-2xl p-4 border border-[#33DB98]/10">
-                  <div className="text-xs text-[#33DB98] font-medium mb-1">
-                    본문 글자수 (공백 포함)
+                  <div className="flex justify-between items-start mb-1">
+                    <div className="text-xs text-[#33DB98] font-medium">
+                      본문 글자수 (공백 포함)
+                    </div>
+                    {competitorStats && (
+                      <div className="text-[10px] text-gray-500">
+                        상위 평균:{" "}
+                        {competitorStats.averageCharacterCount.toLocaleString()}
+                        자
+                      </div>
+                    )}
                   </div>
-                  <div className="text-2xl font-bold text-white">
+                  <div className="text-2xl font-bold text-white flex items-baseline gap-2">
                     {stats.characterCount.toLocaleString()}
-                    <span className="text-xs text-gray-500 mt-1 pl-1">자</span>
+                    <span className="text-xs text-gray-500 font-normal">
+                      자
+                    </span>
+                    {competitorStats && (
+                      <span
+                        className={`text-[11px] px-1.5 py-0.5 rounded ${
+                          stats.characterCount >=
+                          competitorStats.averageCharacterCount
+                            ? "bg-emerald-500/10 text-emerald-500"
+                            : "bg-amber-500/10 text-amber-500"
+                        }`}
+                      >
+                        {Math.round(
+                          (stats.characterCount /
+                            competitorStats.averageCharacterCount) *
+                            100,
+                        )}
+                        %
+                      </span>
+                    )}
                   </div>
                 </div>
+
                 <div className="bg-blue-500/5 rounded-2xl p-4 border border-blue-500/10">
-                  <div className="text-xs text-blue-400 font-medium mb-1">
-                    본문 이미지 수
+                  <div className="flex justify-between items-start mb-1">
+                    <div className="text-xs text-blue-400 font-medium">
+                      본문 이미지 수
+                    </div>
+                    {competitorStats && (
+                      <div className="text-[10px] text-gray-400">
+                        상위 평균: {competitorStats.averageImageCount}개
+                      </div>
+                    )}
                   </div>
-                  <div className="text-2xl font-bold text-white">
+                  <div className="text-2xl font-bold text-white flex items-baseline gap-2">
                     {stats.imageCount}
-                    <span className="text-xs text-gray-500 mt-1 pl-1">개</span>
+                    <span className="text-xs text-gray-500 font-normal">
+                      개
+                    </span>
+                    {competitorStats && (
+                      <span
+                        className={`text-[11px] px-1.5 py-0.5 rounded ${
+                          stats.imageCount >= competitorStats.averageImageCount
+                            ? "bg-emerald-500/10 text-emerald-500"
+                            : "bg-amber-500/10 text-amber-500"
+                        }`}
+                      >
+                        {stats.imageCount} / {competitorStats.averageImageCount}
+                      </span>
+                    )}
                   </div>
                 </div>
+
+                {competitorStats && (
+                  <div className="bg-purple-500/5 rounded-2xl p-4 border border-purple-500/10">
+                    <div className="text-xs text-purple-400 font-medium mb-1">
+                      상위 노출 포스트 평균 작성일
+                    </div>
+                    <div className="text-2xl font-bold text-white">
+                      {competitorStats.averageDaysAgo}
+                      <span className="text-xs text-gray-500 mt-1 pl-1 font-normal">
+                        일 전
+                      </span>
+                    </div>
+                    <div className="text-[10px] text-gray-500 mt-1">
+                      * 키워드: &quot;{competitorStats.keyword}&quot; 기반 분석
+                    </div>
+                  </div>
+                )}
+
+                {!competitorStats && !isAnalyzingCompetitors && (
+                  <div className="text-[10px] text-gray-500 text-center py-2">
+                    키워드를 입력하면 상위 블로그 통계와 비교해드립니다.
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -518,7 +676,7 @@ const RightPanel: React.FC<RightPanelProps> = ({
             )}
           </div>
         </div>
-        <div className="p-6">
+        <div className={generatedContent ? "p-0" : "p-6"}>
           {isGenerating && !generatedContent && (
             <div className="flex flex-col items-center justify-center text-center text-gray-500 gap-3 h-60">
               <Loader2 size={32} className="animate-spin text-[#33DB98]" />
@@ -528,13 +686,13 @@ const RightPanel: React.FC<RightPanelProps> = ({
             </div>
           )}
           {error && (
-            <div className="flex flex-col items-center justify-center text-center text-red-400 gap-2 h-60">
+            <div className="flex flex-col items-center justify-center text-center text-red-400 gap-2 h-60 p-6">
               <span className="text-sm font-medium">오류가 발생했습니다</span>
               <span className="text-xs text-red-500/70">{error}</span>
             </div>
           )}
           {!isGenerating && !generatedContent && !error && (
-            <div className="flex flex-col items-center justify-center text-center text-gray-500 gap-2 h-60">
+            <div className="flex flex-col items-center justify-center text-center text-gray-500 gap-2 h-60 p-6">
               <ArrowLeft size={24} />
               <span className="text-sm">
                 좌측 폼을 작성하고 생성 버튼을 눌러주세요
@@ -542,12 +700,12 @@ const RightPanel: React.FC<RightPanelProps> = ({
             </div>
           )}
           {generatedContent && (
-            <>
-              <div className="prose prose-invert prose-emerald max-w-none">
-                <div
-                  className="text-gray-300 text-sm leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: generatedContent }}
-                />
+            <div className="bg-gray-100/80 p-6 sm:p-10 border-t border-white/5">
+              <div
+                className="bg-white shadow-xl border border-gray-200 rounded-xl p-8 sm:p-12 prose prose-slate max-w-none"
+                ref={contentRef}
+              >
+                <ContentDisplay content={generatedContent} />
               </div>
               <button
                 className="mt-8 px-4 py-2 bg-white/5 hover:bg-white/10 text-gray-400 rounded-lg text-xs transition-colors"
@@ -557,7 +715,7 @@ const RightPanel: React.FC<RightPanelProps> = ({
               >
                 내용 로그 출력 (개발용)
               </button>
-            </>
+            </div>
           )}
         </div>
       </div>
