@@ -12,6 +12,11 @@ import {
   Play,
   Instagram,
 } from "lucide-react";
+import {
+  BlogFormProvider,
+  useBlogForm,
+} from "../blog/__components/BlogFormContext";
+import { BlogAiPageContent } from "../blog/__components/BlogAiPageClient";
 
 // Mock Services
 const generateBlogPost = async (topic: string) => {
@@ -80,6 +85,7 @@ function BrandingWorkflowContent() {
   const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const { updateFormData } = useBlogForm();
 
   // Data State
   const [topic, setTopic] = useState(searchParams.get("topic") || "");
@@ -95,14 +101,17 @@ function BrandingWorkflowContent() {
 
   const handleStep1Submit = async () => {
     if (!topic) return;
-    setIsLoading(true);
-    try {
-      const result = await generateBlogPost(topic);
-      setBlogContent(result);
-      setCurrentStep(2);
-    } finally {
-      setIsLoading(false);
-    }
+
+    // 블로그 폼 데이터에 Step 1 입력값 주입
+    updateFormData("contentPlanning", (prev: any) => ({
+      ...prev,
+      subject: topic,
+      targetAudience: targetAudience,
+      keyMessage: insight,
+    }));
+
+    // 화면 전환 (이제 실제 블로그 생성 컴포넌트가 Step 2에 표시됨)
+    setCurrentStep(2);
   };
 
   const handleStep2Submit = async () => {
@@ -256,21 +265,20 @@ function BrandingWorkflowContent() {
         {currentStep === 2 && (
           <div className="h-full flex flex-col">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-white">
-                Review Blog Post
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <FileText className="text-[#33DB98]" /> 블로그 포스트 생성
               </h2>
               <button
                 onClick={handleStep2Submit}
-                className="text-sm font-bold text-black bg-[#33DB98] px-4 py-2 rounded-lg hover:bg-[#2bb880] transition flex items-center gap-2"
+                className="text-sm font-bold text-black bg-[#33DB98] px-6 py-2.5 rounded-xl hover:bg-[#2bb880] transition flex items-center gap-2 shadow-lg shadow-[#33DB98]/20"
               >
-                Approve & Generate Thread <ArrowRight size={16} />
+                블로그 확정 & 쓰레드 생성으로 이동
+                <ArrowRight size={16} />
               </button>
             </div>
-            <textarea
-              value={blogContent}
-              onChange={(e) => setBlogContent(e.target.value)}
-              className="flex-1 w-full bg-vzx-bg border border-white/10 rounded-xl p-6 text-gray-300 font-mono text-sm leading-relaxed resize-none focus:border-[#33DB98] outline-none min-h-[400px]"
-            />
+            <div className="flex-1 overflow-y-auto custom-scrollbar -mx-8 -mb-8 px-4 pb-8">
+              <BlogAiPageContent hideHeader={true} />
+            </div>
           </div>
         )}
 
@@ -432,7 +440,9 @@ export default function BrandingWorkflow() {
         </div>
       }
     >
-      <BrandingWorkflowContent />
+      <BlogFormProvider>
+        <BrandingWorkflowContent />
+      </BlogFormProvider>
     </Suspense>
   );
 }

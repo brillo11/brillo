@@ -1,6 +1,6 @@
 import { generateText } from 'ai';
 import { NextRequest, NextResponse } from 'next/server';
-// import { EXCELLENT_TITLES, FORBIDDEN_WORDS, FORBIDDEN_PHRASES } from '@/lib/reference-materials';
+import { EXCELLENT_TITLES } from '@/app/(service)/service/personal-branding/blog/__ref/excellent-titles';
 
 export async function POST(req: NextRequest) {
     try {
@@ -8,22 +8,12 @@ export async function POST(req: NextRequest) {
         const { branding, contentPlanning } = formData;
 
         const prompt = `
-당신은 전문적인 의료 블로그 제목 작성자입니다.
-
-# 필수 준수 사항
-
-## ⚠️ 의료법 금칙어 (절대 사용 금지)
-
-## ⚠️ 금지 문구 (절대 사용 금지)
-
-# 우수 제목 참고 예시
-
----
+당신은 전문적인 블로그 제목 작성자입니다.
 
 # 작성할 제목 정보
 
 ## 브랜딩 정보
-전문분야: ${branding.specialties.join(', ')}
+활동 분야: ${branding.specialties.join(', ')}
 ${branding.brandingText}
 
 ## 글의 주제 및 타겟
@@ -37,13 +27,12 @@ ${branding.brandingText}
 # 작성 지침
 
 1. 위 정보를 바탕으로 **블로그 제목 5개**를 생성해주세요.
-2. **의료법 금칙어와 금지 문구를 절대 사용하지 마세요**.
-3. **우수 제목 참고 예시**의 패턴을 활용하세요.
-4. 각 제목은 다음 규칙을 따라주세요:
-   - 키워드를 맨 앞에 배치
-   - 총 길이 20자 내외
-   - 클릭을 유도하는 제목
-   - 호기심 유발, 메리트 제시, 가치 입증 등 다양한 패턴 활용
+2. **${EXCELLENT_TITLES}**의 패턴을 활용하세요.
+3. 각 제목은 다음 규칙을 따라주세요:
+   - 핵심 키워드를 포함
+   - 총 길이 20~25자 내외
+   - 독자의 클릭을 유도하는 매력적인 제목
+   - 호기심 유발, 혜택 제시, 신뢰성 강조 등 다양한 패턴 활용
 
 ## 출력 형식
 
@@ -59,7 +48,7 @@ ${branding.brandingText}
 `;
 
         const result = await generateText({
-            model: "google/gemini-2.5-flash",
+            model: "google/gemini-3-flash",
             messages: [
                 {
                     role: "user",

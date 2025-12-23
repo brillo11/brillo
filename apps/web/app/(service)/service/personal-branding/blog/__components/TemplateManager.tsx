@@ -1,17 +1,18 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { X, Trash2, FileText, Clock } from 'lucide-react';
-import { useBlogForm, SavedTemplate } from './BlogFormContext';
+import React, { useState, useEffect } from "react";
+import { X, Trash2, Clock, Bookmark } from "lucide-react";
+import { useBlogForm, SavedTemplate } from "./BlogFormContext";
 
-interface TemplateManagerProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-const TemplateManager: React.FC<TemplateManagerProps> = ({ isOpen, onClose }) => {
+const TemplateManager: React.FC = () => {
   const { getSavedTemplates, loadTemplate, deleteTemplate } = useBlogForm();
+  const [isOpen, setIsOpen] = useState(false);
   const [templates, setTemplates] = useState<SavedTemplate[]>([]);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -20,109 +21,118 @@ const TemplateManager: React.FC<TemplateManagerProps> = ({ isOpen, onClose }) =>
   }, [isOpen, getSavedTemplates]);
 
   const handleLoad = (id: string) => {
-    loadTemplate(id);
-    onClose();
+    if (
+      confirm(
+        "이 템플릿을 불러오시겠습니까? 현재 입력된 내용은 사라질 수 있습니다.",
+      )
+    ) {
+      loadTemplate(id);
+      setIsOpen(false);
+    }
   };
 
-  const handleDelete = (id: string) => {
-    deleteTemplate(id);
-    setTemplates(getSavedTemplates());
+  const handleDelete = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (confirm("정말 삭제하시겠습니까?")) {
+      deleteTemplate(id);
+      setTemplates(getSavedTemplates());
+    }
   };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleString("ko-KR", {
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200">
-          <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <FileText className="text-blue-600" size={28} />
-            저장된 템플릿
-          </h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-          >
-            <X size={24} className="text-slate-600" />
-          </button>
-        </div>
+    <div className="flex flex-col items-start gap-2 relative">
+      {/* Toggle Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 bg-vzx-card px-4 py-3 rounded-full border border-white/10 shadow-lg hover:bg-white/5 transition-all text-white font-bold group backdrop-blur-md text-[14px]"
+      >
+        <Bookmark
+          size={20}
+          className="text-[#33DB98] group-hover:scale-110 transition-transform"
+        />
+        <span>템플릿</span>
+        {mounted && (
+          <span className="bg-[#33DB98]/10 text-[#33DB98] text-xs px-2 py-0.5 rounded-full min-w-[24px] text-center border border-[#33DB98]/20">
+            {getSavedTemplates().length}
+          </span>
+        )}
+      </button>
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
-          {templates.length === 0 ? (
-            <div className="text-center py-12">
-              <FileText size={48} className="mx-auto text-slate-300 mb-4" />
-              <p className="text-slate-500 text-lg">저장된 템플릿이 없습니다</p>
-              <p className="text-slate-400 text-sm mt-2">
-                템플릿을 저장하면 여기에 표시됩니다
-              </p>
+      {/* Dropdown List */}
+      {isOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-[45]"
+            onClick={() => setIsOpen(false)}
+          />
+          <div className="bg-vzx-card rounded-2xl border border-white/10 shadow-2xl w-80 max-h-[60vh] overflow-hidden flex flex-col animate-accordion-down origin-top-left backdrop-blur-xl absolute top-full mt-2 right-0 z-[50]">
+            <div className="p-4 bg-white/5 border-b border-white/5 flex justify-between items-center">
+              <span className="text-xs font-semibold text-gray-400">
+                저장된 템플릿
+              </span>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-gray-500 hover:text-white transition-colors"
+              >
+                <X size={14} />
+              </button>
             </div>
-          ) : (
-            <div className="space-y-3">
-              {templates.map((template) => (
-                <div
-                  key={template.id}
-                  className="border border-slate-200 rounded-xl p-4 hover:border-blue-300 hover:shadow-md transition-all group"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-slate-900 text-lg mb-2 truncate">
-                        {template.name}
-                      </h3>
-                      <div className="flex items-center gap-2 text-sm text-slate-500">
-                        <Clock size={14} />
-                        <span>{formatDate(template.createdAt)}</span>
-                      </div>
-                      <div className="mt-3 flex flex-wrap gap-2 text-xs">
-                        <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-md font-medium">
-                          {template.formData.writingType === 'CONVERSION' ? '전환용' : '정보성'}
-                        </span>
-                        {template.formData.branding.specialties.length > 0 && (
-                          <span className="bg-purple-50 text-purple-700 px-2 py-1 rounded-md font-medium">
-                            {template.formData.branding.specialties.join(', ')}
-                          </span>
-                        )}
-                        {template.formData.contentPlanning.keywords.length > 0 && (
-                          <span className="bg-green-50 text-green-700 px-2 py-1 rounded-md font-medium">
-                            키워드 {template.formData.contentPlanning.keywords.length}개
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex gap-2 shrink-0">
-                      <button
-                        onClick={() => handleLoad(template.id)}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors text-sm"
-                      >
-                        불러오기
-                      </button>
-                      <button
-                        onClick={() => handleDelete(template.id)}
-                        className="p-2 hover:bg-red-50 text-red-600 rounded-lg transition-colors"
-                        title="삭제"
-                      >
-                        <Trash2 size={20} />
-                      </button>
-                    </div>
-                  </div>
+
+            <div className="overflow-y-auto flex-1 p-2 space-y-2">
+              {templates.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <Bookmark size={32} className="mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">저장된 템플릿이 없습니다</p>
                 </div>
-              ))}
+              ) : (
+                templates.map((template) => (
+                  <div
+                    key={template.id}
+                    className="group relative bg-white/5 border border-white/5 hover:border-[#33DB98]/30 rounded-xl p-3 transition-all cursor-pointer hover:bg-white/10"
+                    onClick={() => handleLoad(template.id)}
+                  >
+                    <div className="pr-6">
+                      <h4 className="text-sm font-semibold text-gray-200 line-clamp-1 mb-1">
+                        {template.name}
+                      </h4>
+                      <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                        <Clock size={10} />
+                        {formatDate(template.createdAt)}
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        <span className="bg-white/5 text-gray-400 px-1.5 py-0.5 rounded text-[10px]">
+                          {template.formData.writingType === "CONVERSION"
+                            ? "전환용"
+                            : template.formData.writingType === "BALANCED"
+                              ? "보통"
+                              : "정보성"}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={(e) => handleDelete(e, template.id)}
+                      className="absolute top-2 right-2 p-1.5 text-gray-600 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                      title="삭제"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

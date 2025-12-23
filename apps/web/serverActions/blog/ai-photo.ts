@@ -44,7 +44,7 @@ export async function editImageWithAI(
 
     try {
         const editResult = await generateText({
-            model: 'google/gemini-2.5-flash-image',
+            model: 'google/gemini-3-flash-image',
             messages: [
                 {
                     role: 'user',
