@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
                     controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'progress', step: 3, message: '본문 생성' })}\n\n`));
 
                     const result = await generateText({
-                        model: "google/gemini-2.5-flash",
+                        model: "google/gemini-3-flash",
                         messages: [
                             {
                                 role: "user",
