@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useBlogForm } from "./BlogFormContext";
 import AccordionItem from "./AccordionItem";
 import { Search, Link, FileText, Loader2, Sparkles } from "lucide-react";
@@ -10,12 +10,23 @@ const StepDetails: React.FC = () => {
   const { formData, updateFormData } = useBlogForm();
   const [length, setLength] = useState(formData.details.length);
   const [styleText, setStyleText] = useState(formData.details.styleText);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // 자동 높이 조절 함수
+  const adjustHeight = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  };
+
   const [analysisType, setAnalysisType] = useState<
     "MANUAL" | "URL" | "KEYWORD"
   >("MANUAL");
   const [urlInput, setUrlInput] = useState(formData.details.referenceUrl || "");
   const [keywordInput, setKeywordInput] = useState(
-    formData.details.referenceKeyword || ""
+    formData.details.referenceKeyword || "",
   );
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
@@ -26,6 +37,11 @@ const StepDetails: React.FC = () => {
     setUrlInput(formData.details.referenceUrl || "");
     setKeywordInput(formData.details.referenceKeyword || "");
   }, [formData.details]);
+
+  // styleText가 변경될 때마다 높이 조절
+  useEffect(() => {
+    adjustHeight();
+  }, [styleText]);
 
   const handleLengthChange = (newLength: string) => {
     setLength(newLength);
@@ -45,7 +61,7 @@ const StepDetails: React.FC = () => {
     try {
       const result = await analyzeStyleFromSource(
         analysisType as "URL" | "KEYWORD",
-        source
+        source,
       );
       if (result.success && result.styleAnalysis) {
         handleStyleTextChange(result.styleAnalysis);
@@ -80,7 +96,7 @@ const StepDetails: React.FC = () => {
             {["500자", "1000자", "2000자"].map((val) => (
               <label
                 key={val}
-                className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border transition-all cursor-pointer ${
+                className={`flex-1 flex items-center justify-center gap-2 py-3 px-2 rounded-xl border transition-all cursor-pointer ${
                   length === val
                     ? "bg-[#33DB98]/10 border-[#33DB98] text-[#33DB98]"
                     : "bg-white/5 border-white/5 text-gray-400 hover:border-white/20"
@@ -107,7 +123,7 @@ const StepDetails: React.FC = () => {
             글 스타일 분석 및 적용
           </label>
 
-          <div className="grid grid-cols-3 gap-2 p-1 bg-black/40 rounded-xl border border-white/5">
+          <div className="grid grid-cols-3 gap-0 p-1 bg-black/40 rounded-xl border border-white/5">
             <button
               onClick={() => setAnalysisType("MANUAL")}
               className={`flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all ${
@@ -130,13 +146,13 @@ const StepDetails: React.FC = () => {
             </button>
             <button
               onClick={() => setAnalysisType("KEYWORD")}
-              className={`flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all break-keep ${
                 analysisType === "KEYWORD"
                   ? "bg-white/10 text-white shadow-sm"
                   : "text-gray-500 hover:text-gray-300"
               }`}
             >
-              <Search size={14} /> 인기글 키워드
+              <Search size={14} /> 키워드 인기글
             </button>
           </div>
 
@@ -196,9 +212,10 @@ const StepDetails: React.FC = () => {
             )}
           </label>
           <textarea
+            ref={textareaRef}
             value={styleText}
             onChange={(e) => handleStyleTextChange(e.target.value)}
-            className="w-full h-32 p-4 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-[#33DB98]/50 focus:border-[#33DB98] text-sm leading-relaxed text-gray-300 placeholder:text-gray-600 transition-all resize-y"
+            className="w-full min-h-[128px] p-4 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-[#33DB98]/50 focus:border-[#33DB98] text-sm leading-relaxed text-gray-300 placeholder:text-gray-600 transition-all resize-none overflow-hidden"
             placeholder="참고할 글의 스타일이나 특징을 입력해주세요. (위의 분석 기능을 사용하면 자동으로 채워집니다)"
           />
           <p className="mt-2 text-[11px] text-gray-500 leading-relaxed">

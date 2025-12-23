@@ -20,13 +20,18 @@ import StepGif from "./StepGif";
 import StepPhoto from "./StepPhoto";
 import RightPanel from "./RightPanel";
 import WritingTypeSelector from "./WritingTypeSelector";
-import CurrentState from "./CurrentState";
 import ProgressTracker from "./ProgressTracker";
 import TemplateManager from "./TemplateManager";
 import HistoryManager, { HistoryItem } from "./HistoryManager";
 import { v4 as uuidv4 } from "uuid";
 
-const BlogAiPageContent: React.FC = () => {
+interface BlogAiPageContentProps {
+  hideHeader?: boolean;
+}
+
+export const BlogAiPageContent: React.FC<BlogAiPageContentProps> = ({
+  hideHeader = false,
+}) => {
   const { formData, saveTemplate } = useBlogForm();
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
@@ -293,63 +298,69 @@ const BlogAiPageContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] relative text-white">
+    <div
+      className={`${hideHeader ? "" : "min-h-screen bg-[#0A0A0A]"} relative text-white`}
+    >
       {/* Current State */}
       {/* <CurrentState /> */}
       {/* Page Title & Hero */}
-      <div className="bg-[#0A0A0A] border-b border-white/5 px-4 py-8 lg:px-8 relative z-[30]">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 max-w-screen-xl mx-auto">
-          <div className="flex items-start gap-4">
-            <div className="p-3 bg-vzx-card rounded-2xl border border-white/5 text-[#33DB98]">
-              <PenTool size={32} />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-white mb-2">블로그 AI</h1>
-              <p className="text-gray-400 font-medium">
-                전문적인 블로그 글을 AI가 작성해드립니다
-              </p>
-              <div className="flex flex-wrap gap-4 mt-3 text-xs font-medium text-gray-500">
-                <span className="flex items-center gap-1">
-                  <span className="text-[#33DB98]">★</span> 고품질 콘텐츠
-                </span>
-                <span className="flex items-center gap-1">
-                  <Search size={12} className="text-[#33DB98]" /> SEO 최적화
-                </span>
-                <span className="flex items-center gap-1">
-                  <Palette size={12} className="text-[#33DB98]" /> 다양한
-                  톤앤매너
-                </span>
-                <span className="flex items-center gap-1">
-                  <Brain size={12} className="text-[#33DB98]" /> 맞춤형 구조
-                </span>
+      {!hideHeader && (
+        <div className="bg-[#0A0A0A] border-b border-white/5 px-4 py-8 lg:px-8 relative z-[30]">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 max-w-screen-xl mx-auto">
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-vzx-card rounded-2xl border border-white/5 text-[#33DB98]">
+                <PenTool size={32} />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-white mb-2">
+                  블로그 AI
+                </h1>
+                <p className="text-gray-400 font-medium">
+                  전문적인 블로그 글을 AI가 작성해드립니다
+                </p>
+                <div className="flex flex-wrap gap-4 mt-3 text-xs font-medium text-gray-500">
+                  <span className="flex items-center gap-1">
+                    <span className="text-[#33DB98]">★</span> 고품질 콘텐츠
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Search size={12} className="text-[#33DB98]" /> SEO 최적화
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Palette size={12} className="text-[#33DB98]" /> 다양한
+                    톤앤매너
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Brain size={12} className="text-[#33DB98]" /> 맞춤형 구조
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="flex gap-2 self-end md:self-center">
-            <div className="bg-[#33DB98]/10 text-[#33DB98] px-4 py-2 rounded-full text-sm font-bold flex items-center gap-1.5 border border-[#33DB98]/20">
-              🎫 보유 크레딧: 3.0
+            <div className="flex gap-2 self-end md:self-center">
+              <div className="bg-[#33DB98]/10 text-[#33DB98] px-4 py-2 rounded-full text-sm font-bold flex items-center gap-1.5 border border-[#33DB98]/20">
+                🎫 보유 크레딧: 3.0
+              </div>
+              {/* Template Manager */}
+              <TemplateManager />
+              {/* History Manager */}
+              <HistoryManager
+                history={history}
+                onLoad={(item) => {
+                  setGeneratedContent(item.content);
+                  setSelectedTitle(item.title);
+                  setIsLeftPanelCollapsed(true);
+                }}
+                onDelete={deleteHistoryItem}
+              />
             </div>
-            {/* Template Manager */}
-            <TemplateManager />
-            {/* History Manager */}
-            <HistoryManager
-              history={history}
-              onLoad={(item) => {
-                setGeneratedContent(item.content);
-                setSelectedTitle(item.title);
-                setIsLeftPanelCollapsed(true);
-              }}
-              onDelete={deleteHistoryItem}
-            />
           </div>
         </div>
-      </div>
+      )}
 
       {/* Content Grid */}
       <div
-        className={`flex flex-col lg:grid gap-8 items-start py-8 max-w-screen-xl mx-auto px-4 relative ${
-          isLeftPanelCollapsed ? "lg:grid-cols-1" : "lg:grid-cols-3"
-        }`}
+        className={`flex flex-col lg:grid gap-8 items-start py-8 relative ${
+          hideHeader ? "w-full px-0" : "max-w-screen-xl mx-auto px-4"
+        } ${isLeftPanelCollapsed ? "lg:grid-cols-1" : "lg:grid-cols-3"}`}
       >
         {/* Overlay (when A is expanded as absolute) */}
         {isLeftPanelCollapsed && isLeftPanelExpanded && (
