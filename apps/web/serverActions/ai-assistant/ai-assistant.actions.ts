@@ -266,7 +266,7 @@ export async function sendThumbnailGuideResponses(
 
 // Image Generation Timeout Configuration
 const TIMEOUT_DURATION = 90000; // 90 seconds
-const FALLBACK_IMAGE_URL = "https://d12q45c5a62j6u.cloudfront.net/fallback/fallback_thumbnail.jpg"; // Replace with actual fallback image URL when available. Using this for now.
+const FALLBACK_IMAGE_URL = "https://d8fowjh4np91t.cloudfront.net/fallback/fallback_thumbnail.png"; // Replace with actual fallback image URL when available. Using this for now.
 
 /**
  * Helper: Promise with timeout and fallback
