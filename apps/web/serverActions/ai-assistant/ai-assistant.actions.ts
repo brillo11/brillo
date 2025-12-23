@@ -264,6 +264,35 @@ export async function sendThumbnailGuideResponses(
   return jsonOutput;
 }
 
+// Image Generation Timeout Configuration
+const TIMEOUT_DURATION = 90000; // 90 seconds
+const FALLBACK_IMAGE_URL = "https://d12q45c5a62j6u.cloudfront.net/fallback/fallback_thumbnail.jpg"; // Replace with actual fallback image URL when available. Using this for now.
+
+/**
+ * Helper: Promise with timeout and fallback
+ */
+async function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  fallbackValue: T | (() => T)
+): Promise<T> {
+  let timeoutHandle: NodeJS.Timeout;
+  const timeoutPromise = new Promise<T>((resolve) => {
+    timeoutHandle = setTimeout(() => {
+      console.warn(`[Timeout] Operation timed out after ${timeoutMs}ms. Using fallback.`);
+      resolve(typeof fallbackValue === "function" ? (fallbackValue as () => T)() : fallbackValue);
+    }, timeoutMs);
+  });
+
+  return Promise.race([
+    promise.then((result) => {
+      clearTimeout(timeoutHandle);
+      return result;
+    }),
+    timeoutPromise,
+  ]);
+}
+
 export async function sendThumbnailResponses({
   thumbnailTitle,
   hookingText,
@@ -301,23 +330,39 @@ export async function sendThumbnailResponses({
     }
   }
 
-  // Call aiGateway
-  const result = await generateImageWithReferenceAI(prompt, "16:9", preparedReferenceImages);
+  // Call aiGateway with Timeout
+  try {
+      const result = await withTimeout(
+        generateImageWithReferenceAI(prompt, "16:9", preparedReferenceImages),
+        TIMEOUT_DURATION,
+        { success: true, imageUrl: "FALLBACK_TRIGGERED" }
+      );
+    
+      if(result.imageUrl === "FALLBACK_TRIGGERED") {
+          return FALLBACK_IMAGE_URL;
+      }
 
-  if (!result.success || !result.imageUrl) {
-    throw new Error(result.error || "Failed to generate thumbnail");
+      if (!result.success || !result.imageUrl) {
+        console.error("Image generation failed:", result.error);
+        return FALLBACK_IMAGE_URL;
+      }
+    
+      // Extract base64 from Data URL for S3 upload
+      const matches = result.imageUrl.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
+      if (!matches || !matches[2]) {
+         // Could not parse data URL
+         return FALLBACK_IMAGE_URL;
+      }
+      const base64Data = matches[2];
+    
+      // Upload to S3
+      const s3Url = await uploadThumbnailToS3(base64Data);
+      return s3Url;
+
+  } catch (error) {
+      console.error("Error in sendThumbnailResponses:", error);
+      return FALLBACK_IMAGE_URL;
   }
-
-  // Extract base64 from Data URL for S3 upload
-  const matches = result.imageUrl.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
-  if (!matches || !matches[2]) {
-      throw new Error("Invalid image data returned");
-  }
-  const base64Data = matches[2];
-
-  // Upload to S3
-  const s3Url = await uploadThumbnailToS3(base64Data);
-  return s3Url;
 }
 
 export async function sendFixThumbnailResponses(
@@ -330,44 +375,55 @@ export async function sendFixThumbnailResponses(
   let thumbnailBase64 = thumbnailUrl;
   let mimeType = "image/jpeg";
 
-  if (thumbnailUrl.startsWith("http")) {
-    const response = await fetch(thumbnailUrl);
-    const arrayBuffer = await response.arrayBuffer();
-    thumbnailBase64 = Buffer.from(arrayBuffer).toString("base64");
-     const mime = response.headers.get("content-type");
-     mimeType = mime ?? "image/jpeg";
-  } else if (thumbnailUrl.startsWith("data:")) {
-      const matches = thumbnailUrl.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
-      if (matches && matches[1] && matches[2]) {
-          mimeType = matches[1];
-          thumbnailBase64 = matches[2];
+  try {
+      if (thumbnailUrl.startsWith("http")) {
+        const response = await fetch(thumbnailUrl);
+        const arrayBuffer = await response.arrayBuffer();
+        thumbnailBase64 = Buffer.from(arrayBuffer).toString("base64");
+         const mime = response.headers.get("content-type");
+         mimeType = mime ?? "image/jpeg";
+      } else if (thumbnailUrl.startsWith("data:")) {
+          const matches = thumbnailUrl.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
+          if (matches && matches[1] && matches[2]) {
+              mimeType = matches[1];
+              thumbnailBase64 = matches[2];
+          }
       }
+    
+      let prompt = `유튜브 썸네일을 수정해줘.\n수정 내용: ${thumbnailEditText}`;
+      if (referenceImage && referenceImageMimeType) {
+        prompt += `\n\n참고 이미지 스타일: 첨부된 참고 이미지의 스타일, 레이아웃, 색감, 폰트, 텍스트 배치를 분석하여 일관성 있는 썸네일을 제작해줘.`;
+      }
+    
+      const result = await withTimeout(
+        editImageWithAI(prompt, thumbnailBase64, mimeType),
+        TIMEOUT_DURATION,
+        { success: true, imageUrl: "FALLBACK_TRIGGERED" }
+      );
+    
+      if (result.imageUrl === "FALLBACK_TRIGGERED") {
+          return FALLBACK_IMAGE_URL;
+      }
+    
+      if (!result.success || !result.imageUrl) {
+          console.error("Image modification failed:", result.error);
+          return FALLBACK_IMAGE_URL;
+      }
+    
+      // Extract base64
+      const matches = result.imageUrl.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
+      if (!matches || !matches[2]) {
+          return FALLBACK_IMAGE_URL;
+      }
+      const base64Data = matches[2];
+    
+      // S3에 업로드하고 URL 반환
+      const s3Url = await uploadThumbnailToS3(base64Data);
+      return s3Url;
+  } catch (error) {
+      console.error("Error in sendFixThumbnailResponses:", error);
+      return FALLBACK_IMAGE_URL;
   }
-
-  let prompt = `유튜브 썸네일을 수정해줘.\n수정 내용: ${thumbnailEditText}`;
-  if (referenceImage && referenceImageMimeType) {
-    // This is a workaround if editImageWithAI doesn't support multiple image inputs directly.
-    prompt += `\n\n참고 이미지 스타일: 첨부된 참고 이미지의 스타일, 레이아웃, 색감, 폰트, 텍스트 배치를 분석하여 일관성 있는 썸네일을 제작해줘.`;
-    // Note: The actual reference image data is not passed to editImageWithAI in its current form.
-    // This would require a change in aiGateway.ts if direct image input is needed.
-  }
-
-  const result = await editImageWithAI(prompt, thumbnailBase64, mimeType);
-
-  if (!result.success || !result.imageUrl) {
-    throw new Error(result.error || "Failed to fix thumbnail");
-  }
-
-  // Extract base64
-  const matches = result.imageUrl.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
-  if (!matches || !matches[2]) {
-      throw new Error("Invalid image data returned");
-  }
-  const base64Data = matches[2];
-
-  // S3에 업로드하고 URL 반환
-  const s3Url = await uploadThumbnailToS3(base64Data);
-  return s3Url;
 }
 
 // 메타데이터 스키마 정의
