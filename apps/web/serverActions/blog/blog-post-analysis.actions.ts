@@ -93,8 +93,11 @@ function extractContentFromHTML(html: string): { content: string; contentLength:
     let contentLength = 0
 
     // se-main-container 영역만 정확하게 추출
-    const mainContainerStartIdx = html.indexOf('class="se-main-container"')
-
+    let mainContainerStartIdx = html.indexOf('class="se-main-container"')
+    if (mainContainerStartIdx === -1) {
+        mainContainerStartIdx = html.indexOf('class="se_component_wrap sect_dsc __se_component_area"')
+    }
+    // console.log(`mainContainerStartIdx: ${mainContainerStartIdx}`)
     if (mainContainerStartIdx > 0) {
         // se-main-container의 시작 <div> 찾기
         const divStartIdx = html.lastIndexOf('<div', mainContainerStartIdx)
@@ -203,7 +206,7 @@ export async function analyzePost(postUrl: string): Promise<PostAnalysisResult> 
         }
 
         const { blogId, logNo } = blogInfo
-
+        console.log(`blogId: ${blogId}, logNo: ${logNo}`)
         // 2. 포스트 HTML 가져오기
         const html = await fetchPostHTML(blogId, logNo)
         if (!html) {

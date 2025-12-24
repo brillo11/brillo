@@ -256,10 +256,14 @@ export async function analyzeStyleFromSource(type: 'URL' | 'KEYWORD', source: st
         try {
           const urlStr = source.startsWith('http') ? source : `https://${source}`;
           const url = new URL(urlStr);
-          if (url.hostname === 'blog.naver.com') {
-            blogId = url.pathname.split('/')[1] || "";
-          } else if (url.hostname.endsWith('.blog.naver.com')) {
-            blogId = url.hostname.split('.')[0] || "";
+          const hostname = url.hostname;
+
+          if (hostname === "blog.naver.com" || hostname === "m.blog.naver.com") {
+            // blog.naver.com/아이디 또는 m.blog.naver.com/아이디 형식 처리
+            blogId = url.pathname.split("/")[1] || "";
+          } else if (hostname.endsWith(".blog.naver.com")) {
+            // 아이디.blog.naver.com 형식 처리
+            blogId = hostname.split(".")[0] || "";
           } else {
             // 다른 호스트명이지만 ID일 가능성이 있는 경우 (예: bongbong_bubu)
             blogId = source.trim();
@@ -270,6 +274,7 @@ export async function analyzeStyleFromSource(type: 'URL' | 'KEYWORD', source: st
       }
 
       if (!blogId) return { success: false, error: '유효한 블로그 주소나 ID가 아닙니다.' };
+      console.log(`blogId: ${blogId}`);
 
       // 2. 해당 블로그의 최신 글 목록(logNo) 가져오기
       const listUrl = `https://blog.naver.com/PostTitleListAsync.naver?blogId=${blogId}&viewDate=&currentPage=1&categoryNo=0&parentCategoryNo=0&countPerPage=5`;
@@ -354,7 +359,7 @@ export async function analyzeStyleFromSource(type: 'URL' | 'KEYWORD', source: st
 
     console.log(contentsToAnalyze);
 
-    const prompt = `다음 블로그 포스트(들)의 글쓰기 스타일을 분석하여, 나중에 다른 글을 쓸 때 참고할 수 있는 '스타일 가이드'를 작성해주세요.
+    const prompt = `다음 블로그 포스트(들)의 글쓰기 스타일을 분석하여, 나중에 다른 글을 쓸 때 프롬프트로 직접 사용할 수 있는 '스타일 가이드' 본문만 작성해주세요.
 
 분석할 내용:
 ${contentsToAnalyze.substring(0, 4000)}
@@ -366,8 +371,11 @@ ${contentsToAnalyze.substring(0, 4000)}
 4. 글의 구성 방식 (서론-본론-결론의 특징, 가독성을 위한 장치 등)
 5. 독자를 대하는 태도 및 분위기 (친근함, 전문적임, 단호함 등)
 
-위 항목들을 종합하여, 300자 내외의 지침 형태로 작성해주세요. 
-최대한 구체적이고 실용적인 가이드를 만들어주세요.`;
+[응답 규칙]
+- "제시된 포스트를 바탕으로~", "분석 결과입니다"와 같은 서술형 도입 문구를 절대 포함하지 마세요.
+- "[작성 팁]", "성공입니다"와 같은 마무리 문구나 조언을 절대 포함하지 마세요.
+- 오직 스타일 가이드의 핵심 내용(지침)만 불렛 포인트나 구조화된 형태로 출력하세요.
+- 다른 설명 없이 스타일 가이드 본문만 바로 시작하세요.`;
 
     const result = await generateText({
       model: "google/gemini-3-flash" as any,

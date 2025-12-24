@@ -47,11 +47,11 @@ const WritingTypeSelector: React.FC = () => {
   const selectedMode = MODES.find((m) => m.id === currentIntensity) ?? MODES[1];
 
   const handleModeChange = (mode: (typeof MODES)[number]) => {
-    // 1. 브랜딩 강도 업데이트
-    updateFormData("options", {
-      ...formData.options,
+    // 1. 브랜딩 강도 업데이트 (함수형 업데이트 사용으로 데이터 정합성 보장)
+    updateFormData("options", (prev: any) => ({
+      ...prev,
       brandingIntensity: mode.id,
-    });
+    }));
     // 2. 글쓰기 유형 자동 매칭 업데이트
     updateFormData("writingType", mode.writingType);
   };

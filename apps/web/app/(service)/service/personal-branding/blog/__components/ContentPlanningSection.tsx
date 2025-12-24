@@ -506,7 +506,7 @@ const ContentPlanningSection: React.FC = () => {
             </div>
             <p className="text-[10px] text-gray-500 mt-2 ml-1 leading-relaxed break-all">
               <span className="font-bold text-gray-400">예시)</span>{" "}
-              https://www.youtube.com/watch?v=tuH1ZTl9s9Q
+              https://youtu.be/fe6_wCixJwE?si=Di4g6Jzt9SXCUa98
             </p>
           </div>
 
@@ -537,7 +537,7 @@ const ContentPlanningSection: React.FC = () => {
             </div>
             <p className="text-[10px] text-gray-500 mt-2 ml-1 leading-relaxed break-all">
               <span className="font-bold text-gray-400">예시)</span>{" "}
-              https://blog.naver.com/whathappylife/224076460020
+              https://m.blog.naver.com/manadra/221159164598
             </p>
           </div>
         </div>

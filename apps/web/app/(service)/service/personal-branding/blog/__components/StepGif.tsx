@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import { Download, Plus, Info, Play, Loader2, Sparkles } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Download, Plus, Info, Loader2 } from "lucide-react";
 import { useBlogForm, BlogFormData } from "./BlogFormContext";
 import AccordionItem from "./AccordionItem";
-import { generateYoutubeGifs } from "@/serverActions/blog/gif.actions";
-import Image from "next/image";
+import { getYouTubeVideoMetadata } from "@/serverActions/youtube/youtube-metadata.actions";
 
 const StepGif: React.FC = () => {
   const { formData, updateFormData } = useBlogForm();
@@ -13,15 +12,32 @@ const StepGif: React.FC = () => {
   // Local state for UI
   const [youtubeUrl, setYoutubeUrl] = useState(formData.gif.youtubeUrl || "");
   const [videoId, setVideoId] = useState("");
+  const [videoDuration, setVideoDuration] = useState<number | null>(null);
   const [minute, setMinute] = useState("");
   const [second, setSecond] = useState("");
-  const [isExtracting, setIsExtracting] = useState(false);
-  const [testGifs, setTestGifs] = useState<string[]>([]);
+  const [isLoadingMetadata, setIsLoadingMetadata] = useState(false);
 
   // Initialize from global state if available
   const [startTimes, setStartTimes] = useState<string[]>(
-    formData.gif.startTimes || []
+    formData.gif.startTimes || [],
   );
+
+  // Sync local states when formData changes (e.g., when loading a template)
+  useEffect(() => {
+    // 외부(템플릿 등)에서 URL이 변경된 경우에만 로컬 상태와 videoId를 업데이트
+    if (formData.gif.youtubeUrl !== youtubeUrl) {
+      const url = formData.gif.youtubeUrl || "";
+      setYoutubeUrl(url);
+
+      const extractedId = extractVideoId(url);
+      if (extractedId) {
+        setVideoId(extractedId);
+      } else {
+        setVideoId("");
+      }
+    }
+    setStartTimes(formData.gif.startTimes || []);
+  }, [formData.gif.youtubeUrl, formData.gif.startTimes, youtubeUrl]);
 
   const extractVideoId = (url: string) => {
     // Handle various YouTube URL formats
@@ -33,13 +49,32 @@ const StepGif: React.FC = () => {
 
   const handleYoutubeChange = (value: string) => {
     setYoutubeUrl(value);
+    // 입력 중에도 전역 상태에 반영하여 템플릿 저장 시 누락되지 않도록 함
+    updateFormData("gif", (prev: BlogFormData["gif"]) => ({
+      ...prev,
+      youtubeUrl: value,
+    }));
   };
 
-  const handleLoadVideo = () => {
+  const handleLoadVideo = async () => {
     const extractedId = extractVideoId(youtubeUrl);
 
     if (extractedId) {
       setVideoId(extractedId);
+      setIsLoadingMetadata(true);
+      setVideoDuration(null);
+
+      try {
+        const metadata = await getYouTubeVideoMetadata(youtubeUrl);
+        if (metadata.success && metadata.durationSeconds) {
+          setVideoDuration(metadata.durationSeconds);
+        }
+      } catch (err) {
+        console.error("Failed to load metadata:", err);
+      } finally {
+        setIsLoadingMetadata(false);
+      }
+
       // Only update global state when video is successfully loaded
       updateFormData("gif", (prev: BlogFormData["gif"]) => ({
         ...prev,
@@ -47,9 +82,10 @@ const StepGif: React.FC = () => {
       }));
     } else {
       alert(
-        "유효한 유튜브 링크를 입력해주세요.\n(예: https://www.youtube.com/watch?v=... 또는 https://youtu.be/...)"
+        "유효한 유튜브 링크를 입력해주세요.\n(예: https://www.youtube.com/watch?v=... 또는 https://youtu.be/...)",
       );
       setVideoId("");
+      setVideoDuration(null);
     }
   };
 
@@ -61,6 +97,24 @@ const StepGif: React.FC = () => {
 
     if (isNaN(m) || isNaN(s)) {
       alert("숫자만 입력해주세요.");
+      return;
+    }
+
+    const totalSeconds = m * 60 + s;
+
+    // 영상 길이보다 큰 시간 입력 시 차단
+    if (videoDuration !== null && totalSeconds >= videoDuration) {
+      const durationMin = Math.floor(videoDuration / 60);
+      const durationSec = videoDuration % 60;
+      alert(
+        `시작 시간이 영상 길이(${durationMin}분 ${durationSec}초)를 초과할 수 없습니다.`,
+      );
+      return;
+    }
+
+    // 최소 5초 확보 필요 (GIF가 5초 길이이므로)
+    if (videoDuration !== null && totalSeconds + 5 > videoDuration) {
+      alert("영상 끝부분이 5초 미만으로 남아 GIF를 생성할 수 없습니다.");
       return;
     }
 
@@ -92,29 +146,6 @@ const StepGif: React.FC = () => {
     }));
   };
 
-  const handleTestExtract = async () => {
-    if (!youtubeUrl || startTimes.length === 0) {
-      alert("유튜브 링크와 최소 하나 이상의 시작 시간을 추가해주세요.");
-      return;
-    }
-
-    setIsExtracting(true);
-    setTestGifs([]);
-
-    try {
-      const result = await generateYoutubeGifs(youtubeUrl, startTimes);
-      if (result.success && result.urls) {
-        setTestGifs(result.urls);
-      } else {
-        alert(result.error || "GIF 추출에 실패했습니다.");
-      }
-    } catch {
-      alert("추출 중 오류가 발생했습니다.");
-    } finally {
-      setIsExtracting(false);
-    }
-  };
-
   return (
     <AccordionItem title="4단계: 유튜브 GIF 만들기 (선택)" defaultOpen={false}>
       <div className="space-y-5">
@@ -127,20 +158,31 @@ const StepGif: React.FC = () => {
           <label className="block text-sm font-bold text-white mb-3">
             유튜브 링크
           </label>
-          <div className="flex gap-2 mb-4">
+          <div className="flex gap-1 mb-4 w-full">
             <input
               type="text"
               value={youtubeUrl}
               onChange={(e) => handleYoutubeChange(e.target.value)}
               placeholder="https://www.youtube.com/watch?v=..."
-              className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#33DB98]/50 focus:border-[#33DB98] transition-all text-white placeholder:text-gray-600"
+              className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#33DB98]/50 focus:border-[#33DB98] transition-all text-white placeholder:text-gray-600 min-w-0"
             />
             <button
               onClick={handleLoadVideo}
-              className="bg-[#33DB98] hover:bg-[#33DB98]/90 text-black px-5 py-3 rounded-xl text-sm font-bold flex items-center gap-2 whitespace-nowrap shadow-lg shadow-[#33DB98]/10 transition-all active:scale-95"
+              disabled={isLoadingMetadata}
+              className="bg-[#33DB98] hover:bg-[#33DB98]/90 disabled:bg-gray-600 text-black px-3 py-3 rounded-xl text-sm font-bold flex items-center gap-2 whitespace-nowrap shadow-lg shadow-[#33DB98]/10 transition-all active:scale-95"
             >
-              <Download size={16} /> 불러오기
+              {isLoadingMetadata ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <Download size={16} />
+              )}
+              불러오기
             </button>
+          </div>
+          <div className="flex justify-between items-center px-1">
+            <p className="text-xs text-gray-500 leading-relaxed -mt-2 break-all">
+              예시) https://youtu.be/fe6_wCixJwE
+            </p>
           </div>
 
           {videoId && (
@@ -156,11 +198,17 @@ const StepGif: React.FC = () => {
               ></iframe>
             </div>
           )}
+          {videoDuration !== null && (
+            <p className="text-xs text-[#33DB98] mt-2 font-bold">
+              영상 길이: {Math.floor(videoDuration / 60)}분 {videoDuration % 60}
+              초
+            </p>
+          )}
         </div>
 
         <div className="pt-2">
           <label className="block text-sm font-bold text-white mb-3">
-            시작 시각 선택 - 여러 개
+            시작 시각 추가
           </label>
 
           {/* Time Input Row */}
@@ -241,7 +289,7 @@ const StepGif: React.FC = () => {
             </div>
           )}
 
-          <div className="flex flex-col gap-4">
+          {/* <div className="flex flex-col gap-4">
             <button
               onClick={handleTestExtract}
               disabled={isExtracting || startTimes.length === 0}
@@ -258,10 +306,10 @@ const StepGif: React.FC = () => {
                   GIF 추출 테스트하기
                 </>
               )}
-            </button>
+            </button> */}
 
-            {/* Test Results Area */}
-            {testGifs.length > 0 && (
+          {/* Test Results Area */}
+          {/* {testGifs.length > 0 && (
               <div className="p-4 bg-black/40 border border-[#33DB98]/30 rounded-2xl space-y-4">
                 <div className="flex items-center gap-2 text-[#33DB98] text-xs font-bold uppercase tracking-wider">
                   <Sparkles size={14} /> 추출 결과 미리보기
@@ -301,7 +349,7 @@ const StepGif: React.FC = () => {
                 </div>
               </div>
             )}
-          </div>
+          </div> */}
 
           <div className="flex items-start gap-2 mt-4 p-3 bg-white/5 rounded-xl border border-white/5">
             <Info size={14} className="mt-0.5 shrink-0 text-[#33DB98]" />

@@ -47,17 +47,17 @@ export default function BlogKeywordSearchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-white">
-      {/* Hero Section */}
-      <div className="bg-[#0A0A0A] border-b border-white/5 px-4 py-12 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-vzx-bg/80 text-white selection:bg-[#33DB98] selection:text-black">
+      <div className="container mx-auto p-6 max-w-5xl space-y-8 animate-fade-in">
+        {/* Header Section */}
+        <div>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-start gap-4">
-              <div className="p-3 bg-vzx-card rounded-2xl shadow-sm border border-white/5 text-[#33DB98]">
+              {/* <div className="p-3 bg-vzx-card rounded-2xl shadow-sm border border-white/5 text-[#33DB98]">
                 <TrendingUp size={32} />
-              </div>
+              </div> */}
               <div>
-                <h1 className="text-3xl font-bold text-white mb-1">
+                <h1 className="text-3xl font-bold text-white mb-2">
                   블로그 키워드 분석
                 </h1>
                 <p className="text-gray-400 font-medium">
@@ -72,18 +72,16 @@ export default function BlogKeywordSearchPage() {
                     <span className="text-[#33DB98]">★</span> 데이터 기반 분석
                   </span>
                   <span className="flex items-center gap-1">
-                    <span className="text-[#33DB98]">★</span> 경쟁사 벤치마킹
+                    <span className="text-[#33DB98]">★</span> 벤치마킹
                   </span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-12">
         {/* Search Input Section */}
-        <div className="bg-vzx-card rounded-2xl border border-white/5 p-8 mb-12 shadow-sm">
+        <div className="bg-vzx-card rounded-2xl border border-white/5 p-8 shadow-sm">
           <form
             onSubmit={handleSearch}
             className="flex flex-col md:flex-row gap-4"

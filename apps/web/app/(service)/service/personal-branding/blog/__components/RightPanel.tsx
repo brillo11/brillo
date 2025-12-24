@@ -41,6 +41,8 @@ interface RightPanelProps {
   onSelectTitle?: (title: string) => void;
   onGenerateTitles?: () => void;
   isLeftPanelCollapsed?: boolean;
+  onRefineContent?: (request: string) => void;
+  isRefining?: boolean;
 }
 
 const RightPanel: React.FC<RightPanelProps> = ({
@@ -53,14 +55,13 @@ const RightPanel: React.FC<RightPanelProps> = ({
   onSelectTitle,
   onGenerateTitles,
   isLeftPanelCollapsed = false,
+  onRefineContent,
+  isRefining = false,
 }) => {
-  const { formData, getSavedTemplates, loadTemplate, deleteTemplate } =
-    useBlogForm();
+  const { formData, templates, loadTemplate, deleteTemplate } = useBlogForm();
   const [isRecentOpen, setIsRecentOpen] = useState(true);
-  const [templates, setTemplates] = useState<
-    ReturnType<typeof getSavedTemplates>
-  >([]);
   const [mounted, setMounted] = useState(false);
+  const [refineRequest, setRefineRequest] = useState("");
 
   // 경쟁사 통계 상태
   const [competitorStats, setCompetitorStats] =
@@ -70,10 +71,6 @@ const RightPanel: React.FC<RightPanelProps> = ({
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  useEffect(() => {
-    setTemplates(getSavedTemplates());
-  }, [getSavedTemplates]);
 
   // 키워드 기반 상위 블로그 통계 분석
   useEffect(() => {
@@ -140,7 +137,6 @@ const RightPanel: React.FC<RightPanelProps> = ({
     e.stopPropagation();
     if (confirm("정말 이 템플릿을 삭제하시겠습니까?")) {
       deleteTemplate(id);
-      setTemplates(getSavedTemplates());
     }
   };
 
@@ -256,10 +252,10 @@ const RightPanel: React.FC<RightPanelProps> = ({
           <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm overflow-hidden min-h-[150px] transition-all duration-300 hover:border-[#33DB98]/20">
             <div className="p-4 border-b border-white/5 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="text-yellow-500">💡</div>
+                <div className="text-[#33DB98]">💡</div>
                 <h3 className="font-bold text-white">블로그 제목 추천</h3>
                 {generatedTitles.length > 0 && (
-                  <span className="text-xs bg-yellow-500/10 text-yellow-500 px-2 py-0.5 rounded-full font-medium">
+                  <span className="text-xs bg-[#33DB98]/10 text-[#33DB98] px-2 py-0.5 rounded-full font-medium">
                     {generatedTitles.length}개
                   </span>
                 )}
@@ -279,7 +275,7 @@ const RightPanel: React.FC<RightPanelProps> = ({
 
             {isGeneratingTitles ? (
               <div className="p-8 flex flex-col items-center justify-center text-center gap-3">
-                <Loader2 size={32} className="text-yellow-500 animate-spin" />
+                <Loader2 size={32} className="text-[#33DB98] animate-spin" />
                 <span className="text-sm text-gray-400">제목 생성 중...</span>
               </div>
             ) : generatedTitles.length > 0 ? (
@@ -290,8 +286,8 @@ const RightPanel: React.FC<RightPanelProps> = ({
                     onClick={() => onSelectTitle?.(title)}
                     className={`w-full text-left p-3 rounded-xl border transition-all ${
                       selectedTitle === title
-                        ? "border-yellow-500/50 bg-yellow-500/5 shadow-sm"
-                        : "border-white/5 hover:border-yellow-500/30 hover:bg-yellow-500/5"
+                        ? "border-[#33DB98]/50 bg-[#33DB98]/5 shadow-sm"
+                        : "border-white/5 hover:border-[#33DB98]/30 hover:bg-[#33DB98]/5"
                     }`}
                   >
                     <div className="flex items-start gap-2">
@@ -301,14 +297,14 @@ const RightPanel: React.FC<RightPanelProps> = ({
                       <span
                         className={`text-sm flex-1 ${
                           selectedTitle === title
-                            ? "text-yellow-200 font-medium"
+                            ? "text-[#33DB98] font-medium"
                             : "text-gray-300"
                         }`}
                       >
                         {title}
                       </span>
                       {selectedTitle === title && (
-                        <span className="text-yellow-500 text-xs">✓</span>
+                        <span className="text-[#33DB98] text-xs">✓</span>
                       )}
                     </div>
                   </button>
@@ -316,9 +312,9 @@ const RightPanel: React.FC<RightPanelProps> = ({
               </div>
             ) : (
               <div className="p-8 flex flex-col items-center justify-center text-center text-gray-500 gap-2 h-full">
-                <ArrowLeft size={24} />
+                {/* <ArrowLeft size={24} /> */}
                 <span className="text-sm">
-                  좌측 폼을 작성하고 생성 버튼을 눌러주세요
+                  핵심 키워드를 기반으로 제목을 추천받아보세요.
                 </span>
               </div>
             )}
@@ -339,14 +335,15 @@ const RightPanel: React.FC<RightPanelProps> = ({
                       className="p-2 hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-white"
                       title="복사"
                     >
+                      <span className="text-xs">복사하기</span>
                       <Copy size={16} />
                     </button>
-                    <button
+                    {/* <button
                       className="p-2 hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-white"
                       title="다운로드"
                     >
                       <Download size={16} />
-                    </button>
+                    </button> */}
                   </div>
                 )}
               </div>
@@ -377,7 +374,7 @@ const RightPanel: React.FC<RightPanelProps> = ({
                 </div>
               )}
               {generatedContent && (
-                <div className="bg-gray-100/80 p-6 sm:p-10 border-t border-white/5">
+                <div className="bg-gray-100/80 p-6 border-t border-white/5">
                   <div
                     className="bg-white shadow-xl border border-gray-200 rounded-xl p-8 sm:p-12 prose prose-slate max-w-none"
                     ref={contentRef}
@@ -399,8 +396,8 @@ const RightPanel: React.FC<RightPanelProps> = ({
         </div>
 
         {/* C 영역: 통계 정보 (좁게, 1/3) */}
-        <div className="col-span-1">
-          <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm overflow-hidden sticky top-8 transition-all duration-300 hover:border-[#33DB98]/20">
+        <div className="col-span-1 sticky top-8 space-y-6 self-start">
+          <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm overflow-hidden transition-all duration-300 hover:border-[#33DB98]/20">
             <div className="p-4 border-b border-white/5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -505,6 +502,45 @@ const RightPanel: React.FC<RightPanelProps> = ({
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+
+          {/* AI Refinement Request */}
+          <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm overflow-hidden transition-all duration-300 hover:border-[#33DB98]/20">
+            <div className="p-4 border-b border-white/5">
+              <div className="flex items-center gap-2">
+                <div className="text-[#33DB98]">✍️</div>
+                <h3 className="font-bold text-white">AI 글 수정 요청</h3>
+              </div>
+            </div>
+            <div className="p-4">
+              <textarea
+                value={refineRequest}
+                onChange={(e) => setRefineRequest(e.target.value)}
+                placeholder="예: 조금 더 전문적인 느낌으로 수정해줘, 중간에 이 내용을 추가해줘"
+                className="w-full h-24 p-3 bg-black/40 border border-white/10 rounded-xl text-sm text-gray-300 placeholder:text-gray-600 focus:outline-none focus:border-[#33DB98] transition-all resize-none mb-3"
+              />
+              <button
+                onClick={() => {
+                  if (refineRequest.trim() && onRefineContent) {
+                    onRefineContent(refineRequest);
+                    setRefineRequest("");
+                  }
+                }}
+                disabled={
+                  isRefining || !refineRequest.trim() || !generatedContent
+                }
+                className="w-full bg-[#33DB98] hover:bg-[#33DB98]/90 disabled:bg-[#33DB98]/20 disabled:text-gray-500 text-black py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2"
+              >
+                {isRefining ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    수정 중...
+                  </>
+                ) : (
+                  <>수정하기</>
+                )}
+              </button>
             </div>
           </div>
         </div>
@@ -700,7 +736,7 @@ const RightPanel: React.FC<RightPanelProps> = ({
             </div>
           )}
           {generatedContent && (
-            <div className="bg-gray-100/80 p-6 sm:p-10 border-t border-white/5">
+            <div className="bg-gray-100/80 p-6 border-t border-white/5">
               <div
                 className="bg-white shadow-xl border border-gray-200 rounded-xl p-8 sm:p-12 prose prose-slate max-w-none"
                 ref={contentRef}
@@ -719,6 +755,45 @@ const RightPanel: React.FC<RightPanelProps> = ({
           )}
         </div>
       </div>
+
+      {/* AI Refinement Request (Mobile/Vertical layout) */}
+      {generatedContent && (
+        <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm overflow-hidden transition-all duration-300 hover:border-[#33DB98]/20">
+          <div className="p-4 border-b border-white/5">
+            <div className="flex items-center gap-2">
+              <div className="text-[#33DB98]">✍️</div>
+              <h3 className="font-bold text-white">AI 글 수정 요청</h3>
+            </div>
+          </div>
+          <div className="p-4">
+            <textarea
+              value={refineRequest}
+              onChange={(e) => setRefineRequest(e.target.value)}
+              placeholder="예: 조금 더 전문적인 느낌으로 수정해줘, 중간에 이 내용을 추가해줘"
+              className="w-full h-24 p-3 bg-black/40 border border-white/10 rounded-xl text-sm text-gray-300 placeholder:text-gray-600 focus:outline-none focus:border-[#33DB98] transition-all resize-none mb-3"
+            />
+            <button
+              onClick={() => {
+                if (refineRequest.trim() && onRefineContent) {
+                  onRefineContent(refineRequest);
+                  setRefineRequest("");
+                }
+              }}
+              disabled={isRefining || !refineRequest.trim()}
+              className="w-full bg-[#33DB98] hover:bg-[#33DB98]/90 disabled:bg-[#33DB98]/20 disabled:text-gray-500 text-black py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2"
+            >
+              {isRefining ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  수정 중...
+                </>
+              ) : (
+                <>수정하기</>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

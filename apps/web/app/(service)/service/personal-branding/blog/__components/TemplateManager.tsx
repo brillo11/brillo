@@ -5,20 +5,14 @@ import { X, Trash2, Clock, Bookmark } from "lucide-react";
 import { useBlogForm, SavedTemplate } from "./BlogFormContext";
 
 const TemplateManager: React.FC = () => {
-  const { getSavedTemplates, loadTemplate, deleteTemplate } = useBlogForm();
+  const { templates, loadTemplate, deleteTemplate, isLoadingTemplates } =
+    useBlogForm();
   const [isOpen, setIsOpen] = useState(false);
-  const [templates, setTemplates] = useState<SavedTemplate[]>([]);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  useEffect(() => {
-    if (isOpen) {
-      setTemplates(getSavedTemplates());
-    }
-  }, [isOpen, getSavedTemplates]);
 
   const handleLoad = (id: string) => {
     if (
@@ -31,16 +25,15 @@ const TemplateManager: React.FC = () => {
     }
   };
 
-  const handleDelete = (e: React.MouseEvent, id: string) => {
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (confirm("정말 삭제하시겠습니까?")) {
-      deleteTemplate(id);
-      setTemplates(getSavedTemplates());
+      await deleteTemplate(id);
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+  const formatDate = (dateValue: Date | string) => {
+    const date = new Date(dateValue);
     return date.toLocaleString("ko-KR", {
       month: "2-digit",
       day: "2-digit",
@@ -63,7 +56,7 @@ const TemplateManager: React.FC = () => {
         <span>템플릿</span>
         {mounted && (
           <span className="bg-[#33DB98]/10 text-[#33DB98] text-xs px-2 py-0.5 rounded-full min-w-[24px] text-center border border-[#33DB98]/20">
-            {getSavedTemplates().length}
+            {templates.length}
           </span>
         )}
       </button>
@@ -89,45 +82,60 @@ const TemplateManager: React.FC = () => {
             </div>
 
             <div className="overflow-y-auto flex-1 p-2 space-y-2">
-              {templates.length === 0 ? (
+              {isLoadingTemplates ? (
+                <div className="text-center py-8 text-gray-500">
+                  <Clock
+                    size={32}
+                    className="mx-auto mb-2 animate-spin opacity-50"
+                  />
+                  <p className="text-sm">로딩 중...</p>
+                </div>
+              ) : templates.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   <Bookmark size={32} className="mx-auto mb-2 opacity-50" />
                   <p className="text-sm">저장된 템플릿이 없습니다</p>
                 </div>
               ) : (
-                templates.map((template) => (
-                  <div
-                    key={template.id}
-                    className="group relative bg-white/5 border border-white/5 hover:border-[#33DB98]/30 rounded-xl p-3 transition-all cursor-pointer hover:bg-white/10"
-                    onClick={() => handleLoad(template.id)}
-                  >
-                    <div className="pr-6">
-                      <h4 className="text-sm font-semibold text-gray-200 line-clamp-1 mb-1">
-                        {template.name}
-                      </h4>
-                      <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                        <Clock size={10} />
-                        {formatDate(template.createdAt)}
-                      </div>
-                      <div className="mt-2 flex flex-wrap gap-1">
-                        <span className="bg-white/5 text-gray-400 px-1.5 py-0.5 rounded text-[10px]">
-                          {template.formData.writingType === "CONVERSION"
-                            ? "전환용"
-                            : template.formData.writingType === "BALANCED"
-                              ? "보통"
-                              : "정보성"}
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={(e) => handleDelete(e, template.id)}
-                      className="absolute top-2 right-2 p-1.5 text-gray-600 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
-                      title="삭제"
+                templates.map((template) => {
+                  const formData =
+                    typeof template.formData === "string"
+                      ? JSON.parse(template.formData)
+                      : template.formData;
+
+                  return (
+                    <div
+                      key={template.id}
+                      className="group relative bg-white/5 border border-white/5 hover:border-[#33DB98]/30 rounded-xl p-3 transition-all cursor-pointer hover:bg-white/10"
+                      onClick={() => handleLoad(template.id)}
                     >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                ))
+                      <div className="pr-6">
+                        <h4 className="text-sm font-semibold text-gray-200 line-clamp-1 mb-1">
+                          {template.name}
+                        </h4>
+                        <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                          <Clock size={10} />
+                          {formatDate(template.createdAt)}
+                        </div>
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          <span className="bg-white/5 text-gray-400 px-1.5 py-0.5 rounded text-[10px]">
+                            {formData?.writingType === "CONVERSION"
+                              ? "전환용"
+                              : formData?.writingType === "BALANCED"
+                                ? "보통"
+                                : "정보성"}
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={(e) => handleDelete(e, template.id)}
+                        className="absolute top-2 right-2 p-1.5 text-gray-600 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                        title="삭제"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  );
+                })
               )}
             </div>
           </div>

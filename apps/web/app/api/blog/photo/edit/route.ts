@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { v4 as uuidv4 } from 'uuid';
-import { uploadToS3, editImageWithAI } from '@/serverActions/blog/ai-photo';
+import { NextRequest, NextResponse } from "next/server";
+import { v4 as uuidv4 } from "uuid";
+import { uploadToS3 } from "@/serverActions/blog/ai-photo";
+import { editImageWithAI } from "@/shared/serverActions/aiGateway";
 
 /**
  * 이미지 편집 API
@@ -25,13 +26,13 @@ export async function POST(req: NextRequest) {
             instruction ||
             'Enhance the photo naturally: smooth skin tone, reduce minor blemishes, improve lighting, but keep the person recognizable and natural-looking. Suitable for professional medical blog.';
 
-        const editedFile = await editImageWithAI(
+        const editResult = await editImageWithAI(
+            defaultInstruction,
             imageUrl,
-            contentType || 'image/jpeg',
-            defaultInstruction
+            contentType || 'image/jpeg'
         );
 
-        if (!editedFile || !('base64Data' in editedFile) || !editedFile.base64Data) {
+        if (!editResult.success || !editResult.imageUrl) {
             return NextResponse.json(
                 { success: false, error: '이미지 편집에 실패했습니다.' },
                 { status: 500 }
@@ -42,7 +43,11 @@ export async function POST(req: NextRequest) {
         console.log('📤 Uploading edited image to S3...');
 
         // 편집된 이미지를 S3 /blog/output/photos 폴더에 업로드
-        const editedBuffer = Buffer.from(editedFile.base64Data as string, 'base64');
+        const base64Data = editResult.imageUrl.split(',')[1];
+        if (!base64Data) {
+            throw new Error('Invalid image data');
+        }
+        const editedBuffer = Buffer.from(base64Data, 'base64');
         const timestamp = Date.now();
         const uuid = uuidv4();
         const editedFilename = `edited_${timestamp}_${uuid}.jpg`;
@@ -50,7 +55,7 @@ export async function POST(req: NextRequest) {
             editedBuffer,
             'blog/output/photos',
             editedFilename,
-            editedFile.mediaType || contentType || 'image/jpeg'
+            contentType || 'image/jpeg'
         );
 
         console.log('✅ Edited image uploaded:', outputUrl);
