@@ -174,7 +174,7 @@ export async function generateImageWithReferenceAI(
  */
 export async function editImageWithAI(
   prompt: string,
-  base64Image: string,
+  imageSource: string, // base64 또는 URL
   contentType: string = "image/jpeg",
 ): Promise<{ success: boolean; imageUrl?: string; error?: string }> {
   try {
@@ -187,7 +187,12 @@ export async function editImageWithAI(
           role: "user",
           content: [
             { type: "text", text: `Edit this image: ${prompt}` },
-            { type: "image", image: `data:${contentType};base64,${base64Image}` },
+            {
+              type: "image",
+              image: imageSource.startsWith("http")
+                ? imageSource
+                : `data:${contentType};base64,${imageSource}`,
+            },
           ],
         },
       ],

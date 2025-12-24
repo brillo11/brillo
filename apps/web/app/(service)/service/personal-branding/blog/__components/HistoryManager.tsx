@@ -12,7 +12,7 @@ HistoryContentDisplay.displayName = "HistoryContentDisplay";
 
 export interface HistoryItem {
   id: string;
-  timestamp: number;
+  createdAt: Date | string;
   title: string;
   content: string;
 }
@@ -57,8 +57,8 @@ const HistoryManager: React.FC<HistoryManagerProps> = ({
     }
   };
 
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleString("ko-KR", {
+  const formatDate = (date: Date | string) => {
+    return new Date(date).toLocaleString("ko-KR", {
       month: "2-digit",
       day: "2-digit",
       hour: "2-digit",
@@ -89,7 +89,7 @@ const HistoryManager: React.FC<HistoryManagerProps> = ({
 
         {/* Dropdown List */}
         {isOpen && (
-          <div className="bg-vzx-card rounded-2xl border border-white/10 shadow-2xl w-80 max-h-[60vh] overflow-hidden flex flex-col animate-accordion-down origin-top-left backdrop-blur-xl absolute top-full mt-2 right-0">
+          <div className="bg-vzx-card rounded-2xl border border-white/10 shadow-2xl w-80 max-h-[60vh] overflow-hidden flex flex-col animate-accordion-down origin-top-left backdrop-blur-xl absolute top-full mt-2 right-0 z-50">
             <div className="p-4 bg-white/5 border-b border-white/5 flex justify-between items-center">
               <span className="text-xs font-semibold text-gray-400">
                 최근 생성 기록
@@ -115,7 +115,6 @@ const HistoryManager: React.FC<HistoryManagerProps> = ({
                     className="group relative bg-white/5 border border-white/5 hover:border-[#33DB98]/30 rounded-xl p-3 transition-all cursor-pointer hover:bg-white/10"
                     onClick={() => {
                       setSelectedItem(item);
-                      onLoad(item);
                     }}
                   >
                     <div className="pr-6">
@@ -124,7 +123,7 @@ const HistoryManager: React.FC<HistoryManagerProps> = ({
                       </h4>
                       <div className="flex items-center gap-1.5 text-xs text-gray-500">
                         <Clock size={10} />
-                        {formatDate(item.timestamp)}
+                        {formatDate(item.createdAt)}
                       </div>
                     </div>
                     <button
@@ -158,7 +157,7 @@ const HistoryManager: React.FC<HistoryManagerProps> = ({
                 <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
                   <Clock size={12} />
                   생성일시:{" "}
-                  {new Date(selectedItem.timestamp).toLocaleString("ko-KR")}
+                  {new Date(selectedItem.createdAt).toLocaleString("ko-KR")}
                 </p>
               </div>
               <button
@@ -179,6 +178,16 @@ const HistoryManager: React.FC<HistoryManagerProps> = ({
             </div>
 
             <div className="p-4 border-t border-white/5 flex justify-end gap-3 bg-vzx-card rounded-b-3xl">
+              <button
+                onClick={() => {
+                  onLoad(selectedItem);
+                  setSelectedItem(null);
+                  setIsOpen(false);
+                }}
+                className="px-4 py-2 bg-white/10 text-white border border-white/10 rounded-xl text-sm font-bold hover:bg-white/20 transition-colors flex items-center gap-1.5"
+              >
+                <Clock size={16} /> 이 설정으로 불러오기
+              </button>
               <button
                 onClick={handleCopy}
                 className="px-4 py-2 bg-[#33DB98] text-black rounded-xl text-sm font-bold hover:bg-[#33DB98]/90 transition-colors flex items-center gap-1.5"

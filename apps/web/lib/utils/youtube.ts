@@ -16,6 +16,8 @@ export function extractVideoId(url: string): string | null {
     /(?:youtube\.com\/watch\?v=|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/,
     // 일반 YouTube (다른 형식)
     /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]+)/,
+    // 일반 YouTube (다른 형식)
+    /youtu\.be\/([a-zA-Z0-9_-]+)/,
   ];
 
   for (let i = 0; i < patterns.length; i++) {

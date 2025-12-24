@@ -9,7 +9,6 @@ datasource db {
   provider = "postgresql"
 }
 
-
 model User {
   id                          String      @id @default(uuid())
   createdAt                   DateTime    @default(now())
@@ -59,6 +58,8 @@ model User {
   cohort   Cohort? @relation(fields: [cohortId], references: [id])
 
   aiAssistantSessions AIAssistantSession[]
+  blogTemplates       BlogTemplate[]
+  blogPostHistories   BlogPostHistory[]
 
   @@index([email])
 }
@@ -343,16 +344,16 @@ model Refund {
 }
 
 model YoutubeApiKey {
-  id            String    @id @default(uuid())
-  keyName       String    @unique // API 키 이름 (환경 변수 이름, 예: "YOUTUBE_DATA_API_KEY", "YOUTUBE_DATA_API_KEY_2")
-  isActive      Boolean   @default(true) // 활성화 여부
-  dailyQuota    Int       @default(10000) // 일일 할당량 (기본 10,000 units)
-  dailyUsage    Int       @default(0) // 오늘 사용량
-  lastResetAt   DateTime  @default(now()) // 마지막 리셋 시간
-  lastUsedAt    DateTime? // 마지막 사용 시간
-  totalUsage    BigInt    @default(0) // 총 사용량
-  updatedAt     DateTime  @updatedAt
-  createdAt     DateTime  @default(now())
+  id          String    @id @default(uuid())
+  keyName     String    @unique // API 키 이름 (환경 변수 이름, 예: "YOUTUBE_DATA_API_KEY", "YOUTUBE_DATA_API_KEY_2")
+  isActive    Boolean   @default(true) // 활성화 여부
+  dailyQuota  Int       @default(10000) // 일일 할당량 (기본 10,000 units)
+  dailyUsage  Int       @default(0) // 오늘 사용량
+  lastResetAt DateTime  @default(now()) // 마지막 리셋 시간
+  lastUsedAt  DateTime? // 마지막 사용 시간
+  totalUsage  BigInt    @default(0) // 총 사용량
+  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime  @default(now())
 
   @@index([keyName])
   @@index([isActive])
@@ -444,38 +445,38 @@ model AIAssistantSession {
   userId         String
   conversationId String // 외부 AI 서비스 conversation ID (OpenAI, Claude 등)
   title          String? // 세션 제목 (titleMessage 기반)
-  
+
   // Step 2: Topic
   titleMessage String? // 주제/토픽 메시지
-  
+
   // Step 3: Title
   titleResponses     Json? // 생성된 제목 세트 (복잡한 구조)
   selectedTitle      String? // 선택된 영상 제목
   selectedTitleIndex Int? // 선택된 제목 인덱스
-  
+
   // Step 4: Thumbnail Guide
   thumbnailGuideResponses     Json? // 생성된 썸네일 가이드 (복잡한 구조)
   selectedThumbnailGuideIndex Int? // 선택된 가이드 인덱스
-  
+
   // Step 5: Thumbnail
   thumbnailUrls String? // S3에 저장된 썸네일 이미지 URL
-  
+
   // Step 6: Script
   scriptResponses Json? // 생성된 대본 (구조화된 JSON)
-  
+
   // Step 7: Metadata
   metadataResponses Json? // 메타데이터 (설명, 타임스탬프, 해시태그, 태그)
-  
+
   // Step 8: Shorts Titles (Legacy but kept for compatibility) / Video Generation
   shortsTitlesResponses Json? // 쇼츠 제목 (각 챕터별 2~3개)
-  
+
   // Step 8: Generated Video
-  generatedVideoUrl     String? // 생성된 영상 URL (S3 or External)
-  generatedVideoType    String? // 'VEO' | 'HEYGEN'
-  
+  generatedVideoUrl  String? // 생성된 영상 URL (S3 or External)
+  generatedVideoType String? // 'VEO' | 'HEYGEN'
+
   // Progress
   step String? // 현재 단계 (TITLE, THUMBNAIL_GUIDE, THUMBNAIL, SCRIPT, METADATA, SHORTS_TITLES)
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -484,4 +485,31 @@ model AIAssistantSession {
   @@index([createdAt])
   @@index([conversationId])
   @@index([step])
+}
+
+model BlogTemplate {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  formData  Json     @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model BlogPostHistory {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  content   String
+  formData  Json     @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
 }

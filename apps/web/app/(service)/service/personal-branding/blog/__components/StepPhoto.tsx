@@ -16,9 +16,12 @@ const StepPhoto: React.FC = () => {
 
   // 초기 로드 시 formData에서 상태 복원
   useEffect(() => {
-    if (formData.photo.originalUrl && !previewUrl) {
+    if (formData.photo.originalUrl) {
       setPreviewUrl(formData.photo.originalUrl);
       setUploadStatus("completed");
+    } else {
+      setPreviewUrl("");
+      setUploadStatus("idle");
     }
   }, [formData.photo.originalUrl]);
 
@@ -48,7 +51,7 @@ const StepPhoto: React.FC = () => {
       if (!uploadResponse.ok) {
         const errorData = await uploadResponse.json().catch(() => ({}));
         throw new Error(
-          errorData.error || `업로드 실패: ${uploadResponse.status}`
+          errorData.error || `업로드 실패: ${uploadResponse.status}`,
         );
       }
 

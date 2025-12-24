@@ -1,6 +1,18 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
+import {
+  saveBlogTemplate as saveTemplateAction,
+  getBlogTemplates,
+  deleteBlogTemplate as deleteTemplateAction,
+} from "@/serverActions/blog/blog-storage.actions";
+import { toast } from "sonner";
 
 // TypeScript interfaces for form data
 export interface BlogFormData {
@@ -45,17 +57,20 @@ export interface BlogFormData {
 export interface SavedTemplate {
   id: string;
   name: string;
-  formData: BlogFormData;
-  createdAt: string;
+  formData: any; // DB에서 가져올 때 Json 타입
+  createdAt: Date | string;
 }
 
 interface BlogFormContextType {
   formData: BlogFormData;
   updateFormData: (section: keyof BlogFormData, data: any) => void;
-  saveTemplate: (name: string) => void;
+  templates: SavedTemplate[];
+  isLoadingTemplates: boolean;
+  saveTemplate: (name: string) => Promise<void>;
   loadTemplate: (id: string) => void;
-  deleteTemplate: (id: string) => void;
-  getSavedTemplates: () => SavedTemplate[];
+  setFullFormData: (data: Partial<BlogFormData>) => void;
+  deleteTemplate: (id: string) => Promise<void>;
+  refreshTemplates: () => Promise<void>;
 }
 
 // Default form data
@@ -108,16 +123,32 @@ const defaultFormData: BlogFormData = {
 
 // Create context
 const BlogFormContext = createContext<BlogFormContextType | undefined>(
-  undefined
+  undefined,
 );
-
-const STORAGE_KEY = "blog-templates";
 
 // Provider component
 export const BlogFormProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [formData, setFormData] = useState<BlogFormData>(defaultFormData);
+  const [templates, setTemplates] = useState<SavedTemplate[]>([]);
+  const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
+
+  const refreshTemplates = async () => {
+    setIsLoadingTemplates(true);
+    try {
+      const data = await getBlogTemplates();
+      setTemplates(data as any);
+    } catch (error) {
+      console.error("Failed to fetch templates:", error);
+    } finally {
+      setIsLoadingTemplates(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshTemplates();
+  }, []);
 
   const updateFormData = (section: keyof BlogFormData, data: any) => {
     setFormData((prev) => ({
@@ -126,36 +157,59 @@ export const BlogFormProvider: React.FC<{ children: ReactNode }> = ({
     }));
   };
 
-  const getSavedTemplates = (): SavedTemplate[] => {
-    if (typeof window === "undefined") return [];
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : [];
-  };
-
-  const saveTemplate = (name: string) => {
-    const templates = getSavedTemplates();
-    const newTemplate: SavedTemplate = {
-      id: Date.now().toString(),
-      name,
-      formData,
-      createdAt: new Date().toISOString(),
-    };
-    templates.push(newTemplate);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(templates));
-  };
-
-  const loadTemplate = (id: string) => {
-    const templates = getSavedTemplates();
-    const template = templates.find((t) => t.id === id);
-    if (template) {
-      setFormData(template.formData);
+  const saveTemplate = async (name: string) => {
+    try {
+      await saveTemplateAction(name, formData);
+      await refreshTemplates();
+      toast.success("템플릿이 저장되었습니다.");
+    } catch (error) {
+      console.error("Failed to save template:", error);
+      toast.error("템플릿 저장에 실패했습니다.");
     }
   };
 
-  const deleteTemplate = (id: string) => {
-    const templates = getSavedTemplates();
-    const filtered = templates.filter((t) => t.id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+  const setFullFormData = (loadedData: Partial<BlogFormData>) => {
+    // 기본값과 병합하여 누락된 필드가 없도록 보장
+    const mergedData = {
+      ...defaultFormData,
+      ...loadedData,
+      branding: { ...defaultFormData.branding, ...loadedData.branding },
+      contentPlanning: {
+        ...defaultFormData.contentPlanning,
+        ...loadedData.contentPlanning,
+      },
+      options: { ...defaultFormData.options, ...loadedData.options },
+      details: { ...defaultFormData.details, ...loadedData.details },
+      gif: { ...defaultFormData.gif, ...loadedData.gif },
+      photo: { ...defaultFormData.photo, ...loadedData.photo },
+    } as BlogFormData;
+
+    setFormData(mergedData);
+  };
+
+  const loadTemplate = (id: string) => {
+    const template = templates.find((t) => t.id === id);
+    if (template) {
+      // formData가 DB에서 올 때 string이면 파싱, 아니면 그대로 사용
+      const loadedData =
+        typeof template.formData === "string"
+          ? JSON.parse(template.formData)
+          : template.formData;
+
+      setFullFormData(loadedData);
+      toast.success(`'${template.name}' 템플릿을 불러왔습니다.`);
+    }
+  };
+
+  const deleteTemplate = async (id: string) => {
+    try {
+      await deleteTemplateAction(id);
+      await refreshTemplates();
+      toast.success("템플릿이 삭제되었습니다.");
+    } catch (error) {
+      console.error("Failed to delete template:", error);
+      toast.error("템플릿 삭제에 실패했습니다.");
+    }
   };
 
   return (
@@ -163,10 +217,13 @@ export const BlogFormProvider: React.FC<{ children: ReactNode }> = ({
       value={{
         formData,
         updateFormData,
+        templates,
+        isLoadingTemplates,
         saveTemplate,
         loadTemplate,
+        setFullFormData,
         deleteTemplate,
-        getSavedTemplates,
+        refreshTemplates,
       }}
     >
       {children}

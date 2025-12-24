@@ -53,6 +53,22 @@ const StepDetails: React.FC = () => {
     updateFormData("details", { ...formData.details, styleText: value });
   };
 
+  const handleUrlChange = (value: string) => {
+    setUrlInput(value);
+    updateFormData("details", (prev: any) => ({
+      ...prev,
+      referenceUrl: value,
+    }));
+  };
+
+  const handleKeywordChange = (value: string) => {
+    setKeywordInput(value);
+    updateFormData("details", (prev: any) => ({
+      ...prev,
+      referenceKeyword: value,
+    }));
+  };
+
   const handleAnalyze = async () => {
     const source = analysisType === "URL" ? urlInput : keywordInput;
     if (!source.trim()) return;
@@ -65,19 +81,20 @@ const StepDetails: React.FC = () => {
       );
       if (result.success && result.styleAnalysis) {
         handleStyleTextChange(result.styleAnalysis);
-        updateFormData("details", {
-          ...formData.details,
+        updateFormData("details", (prev: any) => ({
+          ...prev,
           styleText: result.styleAnalysis,
-          referenceUrl: analysisType === "URL" ? urlInput : undefined,
+          referenceUrl: analysisType === "URL" ? urlInput : prev.referenceUrl,
           referenceKeyword:
-            analysisType === "KEYWORD" ? keywordInput : undefined,
+            analysisType === "KEYWORD" ? keywordInput : prev.referenceKeyword,
           styleAnalysisResult: result.styleAnalysis,
-        });
+        }));
         alert("스타일 분석이 완료되었습니다!");
       } else {
         alert(result.error || "분석에 실패했습니다.");
       }
-    } catch (_error) {
+    } catch (error) {
+      console.error("스타일 분석 중 오류:", error);
       alert("분석 중 오류가 발생했습니다.");
     } finally {
       setIsAnalyzing(false);
@@ -157,47 +174,56 @@ const StepDetails: React.FC = () => {
           </div>
 
           {analysisType !== "MANUAL" && (
-            <div className="flex gap-2">
-              <div className="flex-1 relative">
-                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                  {analysisType === "URL" ? (
-                    <Link size={16} className="text-gray-500" />
-                  ) : (
-                    <Search size={16} className="text-gray-500" />
-                  )}
+            <>
+              <div className="flex gap-2">
+                <div className="flex-1 relative">
+                  <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                    {analysisType === "URL" ? (
+                      <Link size={16} className="text-gray-500" />
+                    ) : (
+                      <Search size={16} className="text-gray-500" />
+                    )}
+                  </div>
+                  <input
+                    type="text"
+                    value={analysisType === "URL" ? urlInput : keywordInput}
+                    onChange={(e) =>
+                      analysisType === "URL"
+                        ? handleUrlChange(e.target.value)
+                        : handleKeywordChange(e.target.value)
+                    }
+                    placeholder={
+                      analysisType === "URL"
+                        ? "분석할 블로그 주소(Home) 또는 ID를 입력하세요"
+                        : "스타일을 벤치마킹할 키워드를 입력하세요"
+                    }
+                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-[#33DB98]/50 transition-colors"
+                  />
                 </div>
-                <input
-                  type="text"
-                  value={analysisType === "URL" ? urlInput : keywordInput}
-                  onChange={(e) =>
-                    analysisType === "URL"
-                      ? setUrlInput(e.target.value)
-                      : setKeywordInput(e.target.value)
+                <button
+                  onClick={handleAnalyze}
+                  disabled={
+                    isAnalyzing ||
+                    !(analysisType === "URL" ? urlInput : keywordInput).trim()
                   }
-                  placeholder={
-                    analysisType === "URL"
-                      ? "분석할 블로그 주소(Home) 또는 ID를 입력하세요"
-                      : "스타일을 벤치마킹할 키워드를 입력하세요"
-                  }
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-[#33DB98]/50 transition-colors"
-                />
+                  className="bg-[#33DB98] hover:bg-[#28a87a] disabled:bg-gray-600 disabled:cursor-not-allowed text-black font-bold px-4 rounded-xl transition-all flex items-center gap-2 shrink-0"
+                >
+                  {isAnalyzing ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <Sparkles size={16} />
+                  )}
+                  <span className="text-sm">분석</span>
+                </button>
               </div>
-              <button
-                onClick={handleAnalyze}
-                disabled={
-                  isAnalyzing ||
-                  !(analysisType === "URL" ? urlInput : keywordInput).trim()
-                }
-                className="bg-[#33DB98] hover:bg-[#28a87a] disabled:bg-gray-600 disabled:cursor-not-allowed text-black font-bold px-4 rounded-xl transition-all flex items-center gap-2 shrink-0"
-              >
-                {isAnalyzing ? (
-                  <Loader2 size={16} className="animate-spin" />
-                ) : (
-                  <Sparkles size={16} />
-                )}
-                <span className="text-sm">분석</span>
-              </button>
-            </div>
+              {analysisType === "URL" ? (
+                <p className="text-xs text-gray-500 leading-relaxed -mt-2 px-2">
+                  예시) https://blog.naver.com/itedu119
+                </p>
+              ) : (
+                <p className="text-xs text-gray-500 leading-relaxed -mt-2 px-2"></p>
+              )}
+            </>
           )}
         </div>
 
