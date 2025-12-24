@@ -170,26 +170,26 @@ export function Step8VideoGeneration({
              {/* Thumbnail & Title */}
              <div className="flex gap-6 items-start">
                 <div className="w-1/3 min-w-[240px]">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Thumbnail</p>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">썸네일</p>
                     <div className="rounded-xl overflow-hidden border border-white/10 shadow-lg relative group aspect-video">
                         {thumbnailUrls ? (
                         <img src={thumbnailUrls} alt="Final Thumbnail" className="w-full h-full object-cover" />
                         ) : (
                         <div className="w-full h-full bg-black/20 flex items-center justify-center text-gray-500">
-                            No Thumbnail
+                            썸네일 없음
                         </div>
                         )}
                     </div>
                 </div>
                 
                 <div className="flex-1 space-y-2">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Title</p>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">제목</p>
                     <div className="p-4 bg-black/20 rounded-xl border border-white/5">
                         <h4 className="text-xl font-bold text-white leading-normal">{selectedTitle}</h4>
                     </div>
                     {metadataResponses?.description && (
                          <div className="mt-4">
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Description</p>
+                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">설명</p>
                             <p className="text-sm text-gray-300 line-clamp-3 leading-relaxed">
                                 {metadataResponses.description}
                             </p>
@@ -207,25 +207,25 @@ export function Step8VideoGeneration({
                 <div className="space-y-4 text-sm text-gray-300">
                     {scriptResponses?.intro && (
                         <div className="bg-black/20 p-3 rounded-lg border border-white/5">
-                            <span className="text-[#33DB98] text-xs font-bold uppercase block mb-1">Intro</span>
+                            <span className="text-[#33DB98] text-xs font-bold uppercase block mb-1">인트로</span>
                             {scriptResponses.intro}
                         </div>
                     )}
                     {scriptResponses?.selfIntro && (
                         <div className="bg-black/20 p-3 rounded-lg border border-white/5">
-                            <span className="text-orange-400 text-xs font-bold uppercase block mb-1">Self Intro</span>
+                            <span className="text-orange-400 text-xs font-bold uppercase block mb-1">자기소개</span>
                             {scriptResponses.selfIntro}
                         </div>
                     )}
                     {scriptResponses?.chapters?.map((chapter: any, idx: number) => (
                         <div key={idx} className="bg-black/20 p-3 rounded-lg border border-white/5">
-                            <span className="text-blue-400 text-xs font-bold uppercase block mb-1">Chapter {idx + 1}: {chapter.title}</span>
+                            <span className="text-blue-400 text-xs font-bold uppercase block mb-1">챕터 {idx + 1}: {chapter.title}</span>
                             {chapter.content}
                         </div>
                     ))}
                     {scriptResponses?.outro && (
                         <div className="bg-black/20 p-3 rounded-lg border border-white/5">
-                            <span className="text-green-400 text-xs font-bold uppercase block mb-1">Outro</span>
+                            <span className="text-green-400 text-xs font-bold uppercase block mb-1">아웃트로</span>
                             {scriptResponses.outro}
                         </div>
                     )}
@@ -243,7 +243,7 @@ export function Step8VideoGeneration({
 
                 {metadataResponses?.tags && (
                     <div className="space-y-1">
-                         <span className="text-xs font-bold text-gray-500 uppercase">Tags</span>
+                         <span className="text-xs font-bold text-gray-500 uppercase">태그</span>
                          <div className="flex flex-wrap gap-1">
                             {metadataResponses.tags.map((tag: string, i: number) => (
                                 <span key={i} className="text-xs text-gray-300 bg-white/5 border border-white/10 px-2 py-1 rounded">
@@ -256,7 +256,7 @@ export function Step8VideoGeneration({
 
                 {metadataResponses?.hashtags && (
                     <div className="space-y-1">
-                         <span className="text-xs font-bold text-gray-500 uppercase">Hashtags</span>
+                         <span className="text-xs font-bold text-gray-500 uppercase">해시태그</span>
                          <div className="flex flex-wrap gap-1">
                             {metadataResponses.hashtags.map((tag: string, i: number) => (
                                 <span key={i} className="text-xs text-[#33DB98] bg-[#33DB98]/10 border border-[#33DB98]/20 px-2 py-1 rounded-full">
@@ -308,7 +308,7 @@ export function Step8VideoGeneration({
                <div className="w-full space-y-4 animate-fade-in">
                   <div className="flex justify-between items-center mb-2">
                      <h3 className="text-lg font-bold text-white">
-                       Generated Video ({videoType === "HEYGEN" ? "HeyGen" : "Veo"})
+                       생성된 영상 ({videoType === "HEYGEN" ? "HeyGen" : "Veo"})
                      </h3>
                      <span className="text-xs bg-white/10 px-2 py-1 rounded text-gray-300">
                         {videoType === "HEYGEN" ? "내 아바타" : "가상 캐릭터"}

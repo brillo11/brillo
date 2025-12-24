@@ -288,7 +288,7 @@ export function Step2ThumbGuide({
               {isChannelLoading ? (
                 <Loader2 size={18} className="animate-spin" />
               ) : (
-                "Fetch"
+                "불러오기"
               )}
             </Button>
           </div>
@@ -343,7 +343,7 @@ export function Step2ThumbGuide({
             ) : (
               <div className="col-span-full flex flex-col items-center justify-center text-gray-500 h-full border-2 border-dashed border-white/10 rounded-xl p-8 bg-white/5">
                 <ImageIcon size={32} className="mb-2 opacity-30" />
-                <span className="text-sm">No channel fetched yet</span>
+                <span className="text-sm">불러온 채널 썸네일 이미지가 없습니다</span>
               </div>
             )}
           </div>
@@ -360,11 +360,11 @@ export function Step2ThumbGuide({
             {isNextLoading ? (
               <>
                 <Loader2 className="animate-spin" size={20} />
-                Creating Thumbnail...
+                썸네일 이미지 생성 중...
               </>
             ) : (
               <>
-                Generate Final Thumbnail
+                썸네일 이미지 생성
                 <ChevronRight size={20} />
               </>
             )}

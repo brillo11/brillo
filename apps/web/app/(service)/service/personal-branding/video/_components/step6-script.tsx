@@ -82,7 +82,7 @@ export function Step6Script({
         <div className="space-y-6">
           <div className="bg-white/5 p-4 rounded-xl border border-white/10 shadow-sm">
             <h3 className="text-sm font-bold text-gray-400 uppercase mb-3">
-              Final Thumbnail
+              썸네일 이미지
             </h3>
             <img
               src={thumbnailUrl}
@@ -90,21 +90,21 @@ export function Step6Script({
               className="w-full rounded-lg mb-2"
             />
             <p className="text-xs text-gray-400 text-center">
-              Version 3 (Final)
+              (최종)
             </p>
           </div>
 
           <div className="bg-white/5 p-4 rounded-xl border border-white/10 shadow-sm">
             <h3 className="text-sm font-bold text-gray-400 uppercase mb-3">
-              Metadata
+              메타데이터
             </h3>
             <div className="space-y-3">
               <div>
-                <span className="text-xs text-gray-400 block">Title</span>
+                <span className="text-xs text-gray-400 block">제목</span>
                 <p className="font-medium text-sm text-white">{selectedTitle}</p>
               </div>
               <div>
-                <span className="text-xs text-gray-400 block">Topic</span>
+                <span className="text-xs text-gray-400 block">주제</span>
                 <p className="font-medium text-sm text-white">{topic}</p>
               </div>
             </div>
@@ -116,7 +116,7 @@ export function Step6Script({
           <div className="p-4 border-b border-white/10 flex items-center justify-between bg-white/5 rounded-t-xl">
             <div className="flex items-center gap-2">
               <FileText size={18} className="text-gray-400" />
-              <span className="font-bold text-white">Video Script</span>
+              <span className="font-bold text-white">영상 대본</span>
             </div>
             <button
               onClick={handleCopy}
@@ -181,11 +181,11 @@ export function Step6Script({
             {isLoading ? (
               <>
                 <Loader2 className="animate-spin" size={20} />
-                Loading...
+                로딩 중...
               </>
             ) : (
               <>
-                Next Step
+                영상 메타데이터 생성
                 <ChevronRight size={20} />
               </>
             )}
