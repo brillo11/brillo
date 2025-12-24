@@ -32,7 +32,7 @@ const STEP_LABELS: Record<string, string> = {
   SHORTS_TITLES: "쇼츠 제목",
 };
 
-export function AssistantHistory() {
+export function AssistantHistory({ redirectOnDelete }: { redirectOnDelete?: string }) {
   const router = useRouter();
   const [sessions, setSessions] = useState<AIAssistantSessionData[]>([]);
   const [selectedSession, setSelectedSession] =
@@ -73,8 +73,10 @@ export function AssistantHistory() {
       // 세션 목록 새로고침
       loadSessions();
 
-      // 히스토리 페이지로 이동
-      router.push("/service/personal-branding/video/history");
+      // 히스토리 페이지로 이동 (옵션)
+      if (redirectOnDelete) {
+        router.push(redirectOnDelete);
+      }
     } catch (error) {
       console.error("Failed to delete session:", error);
       toast.error("삭제에 실패했습니다.");
