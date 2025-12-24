@@ -91,61 +91,61 @@ export function Step8VideoGeneration({
 
   const handleHeyGenGeneration = async (script: string) => {
     setProgressMessage("영상 생성 요청 중...");
-    try {
-      // 1. Request generation
-      const result = await generateHeyGenVideo(script);
-
-      if (!result.success || !result.videoId) {
-        throw new Error(result.error || "영상 생성 요청 실패");
-      }
-
-      const videoId = result.videoId;
-      setProgressMessage("영상 처리 중... (약 2~5분 소요)");
-      toast.info("영상 생성이 시작되었습니다.");
-
-      // 2. Poll status
-      const checkStatus = async () => {
-        try {
-          const statusResult = await checkHeyGenVideoStatus(videoId);
-          
-          if (!statusResult.success) {
-            throw new Error(statusResult.error || "상태 확인 실패");
-          }
-
-          if (statusResult.status === "completed" && statusResult.videoUrl) {
-            setVideoUrl(statusResult.videoUrl);
-            setVideoType("HEYGEN");
-            setIsGeneratingVideo(false);
-            setProgressMessage("");
-            toast.success("내 아바타 영상이 생성되었습니다.");
-            
-            onVideoGenerated?.(statusResult.videoUrl, "HEYGEN");
-            return;
-          } else if (statusResult.status === "failed") {
-             setIsGeneratingVideo(false);
-             setProgressMessage("");
-             toast.error(statusResult.error || "영상 생성 실패");
-          } else {
-             // Still processing
-             setTimeout(checkStatus, 5000);
-          }
-        } catch (error) {
-           console.error("Polling status failed:", error);
-           toast.error("영상 상태 확인 중 오류가 발생했습니다.");
-           setIsGeneratingVideo(false);
-           setProgressMessage("");
+    
+    // Return a new Promise that resolves only when polling is done
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        // 1. Request generation
+        const result = await generateHeyGenVideo(script);
+  
+        if (!result.success || !result.videoId) {
+          throw new Error(result.error || "영상 생성 요청 실패");
         }
-      };
-
-      // Start polling
-      setTimeout(checkStatus, 5000);
-      
-      // Return a promise that resolves but keeps loading state true for polling
-      return new Promise<void>((resolve) => resolve());
-
-    } catch (error) {
-       throw error;
-    }
+  
+        const videoId = result.videoId;
+        setProgressMessage("영상 처리 중... (약 2~5분 소요)");
+        toast.info("영상 생성이 시작되었습니다.");
+  
+        // 2. Poll status
+        const checkStatus = async () => {
+          try {
+            const statusResult = await checkHeyGenVideoStatus(videoId);
+            
+            if (!statusResult.success) {
+              // If API check fails hard, stop
+              // But maybe transient error? Let's stop for now to be safe
+              reject(new Error(statusResult.error || "상태 확인 실패"));
+              return;
+            }
+  
+            if (statusResult.status === "completed" && statusResult.videoUrl) {
+              setVideoUrl(statusResult.videoUrl);
+              setVideoType("HEYGEN");
+              toast.success("내 아바타 영상이 생성되었습니다.");
+              
+              onVideoGenerated?.(statusResult.videoUrl, "HEYGEN");
+              resolve(); // Done!
+            } else if (statusResult.status === "failed") {
+               reject(new Error(statusResult.error || "영상 생성 실패"));
+            } else {
+               // Still processing ("pending" or "processing")
+               setTimeout(checkStatus, 5000);
+            }
+          } catch (error) {
+             console.error("Polling status failed:", error);
+             // Don't reject immediately on polling error, maybe retry? 
+             // For now, let's reject to avoid infinite loop on broken network
+             reject(error);
+          }
+        };
+  
+        // Start polling
+        setTimeout(checkStatus, 5000);
+  
+      } catch (error) {
+         reject(error);
+      }
+    });
   };
 
 
@@ -288,7 +288,7 @@ export function Step8VideoGeneration({
                  <User size={16} />
                  내 아바타
               </button>
-              <button
+              {/* <button
                 onClick={() => setActiveTab("VEO")}
                 disabled={isGeneratingVideo}
                 className={cn(
@@ -300,7 +300,7 @@ export function Step8VideoGeneration({
               >
                  <Sparkles size={16} />
                  AI 캐릭터 (Veo)
-              </button>
+              </button> */}
            </div>
 
            <div className="flex-1 flex flex-col items-center justify-center">
@@ -322,13 +322,13 @@ export function Step8VideoGeneration({
                        poster={thumbnailUrls}
                      />
                   </div>
-                  <Button 
+                  {/* <Button 
                      onClick={() => setVideoUrl(null)}
                      variant="outline"
                      className="w-full border-white/10 hover:bg-white/5 text-gray-400"
                   >
                      다른 버전 생성하기
-                  </Button>
+                  </Button> */}
                </div>
              ) : (
                <div className="text-center space-y-6 max-w-sm animate-fade-in">
