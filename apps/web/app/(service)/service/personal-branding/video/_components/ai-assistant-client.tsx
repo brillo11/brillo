@@ -397,24 +397,6 @@ export function AIAssistantClient({
     }
   };
 
-  const handleShortsTitlesGenerate = async () => {
-    if (!currentSessionId) return;
-
-    setIsShortsTitlesLoading(true);
-
-    try {
-      const response = await sendShortsTitlesResponses(currentSessionId);
-      const updates = { shortsTitlesResponses: response, step: "COMPLETE" };
-      await saveSessionData(updates);
-      toast.success("쇼츠 제목이 생성되었습니다.");
-    } catch (error) {
-      console.error("Failed to generate shorts titles:", error);
-      toast.error("쇼츠 제목 생성에 실패했습니다.");
-    } finally {
-      setIsShortsTitlesLoading(false);
-    }
-  };
-
   const handleChatSubmit = async () => {
     if (!chatInput.trim() || !currentSessionId) return;
 
@@ -526,7 +508,7 @@ export function AIAssistantClient({
                 { step: 5, label: "Design" },
                 { step: 6, label: "Script" },
                 { step: 7, label: "Metadata" },
-                { step: 8, label: "Video" },
+                { step: 8, label: "Final" },
               ].map((s, i) => (
                 <div
                   key={s.step}

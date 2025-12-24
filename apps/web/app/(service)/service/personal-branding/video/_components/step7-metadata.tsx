@@ -69,7 +69,7 @@ export function Step7Metadata({
   return (
     <div className="space-y-6 animate-fade-in max-w-5xl mx-auto">
       <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-        <Hash className="text-[#33DB98]" /> Metadata Optimization
+        <Hash className="text-[#33DB98]" /> 메타데이터 최적화
       </h2>
 
       <div className="grid gap-6">
@@ -78,7 +78,7 @@ export function Step7Metadata({
           <div className="bg-white/5 p-6 rounded-2xl border border-white/10 shadow-sm hover:border-[#33DB98]/50 transition-colors">
             <div className="flex justify-between mb-4 items-center">
               <span className="text-sm font-bold text-gray-400 uppercase tracking-wider">
-                Description
+                설명
               </span>
               <button
                 onClick={() =>
@@ -104,7 +104,7 @@ export function Step7Metadata({
               <div className="bg-white/5 p-6 rounded-2xl border border-white/10 shadow-sm hover:border-[#33DB98]/50 transition-colors">
                 <div className="flex justify-between mb-4 items-center">
                   <span className="text-sm font-bold text-gray-400 uppercase tracking-wider">
-                    Timestamps
+                    타임스탬프
                   </span>
                   <button
                     onClick={() => {
@@ -138,7 +138,7 @@ export function Step7Metadata({
                 <div className="bg-white/5 p-6 rounded-2xl border border-white/10 shadow-sm hover:border-[#33DB98]/50 transition-colors">
                   <div className="flex justify-between mb-4 items-center">
                     <span className="text-sm font-bold text-gray-400 uppercase tracking-wider">
-                      Hashtags
+                      해시태그
                     </span>
                     <button
                       onClick={() => {
@@ -169,7 +169,7 @@ export function Step7Metadata({
               <div className="bg-white/5 p-6 rounded-2xl border border-white/10 shadow-sm hover:border-[#33DB98]/50 transition-colors">
                 <div className="flex justify-between mb-4 items-center">
                   <span className="text-sm font-bold text-gray-400 uppercase tracking-wider">
-                    Tags
+                    태그
                   </span>
                   <button
                     onClick={() => {
@@ -207,11 +207,11 @@ export function Step7Metadata({
             {isLoading ? (
               <>
                 <Loader2 className="animate-spin" size={20} />
-                Loading...
+                로딩 중...
               </>
             ) : (
               <>
-                Next Step
+                최종 확인
                 <ChevronRight size={20} />
               </>
             )}

@@ -108,7 +108,7 @@ export function Step5ThumbGen({
               <div className="absolute inset-0 bg-black/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center gap-3">
                 <Loader2 className="animate-spin text-[#33DB98]" size={48} />
                 <p className="font-medium text-gray-400">
-                  Refining thumbnail...
+                  이미지 수정 중...
                 </p>
               </div>
             )}
@@ -120,7 +120,7 @@ export function Step5ThumbGen({
                 className="w-full aspect-video object-cover"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-black/70 p-3 text-white text-center text-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                Preview Mode
+                미리보기
               </div>
             </div>
             <p className="mt-4 text-sm text-gray-500">
@@ -321,11 +321,11 @@ export function Step5ThumbGen({
               {isLoading ? (
                 <>
                   <Loader2 className="animate-spin" size={18} />
-                  <span>Generating Script...</span>
+                  <span>대본 생성 중...</span>
                 </>
               ) : (
                 <>
-                  <span>Confirm & Generate Script</span>
+                  <span>대본 생성</span>
                   <Send size={18} />
                 </>
               )}
