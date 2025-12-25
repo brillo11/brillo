@@ -253,7 +253,7 @@ export async function sendThumbnailGuideResponses(
     model: "gpt-5.1",
     input: `썸네일 가이드 만들어줘. ${selectedTitleIndex + 1}번`,
     conversation: conversationId,
-    tools: tools,
+    // tools: tools,
     text: {
       format: thumbnailGuideTextFormat,
     },
