@@ -585,7 +585,7 @@ export function AIAssistantClient({
             onFixThumbnail={handleFixThumbnail}
             isLoading={isScriptLoading}
             referenceScript={referenceScript}
-            onReferenceScriptChange={setReferenceScript}
+            // onReferenceScriptChange={setReferenceScript}
           />
         )}
         {currentStep === 6 && (
