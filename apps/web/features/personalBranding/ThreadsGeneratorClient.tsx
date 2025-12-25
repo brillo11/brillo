@@ -13,6 +13,9 @@ import {
   Zap,
   Users,
   HelpCircle,
+  Heart,
+  Repeat,
+  Send,
 } from "lucide-react";
 import {
   generateThreadsContent,
@@ -381,18 +384,30 @@ export function ThreadsGeneratorClient({
                       </p>
 
                       {/* Interaction Mock */}
-                      <div className="flex items-center gap-4 text-gray-500 pt-1">
-                        <div className="hover:text-red-500 cursor-pointer transition-colors">
-                          <HelpCircle size={16} className="rotate-180" />
+                      <div className="flex items-center gap-4 pt-2">
+                        <div className="group/icon flex items-center gap-1 cursor-pointer">
+                          <Heart
+                            size={20}
+                            className="text-gray-500 group-hover/icon:text-red-500 transition-colors"
+                          />
                         </div>
-                        <div className="hover:text-gray-300 cursor-pointer transition-colors">
-                          <MessageCircle size={16} />
+                        <div className="group/icon flex items-center gap-1 cursor-pointer">
+                          <MessageCircle
+                            size={20}
+                            className="text-gray-500 group-hover/icon:text-white transition-colors"
+                          />
                         </div>
-                        <div className="hover:text-gray-300 cursor-pointer transition-colors">
-                          <Zap size={16} className="rotate-45" />
+                        <div className="group/icon flex items-center gap-1 cursor-pointer">
+                          <Repeat
+                            size={20}
+                            className="text-gray-500 group-hover/icon:text-white transition-colors"
+                          />
                         </div>
-                        <div className="hover:text-gray-300 cursor-pointer transition-colors">
-                          <Sparkles size={16} />
+                        <div className="group/icon flex items-center gap-1 cursor-pointer">
+                          <Send
+                            size={20}
+                            className="text-gray-500 group-hover/icon:text-white transition-colors"
+                          />
                         </div>
                       </div>
                     </div>
