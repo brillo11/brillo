@@ -194,7 +194,7 @@ export async function POST(req: NextRequest) {
 }
 
 function constructPrompt(formData: any): string {
-  const { writingType, branding, contentPlanning, options, details, photo } =
+  const { brandingMode, branding, contentPlanning, options, details, photo } =
     formData;
 
     return `
@@ -205,17 +205,10 @@ function constructPrompt(formData: any): string {
 # 작성할 글 정보
 
 ## 1. 글쓰기 전략 (가장 중요)
-- **유형:** ${
-      writingType === "CONVERSION"
-        ? "전환용 (문의/구독 유도 중심)"
-        : writingType === "BALANCED"
-          ? "공감/경험형 (경험 공유 및 신뢰 구축 중심)"
-          : "정보성 (지식 공유 및 안내 중심)"
-    }
 - **브랜딩 노출 강도:** ${
-      options.brandingIntensity === 'MINIMAL' 
+      brandingMode === 'MINIMAL' 
         ? '최소 (정보 전달에 집중)' 
-        : options.brandingIntensity === 'STRONG' 
+        : brandingMode === 'STRONG' 
           ? '강함 (작성자의 전문성 전면 배치)' 
           : '보통 (경험과 정보의 조화)'
     }
@@ -285,7 +278,7 @@ ${details.styleText ? `- **참고 스타일 가이드:**\n${details.styleText}` 
 4. **콘텐츠 구조:**
    - **도입부**: 독자의 문제 상황에 공감하며 시작하세요.
    - **본문**: 가독성을 위해 소제목(h2, h3)을 활용하세요.
-   - **종결부**: 내용을 요약하고, ${writingType === 'CONVERSION' ? '강력한 행동 유도(CTA)를 포함하세요.' : '독자에게 응원의 메시지를 던지며 마무리하세요.'}
+   - **종결부**: 내용을 요약하고, ${brandingMode === 'STRONG' ? '강력한 행동 유도(CTA)를 포함하세요.' : '독자에게 응원의 메시지를 던지며 마무리하세요.'}
 
 5. **⚠️ HTML 출력 형식 (중요!)**
    - ❌ **절대 포함하지 말 것:** \`<!DOCTYPE>\`, \`<html>\`, \`<head>\`, \`<style>\`, \`<body>\` 태그

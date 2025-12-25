@@ -9,7 +9,6 @@ const MODES = [
     id: "MINIMAL",
     label: "최소",
     subLabel: "정보 집중",
-    writingType: "INFORMATIONAL",
     icon: <Info size={16} />,
     description: "독자가 필요한 정보를 빠르고 정확하게 전달하는 데 집중합니다.",
     effects: ["빠른 정보 습득", "객관적 신뢰도 확보", "거부감 없는 정보 전달"],
@@ -18,7 +17,6 @@ const MODES = [
     id: "BALANCED",
     label: "보통",
     subLabel: "경험 공유",
-    writingType: "BALANCED",
     icon: <Sparkles size={16} />,
     description: "정보와 함께 작성자의 개인적인 경험과 통찰을 적절히 섞습니다.",
     effects: [
@@ -31,7 +29,6 @@ const MODES = [
     id: "STRONG",
     label: "강함",
     subLabel: "전문성 강조",
-    writingType: "CONVERSION",
     icon: <Target size={16} />,
     description:
       "작성자의 전문성, 성과, 철학을 강력하게 드러내 가치를 입증합니다.",
@@ -41,19 +38,14 @@ const MODES = [
 
 const WritingTypeSelector: React.FC = () => {
   const { formData, updateFormData } = useBlogForm();
-  const currentIntensity = formData.options.brandingIntensity || "BALANCED";
+  const currentIntensity = formData.brandingMode || "BALANCED";
 
   // MODES[1]을 기본값으로 명시하여 undefined 방지
   const selectedMode = MODES.find((m) => m.id === currentIntensity) ?? MODES[1];
 
   const handleModeChange = (mode: (typeof MODES)[number]) => {
-    // 1. 브랜딩 강도 업데이트 (함수형 업데이트 사용으로 데이터 정합성 보장)
-    updateFormData("options", (prev: any) => ({
-      ...prev,
-      brandingIntensity: mode.id,
-    }));
-    // 2. 글쓰기 유형 자동 매칭 업데이트
-    updateFormData("writingType", mode.writingType);
+    // 브랜딩 모드 업데이트
+    updateFormData("brandingMode", mode.id);
   };
 
   return (
@@ -86,9 +78,6 @@ const WritingTypeSelector: React.FC = () => {
             <div className="text-[#33DB98]">{selectedMode.icon}</div>
             <span className="text-sm font-bold text-white">
               {selectedMode.subLabel}
-            </span>
-            <span className="text-[10px] bg-[#33DB98]/10 text-[#33DB98] px-1.5 py-0.5 rounded border border-[#33DB98]/20 font-black">
-              {selectedMode.writingType}
             </span>
           </div>
 

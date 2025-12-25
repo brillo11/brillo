@@ -16,7 +16,7 @@ import { toast } from "sonner";
 
 // TypeScript interfaces for form data
 export interface BlogFormData {
-  writingType: "INFORMATIONAL" | "BALANCED" | "CONVERSION";
+  brandingMode: "MINIMAL" | "BALANCED" | "STRONG";
   branding: {
     specialties: string[];
     brandingText: string;
@@ -33,7 +33,6 @@ export interface BlogFormData {
     generateImageWithAi: boolean;
     disclaimerEnabled: boolean;
     styleReference: string;
-    brandingIntensity: "MINIMAL" | "BALANCED" | "STRONG";
   };
   details: {
     length: string;
@@ -75,7 +74,7 @@ interface BlogFormContextType {
 
 // Default form data
 const defaultFormData: BlogFormData = {
-  writingType: "CONVERSION",
+  brandingMode: "BALANCED",
   branding: {
     specialties: [],
     brandingText: `[자기소개 및 브랜드 슬로건]
@@ -106,7 +105,6 @@ const defaultFormData: BlogFormData = {
     generateImageWithAi: false,
     disclaimerEnabled: false,
     styleReference: "친절형",
-    brandingIntensity: "BALANCED",
   },
   details: {
     length: "1000자",
@@ -173,6 +171,7 @@ export const BlogFormProvider: React.FC<{ children: ReactNode }> = ({
     const mergedData = {
       ...defaultFormData,
       ...loadedData,
+      brandingMode: loadedData.brandingMode || defaultFormData.brandingMode,
       branding: { ...defaultFormData.branding, ...loadedData.branding },
       contentPlanning: {
         ...defaultFormData.contentPlanning,

@@ -118,11 +118,11 @@ const TemplateManager: React.FC = () => {
                         </div>
                         <div className="mt-2 flex flex-wrap gap-1">
                           <span className="bg-white/5 text-gray-400 px-1.5 py-0.5 rounded text-[10px]">
-                            {formData?.writingType === "CONVERSION"
-                              ? "전환용"
-                              : formData?.writingType === "BALANCED"
-                                ? "보통"
-                                : "정보성"}
+                            {formData?.brandingMode === "STRONG"
+                              ? "강함"
+                              : formData?.brandingMode === "MINIMAL"
+                                ? "최소"
+                                : "보통"}
                           </span>
                         </div>
                       </div>
