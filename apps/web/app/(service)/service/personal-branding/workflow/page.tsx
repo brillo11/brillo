@@ -11,6 +11,7 @@ import {
   Loader2,
   Play,
   Instagram,
+  ArrowLeft,
 } from "lucide-react";
 import {
   BlogFormProvider,
@@ -18,6 +19,15 @@ import {
 } from "../blog/__components/BlogFormContext";
 import { BlogAiPageContent } from "../blog/__components/BlogAiPageClient";
 import { AIAssistantClient } from "../video/_components/ai-assistant-client";
+import {
+  ThreadsGeneratorClient,
+  ThreadsGeneratorState,
+} from "@/features/personalBranding/ThreadsGeneratorClient";
+import {
+  InstagramGeneratorClient,
+  InstagramGeneratorState,
+} from "@/features/personalBranding/InstagramGeneratorClient";
+import { ThreadsIcon } from "@/shared/icons/ThreadsIcon";
 
 // Mock Services
 const generateBlogPost = async (topic: string) => {
@@ -25,35 +35,6 @@ const generateBlogPost = async (topic: string) => {
     setTimeout(() => {
       resolve(
         `# Introduction to ${topic}\n\nThis is a generated blog post content about ${topic}.\n\n## Key Takeaway\nThis is the main point of the article.\n\n## Conclusion\nWrap up of the concept.`,
-      );
-    }, 1500);
-  });
-};
-
-const generateThreadFromBlog = async (content: string) => {
-  return new Promise<string[]>((resolve) => {
-    setTimeout(() => {
-      resolve([
-        "🧵 1/5 Here is a thread based on the blog post!",
-        "2/5 The first key point is fascinating.",
-        "3/5 Don't forget about this second aspect.",
-        "4/5 This changes everything about the topic.",
-        "5/5 Conclusion: Start today! #Growth",
-      ]);
-    }, 1500);
-  });
-};
-
-const generateInstagramPlan = async (tweets: string[]) => {
-  return new Promise<string>((resolve) => {
-    setTimeout(() => {
-      resolve(
-        "📸 [Instagram Carousel Plan]\n\n" +
-          "Slide 1: Hook - Catchy Title\n" +
-          "Slide 2: Context - Why this matters\n" +
-          "Slide 3: Insight 1 - Detailed point\n" +
-          "Slide 4: Insight 2 - Another point\n" +
-          "Slide 5: Summary & CTA - Save this post!",
       );
     }, 1500);
   });
@@ -95,6 +76,43 @@ function BrandingWorkflowContent() {
   const [blogContent, setBlogContent] = useState("");
   const [threadTweets, setThreadTweets] = useState<string[]>([]);
   const [instagramContent, setInstagramContent] = useState("");
+
+  // Persisted Step Data
+  const [threadsData, setThreadsData] = useState<ThreadsGeneratorState>({
+    topic: "",
+    targetAudience: "",
+    insight: "",
+    selectedStyle: null,
+    selectedTone: "AUTO",
+    posts: [],
+  });
+
+  const [instagramData, setInstagramData] = useState<InstagramGeneratorState>({
+    topic: "",
+    targetAudience: "",
+    keyInsights: "",
+    selectedStyle: null,
+    pages: [],
+    aspectRatio: "1:1",
+  });
+
+  // Keep internal state in sync with step 1 inputs if they are empty
+  // effective "flow down" of initial data
+  const syncInitialData = () => {
+    setThreadsData((prev) => ({
+      ...prev,
+      topic: prev.topic || topic,
+      targetAudience: prev.targetAudience || targetAudience,
+      insight: prev.insight || insight,
+    }));
+    setInstagramData((prev) => ({
+      ...prev,
+      topic: prev.topic || topic,
+      targetAudience: prev.targetAudience || targetAudience,
+      keyInsights: prev.keyInsights || insight,
+    }));
+  };
+
   const [videoAssets, setVideoAssets] = useState<{
     script: string;
     visualPrompt: string;
@@ -111,30 +129,18 @@ function BrandingWorkflowContent() {
       keyMessage: insight,
     }));
 
+    syncInitialData();
+
     // 화면 전환 (이제 실제 블로그 생성 컴포넌트가 Step 2에 표시됨)
     setCurrentStep(2);
   };
 
   const handleStep2Submit = async () => {
-    setIsLoading(true);
-    try {
-      const result = await generateThreadFromBlog(blogContent);
-      setThreadTweets(result);
-      setCurrentStep(3);
-    } finally {
-      setIsLoading(false);
-    }
+    setCurrentStep(3);
   };
 
   const handleStep3Submit = async () => {
-    setIsLoading(true);
-    try {
-      const result = await generateInstagramPlan(threadTweets);
-      setInstagramContent(result);
-      setCurrentStep(4);
-    } finally {
-      setIsLoading(false);
-    }
+    setCurrentStep(4);
   };
 
   const handleStep4Submit = async () => {
@@ -262,13 +268,21 @@ function BrandingWorkflowContent() {
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
                 <FileText className="text-[#33DB98]" /> 블로그 포스트 생성
               </h2>
-              <button
-                onClick={handleStep2Submit}
-                className="text-sm font-bold text-black bg-[#33DB98] px-6 py-2.5 rounded-xl hover:bg-[#2bb880] transition flex items-center gap-2 shadow-lg shadow-[#33DB98]/20"
-              >
-                블로그 확정 & 쓰레드 생성으로 이동
-                <ArrowRight size={16} />
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setCurrentStep(1)}
+                  className="p-2 rounded-xl border border-white/10 hover:bg-white/5 text-gray-400 hover:text-white transition"
+                >
+                  <ArrowLeft size={20} />
+                </button>
+                <button
+                  onClick={handleStep2Submit}
+                  className="text-sm font-bold text-black bg-[#33DB98] px-6 py-2.5 rounded-xl hover:bg-[#2bb880] transition flex items-center gap-2 shadow-lg shadow-[#33DB98]/20"
+                >
+                  블로그 확정 & 쓰레드 생성으로 이동
+                  <ArrowRight size={16} />
+                </button>
+              </div>
             </div>
             <div className="flex-1 overflow-y-auto custom-scrollbar -mx-8 -mb-8 px-4 pb-8">
               <BlogAiPageContent hideHeader={true} />
@@ -280,38 +294,33 @@ function BrandingWorkflowContent() {
         {currentStep === 3 && (
           <div className="h-full flex flex-col">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-white">
-                Review Twitter Thread
+              <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                <ThreadsIcon className="text-[#33DB98]" /> 쓰레드 생성
               </h2>
-              <button
-                onClick={handleStep3Submit}
-                className="text-sm font-bold text-black bg-[#33DB98] px-4 py-2 rounded-lg hover:bg-[#2bb880] transition flex items-center gap-2"
-              >
-                Generate Video Assets <ArrowRight size={16} />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto space-y-4 pr-2">
-              {threadTweets.map((tweet, index) => (
-                <div
-                  key={index}
-                  className="bg-vzx-bg border border-white/5 p-4 rounded-xl flex gap-4"
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setCurrentStep(2)}
+                  className="p-2 rounded-xl border border-white/10 hover:bg-white/5 text-gray-400 hover:text-white transition"
                 >
-                  <div className="w-10 h-10 rounded-full bg-gray-700 flex-shrink-0" />
-                  <div className="flex-1">
-                    <div className="flex justify-between mb-1">
-                      <span className="font-bold text-white">
-                        VZX Instructor
-                      </span>
-                      <span className="text-gray-500 text-xs">
-                        {index + 1}/{threadTweets.length}
-                      </span>
-                    </div>
-                    <p className="text-gray-300 text-sm whitespace-pre-wrap">
-                      {tweet}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                  <ArrowLeft size={20} />
+                </button>
+                <button
+                  onClick={handleStep3Submit}
+                  className="text-sm font-bold text-black bg-[#33DB98] px-4 py-2 rounded-lg hover:bg-[#2bb880] transition flex items-center gap-2"
+                >
+                  인스타그램 캐러셀 생성 <ArrowRight size={16} />
+                </button>
+              </div>
+            </div>
+            <div className="flex-1 overflow-y-auto custom-scrollbar -mx-8 -mb-8 px-4 pb-8">
+              <ThreadsGeneratorClient
+                initialTopic={topic}
+                initialTargetAudience={targetAudience}
+                initialInsight={insight}
+                initialData={threadsData}
+                onDataChange={setThreadsData}
+                hideHeader={true}
+              />
             </div>
           </div>
         )}
@@ -320,21 +329,34 @@ function BrandingWorkflowContent() {
         {currentStep === 4 && (
           <div className="h-full flex flex-col">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-white">
-                Review Instagram Plan
+              <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                <Instagram className="text-[#33DB98]" /> 캐러셀 생성
               </h2>
-              <button
-                onClick={handleStep4Submit}
-                className="text-sm font-bold text-black bg-[#33DB98] px-4 py-2 rounded-lg hover:bg-[#2bb880] transition flex items-center gap-2"
-              >
-                Generate Video Assets <ArrowRight size={16} />
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setCurrentStep(3)}
+                  className="p-2 rounded-xl border border-white/10 hover:bg-white/5 text-gray-400 hover:text-white transition"
+                >
+                  <ArrowLeft size={20} />
+                </button>
+                <button
+                  onClick={handleStep4Submit}
+                  className="text-sm font-bold text-black bg-[#33DB98] px-4 py-2 rounded-lg hover:bg-[#2bb880] transition flex items-center gap-2"
+                >
+                  영상 생성 <ArrowRight size={16} />
+                </button>
+              </div>
             </div>
-            <textarea
-              value={instagramContent}
-              onChange={(e) => setInstagramContent(e.target.value)}
-              className="flex-1 w-full bg-vzx-bg border border-white/10 rounded-xl p-6 text-gray-300 font-mono text-sm leading-relaxed resize-none focus:border-[#33DB98] outline-none min-h-[400px]"
-            />
+            <div className="flex-1 overflow-y-auto custom-scrollbar -mx-8 -mb-8 px-4 pb-8">
+              <InstagramGeneratorClient
+                initialTopic={topic}
+                initialTargetAudience={targetAudience}
+                initialInsight={insight}
+                initialData={instagramData}
+                onDataChange={setInstagramData}
+                hideHeader={true}
+              />
+            </div>
           </div>
         )}
 
@@ -345,6 +367,14 @@ function BrandingWorkflowContent() {
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
                 <Video className="text-[#33DB98]" /> 영상 생성
               </h2>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setCurrentStep(4)}
+                  className="p-2 rounded-xl border border-white/10 hover:bg-white/5 text-gray-400 hover:text-white transition"
+                >
+                  <ArrowLeft size={20} />
+                </button>
+              </div>
             </div>
             {/* 
               Wrap AIAssistantClient in a container similar to Step 2 
