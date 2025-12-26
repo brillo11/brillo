@@ -1,18 +1,16 @@
 "use client";
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@repo/ui/components/tooltip";
+
 import {
   Loader2,
   Sparkles,
   Check,
   ChevronRight,
-  HelpCircle,
   Play,
+  BookOpen,
+  MessageCircle,
+  Star,
+  Zap,
 } from "lucide-react";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
@@ -25,30 +23,35 @@ const VIDEO_STYLES: {
   title: string;
   desc: string;
   detail: string;
+  icon: any;
 }[] = [
   {
     id: "INFO",
     title: "정보 전달 (Info)",
     desc: "명확한 정보와 노하우 전달",
     detail: "How-to, 꿀팁, 강의식 구성. 신뢰감을 주는 구조.",
+    icon: BookOpen,
   },
   {
     id: "STORY",
     title: "스토리텔링 (Story)",
     desc: "경험과 감정을 공유하는 서사",
     detail: "개인의 경험, 실패/성공담, 브이로그. 공감을 유도하는 구조.",
+    icon: MessageCircle,
   },
   {
     id: "REVIEW",
     title: "리뷰/분석 (Review)",
     desc: "장단점 분석과 솔직한 평가",
     detail: "제품/서비스/트렌드 분석. 객관적이고 날카로운 시각.",
+    icon: Star,
   },
   {
     id: "MOTIVATION",
     title: "동기부여 (Motivation)",
     desc: "행동을 이끌어내는 설득",
     detail: "마인드셋, 자기계발. 감정을 고무시키는 구조.",
+    icon: Zap,
   },
 ];
 
@@ -154,11 +157,13 @@ export function Step1Planning({
               스타일 선택 <span className="text-red-400">*</span>
             </Label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <TooltipProvider>
-                {VIDEO_STYLES.map((style) => (
-                  <div
-                    key={style.id}
-                    className={`
+              {VIDEO_STYLES.map((style) => (
+                <div
+                  key={style.id}
+                  onClick={() =>
+                    !isGenerating && !isNextLoading && onStyleChange(style.id)
+                  }
+                  className={`
                       relative cursor-pointer transition-all duration-300 border rounded-2xl p-4
                       ${
                         selectedStyle === style.id
@@ -166,41 +171,38 @@ export function Step1Planning({
                           : "bg-vzx-card border-white/5 hover:border-[#33DB98]/50 text-gray-400 hover:text-white"
                       }
                     `}
-                    onClick={() =>
-                      !isGenerating && !isNextLoading && onStyleChange(style.id)
-                    }
-                  >
-                    <div className="flex items-center justify-between font-medium mb-1">
-                      <span
-                        className={
-                          selectedStyle === style.id
-                            ? "text-[#33DB98]"
-                            : "text-white"
-                        }
-                      >
-                        {style.title}
-                      </span>
-
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div
-                            className="p-1 hover:bg-white/10 rounded-full transition-colors"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                            }}
-                          >
-                            <HelpCircle className="w-4 h-4 text-gray-500 hover:text-[#33DB98]" />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent className="bg-vzx-card border-white/10 text-gray-300">
-                          <p>{style.detail}</p>
-                        </TooltipContent>
-                      </Tooltip>
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div
+                      className={`p-2 rounded-lg transition-colors ${
+                        selectedStyle === style.id
+                          ? "bg-[#33DB98] text-black"
+                          : "bg-white/5 text-gray-400"
+                      }`}
+                    >
+                      <style.icon size={20} />
                     </div>
-                    <p className="text-xs text-gray-500">{style.desc}</p>
+                    {selectedStyle === style.id && (
+                      <div className="w-2 h-2 rounded-full bg-[#33DB98] animate-pulse" />
+                    )}
                   </div>
-                ))}
-              </TooltipProvider>
+                  <h3
+                    className={`font-bold mb-1 transition-colors ${
+                      selectedStyle === style.id
+                        ? "text-[#33DB98]"
+                        : "text-gray-200"
+                    }`}
+                  >
+                    {style.title}
+                  </h3>
+                  <p className="text-xs text-gray-500 leading-relaxed font-medium mb-1">
+                    {style.desc}
+                  </p>
+                  <p className="text-[10px] text-gray-500 leading-tight border-t border-white/5 pt-2 mt-2">
+                    {style.detail}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
 

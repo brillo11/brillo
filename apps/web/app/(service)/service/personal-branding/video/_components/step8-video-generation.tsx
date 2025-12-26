@@ -532,7 +532,7 @@ export function Step8VideoGeneration({
                       </div>
                       <p className="text-sm text-gray-400">
                         {activeTab === "HEYGEN"
-                          ? "아바타가 읽을 대본을 수정할 수 있습니다."
+                          ? "아바타가 읽을 대본을 수정할 수 있습니다. (Tip: '...' 또는 '-' 입력 시 0.5초 쉬어갑니다)"
                           : "캐릭터가 연기할 대본을 수정할 수 있습니다."}
                       </p>
                       <textarea
