@@ -33,6 +33,13 @@ import {
   Square,
   Sparkles,
   Download,
+  Magnet,
+  Target,
+  Siren,
+  ListOrdered,
+  Hammer,
+  BookOpen,
+  AlertOctagon,
 } from "lucide-react";
 
 const STYLES: {
@@ -40,6 +47,11 @@ const STYLES: {
   title: string;
   desc: string;
   pages: string;
+  id: InstagramStyle;
+  title: string;
+  desc: string;
+  pages: string;
+  icon: any;
   detail: string;
 }[] = [
   {
@@ -47,6 +59,7 @@ const STYLES: {
     title: "리텐션",
     desc: "끝까지 읽게 만드는 몰입형 구조",
     pages: "8 페이지",
+    icon: Magnet,
     detail: "훅(1p) -> 공감 유도(2p) -> 핵심 정보(3~6p) -> 요약(7p) -> CTA(8p)",
   },
   {
@@ -54,6 +67,7 @@ const STYLES: {
     title: "AIDA",
     desc: "논리적인 설득과 상세 정보 전달",
     pages: "8 페이지",
+    icon: Target,
     detail: "Attention(1p) -> Interest(2~3p) -> Desire(4~6p) -> Action(7~8p)",
   },
   {
@@ -61,6 +75,7 @@ const STYLES: {
     title: "PAS",
     desc: "문제 제기와 해결책 제시 (광고성)",
     pages: "5 페이지",
+    icon: Siren,
     detail: "Problem(1p) -> Agitation(2~3p) -> Solution(4~5p)",
   },
   {
@@ -68,6 +83,7 @@ const STYLES: {
     title: "BAB",
     desc: "꿈과 희망, 변화를 보여주는 구조",
     pages: "6 페이지",
+    icon: Sparkles,
     detail: "Before(1~2p) -> After(3~4p) -> Bridge(5~6p)",
   },
   {
@@ -75,6 +91,7 @@ const STYLES: {
     title: "리스트형",
     desc: "저장 부르는 꿀팁 모음",
     pages: "8 페이지",
+    icon: ListOrdered,
     detail: "인트로(1p) -> 팁 나열(2~6p) -> 요약 및 저장 유도(7~8p)",
   },
   {
@@ -82,6 +99,7 @@ const STYLES: {
     title: "하우투",
     desc: "따라만 하면 완성되는 가이드",
     pages: "8 페이지",
+    icon: Hammer,
     detail:
       "결과물(1p) -> 준비물(2p) -> 단계별 과정(3~6p) -> 완성 및 CTA(7~8p)",
   },
@@ -90,6 +108,7 @@ const STYLES: {
     title: "스토리텔링",
     desc: "몰입감 있는 경험담 / 썰",
     pages: "8 페이지",
+    icon: BookOpen,
     detail: "배경(1p) -> 위기(2p) -> 갈등(3~4p) -> 해결(5~6p) -> 교훈(7~8p)",
   },
   {
@@ -97,6 +116,7 @@ const STYLES: {
     title: "실수 모음",
     desc: "이것만 안 해도 절반은 성공!",
     pages: "8 페이지",
+    icon: AlertOctagon,
     detail:
       "하지마라(1p) -> 실수1(2p) -> 실수2(3p) -> 실수3(4p) -> 해결책(5~6p) -> 요약(7~8p)",
   },
@@ -449,6 +469,20 @@ export function InstagramGeneratorClient({
                     `}
                     onClick={() => !isPending && setSelectedStyle(style.id)}
                   >
+                    <div className="flex items-start justify-between mb-2">
+                      <div
+                        className={`p-2 rounded-lg transition-colors ${
+                          selectedStyle === style.id
+                            ? "bg-[var(--vzx-accent)] text-black"
+                            : "bg-white/5 text-gray-400"
+                        }`}
+                      >
+                        <style.icon size={20} />
+                      </div>
+                      {selectedStyle === style.id && (
+                        <div className="w-2 h-2 rounded-full bg-[var(--vzx-accent)] animate-pulse" />
+                      )}
+                    </div>
                     <div className="flex items-center justify-between font-medium mb-1">
                       <span
                         className={
@@ -459,25 +493,12 @@ export function InstagramGeneratorClient({
                       >
                         {style.title}
                       </span>
-
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div
-                            className="p-1 hover:bg-white/10 rounded-full transition-colors"
-                            onClick={(e) => {
-                              e.stopPropagation(); // Prevent card selection when clicking tooltip
-                            }}
-                          >
-                            <HelpCircle className="w-4 h-4 text-gray-500 hover:text-[var(--vzx-accent)]" />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent className="bg-vzx-card border-white/10 text-gray-300">
-                          <p>{style.detail}</p>
-                        </TooltipContent>
-                      </Tooltip>
                     </div>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 mb-2">
                       {style.desc} • {style.pages}
+                    </p>
+                    <p className="text-[10px] text-gray-500 leading-tight border-t border-white/5 pt-2 mt-2">
+                      {style.detail}
                     </p>
                   </div>
                 ))}
