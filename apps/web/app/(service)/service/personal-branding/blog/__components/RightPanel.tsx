@@ -60,7 +60,7 @@ const RightPanel: React.FC<RightPanelProps> = ({
   isRefining = false,
 }) => {
   const { formData, templates, loadTemplate, deleteTemplate } = useBlogForm();
-  const [isRecentOpen, setIsRecentOpen] = useState(true);
+  const [isRecentOpen, setIsRecentOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [refineRequest, setRefineRequest] = useState("");
 
