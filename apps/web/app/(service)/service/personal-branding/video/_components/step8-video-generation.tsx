@@ -3,6 +3,8 @@ import { Loader2, PlayCircle, Video as VideoIcon, CheckCircle2, User, Sparkles, 
 import { Button } from "@repo/ui/components/button";
 import { toast } from "sonner";
 import { cn } from "@repo/ui/lib/utils";
+import { convertVideoToShorts } from "@/serverActions/ai-assistant/video-processing.actions";
+
 import { generateHeyGenVideo, checkHeyGenVideoStatus } from "@/serverActions/ai-assistant/heygen.actions";
 import { generateAvatarIntroVideo } from "@/serverActions/ai-assistant/veo.actions";
 
@@ -33,7 +35,38 @@ export function Step8VideoGeneration({
   const [videoType, setVideoType] = useState<"VEO" | "HEYGEN" | null>(initialVideoType || null);
   const [progressMessage, setProgressMessage] = useState<string>("");
   const [introScript, setIntroScript] = useState<string>("");
+  const [aspectRatio, setAspectRatio] = useState<"16:9" | "9:16">("16:9");
+  const [isConverting, setIsConverting] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handleConvertToShorts = async () => {
+    if (!videoUrl) return;
+    
+    setIsConverting(true);
+    toast.info("숏폼으로 변환 중입니다... (약 1분 소요)");
+
+    try {
+      const result = await convertVideoToShorts(videoUrl);
+      
+      if (result.success && result.videoUrl) {
+        toast.success("변환이 완료되었습니다. 다운로드를 시작합니다.");
+        // Trigger download
+        const link = document.createElement('a');
+        link.href = result.videoUrl;
+        link.download = `shorts-${Date.now()}.mp4`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        throw new Error(result.error || "변환 실패");
+      }
+    } catch (error) {
+      console.error("Conversion failed:", error);
+      toast.error("영상 변환에 실패했습니다.");
+    } finally {
+      setIsConverting(false);
+    }
+  };
 
   // Initial load
   useEffect(() => {
@@ -65,7 +98,7 @@ export function Step8VideoGeneration({
 
     try {
       if (activeTab === "HEYGEN") {
-        await handleHeyGenGeneration(finalScript);
+        await handleHeyGenGeneration(finalScript, aspectRatio);
       } else {
         await handleVeoGeneration(finalScript);
       }
@@ -96,14 +129,14 @@ export function Step8VideoGeneration({
     }
   };
 
-  const handleHeyGenGeneration = async (script: string) => {
+  const handleHeyGenGeneration = async (script: string, ratio: "16:9" | "9:16") => {
     setProgressMessage("영상 생성 요청 중...");
     
     // Return a new Promise that resolves only when polling is done
     return new Promise<void>(async (resolve, reject) => {
       try {
         // 1. Request generation
-        const result = await generateHeyGenVideo(script);
+        const result = await generateHeyGenVideo(script, ratio);
   
         if (!result.success || !result.videoId) {
           throw new Error(result.error || "영상 생성 요청 실패");
@@ -348,13 +381,35 @@ export function Step8VideoGeneration({
                         </select>
                      </div>
                   </div>
-                  <Button 
-                     onClick={() => setVideoUrl(null)}
-                     variant="outline"
-                     className="w-full border-white/10 hover:bg-white/5 text-gray-400 mt-4"
-                  >
-                     영상 다시 생성하기
-                  </Button>
+                  <div className="flex gap-2 mt-4">
+                     <Button 
+                        onClick={() => setVideoUrl(null)}
+                        variant="outline"
+                        className="flex-1 border-white/10 hover:bg-white/5 text-gray-400"
+                     >
+                        영상 다시 생성하기
+                     </Button>
+                     
+                     {videoType === "HEYGEN" && aspectRatio === "16:9" && (
+                       <Button
+                         onClick={handleConvertToShorts}
+                         disabled={isConverting}
+                         className="flex-1 bg-white/10 hover:bg-white/20 text-white border border-white/10"
+                       >
+                         {isConverting ? (
+                           <>
+                             <Loader2 className="animate-spin mr-2" size={16} />
+                             변환 중...
+                           </>
+                         ) : (
+                           <>
+                             <VideoIcon className="mr-2" size={16} />
+                             Shorts로 변환 (9:16)
+                           </>
+                         )}
+                       </Button>
+                     )}
+                  </div>
                </div>
              ) : (
                <div className="text-center space-y-6 w-full max-w-3xl animate-fade-in">
@@ -415,6 +470,37 @@ export function Step8VideoGeneration({
                         )}
                       </Button>
                    </div>
+                  
+                  {/* Aspect Ratio Selector */}
+                  {activeTab === "HEYGEN" && !isGeneratingVideo && (
+                    <div className="flex items-center justify-center gap-4 animate-fade-in">
+                       <span className="text-sm text-gray-400">영상 비율 설정:</span>
+                       <div className="flex gap-2 bg-black/20 p-1 rounded-lg border border-white/5">
+                          <button
+                            onClick={() => setAspectRatio("16:9")}
+                            className={cn(
+                              "px-3 py-1 rounded-md text-xs font-medium transition-colors",
+                              aspectRatio === "16:9" 
+                                ? "bg-white/10 text-[#33DB98]" 
+                                : "text-gray-500 hover:text-gray-300"
+                            )}
+                          >   
+                             16:9 (가로형)
+                          </button>
+                          <button
+                            onClick={() => setAspectRatio("9:16")}
+                            className={cn(
+                              "px-3 py-1 rounded-md text-xs font-medium transition-colors",
+                              aspectRatio === "9:16" 
+                                ? "bg-white/10 text-[#33DB98]" 
+                                : "text-gray-500 hover:text-gray-300"
+                            )}
+                          >
+                             9:16 (세로형)
+                          </button>
+                       </div>
+                    </div>
+                  )}
                   
                   {isGeneratingVideo && (
                      <div className="text-xs text-center text-gray-500 animate-pulse">

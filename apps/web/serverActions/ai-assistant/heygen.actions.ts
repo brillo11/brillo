@@ -16,8 +16,9 @@ interface HeyGenVideoResponse {
 /**
  * HeyGen 비디오 생성 요청
  * @param script 아바타가 읽을 대본
+ * @param aspectRatio 영상 비율 ("16:9" | "9:16")
  */
-export async function generateHeyGenVideo(script: string): Promise<HeyGenVideoResponse> {
+export async function generateHeyGenVideo(script: string, aspectRatio: "16:9" | "9:16" = "16:9"): Promise<HeyGenVideoResponse> {
   try {
     if (!HEYGEN_API_KEY) {
       return { success: false, error: "HeyGen API 키가 설정되지 않았습니다." };
@@ -65,8 +66,8 @@ export async function generateHeyGenVideo(script: string): Promise<HeyGenVideoRe
             },
           },
         ],
-        dimension: { width: 1280, height: 720 },
-        aspect_ratio: "16:9",
+        dimension: aspectRatio === "16:9" ? { width: 1280, height: 720 } : { width: 720, height: 1280 },
+        aspect_ratio: aspectRatio,
       }),
     });
 
