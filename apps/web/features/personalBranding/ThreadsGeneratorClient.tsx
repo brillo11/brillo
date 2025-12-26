@@ -409,7 +409,7 @@ export function ThreadsGeneratorClient({
                     />
                   </svg>
                 </div>
-                <span>잡생각 정리하는 중... ({seconds}초)</span>
+                <span>가볍게 쓰레드 쓰느중... ({seconds}초)</span>
               </>
             ) : (
               <>
