@@ -44,6 +44,7 @@ export function Step8VideoGeneration({
   const [activeTab, setActiveTab] = useState<"VEO" | "HEYGEN">(
     initialVideoType || "HEYGEN",
   );
+  const [videoSpeed, setVideoSpeed] = useState<number>(1.0);
   const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
   const [videoUrl, setVideoUrl] = useState<string | null>(
     initialVideoUrl || null,
@@ -111,7 +112,7 @@ export function Step8VideoGeneration({
 
     try {
       if (activeTab === "HEYGEN") {
-        await handleHeyGenGeneration(finalScript, aspectRatio);
+        await handleHeyGenGeneration(finalScript, aspectRatio, videoSpeed);
       } else {
         await handleVeoGeneration(finalScript);
       }
@@ -149,6 +150,7 @@ export function Step8VideoGeneration({
   const handleHeyGenGeneration = async (
     script: string,
     ratio: "16:9" | "9:16",
+    speed: number,
   ) => {
     setProgressMessage("영상 생성 요청 중...");
 
@@ -156,7 +158,7 @@ export function Step8VideoGeneration({
     return new Promise<void>(async (resolve, reject) => {
       try {
         // 1. Request generation
-        const result = await generateHeyGenVideo(script, ratio);
+        const result = await generateHeyGenVideo(script, ratio, speed);
 
         if (!result.success || !result.videoId) {
           throw new Error(result.error || "영상 생성 요청 실패");
@@ -457,7 +459,7 @@ export function Step8VideoGeneration({
                       ) : (
                         <>
                           <VideoIcon className="mr-2" size={16} />
-                          Shorts로 변환 (9:16)
+                          Shorts로 변환 및 다운로드 (9:16)
                         </>
                       )}
                     </Button>
@@ -466,34 +468,33 @@ export function Step8VideoGeneration({
               </div>
             ) : (
               <div className="text-center space-y-6 w-full max-w-3xl animate-fade-in">
-                  {isGeneratingVideo && (  
-                <div
-                  className={cn(
-                    "w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 relative transition-colors duration-500",
-                    activeTab === "HEYGEN"
-                      ? "bg-[#33DB98]/10"
-                      : "bg-purple-500/10",
-                  )}
-                >
+                {isGeneratingVideo && (
                   <div
                     className={cn(
-                      "absolute inset-0 rounded-full animate-ping opacity-20",
+                      "w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 relative transition-colors duration-500",
                       activeTab === "HEYGEN"
-                        ? "bg-[#33DB98]/20"
-                        : "bg-purple-500/20",
+                        ? "bg-[#33DB98]/10"
+                        : "bg-purple-500/10",
                     )}
-                  ></div>
-                  <VideoIcon
-                    size={32}
-                    className={
-                      activeTab === "HEYGEN"
-                        ? "text-[#33DB98]"
-                        : "text-purple-500"
-                    }
-                  />
-                
-                </div>
-                  )}
+                  >
+                    <div
+                      className={cn(
+                        "absolute inset-0 rounded-full animate-ping opacity-20",
+                        activeTab === "HEYGEN"
+                          ? "bg-[#33DB98]/20"
+                          : "bg-purple-500/20",
+                      )}
+                    ></div>
+                    <VideoIcon
+                      size={32}
+                      className={
+                        activeTab === "HEYGEN"
+                          ? "text-[#33DB98]"
+                          : "text-purple-500"
+                      }
+                    />
+                  </div>
+                )}
                 <div className="space-y-8 w-full py-6">
                   {!isGeneratingVideo && (
                     <div className="space-y-2 text-left">
@@ -503,6 +504,28 @@ export function Step8VideoGeneration({
                             ? "내 아바타 인트로 생성"
                             : "AI 가상 캐릭터 생성"}
                         </h3>
+                        {/* Speed Control */}
+                        {activeTab === "HEYGEN" && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-gray-400">속도:</span>
+                            <div className="flex bg-black/40 rounded-lg p-1 border border-white/10">
+                              {[0.8, 0.9, 1.0, 1.1, 1.2].map((speed) => (
+                                <button
+                                  key={speed}
+                                  onClick={() => setVideoSpeed(speed)}
+                                  className={cn(
+                                    "px-2 py-0.5 text-xs rounded transition-all",
+                                    videoSpeed === speed
+                                      ? "bg-[#33DB98] text-black font-bold"
+                                      : "text-gray-400 hover:text-white",
+                                  )}
+                                >
+                                  {speed.toFixed(1)}x
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                         <span className="text-xs text-gray-500">
                           {introScript.length} / 500자
                         </span>
