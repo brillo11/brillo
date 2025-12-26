@@ -221,6 +221,18 @@
     }
   }
 
+  @keyframes glow-fade {
+    0%,
+    80% {
+      border-color: var(--vzx-accent);
+      box-shadow: 0 0 15px rgba(51, 219, 152, 0.5);
+    }
+    100% {
+      border-color: rgba(255, 255, 255, 0.1);
+      box-shadow: none;
+    }
+  }
+
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -248,6 +260,10 @@
 
 .animation-delay-2000 {
   animation-delay: 2s;
+}
+
+.animate-glow-fade {
+  animation: glow-fade 10s ease-out forwards;
 }
 
 .animate-fade-in {

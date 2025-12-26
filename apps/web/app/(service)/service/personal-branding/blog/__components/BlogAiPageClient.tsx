@@ -11,7 +11,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { BlogFormProvider, useBlogForm } from "./BlogFormContext";
-import BrandingSection from "./BrandingSection";
+// import BrandingSection from "./BrandingSection";
 import ContentPlanningSection from "./ContentPlanningSection";
 import StepOptions from "./StepOptions";
 import StepDetails from "./StepDetails";
@@ -31,10 +31,12 @@ import { toast } from "sonner";
 
 interface BlogAiPageContentProps {
   hideHeader?: boolean;
+  isWorkflow?: boolean;
 }
 
 export const BlogAiPageContent: React.FC<BlogAiPageContentProps> = ({
   hideHeader = false,
+  isWorkflow = false,
 }) => {
   const { formData, saveTemplate, setFullFormData } = useBlogForm();
   const [isGenerating, setIsGenerating] = useState(false);
@@ -391,9 +393,9 @@ export const BlogAiPageContent: React.FC<BlogAiPageContentProps> = ({
               <ChevronRight size={16} className="rotate-180" />
             </button>
             <WritingTypeSelector />
-            <div className="space-y-4">
-              <BrandingSection />
-              <ContentPlanningSection />
+            <div className="space-y-4 mt-4">
+              {/* <BrandingSection /> */}
+              <ContentPlanningSection isWorkflow={isWorkflow} />
               <StepOptions />
               <StepDetails />
               <StepGif />
@@ -525,8 +527,8 @@ export const BlogAiPageContent: React.FC<BlogAiPageContentProps> = ({
             <div className="space-y-8 w-full lg:col-span-2">
               <WritingTypeSelector />
               <div className="space-y-4">
-                <BrandingSection />
-                <ContentPlanningSection />
+                {/* <BrandingSection /> */}
+                <ContentPlanningSection isWorkflow={isWorkflow} />
                 <StepOptions />
                 <StepDetails />
                 <StepGif />

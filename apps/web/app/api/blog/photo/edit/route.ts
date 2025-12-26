@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
         // AI Gateway로 이미지 편집
         const defaultInstruction =
             instruction ||
-            'Enhance the photo naturally: smooth skin tone, reduce minor blemishes, improve lighting, but keep the person recognizable and natural-looking. Suitable for professional medical blog.';
+            'Enhance the photo naturally: smooth skin tone, reduce minor blemishes, improve lighting, but keep the person recognizable and natural-looking. Suitable for professional personal branding blog.';
 
         const editResult = await editImageWithAI(
             defaultInstruction,

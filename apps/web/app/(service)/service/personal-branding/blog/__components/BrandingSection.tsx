@@ -32,27 +32,27 @@ const BrandingSection: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [brandingText, setBrandingText] = useState(
-    formData.branding.brandingText
+    formData.branding.brandingText,
   );
 
-  const selectedSpecialties = formData.branding.specialties;
-  const setSelectedSpecialties = (specialties: string[]) => {
-    updateFormData("branding", { ...formData.branding, specialties });
-  };
+  // const selectedSpecialties = formData.branding.specialties;
+  // const setSelectedSpecialties = (specialties: string[]) => {
+  //   updateFormData("branding", { ...formData.branding, specialties });
+  // };
 
-  const toggleSpecialty = (item: string) => {
-    if (selectedSpecialties.includes(item)) {
-      setSelectedSpecialties(selectedSpecialties.filter((i) => i !== item));
-    } else {
-      if (selectedSpecialties.length >= 3) return;
-      setSelectedSpecialties([...selectedSpecialties, item]);
-    }
-  };
+  // const toggleSpecialty = (item: string) => {
+  //   if (selectedSpecialties.includes(item)) {
+  //     setSelectedSpecialties(selectedSpecialties.filter((i) => i !== item));
+  //   } else {
+  //     if (selectedSpecialties.length >= 3) return;
+  //     setSelectedSpecialties([...selectedSpecialties, item]);
+  //   }
+  // };
 
-  const removeSpecialty = (item: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setSelectedSpecialties(selectedSpecialties.filter((i) => i !== item));
-  };
+  // const removeSpecialty = (item: string, e: React.MouseEvent) => {
+  //   e.stopPropagation();
+  //   setSelectedSpecialties(selectedSpecialties.filter((i) => i !== item));
+  // };
 
   // Sync local state when formData changes (e.g., when loading a template)
   useEffect(() => {
@@ -72,7 +72,7 @@ const BrandingSection: React.FC = () => {
     const filteredItems = groupData.items.filter(
       (item) =>
         item.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        groupData.group.toLowerCase().includes(searchQuery.toLowerCase())
+        groupData.group.toLowerCase().includes(searchQuery.toLowerCase()),
     );
     return { ...groupData, items: filteredItems };
   }).filter((groupData) => groupData.items.length > 0);
@@ -81,16 +81,16 @@ const BrandingSection: React.FC = () => {
     <AccordionItem title="0단계: 브랜딩 정보" defaultOpen={true}>
       <div className="space-y-6">
         {/* Specialties */}
-        <div>
+        {/* <div>
           <label className="text-sm font-bold text-white mb-3 flex justify-between">
             <span>
               활동 분야 선택{" "}
               <span className="text-gray-500 font-normal ml-1">최대 3개</span>
             </span>
-          </label>
+          </label> */}
 
-          {/* Selected Tags */}
-          <div className="flex flex-wrap gap-2 mb-4">
+        {/* Selected Tags */}
+        {/* <div className="flex flex-wrap gap-2 mb-4">
             {selectedSpecialties.map((item) => (
               <span
                 key={item}
@@ -105,10 +105,10 @@ const BrandingSection: React.FC = () => {
                 </button>
               </span>
             ))}
-          </div>
+          </div> */}
 
-          {/* Search & Dropdown */}
-          <div className="relative">
+        {/* Search & Dropdown */}
+        {/* <div className="relative">
             <div className="relative">
               <input
                 type="text"
@@ -125,10 +125,10 @@ const BrandingSection: React.FC = () => {
                 className="absolute left-3 top-3.5 text-gray-500"
                 size={18}
               />
-            </div>
+            </div> */}
 
-            {/* Dropdown List */}
-            {isOpen && (
+        {/* Dropdown List */}
+        {/* {isOpen && (
               <div className="absolute w-full mt-2 bg-[#1A1A1A] border border-white/10 rounded-2xl shadow-2xl z-20 max-h-[320px] overflow-y-auto overflow-x-hidden backdrop-blur-xl">
                 <div role="listbox" className="py-2">
                   {filteredGroups.length > 0 ? (
@@ -172,24 +172,24 @@ const BrandingSection: React.FC = () => {
                       검색 결과가 없습니다.
                     </div>
                   )}
-                </div>
-                {/* Backdrop to close */}
-                <div
+                </div>*/}
+        {/* Backdrop to close */}
+        {/*<div
                   className="fixed inset-0 z-[-1]"
                   onClick={() => setIsOpen(false)}
                 />
               </div>
-            )}
+            )} */}
 
-            {/* Click outside handler */}
-            {isOpen && (
+        {/* Click outside handler */}
+        {/* {isOpen && (
               <div
                 className="fixed inset-0 z-10 bg-transparent"
                 onClick={() => setIsOpen(false)}
               />
             )}
           </div>
-        </div>
+        </div> */}
 
         {/* Branding Text */}
         <div>
