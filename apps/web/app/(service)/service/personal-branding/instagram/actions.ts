@@ -3,7 +3,15 @@
 import { generateText } from "ai";
 import { generateImageWithAI } from "@/shared/serverActions/aiGateway";
 
-export type InstagramStyle = "RETENTION" | "AIDA" | "PAS" | "BAB";
+export type InstagramStyle =
+  | "RETENTION"
+  | "AIDA"
+  | "PAS"
+  | "BAB"
+  | "LISTICLE"
+  | "HOW_TO"
+  | "STORYTELLING"
+  | "MISTAKES";
 export type InstagramAspectRatio = "9:16" | "4:5" | "1:1";
 
 export async function generateInstagramImage(
@@ -103,6 +111,57 @@ export async function generateInstagramContent(
       - Page 3-4: After (Desired future)
       - Page 5-6: Bridge (How to get there)
       - Goal: Hope, transformation.
+      `;
+    } else if (style === "LISTICLE") {
+      prompt += `
+      - Structure: List format (Top N, 3 ways, etc.)
+      - Page 1: Title (e.g., "Top 3 ways to...")
+      - Page 2: Item 1
+      - Page 3: Item 2
+      - Page 4: Item 3
+      - Page 5-6: Additional items or details
+      - Page 7: Summary/Recap
+      - Page 8: CTA (Save this post)
+      - Goal: High save rate, educational.
+      `;
+    } else if (style === "HOW_TO") {
+      prompt += `
+      - Structure: Step-by-step Tutorial
+      - Page 1: Title & End result preview
+      - Page 2: Preparation/Overview
+      - Page 3: Step 1
+      - Page 4: Step 2
+      - Page 5: Step 3
+      - Page 6: Step 4 / Final polish
+      - Page 7: Final Result & Key takeaway
+      - Page 8: CTA (Try it yourself)
+      - Goal: Actionable, practical value.
+      `;
+    } else if (style === "STORYTELLING") {
+      prompt += `
+      - Structure: Hero's Journey (Simplified)
+      - Page 1: Title (Intriguing hook)
+      - Page 2: Background/Status Quo
+      - Page 3: Inciting Incident/Problem
+      - Page 4: Struggle/Challenge
+      - Page 5: Turning Point/Solution
+      - Page 6: Result/Transformation
+      - Page 7: Lesson Learned
+      - Page 8: CTA (Share your story)
+      - Goal: Emotional connection, engagement.
+      `;
+    } else if (style === "MISTAKES") {
+      prompt += `
+      - Structure: Common Mistakes (Counter-intuitive)
+      - Page 1: Title ("Don't do this", "Stop doing X")
+      - Page 2: Mistake 1 (Common error)
+      - Page 3: Why it's bad (Consequence)
+      - Page 4: Mistake 2 (Common error)
+      - Page 5: Why it's bad (Consequence)
+      - Page 6: Better Alternative (Solution)
+      - Page 7: Final Advice / Summary
+      - Page 8: CTA (Save to avoid mistakes)
+      - Goal: High click-through, loss aversion, authoritative.
       `;
     }
 
