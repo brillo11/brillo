@@ -149,12 +149,39 @@ export function ThreadsGeneratorClient({
   const [posts, setPosts] = useState<string[]>(initialData?.posts || []);
   const [isPending, startTransition] = useTransition();
 
+  const [progress, setProgress] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+
   useEffect(() => {
     if (initialTopic && !initialData?.topic) setTopic(initialTopic);
     if (initialTargetAudience && !initialData?.targetAudience)
       setTargetAudience(initialTargetAudience);
     if (initialInsight && !initialData?.insight) setInsight(initialInsight);
   }, [initialTopic, initialTargetAudience, initialInsight]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isPending) {
+      setProgress(0);
+      setSeconds(0);
+      const duration = 15000; // 15 seconds
+      const startTime = Date.now();
+
+      interval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const newProgress = Math.min((elapsed / duration) * 100, 100);
+        setProgress(newProgress);
+        setSeconds(Math.floor(elapsed / 1000));
+      }, 100); // UI update interval
+    } else {
+      setProgress(0);
+      setSeconds(0);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isPending]);
 
   // Sync state changes to parent
   useEffect(() => {
@@ -354,7 +381,35 @@ export function ThreadsGeneratorClient({
           >
             {isPending ? (
               <>
-                <Loader2 className="animate-spin mr-2" /> 잡생각 정리하는 중...
+                <div className="relative mr-2 w-6 h-6">
+                  <svg
+                    className="w-full h-full transform -rotate-90"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="transparent"
+                      className="text-black/10"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="transparent"
+                      strokeDasharray={2 * Math.PI * 10}
+                      strokeDashoffset={2 * Math.PI * 10 * (1 - progress / 100)}
+                      strokeLinecap="round"
+                      className="text-black transition-all duration-100 ease-linear"
+                    />
+                  </svg>
+                </div>
+                <span>잡생각 정리하는 중... ({seconds}초)</span>
               </>
             ) : (
               <>

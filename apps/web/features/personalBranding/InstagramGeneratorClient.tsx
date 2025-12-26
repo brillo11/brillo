@@ -188,6 +188,9 @@ export function InstagramGeneratorClient({
 
   const [isGeneratingImages, setIsGeneratingImages] = useState(false);
 
+  const [progress, setProgress] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+
   useEffect(() => {
     if (initialTopic && !initialData?.topic) setTopic(initialTopic);
     if (initialTargetAudience && !initialData?.targetAudience)
@@ -195,6 +198,33 @@ export function InstagramGeneratorClient({
     if (initialInsight && !initialData?.keyInsights)
       setKeyInsights(initialInsight);
   }, [initialTopic, initialTargetAudience, initialInsight]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    const isActive = isPending || isGeneratingImages;
+
+    if (isActive) {
+      setProgress(0);
+      setSeconds(0);
+      // Planning: 15s, Image Gen: 180s
+      const duration = isPending ? 15000 : 180000;
+      const startTime = Date.now();
+
+      interval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const newProgress = Math.min((elapsed / duration) * 100, 100);
+        setProgress(newProgress);
+        setSeconds(Math.floor(elapsed / 1000));
+      }, 100); // UI update interval
+    } else {
+      setProgress(0);
+      setSeconds(0);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isPending, isGeneratingImages]);
 
   // Sync state changes to parent
   useEffect(() => {
@@ -510,8 +540,35 @@ export function InstagramGeneratorClient({
           >
             {isPending ? (
               <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                기획 생성 중...
+                <div className="relative mr-2 w-6 h-6">
+                  <svg
+                    className="w-full h-full transform -rotate-90"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="transparent"
+                      className="text-black/10"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="transparent"
+                      strokeDasharray={2 * Math.PI * 10}
+                      strokeDashoffset={2 * Math.PI * 10 * (1 - progress / 100)}
+                      strokeLinecap="round"
+                      className="text-black transition-all duration-100 ease-linear"
+                    />
+                  </svg>
+                </div>
+                <span>기획 생성 중... ({seconds}초)</span>
               </>
             ) : (
               <>
@@ -555,10 +612,41 @@ export function InstagramGeneratorClient({
                   className="flex-1 h-12 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-medium"
                 >
                   {isGeneratingImages ? (
-                    <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      이미지 생성 중...
-                    </>
+                    <div className="flex justify-center items-center gap-2 w-full h-full relative">
+                      <div className="relative mr-2 w-6 h-6 flex items-center justify-center">
+                        <svg
+                          className="w-full h-full transform -rotate-90"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            fill="transparent"
+                            className="text-white/20"
+                          />
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            fill="transparent"
+                            strokeDasharray={2 * Math.PI * 10}
+                            strokeDashoffset={
+                              2 * Math.PI * 10 * (1 - progress / 100)
+                            }
+                            strokeLinecap="round"
+                            className="text-white transition-all duration-100 ease-linear"
+                          />
+                        </svg>
+                      </div>
+                      <span className="text-white h-6 flex items-center">
+                        이미지 생성 중... ({seconds}초)
+                      </span>
+                    </div>
                   ) : (
                     <>
                       <Sparkles className="mr-2 h-5 w-5 text-yellow-400" />
