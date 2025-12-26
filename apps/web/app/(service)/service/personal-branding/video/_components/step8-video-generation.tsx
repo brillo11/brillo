@@ -471,6 +471,7 @@ export function Step8VideoGeneration({
               </div>
             ) : (
               <div className="text-center space-y-6 w-full max-w-3xl animate-fade-in">
+                  {isGeneratingVideo && (  
                 <div
                   className={cn(
                     "w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 relative transition-colors duration-500",
@@ -479,7 +480,6 @@ export function Step8VideoGeneration({
                       : "bg-purple-500/10",
                   )}
                 >
-                  {isGeneratingVideo && (  <>
                   <div
                     className={cn(
                       "absolute inset-0 rounded-full animate-ping opacity-20",
@@ -495,11 +495,11 @@ export function Step8VideoGeneration({
                         ? "text-[#33DB98]"
                         : "text-purple-500"
                     }
-                  /></>
-                  )}
+                  />
                 
                 </div>
-                <div className="space-y-4 w-full">
+                  )}
+                <div className="space-y-8 w-full py-6">
                   {!isGeneratingVideo && (
                     <div className="space-y-2 text-left">
                       <div className="flex justify-between items-center">
@@ -522,7 +522,7 @@ export function Step8VideoGeneration({
                         onChange={(e) =>
                           setIntroScript(e.target.value.slice(0, 500))
                         }
-                        className="w-full min-h-[200px] bg-black/40 border border-white/10 rounded-xl p-4 text-sm text-white focus:outline-none focus:border-[#33DB98] transition-colors"
+                        className="w-full min-h-[300px] bg-black/40 border border-white/10 rounded-xl p-4 text-sm text-white focus:outline-none focus:border-[#33DB98] transition-colors"
                         placeholder="생성할 대본을 입력하세요..."
                         disabled={isGeneratingVideo}
                       />
