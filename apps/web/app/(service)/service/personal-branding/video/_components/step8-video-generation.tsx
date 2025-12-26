@@ -32,6 +32,8 @@ export function Step8VideoGeneration({
   const [videoUrl, setVideoUrl] = useState<string | null>(initialVideoUrl || null);
   const [videoType, setVideoType] = useState<"VEO" | "HEYGEN" | null>(initialVideoType || null);
   const [progressMessage, setProgressMessage] = useState<string>("");
+  const [introScript, setIntroScript] = useState<string>("");
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // Initial load
   useEffect(() => {
@@ -42,10 +44,14 @@ export function Step8VideoGeneration({
       setVideoType(initialVideoType);
       setActiveTab(initialVideoType);
     }
-  }, [initialVideoUrl, initialVideoType]);
+    // Set initial script from responses
+    if (scriptResponses?.intro) {
+       setIntroScript(scriptResponses.intro);
+    }
+  }, [initialVideoUrl, initialVideoType, scriptResponses]);
 
   const handleGenerateVideo = async () => {
-    if (!scriptResponses?.intro) {
+    if (!introScript.trim()) {
       toast.error("대본 인트로 내용이 없습니다.");
       return;
     }
@@ -54,13 +60,14 @@ export function Step8VideoGeneration({
     setVideoUrl(null); // Reset previous video
     setVideoType(null);
     
-    const introScript = scriptResponses.intro.slice(0, 500); // Limit length
+    // Use edited script
+    const finalScript = introScript.slice(0, 500); 
 
     try {
       if (activeTab === "HEYGEN") {
-        await handleHeyGenGeneration(introScript);
+        await handleHeyGenGeneration(finalScript);
       } else {
-        await handleVeoGeneration(introScript);
+        await handleVeoGeneration(finalScript);
       }
     } catch (error) {
       console.error("Video generation failed:", error);
@@ -314,24 +321,43 @@ export function Step8VideoGeneration({
                         {videoType === "HEYGEN" ? "내 아바타" : "가상 캐릭터"}
                      </span>
                   </div>
-                  <div className="relative rounded-xl overflow-hidden border border-white/10 shadow-2xl">
+                  <div className="relative rounded-xl overflow-hidden border border-white/10 shadow-2xl group">
                      <video 
+                       ref={videoRef}
                        src={videoUrl} 
                        controls 
                        className="w-full aspect-video bg-black"
                        poster={thumbnailUrls}
                      />
+                     {/* Playback Speed Control Overlay */}
+                     <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <select 
+                          className="bg-black/70 backdrop-blur text-white text-xs border border-white/20 rounded px-2 py-1 outline-none hover:bg-black/90 cursor-pointer"
+                          onChange={(e) => {
+                             if(videoRef.current) {
+                                videoRef.current.playbackRate = parseFloat(e.target.value);
+                             }
+                          }}
+                          defaultValue="1"
+                        >
+                           <option value="0.5">0.5x</option>
+                           <option value="0.75">0.75x</option>
+                           <option value="1">1x (Normal)</option>
+                           <option value="1.25">1.25x</option>
+                           <option value="1.5">1.5x</option>
+                        </select>
+                     </div>
                   </div>
-                  {/* <Button 
+                  <Button 
                      onClick={() => setVideoUrl(null)}
                      variant="outline"
-                     className="w-full border-white/10 hover:bg-white/5 text-gray-400"
+                     className="w-full border-white/10 hover:bg-white/5 text-gray-400 mt-4"
                   >
-                     다른 버전 생성하기
-                  </Button> */}
+                     영상 다시 생성하기
+                  </Button>
                </div>
              ) : (
-               <div className="text-center space-y-6 max-w-sm animate-fade-in">
+               <div className="text-center space-y-6 w-full max-w-3xl animate-fade-in">
                   <div className={cn(
                      "w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 relative transition-colors duration-500",
                      activeTab === "HEYGEN" ? "bg-[#33DB98]/10" : "bg-purple-500/10"
@@ -342,40 +368,53 @@ export function Step8VideoGeneration({
                      )}></div>
                      <VideoIcon size={32} className={activeTab === "HEYGEN" ? "text-[#33DB98]" : "text-purple-500"} />
                   </div>
-                  
-                  <div className="space-y-2">
-                     <h3 className="text-xl font-bold text-white">
-                        {activeTab === "HEYGEN" ? "내 아바타 인트로 생성" : "AI 가상 캐릭터 생성"}
-                     </h3>
-                     <p className="text-sm text-gray-400">
-                        {activeTab === "HEYGEN" 
-                          ? "HeyGen에 등록된 나만의 아바타가\n인트로 대본을 읽어주는 영상을 생성합니다." 
-                          : "Veo 3.1이 생성한 가상의 AI 캐릭터가\n인트로 대본을 연기하는 영상을 생성합니다."}
-                     </p>
-                  </div>
+                                    <div className="space-y-4 w-full">
+                      <div className="space-y-2 text-left">
+                         <div className="flex justify-between items-center">
+                            <h3 className="text-xl font-bold text-white">
+                               {activeTab === "HEYGEN" ? "내 아바타 인트로 생성" : "AI 가상 캐릭터 생성"}
+                            </h3>
+                            <span className="text-xs text-gray-500">
+                               {introScript.length} / 500자
+                            </span>
+                         </div>
+                         <p className="text-sm text-gray-400">
+                            {activeTab === "HEYGEN" 
+                              ? "아바타가 읽을 대본을 수정할 수 있습니다." 
+                              : "캐릭터가 연기할 대본을 수정할 수 있습니다."}
+                         </p>
+                         <textarea
+                            value={introScript}
+                            onChange={(e) => setIntroScript(e.target.value.slice(0, 500))}
+                            className="w-full min-h-[200px] bg-black/40 border border-white/10 rounded-xl p-4 text-sm text-white focus:outline-none focus:border-[#33DB98] transition-colors"
+                            placeholder="생성할 대본을 입력하세요..."
+                            disabled={isGeneratingVideo}
+                         />
+                      </div>
 
-                  <Button
-                    onClick={handleGenerateVideo}
-                    disabled={isGeneratingVideo}
-                    className={cn(
-                       "w-full py-6 text-lg font-bold text-black shadow-lg transition-all hover:scale-[1.02]",
-                       activeTab === "HEYGEN" 
-                          ? "bg-[#33DB98] hover:bg-[#33DB98]/90 shadow-[#33DB98]/20" 
-                          : "bg-purple-500 hover:bg-purple-500/90 shadow-purple-500/20 text-white"
-                    )}
-                  >
-                    {isGeneratingVideo ? (
-                      <>
-                        <Loader2 className="animate-spin mr-2" size={20} />
-                        {progressMessage || "생성 중..."}
-                      </>
-                    ) : (
-                      <>
-                         <PlayCircle className="mr-2" size={20} />
-                         {activeTab === "HEYGEN" ? "내 아바타로 생성하기" : "AI 캐릭터로 생성하기"}
-                      </>
-                    )}
-                  </Button>
+                      <Button
+                        onClick={handleGenerateVideo}
+                        disabled={isGeneratingVideo || !introScript.trim()}
+                        className={cn(
+                           "w-full py-6 text-lg font-bold text-black shadow-lg transition-all hover:scale-[1.02]",
+                           activeTab === "HEYGEN" 
+                              ? "bg-[#33DB98] hover:bg-[#33DB98]/90 shadow-[#33DB98]/20" 
+                              : "bg-purple-500 hover:bg-purple-500/90 shadow-purple-500/20 text-white"
+                        )}
+                      >
+                        {isGeneratingVideo ? (
+                          <>
+                            <Loader2 className="animate-spin mr-2" size={20} />
+                            {progressMessage || "생성 중..."}
+                          </>
+                        ) : (
+                          <>
+                             <PlayCircle className="mr-2" size={20} />
+                             {activeTab === "HEYGEN" ? "내 아바타로 생성하기" : "AI 캐릭터로 생성하기"}
+                          </>
+                        )}
+                      </Button>
+                   </div>
                   
                   {isGeneratingVideo && (
                      <div className="text-xs text-center text-gray-500 animate-pulse">
