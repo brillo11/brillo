@@ -625,7 +625,7 @@ const RightPanel: React.FC<RightPanelProps> = ({
       </div>
 
       {/* Blog Title Suggestion */}
-      <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm overflow-hidden min-h-[150px] transition-all duration-300 hover:border-[#33DB98]/20">
+      {/* <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm overflow-hidden min-h-[150px] transition-all duration-300 hover:border-[#33DB98]/20">
         <div className="p-4 border-b border-white/5">
           <div className="flex items-center gap-2">
             <div className="text-yellow-500">💡</div>
@@ -683,10 +683,10 @@ const RightPanel: React.FC<RightPanelProps> = ({
             </span>
           </div>
         )}
-      </div>
+      </div> */}
 
       {/* Generated Blog Post */}
-      <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm overflow-hidden min-h-[300px] transition-all duration-300 hover:border-[#33DB98]/20">
+      {/* <div className="bg-vzx-card rounded-2xl border border-white/5 shadow-sm overflow-hidden min-h-[300px] transition-all duration-300 hover:border-[#33DB98]/20">
         <div className="p-4 border-b border-white/5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -754,7 +754,7 @@ const RightPanel: React.FC<RightPanelProps> = ({
             </div>
           )}
         </div>
-      </div>
+      </div> */}
 
       {/* AI Refinement Request (Mobile/Vertical layout) */}
       {generatedContent && (

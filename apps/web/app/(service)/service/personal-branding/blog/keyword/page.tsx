@@ -360,7 +360,7 @@ export default function BlogKeywordSearchPage() {
                     </div>
 
                     {/* Debug: Parsed Content */}
-                    <div className="mt-4 pt-4 border-t border-white/5">
+                    {/* <div className="mt-4 pt-4 border-t border-white/5">
                       <details className="group/debug">
                         <summary className="text-[10px] text-gray-500 cursor-pointer hover:text-[#33DB98] transition-colors font-bold uppercase tracking-wider list-none flex items-center gap-1 outline-none">
                           <span className="group-open/debug:rotate-90 transition-transform duration-200">
@@ -384,7 +384,7 @@ export default function BlogKeywordSearchPage() {
                           </div>
                         </div>
                       </details>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               ))}
