@@ -57,6 +57,33 @@ export function Step2ThumbGuide({
     onReferenceThumbnailsChange?.(selectedReferenceThumbnails);
   }, [selectedReferenceThumbnails, onReferenceThumbnailsChange]);
 
+  const [imageProgress, setImageProgress] = useState(0);
+  const [imageSeconds, setImageSeconds] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isNextLoading) {
+      setImageProgress(0);
+      setImageSeconds(0);
+      const duration = 150000; // 150 seconds
+      const startTime = Date.now();
+
+      interval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const newProgress = Math.min((elapsed / duration) * 100, 100);
+        setImageProgress(newProgress);
+        setImageSeconds(Math.floor(elapsed / 1000));
+      }, 100); // UI update interval
+    } else {
+      setImageProgress(0);
+      setImageSeconds(0);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isNextLoading]);
+
   const toggleGuide = (index: number) => {
     setExpandedGuides((prev) => {
       const newSet = new Set(prev);
@@ -371,8 +398,37 @@ export function Step2ThumbGuide({
           >
             {isNextLoading ? (
               <>
-                <Loader2 className="animate-spin" size={20} />
-                썸네일 이미지 생성 중...
+                <div className="relative mr-2 w-6 h-6 flex items-center justify-center">
+                  <svg
+                    className="w-full h-full transform -rotate-90"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="transparent"
+                      className="text-black/10"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="transparent"
+                      strokeDasharray={2 * Math.PI * 10}
+                      strokeDashoffset={
+                        2 * Math.PI * 10 * (1 - imageProgress / 100)
+                      }
+                      strokeLinecap="round"
+                      className="text-black transition-all duration-100 ease-linear"
+                    />
+                  </svg>
+                </div>
+                <span>썸네일 이미지 생성 중... ({imageSeconds}초)</span>
               </>
             ) : (
               <>

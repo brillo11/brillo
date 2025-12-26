@@ -412,11 +412,11 @@ export function Step1Planning({
                           />
                         </svg>
                       </div>
-                      <span>기획 정리중... ({nextStepSeconds}초)</span>
+                      <span>썸네일 전략 구상중... ({nextStepSeconds}초)</span>
                     </>
                   ) : (
                     <>
-                      다음 단계로 이동
+                      썸네일 전략 구상하기
                       <ChevronRight className="ml-2 h-5 w-5" />
                     </>
                   )}
