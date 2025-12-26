@@ -65,7 +65,7 @@ export function Step2ThumbGuide({
     if (isNextLoading) {
       setImageProgress(0);
       setImageSeconds(0);
-      const duration = 150000; // 150 seconds
+      const duration = 120000; // 120 seconds
       const startTime = Date.now();
 
       interval = setInterval(() => {

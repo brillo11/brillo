@@ -42,7 +42,7 @@
   /* Border & Input */
   --border: oklch(0.922 0 0); /* Light Gray */
   --input: oklch(0.922 0 0); /* Light Gray */
-  --ring: oklch(0.577 0.245 27.325); /* Red-600 */
+  --ring: rgb(51, 219, 152); /* Red-600 */
 
   /* Chart Colors */
   --chart-1: oklch(0.577 0.245 27.325); /* Red-600 */
@@ -106,7 +106,7 @@
   /* Border & Input */
   --border: oklch(0.269 0 0);
   --input: oklch(0.269 0 0);
-  --ring: oklch(0.637 0.237 25.331); /* Red-500 */
+  --ring: rgb(51, 219, 152); /* Red-500 */
 
   /* Chart Colors (다크 모드용) */
   --chart-1: oklch(0.577 0.245 27.325); /* Red-600 */
@@ -118,12 +118,12 @@
   /* Sidebar */
   --sidebar: oklch(0.205 0 0); /* Dark Gray */
   --sidebar-foreground: oklch(0.985 0 0); /* Pure White */
-  --sidebar-primary: oklch(0.577 0.245 27.325); /* Red-600 */
+  --sidebar-primary: rgb(51, 219, 152); /* Red-600 */
   --sidebar-primary-foreground: oklch(0.985 0 0); /* Pure White */
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.577 0.245 27.325); /* Red-600 */
+  --sidebar-ring: rgb(51, 219, 152); /* Red-600 */
 
   /* TubeInsight Custom Colors (다크 모드) */
   --success-green: oklch(0.696 0.17 162.48);

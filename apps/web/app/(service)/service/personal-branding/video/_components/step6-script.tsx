@@ -69,6 +69,33 @@ export function Step6Script({
     };
   }, [isGenerating]);
 
+  const [metaProgress, setMetaProgress] = useState(0);
+  const [metaSeconds, setMetaSeconds] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isLoading) {
+      setMetaProgress(0);
+      setMetaSeconds(0);
+      const duration = 15000; // 15 seconds
+      const startTime = Date.now();
+
+      interval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const newProgress = Math.min((elapsed / duration) * 100, 100);
+        setMetaProgress(newProgress);
+        setMetaSeconds(Math.floor(elapsed / 1000));
+      }, 100); // UI update interval
+    } else {
+      setMetaProgress(0);
+      setMetaSeconds(0);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isLoading]);
+
   const handleCopy = () => {
     if (scriptResponses) {
       const fullScript = `${scriptResponses.intro}\n\n${scriptResponses.selfIntro}\n\n${scriptResponses.chapters.map((ch) => `${ch.title}\n${ch.content}`).join("\n\n")}\n\n${scriptResponses.outro}`;
@@ -239,8 +266,37 @@ export function Step6Script({
           >
             {isLoading ? (
               <>
-                <Loader2 className="animate-spin" size={20} />
-                로딩 중...
+                <div className="relative mr-2 w-6 h-6 flex items-center justify-center">
+                  <svg
+                    className="w-full h-full transform -rotate-90"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="transparent"
+                      className="text-black/10"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="transparent"
+                      strokeDasharray={2 * Math.PI * 10}
+                      strokeDashoffset={
+                        2 * Math.PI * 10 * (1 - metaProgress / 100)
+                      }
+                      strokeLinecap="round"
+                      className="text-black transition-all duration-100 ease-linear"
+                    />
+                  </svg>
+                </div>
+                <span>영상 메타데이터 생성 중... ({metaSeconds}초)</span>
               </>
             ) : (
               <>
