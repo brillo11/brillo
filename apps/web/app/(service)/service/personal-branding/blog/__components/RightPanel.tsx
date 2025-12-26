@@ -21,6 +21,7 @@ import {
 
 // 콘텐츠 표시 컴포넌트를 별도로 분리하고 memo 처리하여 불필요한 재렌더링 방지 (이미지 깜빡임 방지)
 const ContentDisplay = memo(({ content }: { content: string }) => {
+  console.log({ content });
   return (
     <div
       className="text-black text-[15px] leading-[1.8] tracking-tight"
