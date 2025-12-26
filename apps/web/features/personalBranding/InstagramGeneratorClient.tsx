@@ -44,7 +44,7 @@ const STYLES: {
 }[] = [
   {
     id: "RETENTION",
-    title: "리텐션 (Retention)",
+    title: "리텐션",
     desc: "끝까지 읽게 만드는 몰입형 구조",
     pages: "8 페이지",
     detail: "훅(1p) -> 공감 유도(2p) -> 핵심 정보(3~6p) -> 요약(7p) -> CTA(8p)",
@@ -95,6 +95,7 @@ export interface InstagramGeneratorState {
   targetAudience: string;
   keyInsights: string;
   selectedStyle: InstagramStyle | null;
+  generatedStyle: InstagramStyle | null;
   pages: InstagramPageContent[];
   aspectRatio: InstagramAspectRatio;
 }
@@ -127,6 +128,9 @@ export function InstagramGeneratorClient({
   const [selectedStyle, setSelectedStyle] = useState<InstagramStyle | null>(
     initialData?.selectedStyle || null,
   );
+  const [generatedStyle, setGeneratedStyle] = useState<InstagramStyle | null>(
+    initialData?.generatedStyle || null,
+  );
   const [pages, setPages] = useState<InstagramPageContent[]>(
     initialData?.pages || [],
   );
@@ -154,6 +158,7 @@ export function InstagramGeneratorClient({
         targetAudience,
         keyInsights,
         selectedStyle,
+        generatedStyle,
         pages,
         aspectRatio,
       });
@@ -163,6 +168,7 @@ export function InstagramGeneratorClient({
     targetAudience,
     keyInsights,
     selectedStyle,
+    generatedStyle,
     pages,
     aspectRatio,
     onDataChange,
@@ -237,6 +243,7 @@ export function InstagramGeneratorClient({
         );
         if (result.success && result.pages) {
           setPages(result.pages as InstagramPageContent[]);
+          setGeneratedStyle(selectedStyle);
           toast.success("카드 뉴스 기획이 생성되었습니다.");
         } else {
           toast.error(result.error || "생성에 실패했습니다.");
@@ -534,8 +541,13 @@ export function InstagramGeneratorClient({
           {pages.length > 0 ? (
             <div className="space-y-4">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-white">
+                <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                   기획 결과 ({pages.length} 페이지)
+                  {generatedStyle && (
+                    <span className="ml-2 px-3 py-1 rounded-full bg-[var(--vzx-accent)]/20 text-[var(--vzx-accent)] text-xs font-medium border border-[var(--vzx-accent)]/30">
+                      {STYLES.find((s) => s.id === generatedStyle)?.title}
+                    </span>
+                  )}
                 </h2>
                 <Button
                   variant="outline"

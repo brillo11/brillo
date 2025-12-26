@@ -107,6 +107,7 @@ export interface ThreadsGeneratorState {
   targetAudience: string;
   insight: string;
   selectedStyle: ThreadsStyle | null;
+  generatedStyle: ThreadsStyle | null;
   selectedTone: ThreadsTone;
   posts: string[];
 }
@@ -138,6 +139,9 @@ export function ThreadsGeneratorClient({
   const [selectedStyle, setSelectedStyle] = useState<ThreadsStyle | null>(
     initialData?.selectedStyle || null,
   );
+  const [generatedStyle, setGeneratedStyle] = useState<ThreadsStyle | null>(
+    initialData?.generatedStyle || null,
+  );
   const [selectedTone, setSelectedTone] = useState<ThreadsTone>(
     initialData?.selectedTone || "AUTO",
   );
@@ -160,6 +164,7 @@ export function ThreadsGeneratorClient({
         targetAudience,
         insight,
         selectedStyle,
+        generatedStyle,
         selectedTone,
         posts,
       });
@@ -169,6 +174,7 @@ export function ThreadsGeneratorClient({
     targetAudience,
     insight,
     selectedStyle,
+    generatedStyle,
     selectedTone,
     posts,
     onDataChange,
@@ -195,6 +201,7 @@ export function ThreadsGeneratorClient({
         );
         if (result.success && result.posts) {
           setPosts(result.posts);
+          setGeneratedStyle(selectedStyle);
           toast.success("쓰레드 포스트가 생성되었습니다.");
         } else {
           toast.error(result.error || "생성에 실패했습니다.");
@@ -372,6 +379,11 @@ export function ThreadsGeneratorClient({
                 <MessageCircle className="text-black fill-black" size={16} />
               </div> */}
               생성된 쓰레드
+              {generatedStyle && (
+                <span className="ml-2 px-3 py-1 rounded-full bg-[var(--vzx-accent)]/20 text-[var(--vzx-accent)] text-xs font-medium border border-[var(--vzx-accent)]/30">
+                  {STYLES.find((s) => s.id === generatedStyle)?.title}
+                </span>
+              )}
             </h2>
 
             {posts.length > 0 ? (

@@ -83,6 +83,7 @@ function BrandingWorkflowContent() {
     targetAudience: "",
     insight: "",
     selectedStyle: null,
+    generatedStyle: null,
     selectedTone: "AUTO",
     posts: [],
   });
@@ -92,6 +93,7 @@ function BrandingWorkflowContent() {
     targetAudience: "",
     keyInsights: "",
     selectedStyle: null,
+    generatedStyle: null,
     pages: [],
     aspectRatio: "1:1",
   });
