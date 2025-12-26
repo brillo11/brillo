@@ -3,6 +3,22 @@ import "dotenv/config";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/shared/lib/auth";
 
+const DEFAULT_BRANDING_TEXT = `[자기소개 및 브랜드 슬로건]
+
+
+[주요 전문 분야 및 경력]
+
+
+[나만의 핵심 가치 및 차별점]
+1. 
+2. 
+3. 
+
+[대표적인 성과 및 포트폴리오]
+
+
+[독자 혜택 및 문의 링크]`;
+
 export async function POST(req: NextRequest) {
   try {
     const session = await auth.api.getSession({
@@ -17,6 +33,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { currentContent, refineRequest, formData } = await req.json();
+    const { branding, contentPlanning, options, brandingMode } = formData;
 
     if (!currentContent || !refineRequest) {
       return NextResponse.json(
@@ -24,6 +41,10 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       );
     }
+
+    const isDefaultBranding = !branding.brandingText || 
+                             branding.brandingText.trim() === "" || 
+                             branding.brandingText.trim() === DEFAULT_BRANDING_TEXT.trim();
 
     const prompt = `
 # 당신의 역할
@@ -45,10 +66,15 @@ ${currentContent}
 4. **이미지 태그 보존:** 기존 글에 포함된 \`<img>\` 태그(src, alt, style 포함)는 절대 삭제하거나 변경하지 말고, 적절한 위치에 그대로 두세요.
 5. **순수 HTML 출력 (중요 !!!) :** \`<!DOCTYPE>\`, \`<html>\`, \`<head>\`, \`<body>\` 태그 없이 순수 콘텐츠 HTML만 출력하세요. 최상위는 \`<div>\`로 시작해야 합니다. 기존 전달된 블로그 글의 최상위는 \`\`\`html 로 싸져있지만, 이를 제거하고 순수 HTML 출력을 해주세요.
 
-# 추가 문맥 (참고용)
-- 주제: ${formData.contentPlanning.subject}
-- 타겟: ${formData.contentPlanning.targetAudience}
-- 말투: ${formData.options.styleReference}
+# 추가 문맥 (브랜딩 전략 유지 및 참고용)
+- **브랜딩 모드:** ${brandingMode}
+- **브랜딩 정보:** 
+${!isDefaultBranding 
+  ? branding.brandingText 
+  : "- 작성자 정보 없음 (객관적 통찰 및 보편적 권위 기반의 톤 유지)"}
+- **주제:** ${contentPlanning.subject}
+- **타겟:** ${contentPlanning.targetAudience}
+- **말투:** ${options.styleReference}
 `;
 
     const result = await generateText({

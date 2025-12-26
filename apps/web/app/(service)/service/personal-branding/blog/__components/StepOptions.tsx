@@ -3,12 +3,25 @@
 import React, { useState, useEffect } from "react";
 import { useBlogForm } from "./BlogFormContext";
 import AccordionItem from "./AccordionItem";
+import { Sparkles } from "lucide-react";
 
 const StepOptions: React.FC = () => {
-  const { formData, updateFormData } = useBlogForm();
+  const { formData, updateFormData, lastAutoFillTimestamp } = useBlogForm();
   const [tone, setTone] = useState("친절형");
   const [imageGenEnabled, setImageGenEnabled] = useState(false);
   const [disclaimerEnabled, setDisclaimerEnabled] = useState(false);
+
+  // 피드백 상태
+  const [showAutoFillMessage, setShowAutoFillMessage] = useState(false);
+  const [highlightTrigger, setHighlightTrigger] = useState(0);
+
+  // auto-fill 피드백 감지
+  useEffect(() => {
+    if (lastAutoFillTimestamp > 0) {
+      setShowAutoFillMessage(true);
+      setHighlightTrigger(lastAutoFillTimestamp);
+    }
+  }, [lastAutoFillTimestamp]);
 
   // Sync local states when formData changes (e.g., when loading a template)
   useEffect(() => {
@@ -47,8 +60,20 @@ const StepOptions: React.FC = () => {
   return (
     <AccordionItem title="2단계: 글의 옵션 설정하기" defaultOpen={true}>
       <div className="space-y-6">
+        {showAutoFillMessage && (
+          <div className="bg-[#33DB98]/10 border border-[#33DB98]/20 rounded-xl p-3 flex items-center gap-2 animate-in fade-in zoom-in duration-300">
+            <Sparkles size={14} className="text-[#33DB98]" />
+            <p className="text-[11px] font-bold text-[#33DB98]">
+              분석 내용을 바탕으로 자동 완성되었습니다. 원한다면 자유롭게
+              수정해보세요 !
+            </p>
+          </div>
+        )}
         {/* Tone */}
-        <div>
+        <div
+          key={`tone-${highlightTrigger}`}
+          className={`p-4 rounded-2xl transition-all ${highlightTrigger > 0 ? "animate-glow-fade bg-white/5" : ""}`}
+        >
           <label className="block text-sm font-bold text-white mb-4">
             말투
           </label>

@@ -329,14 +329,14 @@ const RightPanel: React.FC<RightPanelProps> = ({
                   <h3 className="font-bold text-white">생성된 블로그 글</h3>
                 </div>
                 {generatedContent && (
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 items-center">
                     <button
                       onClick={handleCopy}
-                      className="p-2 hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-white"
+                      className="flex gap-2 items-center p-2 hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-white"
                       title="복사"
                     >
-                      <span className="text-xs">복사하기</span>
-                      <Copy size={16} />
+                      <span className="text-xs text-[#33DB98]">복사하기</span>
+                      <Copy size={16} className="text-[#33DB98]" />
                     </button>
                     {/* <button
                       className="p-2 hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-white"

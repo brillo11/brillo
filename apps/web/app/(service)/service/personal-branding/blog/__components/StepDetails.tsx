@@ -7,18 +7,32 @@ import { Search, Link, FileText, Loader2, Sparkles } from "lucide-react";
 import { analyzeStyleFromSource } from "@/serverActions/blog/keyword-search";
 
 const StepDetails: React.FC = () => {
-  const { formData, updateFormData } = useBlogForm();
+  const { formData, updateFormData, lastAutoFillTimestamp } = useBlogForm();
   const [length, setLength] = useState(formData.details.length);
   const [styleText, setStyleText] = useState(formData.details.styleText);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // 피드백 상태
+  const [showAutoFillMessage, setShowAutoFillMessage] = useState(false);
+  const [highlightTrigger, setHighlightTrigger] = useState(0);
+
+  // auto-fill 피드백 감지
+  useEffect(() => {
+    if (lastAutoFillTimestamp > 0) {
+      setShowAutoFillMessage(true);
+      setHighlightTrigger(lastAutoFillTimestamp);
+    }
+  }, [lastAutoFillTimestamp]);
+
   // 자동 높이 조절 함수
   const adjustHeight = () => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.height = "auto";
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    }
+    requestAnimationFrame(() => {
+      const textarea = textareaRef.current;
+      if (textarea) {
+        textarea.style.height = "auto";
+        textarea.style.height = `${textarea.scrollHeight}px`;
+      }
+    });
   };
 
   const [analysisType, setAnalysisType] = useState<
@@ -41,7 +55,7 @@ const StepDetails: React.FC = () => {
   // styleText가 변경될 때마다 높이 조절
   useEffect(() => {
     adjustHeight();
-  }, [styleText]);
+  }, [styleText, highlightTrigger]);
 
   const handleLengthChange = (newLength: string) => {
     setLength(newLength);
@@ -104,6 +118,15 @@ const StepDetails: React.FC = () => {
   return (
     <AccordionItem title="3단계: 글의 세부 설정" defaultOpen={true}>
       <div className="space-y-6">
+        {showAutoFillMessage && (
+          <div className="bg-[#33DB98]/10 border border-[#33DB98]/20 rounded-xl p-3 flex items-center gap-2 animate-in fade-in zoom-in duration-300">
+            <Sparkles size={14} className="text-[#33DB98]" />
+            <p className="text-[11px] font-bold text-[#33DB98]">
+              분석 내용을 바탕으로 자동 완성되었습니다. 원한다면 자유롭게
+              수정해보세요 !
+            </p>
+          </div>
+        )}
         {/* Length */}
         <div>
           <label className="block text-sm font-bold text-white mb-4">
@@ -238,10 +261,11 @@ const StepDetails: React.FC = () => {
             )}
           </label>
           <textarea
+            key={`style-${highlightTrigger}`}
             ref={textareaRef}
             value={styleText}
             onChange={(e) => handleStyleTextChange(e.target.value)}
-            className="w-full min-h-[128px] p-4 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-[#33DB98]/50 focus:border-[#33DB98] text-sm leading-relaxed text-gray-300 placeholder:text-gray-600 transition-all resize-none overflow-hidden"
+            className={`w-full min-h-[128px] p-4 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-[#33DB98]/50 focus:border-[#33DB98] text-sm leading-relaxed text-gray-300 placeholder:text-gray-600 transition-all resize-none overflow-hidden ${highlightTrigger > 0 ? "animate-glow-fade" : ""}`}
             placeholder="참고할 글의 스타일이나 특징을 입력해주세요. (위의 분석 기능을 사용하면 자동으로 채워집니다)"
           />
           <p className="mt-2 text-[11px] text-gray-500 leading-relaxed">

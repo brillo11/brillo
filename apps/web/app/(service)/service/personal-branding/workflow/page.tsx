@@ -271,7 +271,7 @@ function BrandingWorkflowContent() {
               </button>
             </div>
             <div className="flex-1 overflow-y-auto custom-scrollbar -mx-8 -mb-8 px-4 pb-8">
-              <BlogAiPageContent hideHeader={true} />
+              <BlogAiPageContent hideHeader={true} isWorkflow={true} />
             </div>
           </div>
         )}

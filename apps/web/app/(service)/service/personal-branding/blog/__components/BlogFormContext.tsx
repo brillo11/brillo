@@ -18,7 +18,7 @@ import { toast } from "sonner";
 export interface BlogFormData {
   brandingMode: "MINIMAL" | "BALANCED" | "STRONG";
   branding: {
-    specialties: string[];
+    // specialties: string[];
     brandingText: string;
   };
   contentPlanning: {
@@ -70,13 +70,15 @@ interface BlogFormContextType {
   setFullFormData: (data: Partial<BlogFormData>) => void;
   deleteTemplate: (id: string) => Promise<void>;
   refreshTemplates: () => Promise<void>;
+  lastAutoFillTimestamp: number;
+  triggerAutoFillFeedback: () => void;
 }
 
 // Default form data
 const defaultFormData: BlogFormData = {
-  brandingMode: "BALANCED",
+  brandingMode: "MINIMAL",
   branding: {
-    specialties: [],
+    // specialties: [],
     brandingText: `[자기소개 및 브랜드 슬로건]
 
 
@@ -131,6 +133,11 @@ export const BlogFormProvider: React.FC<{ children: ReactNode }> = ({
   const [formData, setFormData] = useState<BlogFormData>(defaultFormData);
   const [templates, setTemplates] = useState<SavedTemplate[]>([]);
   const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
+  const [lastAutoFillTimestamp, setLastAutoFillTimestamp] = useState(0);
+
+  const triggerAutoFillFeedback = () => {
+    setLastAutoFillTimestamp(Date.now());
+  };
 
   const refreshTemplates = async () => {
     setIsLoadingTemplates(true);
@@ -223,6 +230,8 @@ export const BlogFormProvider: React.FC<{ children: ReactNode }> = ({
         setFullFormData,
         deleteTemplate,
         refreshTemplates,
+        lastAutoFillTimestamp,
+        triggerAutoFillFeedback,
       }}
     >
       {children}

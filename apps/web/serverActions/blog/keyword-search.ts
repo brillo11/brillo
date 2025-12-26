@@ -4,6 +4,20 @@ import { analyzePost } from './blog-post-analysis.actions';
 import { getYouTubeTranscript } from '../youtube/youtube-transcript.actions';
 
 /**
+ * HTML 태그를 제거하고 순수 텍스트만 추출하는 헬퍼 함수
+ */
+function cleanHtmlContent(html: string, maxLength: number = 3000): string {
+  if (!html) return "";
+  return html
+    .replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gmi, "") // 스크립트 제거
+    .replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gmi, "") // 스타일 제거
+    .replace(/<[^>]*>?/gm, " ") // 태그 제거
+    .replace(/\s+/g, " ") // 연속 공백 제거
+    .trim()
+    .substring(0, maxLength);
+}
+
+/**
  * YouTube URL을 분석하여 해당 자막을 기반으로 글쓰기 기획안을 생성합니다.
  */
 export async function generateContentPlanFromYoutube(url: string): Promise<{
@@ -13,6 +27,8 @@ export async function generateContentPlanFromYoutube(url: string): Promise<{
     targetAudience: string;
     keyMessage: string;
     keywords: string[];
+    tone: string;
+    styleAnalysis: string;
   };
   error?: string;
 }> {
@@ -27,16 +43,39 @@ export async function generateContentPlanFromYoutube(url: string): Promise<{
       .join(' ')
       .substring(0, 3000);
 
-    const prompt = `다음 YouTube 영상의 자막 내용을 분석하여, 이 내용을 바탕으로 네이버 블로그 포스팅 기획안을 작성해주세요.
+    const prompt = `다음 YouTube 영상의 자막 내용을 분석하여 네이버 블로그 포스팅 기획안을 작성해주세요.
 
 영상 자막 내용: ${fullText}
+
+[말투(tone) 분석 지침]
+본문의 전체적인 문체를 분석하여 다음 중 하나를 선택하세요:
+- 정중형: '~습니다', '~입니다' 등 격식 있는 문어체가 지배적인 경우
+- 친절형: '~해요', '~예요', '~인가요?' 등 부드러운 구어체가 지배적인 경우
+- 친근형: '~해', '~이야', '~다' 등 반말이나 평어가 지배적인 경우
+반드시 가장 많이 사용된 종결 어미 형식을 기준으로 '친절형', '정중형', '친근형' 중 키워드 하나만 선택하세요.
+
+[스타일 분석 지침]
+분석 항목:
+1. 문체 (말투, 종결 어미의 특징 - 예: ~해요, ~입니다, ~다 등)
+2. 단어 선택의 특징 (자주 사용하는 단어, 전문 용어 사용 수준, 이모지 활용도 등)
+3. 문장 구조 (문장의 평균 길이, 호흡, 줄바꿈 습관 등)
+4. 글의 구성 방식 (서론-본론-결론의 특징, 가독성을 위한 장치 등)
+5. 독자를 대하는 태도 및 분위기 (친근함, 전문적임, 단호함 등)
+
+[응답 규칙]
+- "제시된 포스트를 바탕으로~", "분석 결과입니다"와 같은 서술형 도입 문구를 절대 포함하지 마세요.
+- "[작성 팁]", "성공입니다"와 같은 마무리 문구나 조언을 절대 포함하지 마세요.
+- 오직 스타일 가이드의 핵심 내용(지침)만 불렛 포인트나 구조화된 형태로 출력하세요.
+- 다른 설명 없이 스타일 가이드 본문만 바로 시작하세요.
 
 반드시 JSON 형식으로만 응답하세요:
 {
   "subject": "포스팅 주제 (영상의 핵심을 잘 보여주는 매력적인 제목)",
   "targetAudience": "타겟 독자 (이 글을 읽을 구체적인 페르소나)",
   "keyMessage": "핵심 메시지 및 강조점 (영상에서 전달하려는 핵심 가치와 강조해야 할 부분)",
-  "keywords": ["핵심 키워드 5개"]
+  "keywords": ["핵심 키워드 5개"],
+  "tone": "친절형" | "정중형" | "친근형",
+  "styleAnalysis": "스타일 분석 지침에 따라 분석한 스타일 가이드"
 }`;
 
     const result = await generateText({
@@ -71,6 +110,8 @@ export async function generateContentPlanFromUrl(url: string): Promise<{
       targetAudience: string;
       keyMessage: string;
       keywords: string[];
+      tone: string;
+      styleAnalysis: string;
     };
     error?: string;
   }> {
@@ -81,18 +122,28 @@ export async function generateContentPlanFromUrl(url: string): Promise<{
       }
   
       const { title, content } = analysisResult.data;
+      const cleanedContent = cleanHtmlContent(content, 3000);
   
-      const prompt = `다음 네이버 블로그 포스트의 제목과 본문 내용을 분석하여, 이 글의 핵심을 잘 요약하고 발전시킨 블로그 포스팅 기획안을 작성해주세요.
+      const prompt = `다음 네이버 블로그 포스트를 분석하여 최적화된 기획안을 작성해주세요.
   
   원래 글 제목: ${title}
-  원래 글 본문 요약: ${content.substring(0, 2000)}
+  원래 글 본문 요약: ${cleanedContent}
   
+  [말투(tone) 분석 지침]
+  본문의 전체적인 문체를 분석하여 다음 중 하나를 선택하세요:
+  - 정중형: '~습니다', '~입니다' 등 격식 있는 문어체가 지배적인 경우
+  - 친절형: '~해요', '~예요', '~인가요?' 등 부드러운 구어체가 지배적인 경우
+  - 친근형: '~해', '~이야', '~다' 등 반말이나 평어가 지배적인 경우
+  반드시 가장 많이 사용된 종결 어미 형식을 기준으로 '친절형', '정중형', '친근형' 중 키워드 하나만 선택하세요.
+
   반드시 JSON 형식으로만 응답하세요:
   {
     "subject": "포스팅 주제 (원래 글을 바탕으로 더 매력적으로 다듬은 제목)",
     "targetAudience": "타겟 독자 (이 글을 읽을 구체적인 페르소나)",
     "keyMessage": "핵심 메시지 및 강조점 (글에서 전달하려는 핵심 가치와 강조해야 할 부분)",
-    "keywords": ["핵심 키워드 5개"]
+    "keywords": ["핵심 키워드 5개"],
+    "tone": "친절형" | "정중형" | "친근형",
+    "styleAnalysis": "원래 글의 문체, 단어 선택, 문장 구조 등을 바탕으로 한 상세 스타일 가이드"
   }`;
   
       const result = await generateText({
@@ -231,6 +282,71 @@ export async function generateContentPlansFromKeywords(keywords: string[]): Prom
   } catch (error) {
     console.error('기획안 생성 오류:', error);
     return { success: false, plans: [], error: '기획안 생성 중 오류가 발생했습니다.' };
+  }
+}
+
+/**
+ * 블로그 본문 내용을 분석하여 말투(tone)와 스타일 가이드를 추출합니다.
+ */
+export async function analyzeToneAndStyleFromContent(content: string): Promise<{
+  success: boolean;
+  tone?: string;
+  styleAnalysis?: string;
+  error?: string;
+}> {
+  try {
+    const cleanedContent = cleanHtmlContent(content, 3000);
+    const prompt = `다음 블로그 본문의 전체적인 문체와 종결 어미를 정밀하게 분석하여 말투 유형을 결정해주세요. 그리고 
+
+[분석 지침]
+1. 본문의 모든 문장 종결 어미를 전수 조사하세요.
+2. '~습니다', '~입니다', '~보입니다' 등 격식 있는 표현이 지배적이라면 반드시 '정중형'을 선택하세요.
+3. '~해요', '~예요', '~인가요?' 등 부드러운 구어체가 지배적이라면 반드시 '친절형'을 선택하세요.
+4. '~해', '~이야', '~다' (일기체/평어)가 지배적이라면 반드시 '친근형'을 선택하세요.
+5. 도입부의 한두 문장에 현혹되지 말고, 본문의 80% 이상을 차지하는 지배적인 말투를 기준으로 선택하세요.
+
+[스타일 분석 지침]
+분석 항목:
+1. 문체 (말투, 종결 어미의 특징 - 예: ~해요, ~입니다, ~다 등)
+2. 단어 선택의 특징 (자주 사용하는 단어, 전문 용어 사용 수준, 이모지 활용도 등)
+3. 문장 구조 (문장의 평균 길이, 호흡, 줄바꿈 습관 등)
+4. 글의 구성 방식 (서론-본론-결론의 특징, 가독성을 위한 장치 등)
+5. 독자를 대하는 태도 및 분위기 (친근함, 전문적임, 단호함 등)
+
+[응답 규칙]
+- "제시된 포스트를 바탕으로~", "분석 결과입니다"와 같은 서술형 도입 문구를 절대 포함하지 마세요.
+- "[작성 팁]", "성공입니다"와 같은 마무리 문구나 조언을 절대 포함하지 마세요.
+- 오직 스타일 가이드의 핵심 내용(지침)만 불렛 포인트나 구조화된 형태로 출력하세요.
+- 다른 설명 없이 스타일 가이드 본문만 바로 시작하세요.;
+
+본문 내용:
+${cleanedContent}
+
+반드시 JSON 형식으로만 응답하세요:
+{
+  "tone": "친절형" | "정중형" | "친근형",
+  "styleAnalysis": "스타일 분석 지침에 따라 분석한 스타일 가이드"
+}`;
+
+    const result = await generateText({
+      model: "google/gemini-3-flash" as any,
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    if (result.text) {
+      const jsonMatch = result.text.match(/\{[\s\S]*\}/);
+      const jsonStr = jsonMatch ? jsonMatch[0] : result.text;
+      const data = JSON.parse(jsonStr);
+      return {
+        success: true,
+        tone: data.tone,
+        styleAnalysis: data.styleAnalysis
+      };
+    }
+    return { success: false, error: 'AI 응답이 없습니다.' };
+  } catch (error) {
+    console.error('톤 및 스타일 분석 오류:', error);
+    return { success: false, error: '분석 중 오류가 발생했습니다.' };
   }
 }
 
