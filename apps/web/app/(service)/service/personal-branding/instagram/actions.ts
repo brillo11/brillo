@@ -17,13 +17,13 @@ export async function generateInstagramImage(
 ) {
   try {
     const finalPrompt = `
-    Context for Instagram Card News Design:
+    Here's context for instagram carousel design.
     - Visual Background/Concept: ${context.visual}
     - Main Headline (Big & Bold): "${context.mainText}"
     - Subtext/Body (Smaller, Readable): "${context.miniTexts}"
     - Design Style/Directions: ${context.directions}
     
-    Design a professional Instagram Card News image. 
+    Design a professional instagram carousel image. 
     1. LAYOUT: Clear typographic hierarchy. The Main Headline should be prominent and readable. The Subtext should be balanced and legible.
     2. BACKGROUND: High-quality visual based on the description, darkened or overlayed if necessary to ensure text readability. If characters or places appear, the background/setting MUST be Korea. 
     3. STYLE: Modern, clean, and aesthetic. Follow the design directions.
