@@ -30,6 +30,8 @@ interface AIAssistantClientProps {
   initialTargetAudience?: string;
   initialKeyInsights?: string;
   hideHeader?: boolean;
+  initialStep?: Step;
+  initialSessionData?: Partial<AIAssistantSessionData>;
 }
 
 export function AIAssistantClient({
@@ -37,13 +39,15 @@ export function AIAssistantClient({
   initialTargetAudience = "",
   initialKeyInsights = "",
   hideHeader = false,
+  initialStep = 1,
+  initialSessionData = {},
 }: AIAssistantClientProps) {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   type SessionData = Partial<AIAssistantSessionData> & { topic?: string };
   type SessionUpdates = Parameters<typeof updateAIAssistantSession>[1];
 
-  const [sessionData, setSessionData] = useState<SessionData>({});
-  const [currentStep, setCurrentStep] = useState<Step>(1);
+  const [sessionData, setSessionData] = useState<SessionData>(initialSessionData);
+  const [currentStep, setCurrentStep] = useState<Step>(initialStep);
   
   // Inputs
   const [topic, setTopic] = useState(initialTopic);
