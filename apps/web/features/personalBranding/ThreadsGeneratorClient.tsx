@@ -366,7 +366,7 @@ export function ThreadsGeneratorClient({
 
         {/* Right Column: Preview */}
         <div className="space-y-6">
-          <div className="bg-[#101010] border border-white/10 rounded-3xl p-8 min-h-[600px] relative overflow-hidden">
+          <div className="bg-[#101010] border border-white/10 rounded-3xl p-6 min-h-[600px] relative overflow-hidden">
             {/* Background Pattern */}
 
             <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2 relative z-10">

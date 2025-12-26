@@ -47,10 +47,6 @@ const STYLES: {
   title: string;
   desc: string;
   pages: string;
-  id: InstagramStyle;
-  title: string;
-  desc: string;
-  pages: string;
   icon: any;
   detail: string;
 }[] = [
@@ -589,10 +585,10 @@ export function InstagramGeneratorClient({
         </div>
 
         {/* Output Section */}
-        <div className="relative border border-white/5 rounded-2xl bg-vzx-card p-6 min-h-[500px]">
+        <div className="relative border border-white/5 rounded-3xl bg-vzx-card p-8 min-h-[600px]">
           {pages.length > 0 ? (
             <div className="space-y-4">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                   기획 결과 ({pages.length} 페이지)
                   {generatedStyle && (
