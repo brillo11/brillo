@@ -16,6 +16,10 @@ import {
   Heart,
   Repeat,
   Send,
+  Bomb,
+  TrendingUp,
+  Glasses,
+  Gift,
 } from "lucide-react";
 import {
   generateThreadsContent,
@@ -57,6 +61,34 @@ const STYLES: {
     desc: "'쓰친(쓰레드 친구) 구함'",
     icon: Users,
     detail: "업계 네트워킹, 취미 공유, 반모/존모 친구 찾기",
+  },
+  {
+    id: "FACT_BOMBER",
+    title: "팩트폭격 & 현실조언",
+    desc: "'뼈 맞아서 순살됨'",
+    icon: Bomb,
+    detail: "정신이 번쩍 드는 현실적인 조언, 쓴소리, 동기부여",
+  },
+  {
+    id: "BUILDING_IN_PUBLIC",
+    title: "성장 기록 & 스토리 리빙",
+    desc: "'같이 성장할 사람?'",
+    icon: TrendingUp,
+    detail: "실패와 배움을 투명하게 공유, 팬덤 형성",
+  },
+  {
+    id: "MY_WAY",
+    title: "마이웨이 (소신 발언)",
+    desc: "'난 좀 다른데?'",
+    icon: Glasses,
+    detail: "남 눈치 안 보는 독자적 시각, 힙한 태도",
+  },
+  {
+    id: "CURATION",
+    title: "큐레이션 & 정보요약",
+    desc: "'이거 하나면 끝!'",
+    icon: Gift,
+    detail: "뉴스/트렌드/꿀팁 3줄 요약, 떠먹여 주기",
   },
 ];
 
