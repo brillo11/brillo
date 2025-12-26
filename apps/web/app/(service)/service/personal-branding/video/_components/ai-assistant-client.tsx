@@ -3,7 +3,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Check, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
-import type { Step, ChatMessage, VideoStyle, ThumbnailReference } from "./types";
+import type {
+  Step,
+  ChatMessage,
+  VideoStyle,
+  ThumbnailReference,
+} from "./types";
 import { Step1Planning } from "./step1-planning";
 import { Step2ThumbGuide } from "./step2-thumb-guide";
 import { Step5ThumbGen } from "./step5-thumb-gen";
@@ -46,9 +51,10 @@ export function AIAssistantClient({
   type SessionData = Partial<AIAssistantSessionData> & { topic?: string };
   type SessionUpdates = Parameters<typeof updateAIAssistantSession>[1];
 
-  const [sessionData, setSessionData] = useState<SessionData>(initialSessionData);
+  const [sessionData, setSessionData] =
+    useState<SessionData>(initialSessionData);
   const [currentStep, setCurrentStep] = useState<Step>(initialStep);
-  
+
   // Inputs
   const [topic, setTopic] = useState(initialTopic);
   const [targetAudience, setTargetAudience] = useState(initialTargetAudience);
@@ -57,11 +63,14 @@ export function AIAssistantClient({
 
   const [selectedTitle, setSelectedTitle] = useState("");
   const [selectedTitleIndex, setSelectedTitleIndex] = useState<number | null>(
-    null
+    null,
   );
-  const [selectedGuideIndex, setSelectedGuideIndex] = useState<number | null>(null);
-  const [selectedReferenceThumbnails, setSelectedReferenceThumbnails] = useState<ThumbnailReference[]>([]);
-  
+  const [selectedGuideIndex, setSelectedGuideIndex] = useState<number | null>(
+    null,
+  );
+  const [selectedReferenceThumbnails, setSelectedReferenceThumbnails] =
+    useState<ThumbnailReference[]>([]);
+
   const [referenceScript, setReferenceScript] = useState("");
 
   // Loading states
@@ -88,7 +97,7 @@ export function AIAssistantClient({
   // 세션 데이터 저장
   const saveSessionData = async (
     updates: SessionUpdates,
-    sessionIdOverride?: string
+    sessionIdOverride?: string,
   ) => {
     const targetSessionId = sessionIdOverride ?? currentSessionId;
     if (!targetSessionId) return;
@@ -105,7 +114,7 @@ export function AIAssistantClient({
       await updateAIAssistantSession(
         targetSessionId,
         updates,
-        title ?? undefined
+        title ?? undefined,
       );
     } catch (error) {
       console.error("Failed to save session data:", error);
@@ -146,7 +155,7 @@ export function AIAssistantClient({
         topic,
         targetAudience,
         keyInsights,
-        videoStyle ?? undefined
+        videoStyle ?? undefined,
       );
       const updatedData = { titleResponses: response };
       await saveSessionData(updatedData, sessionId);
@@ -171,7 +180,11 @@ export function AIAssistantClient({
   };
 
   const handleGuideSelect = async (index: number) => {
-    if (!sessionData.thumbnailGuideResponses?.thumbnailGuides?.[index] || !currentSessionId) return;
+    if (
+      !sessionData.thumbnailGuideResponses?.thumbnailGuides?.[index] ||
+      !currentSessionId
+    )
+      return;
     setSelectedGuideIndex(index);
   };
 
@@ -181,8 +194,9 @@ export function AIAssistantClient({
     // 썸네일 가이드 생성 후 다음 스텝으로 이동
     setIsGuideLoading(true);
     try {
-      const selectedTitleSet = sessionData.titleResponses?.sets[selectedTitleIndex];
-      
+      const selectedTitleSet =
+        sessionData.titleResponses?.sets[selectedTitleIndex];
+
       if (!selectedTitleSet) {
         toast.error("선택된 기획안이 없습니다.");
         return;
@@ -197,12 +211,15 @@ export function AIAssistantClient({
       await saveSessionData(updates);
 
       // 썸네일 가이드 생성
-      const response = await sendThumbnailGuideResponses(currentSessionId, selectedTitleIndex);
+      const response = await sendThumbnailGuideResponses(
+        currentSessionId,
+        selectedTitleIndex,
+      );
       const guideUpdates = {
-        thumbnailGuideResponses: response
+        thumbnailGuideResponses: response,
       };
       await saveSessionData(guideUpdates);
-      
+
       await handleStepChange(2); // Move to Step 2 (Thumb Guide)
       toast.success("썸네일 가이드가 생성되었습니다.");
     } catch (error) {
@@ -218,8 +235,12 @@ export function AIAssistantClient({
 
     setIsThumbnailLoading(true);
     try {
-      const selectedTitleSet = sessionData.titleResponses?.sets[selectedTitleIndex!];
-      const selectedGuide = sessionData.thumbnailGuideResponses?.thumbnailGuides[selectedGuideIndex];
+      const selectedTitleSet =
+        sessionData.titleResponses?.sets[selectedTitleIndex!];
+      const selectedGuide =
+        sessionData.thumbnailGuideResponses?.thumbnailGuides[
+          selectedGuideIndex
+        ];
 
       if (!selectedTitleSet || !selectedGuide) {
         toast.error("선택된 가이드가 없습니다.");
@@ -227,26 +248,26 @@ export function AIAssistantClient({
       }
 
       const updates = {
-         selectedThumbnailGuideIndex: selectedGuideIndex,
-         step: "THUMBNAIL"
+        selectedThumbnailGuideIndex: selectedGuideIndex,
+        step: "THUMBNAIL",
       };
       await saveSessionData(updates);
 
       // 썸네일 생성
       const s3Url = await sendThumbnailResponses({
         thumbnailTitle: selectedTitleSet.thumbnailTitle,
-        hookingText: selectedTitleSet.thumbnailTitle || "", 
+        hookingText: selectedTitleSet.thumbnailTitle || "",
         videoTitle: selectedTitleSet.videoTitle,
         thumbnailGuide: selectedGuide.guideDescription || "",
         referenceImages: selectedReferenceThumbnails,
       });
-      
+
       const thumbUpdates = {
         thumbnailUrls: s3Url,
-        step: "SCRIPT" 
+        step: "SCRIPT",
       };
       await saveSessionData(thumbUpdates);
-      
+
       await handleStepChange(5); // Move to Step 5 (Thumb Gen)
       toast.success("썸네일이 생성되었습니다.");
     } catch (error) {
@@ -263,8 +284,12 @@ export function AIAssistantClient({
     setIsThumbnailLoading(true);
 
     try {
-      const selectedTitleSet = sessionData.titleResponses?.sets[selectedTitleIndex!];
-      const selectedGuide = sessionData.thumbnailGuideResponses?.thumbnailGuides[selectedGuideIndex];
+      const selectedTitleSet =
+        sessionData.titleResponses?.sets[selectedTitleIndex!];
+      const selectedGuide =
+        sessionData.thumbnailGuideResponses?.thumbnailGuides[
+          selectedGuideIndex
+        ];
 
       if (!selectedTitleSet || !selectedGuide) {
         toast.error("선택된 정보가 없습니다.");
@@ -313,7 +338,7 @@ export function AIAssistantClient({
         thumbnailEditText,
         sessionData.thumbnailUrls, // S3 URL 전달
         base64,
-        mimeType
+        mimeType,
       );
 
       // 썸네일 수정은 즉시 반영되어야 하므로 저장
@@ -431,7 +456,10 @@ export function AIAssistantClient({
     // 대본 생성 후 다음 스텝으로 이동
     setIsScriptLoading(true);
     try {
-      const response = await sendScriptResponses(currentSessionId, referenceScript);
+      const response = await sendScriptResponses(
+        currentSessionId,
+        referenceScript,
+      );
       const updates = { scriptResponses: response, step: "METADATA" };
       await saveSessionData(updates);
       await handleStepChange(6);
@@ -447,11 +475,11 @@ export function AIAssistantClient({
   const ProgressBar = () => {
     const steps = [
       "Planning", // Step 1
-      "Guide",    // Step 2
-      "Design",   // Step 5
-      "Script",   // Step 6
-      "Meta",     // Step 7
-      "Refine",   // Step 8
+      "Guide", // Step 2
+      "Design", // Step 5
+      "Script", // Step 6
+      "Meta", // Step 7
+      "Refine", // Step 8
     ];
 
     // Map currentStep to progress index
@@ -489,85 +517,84 @@ export function AIAssistantClient({
             유튜브 영상 제작
           </h1>
           <p className="text-gray-400">
-            나만의 유튜브 콘텐츠를 만들어보세요. 제목, 썸네일,
-            스크립트까지 단계별로 안내해드립니다.
+            나만의 유튜브 콘텐츠를 만들어보세요. 제목, 썸네일, 스크립트까지
+            단계별로 안내해드립니다.
           </p>
         </div>
       )}
       <div className="relative">
+        <ProgressBar />
+        <div className="flex items-center justify-between relative">
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-white/10 -z-10 rounded-full"></div>
+          <div
+            className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#33DB98] -z-10 rounded-full transition-all duration-500"
+            style={{
+              width: `${((currentStep - 1) / (8 - 1)) * 100}%`, // Rough approximation for dot position? No, let's use the index logic or just match valid steps
+            }}
+          ></div>
 
-            <ProgressBar />
-            <div className="flex items-center justify-between relative">
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-white/10 -z-10 rounded-full"></div>
+          {[
+            { step: 1, label: "Plan" },
+            { step: 2, label: "Guide" },
+            { step: 5, label: "Design" },
+            { step: 6, label: "Script" },
+            { step: 7, label: "Metadata" },
+            { step: 8, label: "Final" },
+          ].map((s, i) => (
+            <div
+              key={s.step}
+              className="flex flex-col items-center gap-2 bg-vzx-bg px-2 rounded-lg z-10"
+            >
               <div
-                className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#33DB98] -z-10 rounded-full transition-all duration-500"
-                style={{
-                  width: `${((currentStep - 1) / (8 - 1)) * 100}%`, // Rough approximation for dot position? No, let's use the index logic or just match valid steps
-                }}
-              ></div>
-
-              {[
-                { step: 1, label: "Plan" },
-                { step: 2, label: "Guide" },
-                { step: 5, label: "Design" },
-                { step: 6, label: "Script" },
-                { step: 7, label: "Metadata" },
-                { step: 8, label: "Final" },
-              ].map((s, i) => (
-                <div
-                  key={s.step}
-                  className="flex flex-col items-center gap-2 bg-vzx-bg px-2 rounded-lg z-10"
-                >
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-                      currentStep >= s.step
-                        ? "bg-[#33DB98] text-black scale-110 shadow-lg shadow-[#33DB98]/20"
-                        : "bg-vzx-card border-2 border-white/10 text-gray-600"
-                    }`}
-                  >
-                    {currentStep > s.step ? <Check size={16} /> : i + 1}
-                  </div>
-                  <span
-                    className={`text-xs font-medium ${currentStep >= s.step ? "text-[#33DB98]" : "text-gray-600"}`}
-                  >
-                    {s.label}
-                  </span>
-                </div>
-              ))}
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
+                  currentStep >= s.step
+                    ? "bg-[#33DB98] text-black scale-110 shadow-lg shadow-[#33DB98]/20"
+                    : "bg-vzx-card border-2 border-white/10 text-gray-600"
+                }`}
+              >
+                {currentStep > s.step ? <Check size={16} /> : i + 1}
+              </div>
+              <span
+                className={`text-xs font-medium ${currentStep >= s.step ? "text-[#33DB98]" : "text-gray-600"}`}
+              >
+                {s.label}
+              </span>
             </div>
+          ))}
+        </div>
       </div>
 
       {/* Main Content Area */}
       <div>
         {currentStep === 1 && (
-          <Step1Planning 
-             topic={topic}
-             onTopicChange={setTopic}
-             targetAudience={targetAudience}
-             onTargetAudienceChange={setTargetAudience}
-             keyInsights={keyInsights}
-             onKeyInsightsChange={setKeyInsights}
-             selectedStyle={videoStyle}
-             onStyleChange={setVideoStyle}
-             onGenerate={handleGeneratePlan}
-             isGenerating={isTitleLoading}
-             titleResponses={sessionData.titleResponses}
-             selectedTitleIndex={selectedTitleIndex}
-             onSelectTitle={handleTitleSelect}
-             onStepChange={handlePlanningNext}
-             isNextLoading={isGuideLoading}
+          <Step1Planning
+            topic={topic}
+            onTopicChange={setTopic}
+            targetAudience={targetAudience}
+            onTargetAudienceChange={setTargetAudience}
+            keyInsights={keyInsights}
+            onKeyInsightsChange={setKeyInsights}
+            selectedStyle={videoStyle}
+            onStyleChange={setVideoStyle}
+            onGenerate={handleGeneratePlan}
+            isGenerating={isTitleLoading}
+            titleResponses={sessionData.titleResponses}
+            selectedTitleIndex={selectedTitleIndex}
+            onSelectTitle={handleTitleSelect}
+            onStepChange={handlePlanningNext}
+            isNextLoading={isGuideLoading}
           />
         )}
         {currentStep === 2 && (
-          <Step2ThumbGuide 
-             onGenerate={() => handlePlanningNext()} // Re-generate guide if needed (less likely)
-             isGenerating={isGuideLoading}
-             thumbnailGuideResponses={sessionData.thumbnailGuideResponses}
-             selectedGuideIndex={selectedGuideIndex}
-             onSelectGuide={handleGuideSelect}
-             onStepChange={handleThumbGuideNext}
-             isNextLoading={isThumbnailLoading}
-             onReferenceThumbnailsChange={setSelectedReferenceThumbnails}
+          <Step2ThumbGuide
+            onGenerate={() => handlePlanningNext()} // Re-generate guide if needed (less likely)
+            isGenerating={isGuideLoading}
+            thumbnailGuideResponses={sessionData.thumbnailGuideResponses}
+            selectedGuideIndex={selectedGuideIndex}
+            onSelectGuide={handleGuideSelect}
+            onStepChange={handleThumbGuideNext}
+            isNextLoading={isThumbnailLoading}
+            onReferenceThumbnailsChange={setSelectedReferenceThumbnails}
           />
         )}
         {currentStep === 5 && sessionData.thumbnailUrls && (
@@ -622,25 +649,27 @@ export function AIAssistantClient({
             selectedTitle={selectedTitle}
             thumbnailUrls={sessionData.thumbnailUrls || undefined}
             scriptResponses={
-               typeof sessionData.scriptResponses === "string"
-                 ? undefined
-                 : (sessionData.scriptResponses as any)
+              typeof sessionData.scriptResponses === "string"
+                ? undefined
+                : (sessionData.scriptResponses as any)
             }
             metadataResponses={
-               typeof sessionData.metadataResponses === "string"
-                 ? undefined
-                 : (sessionData.metadataResponses as any)
+              typeof sessionData.metadataResponses === "string"
+                ? undefined
+                : (sessionData.metadataResponses as any)
             }
             onVideoGenerated={async (url, type) => {
               if (currentSessionId) {
                 await saveSessionData({
                   generatedVideoUrl: url,
-                  generatedVideoType: type
+                  generatedVideoType: type,
                 });
               }
             }}
             initialVideoUrl={sessionData.generatedVideoUrl || undefined}
-            initialVideoType={sessionData.generatedVideoType as "VEO" | "HEYGEN" || undefined}
+            initialVideoType={
+              (sessionData.generatedVideoType as "VEO" | "HEYGEN") || undefined
+            }
           />
         )}
       </div>

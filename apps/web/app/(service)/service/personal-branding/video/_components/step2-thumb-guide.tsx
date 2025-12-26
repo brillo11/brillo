@@ -42,12 +42,15 @@ export function Step2ThumbGuide({
 }: Step2ThumbGuideProps) {
   const guides = thumbnailGuideResponses?.thumbnailGuides || [];
   const [expandedGuides, setExpandedGuides] = useState<Set<number>>(new Set());
-  
+
   // YouTube Fetch State
   const [youtubeChannelUrl, setYoutubeChannelUrl] = useState("");
   const [isChannelLoading, setIsChannelLoading] = useState(false);
-  const [youtubeThumbnails, setYoutubeThumbnails] = useState<ThumbnailReference[]>([]);
-  const [selectedReferenceThumbnails, setSelectedReferenceThumbnails] = useState<ThumbnailReference[]>([]);
+  const [youtubeThumbnails, setYoutubeThumbnails] = useState<
+    ThumbnailReference[]
+  >([]);
+  const [selectedReferenceThumbnails, setSelectedReferenceThumbnails] =
+    useState<ThumbnailReference[]>([]);
 
   // Notify parent when selected thumbnails change
   useEffect(() => {
@@ -107,7 +110,7 @@ export function Step2ThumbGuide({
         // 쇼츠 영상 제외하고 일반 영상만 필터링
         const regularVideos = result.videos.filter(
           (video: any) =>
-            !isShortsVideo(video.duration || "", video.title || "")
+            !isShortsVideo(video.duration || "", video.title || ""),
         );
 
         const allThumbnails: ThumbnailReference[] = regularVideos
@@ -121,7 +124,7 @@ export function Step2ThumbGuide({
             };
           })
           .filter(
-            (thumb: ThumbnailReference | null) => thumb !== null
+            (thumb: ThumbnailReference | null) => thumb !== null,
           ) as ThumbnailReference[];
 
         // 최대 개수만큼만 가져오기
@@ -148,41 +151,42 @@ export function Step2ThumbGuide({
   if (guides.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-6">
-          <div className="text-center space-y-2">
-            <h2 className="text-2xl font-bold text-white">
-              썸네일 가이드 생성
-            </h2>
-            <p className="text-gray-400">
-              선택한 주제와 제목에 어울리는 최적의 썸네일 시각화 가이드를 제안해드립니다.
-            </p>
-          </div>
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl font-bold text-white">썸네일 가이드 생성</h2>
+          <p className="text-gray-400">
+            선택한 주제와 제목에 어울리는 최적의 썸네일 시각화 가이드를
+            제안해드립니다.
+          </p>
+        </div>
 
-          <Button
-            onClick={onGenerate}
-            disabled={isGenerating}
-            className="h-12 text-lg bg-[#33DB98] text-black hover:bg-[#33DB98]/90 font-bold border-none px-8"
-          >
-            {isGenerating ? (
-              <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                가이드 구상 중...
-              </>
-            ) : (
-              <>
-                <Sparkles className="mr-2 h-5 w-5" />
-                썸네일 가이드 생성하기
-              </>
-            )}
-          </Button>
+        <Button
+          onClick={onGenerate}
+          disabled={isGenerating}
+          className="h-12 text-lg bg-[#33DB98] text-black hover:bg-[#33DB98]/90 font-bold border-none px-8"
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              가이드 구상 중...
+            </>
+          ) : (
+            <>
+              <Sparkles className="mr-2 h-5 w-5" />
+              썸네일 가이드 생성하기
+            </>
+          )}
+        </Button>
 
-          <div className="bg-white/5 rounded-xl p-4 border border-white/10 text-sm text-gray-400 max-w-md">
-            <p className="mb-2 font-bold text-gray-300">💡 Tip</p>
-            <p>
-              AI가 영상의 주제와 분위기를 분석하여 클릭률을 높일 수 있는 3가지 시각적 컨셉을 제안합니다.
-              <br className="my-2" />
-              마음에 드는 가이드를 선택하면 다음 단계에서 실제 썸네일 이미지를 생성합니다.
-            </p>
-          </div>
+        <div className="bg-white/5 rounded-xl p-4 border border-white/10 text-sm text-gray-400 max-w-md">
+          <p className="mb-2 font-bold text-gray-300">💡 Tip</p>
+          <p>
+            AI가 영상의 주제와 분위기를 분석하여 클릭률을 높일 수 있는 3가지
+            시각적 컨셉을 제안합니다.
+            <br className="my-2" />
+            마음에 드는 가이드를 선택하면 다음 단계에서 실제 썸네일 이미지를
+            생성합니다.
+          </p>
+        </div>
       </div>
     );
   }
@@ -213,12 +217,18 @@ export function Step2ThumbGuide({
               }`}
             >
               <div>
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${
-                    isSelected ? "bg-[#33DB98]/20 text-[#33DB98]" : "bg-white/5 text-gray-400"
-                }`}>
+                <div
+                  className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${
+                    isSelected
+                      ? "bg-[#33DB98]/20 text-[#33DB98]"
+                      : "bg-white/5 text-gray-400"
+                  }`}
+                >
                   <ImageIcon />
                 </div>
-                <h3 className={`font-bold text-lg mb-2 ${isSelected ? "text-white" : "text-gray-200"}`}>
+                <h3
+                  className={`font-bold text-lg mb-2 ${isSelected ? "text-white" : "text-gray-200"}`}
+                >
                   <MarkdownRenderer content={guide.guideTitle} />
                 </h3>
                 <div className="text-sm text-gray-400 leading-relaxed mb-4 line-clamp-3">
@@ -292,12 +302,12 @@ export function Step2ThumbGuide({
               )}
             </Button>
           </div>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2 min-h-[200px]">
             {youtubeThumbnails.length > 0 ? (
               youtubeThumbnails.map((thumb) => {
                 const isSelected = selectedReferenceThumbnails.some(
-                  (t) => t.id === thumb.id
+                  (t) => t.id === thumb.id,
                 );
                 return (
                   <div
@@ -343,7 +353,9 @@ export function Step2ThumbGuide({
             ) : (
               <div className="col-span-full flex flex-col items-center justify-center text-gray-500 h-full border-2 border-dashed border-white/10 rounded-xl p-8 bg-white/5">
                 <ImageIcon size={32} className="mb-2 opacity-30" />
-                <span className="text-sm">불러온 채널 썸네일 이미지가 없습니다</span>
+                <span className="text-sm">
+                  불러온 채널 썸네일 이미지가 없습니다
+                </span>
               </div>
             )}
           </div>
@@ -351,7 +363,7 @@ export function Step2ThumbGuide({
       </div>
 
       {onStepChange && selectedGuideIndex !== null && (
-        <div className="flex justify-end mt-6">
+        <div className="flex justify-end mt-8">
           <Button
             onClick={() => onStepChange(5)} // Parameter doesn't technically matter if handleThumbGuideNext ignores it, but type says Step
             disabled={isNextLoading}

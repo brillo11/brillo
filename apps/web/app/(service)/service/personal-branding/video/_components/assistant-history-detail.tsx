@@ -16,7 +16,9 @@ interface AssistantHistoryDetailProps {
   session: AIAssistantSessionData;
 }
 
-export function AssistantHistoryDetail({ session }: AssistantHistoryDetailProps) {
+export function AssistantHistoryDetail({
+  session,
+}: AssistantHistoryDetailProps) {
   const safeParse = (data: any) => {
     if (!data) return null;
     if (typeof data === "string") {
@@ -33,9 +35,8 @@ export function AssistantHistoryDetail({ session }: AssistantHistoryDetailProps)
   const scriptData = safeParse(session.scriptResponses);
   const metadataData = safeParse(session.metadataResponses);
   const titleData = safeParse(session.titleResponses);
-    
-  const selectedTitleSet =
-    titleData?.sets?.[session.selectedTitleIndex ?? 0];
+
+  const selectedTitleSet = titleData?.sets?.[session.selectedTitleIndex ?? 0];
 
   return (
     <div className="max-w-6xl mx-auto p-8 space-y-8 pb-20">
@@ -121,10 +122,10 @@ export function AssistantHistoryDetail({ session }: AssistantHistoryDetailProps)
             {scriptData ? (
               <div className="space-y-4 text-sm text-gray-300">
                 <div>
-                  <div className="font-bold text-[#33DB98] mb-2">
-                    🎬 인트로
-                  </div>
-                  <p className="whitespace-pre-wrap leading-relaxed">{scriptData.intro}</p>
+                  <div className="font-bold text-[#33DB98] mb-2">🎬 인트로</div>
+                  <p className="whitespace-pre-wrap leading-relaxed">
+                    {scriptData.intro}
+                  </p>
                 </div>
                 <div>
                   <div className="font-bold text-orange-400 mb-2">
@@ -139,14 +140,16 @@ export function AssistantHistoryDetail({ session }: AssistantHistoryDetailProps)
                     <div className="font-bold text-blue-400 mb-2">
                       {chapter.title}
                     </div>
-                    <p className="whitespace-pre-wrap leading-relaxed">{chapter.content}</p>
+                    <p className="whitespace-pre-wrap leading-relaxed">
+                      {chapter.content}
+                    </p>
                   </div>
                 ))}
                 <div>
-                  <div className="font-bold text-green-400 mb-2">
-                    🎬 마무리
-                  </div>
-                  <p className="whitespace-pre-wrap leading-relaxed">{scriptData.outro}</p>
+                  <div className="font-bold text-green-400 mb-2">🎬 마무리</div>
+                  <p className="whitespace-pre-wrap leading-relaxed">
+                    {scriptData.outro}
+                  </p>
                 </div>
               </div>
             ) : (

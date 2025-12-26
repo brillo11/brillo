@@ -89,9 +89,7 @@ export function Step6Script({
               alt="Final"
               className="w-full rounded-lg mb-2"
             />
-            <p className="text-xs text-gray-400 text-center">
-              (최종)
-            </p>
+            <p className="text-xs text-gray-400 text-center">(최종)</p>
           </div>
 
           <div className="bg-white/5 p-4 rounded-xl border border-white/10 shadow-sm">
@@ -101,7 +99,9 @@ export function Step6Script({
             <div className="space-y-3">
               <div>
                 <span className="text-xs text-gray-400 block">제목</span>
-                <p className="font-medium text-sm text-white">{selectedTitle}</p>
+                <p className="font-medium text-sm text-white">
+                  {selectedTitle}
+                </p>
               </div>
               <div>
                 <span className="text-xs text-gray-400 block">주제</span>
