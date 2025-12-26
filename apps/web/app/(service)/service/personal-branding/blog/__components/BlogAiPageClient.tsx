@@ -79,8 +79,8 @@ export const BlogAiPageContent: React.FC<BlogAiPageContentProps> = ({
   // Load History from DB
   const refreshHistory = async () => {
     try {
-      const data = await getBlogPostHistories();
-      setHistory(data as any);
+      const data = (await getBlogPostHistories()) as HistoryItem[];
+      setHistory(data);
     } catch (e) {
       console.error("Failed to fetch history:", e);
     }
@@ -253,25 +253,49 @@ export const BlogAiPageContent: React.FC<BlogAiPageContentProps> = ({
                     setGeneratedContent((prev) => prev + data.content);
                     finalContent += data.content;
                   } else if (data.type === "image-data") {
+                    const placeholderRegex = new RegExp(
+                      data.placeholder
+                        .replace("PLACEHOLDER", "PLACE_?HOLDER")
+                        .replace("[", "\\[")
+                        .replace("]", "\\]"),
+                      "gi",
+                    );
                     setGeneratedContent((prev) =>
-                      prev.replace(data.placeholder, data.imageUrl),
+                      prev.replace(placeholderRegex, data.imageUrl),
                     );
                     finalContent = finalContent.replace(
-                      data.placeholder,
+                      placeholderRegex,
                       data.imageUrl,
                     );
                     if (data.placeholder === "[DIRECTOR_PHOTO_PLACEHOLDER]") {
                       setCompletedSteps((prev) => [...prev, 5]);
                     }
                   } else if (data.type === "gif-result") {
-                    const gifHtml = data.urls
-                      .map(
-                        (url: string) =>
-                          `<img src="${url}" alt="GIF" style="width: 100%; max-width: 600px; margin: 20px auto; display: block; border-radius: 8px;" />`,
-                      )
-                      .join("");
-                    setGeneratedContent((prev) => gifHtml + prev);
-                    finalContent = gifHtml + finalContent;
+                    // 본문에 플레이스홀더가 있거나 이미 이미지가 삽입되었는지 확인
+                    const hasGifs = (data.urls as string[]).some(
+                      (url: string, i: number) => {
+                        const placeholderRegex = new RegExp(
+                          `\\[GIF_PLACE_?HOLDER_${i + 1}\\]`,
+                          "gi",
+                        );
+                        return (
+                          placeholderRegex.test(finalContent) ||
+                          finalContent.includes(url)
+                        );
+                      },
+                    );
+
+                    // 플레이스홀더나 이미지가 없는 경우에만 상단에 추가 (기존 방식)
+                    if (!hasGifs) {
+                      const gifHtml = data.urls
+                        .map(
+                          (url: string) =>
+                            `<img src="${url}" alt="GIF" style="width: 100%; max-width: 600px; margin: 20px auto; display: block; border-radius: 8px;" />`,
+                        )
+                        .join("");
+                      setGeneratedContent((prev) => gifHtml + prev);
+                      finalContent = gifHtml + finalContent;
+                    }
                     setCompletedSteps((prev) => [...prev, 4]);
                   } else if (data.type === "done") {
                     setCurrentStep(6);
@@ -314,25 +338,49 @@ export const BlogAiPageContent: React.FC<BlogAiPageContentProps> = ({
                 setGeneratedContent((prev) => prev + data.content);
                 finalContent += data.content;
               } else if (data.type === "image-data") {
+                const placeholderRegex = new RegExp(
+                  data.placeholder
+                    .replace("PLACEHOLDER", "PLACE_?HOLDER")
+                    .replace("[", "\\[")
+                    .replace("]", "\\]"),
+                  "gi",
+                );
                 setGeneratedContent((prev) =>
-                  prev.replace(data.placeholder, data.imageUrl),
+                  prev.replace(placeholderRegex, data.imageUrl),
                 );
                 finalContent = finalContent.replace(
-                  data.placeholder,
+                  placeholderRegex,
                   data.imageUrl,
                 );
                 if (data.placeholder === "[DIRECTOR_PHOTO_PLACEHOLDER]") {
                   setCompletedSteps((prev) => [...prev, 5]);
                 }
               } else if (data.type === "gif-result") {
-                const gifHtml = data.urls
-                  .map(
-                    (url: string) =>
-                      `<img src="${url}" alt="GIF" style="width: 100%; max-width: 600px; margin: 20px auto; display: block; border-radius: 8px;" />`,
-                  )
-                  .join("");
-                setGeneratedContent((prev) => gifHtml + prev);
-                finalContent = gifHtml + finalContent;
+                // 본문에 플레이스홀더가 있거나 이미 이미지가 삽입되었는지 확인
+                const hasGifs = (data.urls as string[]).some(
+                  (url: string, i: number) => {
+                    const placeholderRegex = new RegExp(
+                      `\\[GIF_PLACE_?HOLDER_${i + 1}\\]`,
+                      "gi",
+                    );
+                    return (
+                      placeholderRegex.test(finalContent) ||
+                      finalContent.includes(url)
+                    );
+                  },
+                );
+
+                // 플레이스홀더나 이미지가 없는 경우에만 상단에 추가 (기존 방식)
+                if (!hasGifs) {
+                  const gifHtml = data.urls
+                    .map(
+                      (url: string) =>
+                        `<img src="${url}" alt="GIF" style="width: 100%; max-width: 600px; margin: 20px auto; display: block; border-radius: 8px;" />`,
+                    )
+                    .join("");
+                  setGeneratedContent((prev) => gifHtml + prev);
+                  finalContent = gifHtml + finalContent;
+                }
                 setCompletedSteps((prev) => [...prev, 4]);
               } else if (data.type === "done") {
                 setCurrentStep(6);
@@ -476,7 +524,7 @@ export const BlogAiPageContent: React.FC<BlogAiPageContentProps> = ({
                 <TemplateManager />
                 <HistoryManager
                   history={history}
-                  onLoad={(item) => {
+                  onLoad={(item: HistoryItem) => {
                     setGeneratedContent(item.content);
                     setSelectedTitle(item.title);
                     setIsLeftPanelCollapsed(true);

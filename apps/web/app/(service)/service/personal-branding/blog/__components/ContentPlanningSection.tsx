@@ -200,7 +200,10 @@ const ContentPlanningSection: React.FC<ContentPlanningSectionProps> = ({
       const selectedPost = blogResults[idx];
 
       const promises: [Promise<any>, Promise<any> | null] = [
-        generateContentPlansFromKeywords(blogKeywords),
+        generateContentPlansFromKeywords(
+          blogKeywords,
+          formData.initialPlanning,
+        ),
         selectedPost?.fullContent
           ? analyzeToneAndStyleFromContent(selectedPost.fullContent)
           : null,
@@ -245,7 +248,7 @@ const ContentPlanningSection: React.FC<ContentPlanningSectionProps> = ({
     setSelectedPlanIdx(idx);
     setIsManualEditExpanded(true);
 
-    // 1단계 내용 업데이트
+    // 1단계 내용 업데이트 (AI가 사용자의 초기 의도를 이미 통합하여 생성함)
     updateFormData("contentPlanning", {
       ...formData.contentPlanning,
       subject: plan.subject,
@@ -253,6 +256,15 @@ const ContentPlanningSection: React.FC<ContentPlanningSectionProps> = ({
       keyMessage: plan.keyMessage,
       keywords: plan.keywords,
     });
+
+    // [중요] 워크플로우 초기 기획안 고정 (상단 요약용)
+    if (!formData.initialPlanning.subject) {
+      updateFormData("initialPlanning", {
+        subject: plan.subject,
+        targetAudience: plan.targetAudience,
+        keyMessage: plan.keyMessage,
+      });
+    }
 
     // 적용할 톤과 스타일 결정 (기획안 자체 데이터 우선, 없으면 분석된 데이터 사용, 그것도 없으면 기본값)
     const finalTone = sanitizeTone(plan.tone || analyzedTone || "친절형");
@@ -280,7 +292,10 @@ const ContentPlanningSection: React.FC<ContentPlanningSectionProps> = ({
     if (!blogUrl.trim()) return;
     setIsGeneratingFromBlog(true);
     try {
-      const result = await generateContentPlanFromUrl(blogUrl);
+      const result = await generateContentPlanFromUrl(
+        blogUrl,
+        formData.initialPlanning,
+      );
       if (result.success && result.plan) {
         applyContentPlan(result.plan);
         triggerAutoFillFeedback();
@@ -300,7 +315,10 @@ const ContentPlanningSection: React.FC<ContentPlanningSectionProps> = ({
     if (!youtubeUrl.trim()) return;
     setIsGeneratingFromYoutube(true);
     try {
-      const result = await generateContentPlanFromYoutube(youtubeUrl);
+      const result = await generateContentPlanFromYoutube(
+        youtubeUrl,
+        formData.initialPlanning,
+      );
       if (result.success && result.plan) {
         applyContentPlan(result.plan);
         triggerAutoFillFeedback();
@@ -377,33 +395,39 @@ const ContentPlanningSection: React.FC<ContentPlanningSectionProps> = ({
                 </span>
               </div>
               <div className="grid grid-cols-1 gap-2.5">
-                {formData.contentPlanning.subject && (
+                {(formData.initialPlanning.subject ||
+                  formData.contentPlanning.subject) && (
                   <div className="flex gap-3">
                     <span className="text-[10px] font-bold text-gray-500 w-16 shrink-0 mt-0.5">
                       주제
                     </span>
                     <p className="text-xs text-gray-300 font-medium line-clamp-1">
-                      {formData.contentPlanning.subject}
+                      {formData.initialPlanning.subject ||
+                        formData.contentPlanning.subject}
                     </p>
                   </div>
                 )}
-                {formData.contentPlanning.targetAudience && (
+                {(formData.initialPlanning.targetAudience ||
+                  formData.contentPlanning.targetAudience) && (
                   <div className="flex gap-3">
                     <span className="text-[10px] font-bold text-gray-500 w-16 shrink-0 mt-0.5">
                       대상고객
                     </span>
                     <p className="text-xs text-gray-300 font-medium line-clamp-1">
-                      {formData.contentPlanning.targetAudience}
+                      {formData.initialPlanning.targetAudience ||
+                        formData.contentPlanning.targetAudience}
                     </p>
                   </div>
                 )}
-                {formData.contentPlanning.keyMessage && (
+                {(formData.initialPlanning.keyMessage ||
+                  formData.contentPlanning.keyMessage) && (
                   <div className="flex gap-3">
                     <span className="text-[10px] font-bold text-gray-500 w-16 shrink-0 mt-0.5">
                       핵심 인사이트
                     </span>
                     <p className="text-xs text-gray-400 leading-relaxed line-clamp-2">
-                      {formData.contentPlanning.keyMessage}
+                      {formData.initialPlanning.keyMessage ||
+                        formData.contentPlanning.keyMessage}
                     </p>
                   </div>
                 )}

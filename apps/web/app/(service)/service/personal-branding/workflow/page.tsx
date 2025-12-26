@@ -131,6 +131,13 @@ function BrandingWorkflowContent() {
       keyMessage: insight,
     }));
 
+    // 워크플로우 초기 기획안 고정
+    updateFormData("initialPlanning", {
+      subject: topic,
+      targetAudience: targetAudience,
+      keyMessage: insight,
+    });
+
     syncInitialData();
 
     // 화면 전환 (이제 실제 블로그 생성 컴포넌트가 Step 2에 표시됨)

@@ -189,13 +189,6 @@ export const serviceMenus: MenuItem[] = [
         
       },
       {
-        id: "blog",
-        title: "블로그키워드",
-        baseUrl: PATH.SERVICE_PERSONAL_BRANDING,
-        url: PATH.SERVICE_PERSONAL_BRANDING_BLOG_KEYWORD,
-        icon: PenLine,
-      },
-      {
         id: "threads",
         title: "쓰레드",
         baseUrl: PATH.SERVICE_PERSONAL_BRANDING,
@@ -231,6 +224,13 @@ export const serviceMenus: MenuItem[] = [
         baseUrl: PATH.SERVICE_TRENDS_OUTLIER,
         url: PATH.SERVICE_TRENDS_OUTLIER,
         icon: Flame,
+      },
+      {
+        id: "blog",
+        title: "블로그키워드",
+        baseUrl: PATH.SERVICE_PERSONAL_BRANDING,
+        url: PATH.SERVICE_PERSONAL_BRANDING_BLOG_KEYWORD,
+        icon: PenLine,
       },
     ],
   },
