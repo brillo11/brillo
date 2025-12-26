@@ -77,6 +77,24 @@ interface BlogFormContextType {
   refreshTemplates: () => Promise<void>;
   lastAutoFillTimestamp: number;
   triggerAutoFillFeedback: () => void;
+
+  // 생성 결과 관련 상태
+  generatedContent: string;
+  setGeneratedContent: React.Dispatch<React.SetStateAction<string>>;
+  generatedTitles: string[];
+  setGeneratedTitles: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedTitle: string;
+  setSelectedTitle: React.Dispatch<React.SetStateAction<string>>;
+  generationStep: number;
+  setGenerationStep: React.Dispatch<React.SetStateAction<number>>;
+  startedSteps: number[];
+  setStartedSteps: React.Dispatch<React.SetStateAction<number[]>>;
+  completedSteps: number[];
+  setCompletedSteps: React.Dispatch<React.SetStateAction<number[]>>;
+  isLeftPanelCollapsed: boolean;
+  setIsLeftPanelCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+  isLeftPanelExpanded: boolean;
+  setIsLeftPanelExpanded: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // Default form data
@@ -144,6 +162,16 @@ export const BlogFormProvider: React.FC<{ children: ReactNode }> = ({
   const [templates, setTemplates] = useState<SavedTemplate[]>([]);
   const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
   const [lastAutoFillTimestamp, setLastAutoFillTimestamp] = useState(0);
+
+  // 생성 결과 관련 상태
+  const [generatedContent, setGeneratedContent] = useState("");
+  const [generatedTitles, setGeneratedTitles] = useState<string[]>([]);
+  const [selectedTitle, setSelectedTitle] = useState("");
+  const [generationStep, setGenerationStep] = useState(0);
+  const [startedSteps, setStartedSteps] = useState<number[]>([]);
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false);
+  const [isLeftPanelExpanded, setIsLeftPanelExpanded] = useState(false);
 
   const triggerAutoFillFeedback = () => {
     setLastAutoFillTimestamp(Date.now());
@@ -246,6 +274,22 @@ export const BlogFormProvider: React.FC<{ children: ReactNode }> = ({
         refreshTemplates,
         lastAutoFillTimestamp,
         triggerAutoFillFeedback,
+        generatedContent,
+        setGeneratedContent,
+        generatedTitles,
+        setGeneratedTitles,
+        selectedTitle,
+        setSelectedTitle,
+        generationStep,
+        setGenerationStep,
+        startedSteps,
+        setStartedSteps,
+        completedSteps,
+        setCompletedSteps,
+        isLeftPanelCollapsed,
+        setIsLeftPanelCollapsed,
+        isLeftPanelExpanded,
+        setIsLeftPanelExpanded,
       }}
     >
       {children}

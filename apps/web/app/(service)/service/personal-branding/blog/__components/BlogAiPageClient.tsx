@@ -38,26 +38,38 @@ export const BlogAiPageContent: React.FC<BlogAiPageContentProps> = ({
   hideHeader = false,
   isWorkflow = false,
 }) => {
-  const { formData, saveTemplate, setFullFormData } = useBlogForm();
+  const {
+    formData,
+    saveTemplate,
+    setFullFormData,
+    generatedContent,
+    setGeneratedContent,
+    generatedTitles,
+    setGeneratedTitles,
+    selectedTitle,
+    setSelectedTitle,
+    generationStep: currentStep,
+    setGenerationStep: setCurrentStep,
+    startedSteps,
+    setStartedSteps,
+    completedSteps,
+    setCompletedSteps,
+    isLeftPanelCollapsed,
+    setIsLeftPanelCollapsed,
+    isLeftPanelExpanded,
+    setIsLeftPanelExpanded,
+  } = useBlogForm();
+
   const [isGenerating, setIsGenerating] = useState(false);
   const [isRefining, setIsRefining] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [startedSteps, setStartedSteps] = useState<number[]>([]);
-  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-  const [generatedContent, setGeneratedContent] = useState("");
   const [error, setError] = useState("");
 
-  // 제목 생성 관련 상태
-  const [generatedTitles, setGeneratedTitles] = useState<string[]>([]);
+  // 제목 생성 관련 상태 (isGeneratingTitles는 로컬에서 관리해도 됨)
   const [isGeneratingTitles, setIsGeneratingTitles] = useState(false);
-  const [selectedTitle, setSelectedTitle] = useState("");
 
   // History State
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
-  // Left Panel Collapse State
-  const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false);
-  const [isLeftPanelExpanded, setIsLeftPanelExpanded] = useState(false); // 확장 버튼으로 열린 상태
   const progressRef = useRef<HTMLDivElement>(null);
 
   // Auto-collapse when generation is complete
