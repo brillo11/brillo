@@ -67,14 +67,9 @@ export function Step8VideoGeneration({
       const result = await convertVideoToShorts(videoUrl);
 
       if (result.success && result.videoUrl) {
-        toast.success("변환이 완료되었습니다. 다운로드를 시작합니다.");
-        // Trigger download
-        const link = document.createElement("a");
-        link.href = result.videoUrl;
-        link.download = `shorts-${Date.now()}.mp4`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        toast.success("변환이 완료되었습니다.");
+        // Open in new tab
+        window.open(result.videoUrl, "_blank");
       } else {
         throw new Error(result.error || "변환 실패");
       }
@@ -443,7 +438,7 @@ export function Step8VideoGeneration({
                   <Button
                     onClick={() => setVideoUrl(null)}
                     variant="outline"
-                    className="flex-1 border-white/10 hover:bg-white/5 text-gray-400"
+                    className="flex-1 border-white/10 hover:bg-white/5 text-gray-400 hover:text-white"
                   >
                     영상 다시 생성하기
                   </Button>
