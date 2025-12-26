@@ -72,14 +72,14 @@ const STYLES: {
   },
   {
     id: "LISTICLE",
-    title: "리스트형 (Best N)",
+    title: "리스트형",
     desc: "저장 부르는 꿀팁 모음",
     pages: "8 페이지",
     detail: "인트로(1p) -> 팁 나열(2~6p) -> 요약 및 저장 유도(7~8p)",
   },
   {
     id: "HOW_TO",
-    title: "하우투 (Tutorial)",
+    title: "하우투",
     desc: "따라만 하면 완성되는 가이드",
     pages: "8 페이지",
     detail:
@@ -87,14 +87,14 @@ const STYLES: {
   },
   {
     id: "STORYTELLING",
-    title: "스토리텔링 (Hero's Journey)",
+    title: "스토리텔링",
     desc: "몰입감 있는 경험담 / 썰",
     pages: "8 페이지",
     detail: "배경(1p) -> 위기(2p) -> 갈등(3~4p) -> 해결(5~6p) -> 교훈(7~8p)",
   },
   {
     id: "MISTAKES",
-    title: "실수 모음 (Common Mistakes)",
+    title: "실수 모음",
     desc: "이것만 안 해도 절반은 성공!",
     pages: "8 페이지",
     detail:
