@@ -279,7 +279,7 @@ function BrandingWorkflowContent() {
                   onClick={handleStep2Submit}
                   className="text-sm font-bold text-black bg-[#33DB98] px-6 py-2.5 rounded-xl hover:bg-[#2bb880] transition flex items-center gap-2 shadow-lg shadow-[#33DB98]/20"
                 >
-                  블로그 확정 & 쓰레드 생성으로 이동
+                  쓰레드 생성
                   <ArrowRight size={16} />
                 </button>
               </div>
