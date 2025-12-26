@@ -332,7 +332,7 @@ function BrandingWorkflowContent() {
           <div className="h-full flex flex-col">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-                <Instagram className="text-[#33DB98]" /> 캐러셀 생성
+                <Instagram className="text-[#33DB98]" /> 인스타그램 캐러셀 생성
               </h2>
               <div className="flex items-center gap-3">
                 <button

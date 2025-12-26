@@ -233,60 +233,56 @@ export function ThreadsGeneratorClient({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Left Column: Inputs */}
-        <div className="space-y-8">
-          <div className="space-y-6">
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="topic" className="text-gray-300">
+              주제
+            </Label>
+            <Input
+              id="topic"
+              placeholder="작성하고 싶은 주제를 입력하세요 (ex. 개발자 취업 현실)"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)]"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="topic" className="text-gray-300">
-                주제
+              <Label htmlFor="target" className="text-gray-300">
+                대상 고객 <span className="text-gray-500 text-xs">(선택)</span>
               </Label>
               <Input
-                id="topic"
-                placeholder="작성하고 싶은 주제를 입력하세요 (ex. 개발자 취업 현실)"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
+                id="target"
+                placeholder="ex. 취준생, 주니어 개발자"
+                value={targetAudience}
+                onChange={(e) => setTargetAudience(e.target.value)}
                 className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)]"
               />
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="target" className="text-gray-300">
-                  대상 고객{" "}
-                  <span className="text-gray-500 text-xs">(선택)</span>
-                </Label>
-                <Input
-                  id="target"
-                  placeholder="ex. 취준생, 주니어 개발자"
-                  value={targetAudience}
-                  onChange={(e) => setTargetAudience(e.target.value)}
-                  className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)]"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="insight" className="text-gray-300">
-                  핵심 인사이트{" "}
-                  <span className="text-gray-500 text-xs">(선택)</span>
-                </Label>
-                <Input
-                  id="insight"
-                  placeholder="ex. 코딩 실력보다 중요한 건 소통"
-                  value={insight}
-                  onChange={(e) => setInsight(e.target.value)}
-                  className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)]"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="insight" className="text-gray-300">
+                핵심 인사이트{" "}
+                <span className="text-gray-500 text-xs">(선택)</span>
+              </Label>
+              <Input
+                id="insight"
+                placeholder="ex. 코딩 실력보다 중요한 건 소통"
+                value={insight}
+                onChange={(e) => setInsight(e.target.value)}
+                className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)]"
+              />
             </div>
           </div>
 
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <Label className="text-gray-300">스타일 선택</Label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {STYLES.map((style) => (
-                  <div
-                    key={style.id}
-                    onClick={() => setSelectedStyle(style.id)}
-                    className={`
+          <div className="space-y-2">
+            <Label className="text-gray-300">스타일 선택</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {STYLES.map((style) => (
+                <div
+                  key={style.id}
+                  onClick={() => setSelectedStyle(style.id)}
+                  className={`
                       relative cursor-pointer transition-all duration-300 border rounded-2xl p-4
                       ${
                         selectedStyle === style.id
@@ -294,49 +290,49 @@ export function ThreadsGeneratorClient({
                           : "bg-vzx-card border-white/5 hover:border-[var(--vzx-accent)]/50 text-gray-400 hover:text-white"
                       }
                     `}
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <div
-                        className={`p-2 rounded-lg transition-colors ${
-                          selectedStyle === style.id
-                            ? "bg-[var(--vzx-accent)] text-black"
-                            : "bg-white/5 text-gray-400"
-                        }`}
-                      >
-                        <style.icon size={20} />
-                      </div>
-                      {selectedStyle === style.id && (
-                        <div className="w-2 h-2 rounded-full bg-[var(--vzx-accent)] animate-pulse" />
-                      )}
-                    </div>
-                    <h3
-                      className={`font-bold mb-1 transition-colors ${
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div
+                      className={`p-2 rounded-lg transition-colors ${
                         selectedStyle === style.id
-                          ? "text-[var(--vzx-accent)]"
-                          : "text-gray-200"
+                          ? "bg-[var(--vzx-accent)] text-black"
+                          : "bg-white/5 text-gray-400"
                       }`}
                     >
-                      {style.title}
-                    </h3>
-                    <p className="text-xs text-gray-500 leading-relaxed font-medium mb-1">
-                      {style.desc}
-                    </p>
-                    <p className="text-[10px] text-gray-500 leading-tight border-t border-white/5 pt-2 mt-2">
-                      {style.detail}
-                    </p>
+                      <style.icon size={20} />
+                    </div>
+                    {selectedStyle === style.id && (
+                      <div className="w-2 h-2 rounded-full bg-[var(--vzx-accent)] animate-pulse" />
+                    )}
                   </div>
-                ))}
-              </div>
+                  <h3
+                    className={`font-bold mb-1 transition-colors ${
+                      selectedStyle === style.id
+                        ? "text-[var(--vzx-accent)]"
+                        : "text-gray-200"
+                    }`}
+                  >
+                    {style.title}
+                  </h3>
+                  <p className="text-xs text-gray-500 leading-relaxed font-medium mb-1">
+                    {style.desc}
+                  </p>
+                  <p className="text-[10px] text-gray-500 leading-tight border-t border-white/5 pt-2 mt-2">
+                    {style.detail}
+                  </p>
+                </div>
+              ))}
             </div>
+          </div>
 
-            <div className="space-y-2">
-              <Label className="text-gray-300">소통방식</Label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {TONES.map((tone) => (
-                  <div
-                    key={tone.id}
-                    onClick={() => setSelectedTone(tone.id)}
-                    className={`
+          <div className="space-y-2">
+            <Label className="text-gray-300">소통방식</Label>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {TONES.map((tone) => (
+                <div
+                  key={tone.id}
+                  onClick={() => setSelectedTone(tone.id)}
+                  className={`
                       cursor-pointer text-center py-3 rounded-xl border transition-all duration-200 text-sm font-medium
                       ${
                         selectedTone === tone.id
@@ -344,11 +340,10 @@ export function ThreadsGeneratorClient({
                           : "bg-vzx-card border-white/5 text-gray-400 hover:text-white hover:border-white/20"
                       }
                     `}
-                  >
-                    {tone.label}
-                  </div>
-                ))}
-              </div>
+                >
+                  {tone.label}
+                </div>
+              ))}
             </div>
           </div>
 
