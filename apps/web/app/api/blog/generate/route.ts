@@ -15,8 +15,47 @@ import {
   generateImageWithAI,
   editImageWithAI,
 } from "@/shared/serverActions/aiGateway";
+import { getYouTubeTranscript } from "@/serverActions/youtube/youtube-transcript.actions";
+import { getCompetitorStats } from "@/serverActions/blog/competitor-stats";
 import { v4 as uuidv4 } from "uuid";
 import { H3_STYLE } from "@/features/blog/constants";
+
+/**
+ * MM:SS 형식을 초 단위로 변환
+ */
+function timeToSeconds(timeStr: string): number {
+  if (!timeStr) return 0;
+  const parts = timeStr.split(":");
+  if (parts.length === 2) {
+    return parseInt(parts[0] || "0") * 60 + parseInt(parts[1] || "0");
+  }
+  return parseInt(timeStr) || 0;
+}
+
+/**
+ * 자막에서 특정 시간 구간의 텍스트 추출
+ */
+function extractTranscriptSegments(
+  transcript: { text: string; start: number }[],
+  startTimes: string[],
+) {
+  return startTimes.map((timeStr, index) => {
+    const startSec = timeToSeconds(timeStr);
+    const endSec = startSec + 5; // 5초 구간
+
+    const segmentText = transcript
+      .filter((item) => item.start >= startSec && item.start <= endSec)
+      .map((item) => item.text)
+      .join(" ")
+      .trim();
+
+    return {
+      index: index + 1,
+      time: timeStr,
+      text: segmentText || "(자막 없음 - 화면 분위기에 맞춰 작성)",
+    };
+  });
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,11 +74,34 @@ export async function POST(req: NextRequest) {
     // console.log('✅ User ID:', userId);
     const formData = await req.json();
 
+    // 상위 노출 블로그 통계 가져오기
+    let competitorStats = null;
+    if (formData.contentPlanning?.keywords?.length > 0) {
+      const stats = await getCompetitorStats(formData.contentPlanning.keywords[0]);
+      if (stats.success) {
+        competitorStats = stats;
+      }
+    }
+
+    // 유튜브 자막 정보 추출
+    let gifContexts: { index: number; time: string; text: string }[] = [];
+    if (formData.gif?.youtubeUrl && formData.gif?.startTimes?.length > 0) {
+      try {
+        const transcriptResult = await getYouTubeTranscript(formData.gif.youtubeUrl);
+        if (transcriptResult.success && transcriptResult.transcript) {
+          gifContexts = extractTranscriptSegments(transcriptResult.transcript, formData.gif.startTimes);
+        }
+        console.log('✅ GIF Contexts:', gifContexts);
+      } catch (e) {
+        console.error("Error fetching transcript for GIF contexts:", e);
+      }
+    }
+
     // Step 1: 요청 접수
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
-        const tasks: Promise<any>[] = [];
+        const tasks: Promise<void | boolean | unknown>[] = [];
 
         try {
           // 1. 유튜브 GIF 생성 태스크 시작 (병렬)
@@ -69,6 +131,21 @@ export async function POST(req: NextRequest) {
                   if (response.ok) {
                     const result = await response.json();
                     if (result.urls && result.urls.length > 0) {
+                      // 개별 GIF 데이터를 플레이스홀더와 함께 전송
+                      result.urls.forEach((url: string, index: number) => {
+                        const placeholder = `[GIF_PLACEHOLDER_${index + 1}]`;
+                        controller.enqueue(
+                          encoder.encode(
+                            `data: ${JSON.stringify({
+                              type: "image-data", // image-data 타입을 재사용하여 클라이언트 교체 로직 활용
+                              placeholder,
+                              imageUrl: url,
+                            })}\n\n`,
+                          ),
+                        );
+                      });
+
+                      // 전체 결과도 전송 (기존 클라이언트 호환성 유지)
                       controller.enqueue(
                         encoder.encode(
                           `data: ${JSON.stringify({
@@ -103,7 +180,8 @@ export async function POST(req: NextRequest) {
             ),
           );
 
-          const prompt = constructPrompt(formData);
+          const prompt = constructPrompt(formData, gifContexts, competitorStats);
+          console.log('✅ Prompt:', prompt);
           controller.enqueue(
             encoder.encode(
               `data: ${JSON.stringify({ type: "progress", step: 3, message: "본문 생성" })}\n\n`,
@@ -128,7 +206,7 @@ export async function POST(req: NextRequest) {
           );
 
           // 3. 이미지 생성 및 인물 사진 처리 (본문이 필요하므로 본문 생성 후 병렬 시작)
-          const contentProcessingTasks: Promise<any>[] = [];
+          const contentProcessingTasks: Promise<void | boolean | unknown>[] = [];
 
           // AI 이미지 생성
           if (formData.options?.generateImageWithAi) {
@@ -141,7 +219,7 @@ export async function POST(req: NextRequest) {
                     ),
                   );
                   const imgTagRegex =
-                    /<img[^>]*src="(\[IMAGE_PLACEHOLDER_\d+\])"[^>]*alt="([^"]*)"[^>]*>/g;
+                    /<img[^>]*src="(\[IMAGE_PLACE_?HOLDER_\d+\])"[^>]*alt="([^"]*)"[^>]*>/gi;
                   const matches = [...textContent.matchAll(imgTagRegex)];
 
                   if (matches.length > 0) {
@@ -290,7 +368,11 @@ const DEFAULT_BRANDING_TEXT = `[자기소개 및 브랜드 슬로건]
 
 [독자 혜택 및 문의 링크]`;
 
-function constructPrompt(formData: any): string {
+function constructPrompt(
+  formData: any,
+  gifContexts: { index: number; time: string; text: string }[] = [],
+  competitorStats: { averageImageCount: number } | null = null,
+): string {
   const { brandingMode, branding, contentPlanning, options, details, photo } =
     formData;
 
@@ -298,6 +380,46 @@ function constructPrompt(formData: any): string {
     !branding.brandingText ||
     branding.brandingText.trim() === "" ||
     branding.brandingText.trim() === DEFAULT_BRANDING_TEXT.trim();
+
+  // 상위 노출 블로그 통계를 기반으로 이미지 쿼터 계산
+  const avgN = competitorStats?.averageImageCount || 3; // 기본값 3개
+  const G = formData.gif?.startTimes?.length || 0;
+  const P = photo?.originalUrl ? 1 : 0;
+
+  // 1. GIF 인접성 분석 (20초 이내)
+  const gifSequences: number[][] = [];
+  if (G > 0 && formData.gif?.startTimes) {
+    const times = formData.gif.startTimes.map(timeToSeconds);
+    let currentSequence: number[] = [1];
+
+    for (let i = 1; i < times.length; i++) {
+      // 이전 GIF와 시작 시간 차이가 20초 이내이면 같은 그룹
+      if (times[i] - times[i - 1] <= 20) {
+        currentSequence.push(i + 1);
+      } else {
+        gifSequences.push(currentSequence);
+        currentSequence = [i + 1];
+      }
+    }
+    gifSequences.push(currentSequence);
+  }
+
+  // 2. 전체 목표치(avgN)에 맞추기 위해 필요한 AI 이미지 개수 산출
+  const requiredAiCount = Math.max(0, avgN - G - P);
+
+  // 3. '유효 미디어 단위' 계산 (GIF 시퀀스는 1개로 취급)
+  const effectiveG = gifSequences.length || G;
+  const totalUnits = effectiveG + P + requiredAiCount;
+
+  // 4. 가독성을 위한 최대 '영역(Area)' 개수 계산 (250자당 1개 지점)
+  const textLength = parseInt(details.length) || 1000;
+  const safetyCap = Math.max(1, Math.floor(textLength / 250));
+
+  // 5. 실제 이미지가 들어갈 '지점'의 총 개수
+  const totalAreaCount = Math.min(totalUnits, safetyCap);
+
+  // AI에게 전체 이미지 총합을 알려주기 위한 변수 (프롬프트용)
+  const totalImages = G + P + requiredAiCount;
 
   return `
 # 당신의 역할
@@ -346,7 +468,24 @@ ${brandingMode === "BALANCED" ? "- **공감적 증명**: 과거의 결핍이나 
 - **핵심 메시지:** ${contentPlanning.keyMessage || "미지정"}
 - **필수 키워드:** ${contentPlanning.keywords.join(", ") || "미지정"}
 
-## 4. 스타일 및 옵션
+${
+  gifContexts.length > 0
+    ? `
+## 4. 참고 영상 GIF 정보
+아래는 본문에 포함될 YouTube GIF 이미지들의 맥락 정보입니다. 
+각 GIF 의 맥락을 해석하고 본문에 자연스럽게 녹아들어 글의 설득력을 더하거나 공감을 유도할 수 있도록 작성하세요.
+
+${gifContexts
+  .map(
+    (ctx) =>
+      `- GIF ${ctx.index} (${ctx.time}): "${ctx.text}"`,
+  )
+  .join("\n")}
+`
+    : ""
+}
+
+## 5. 스타일 및 옵션
 - ## 글 옵션
 **말투 (매우 중요!):** ${options.styleReference}
 
@@ -416,7 +555,36 @@ ${details.styleText ? `- **참고 스타일 가이드:**\n${details.styleText}` 
      "${H3_STYLE}"
    - ✅ **구조:** 최상위는 \`<div>\` 태그로 시작
 
-6. **필수 포함 사항:**
+6. **이미지 및 미디어 삽입 규칙 (CRITICAL):**
+   당신은 본문에 다음 미디어들을 **총 ${totalAreaCount}개의 영역**에 나누어 배치해야 합니다.
+
+   **[미디어 리스트]**
+   ${P > 0 ? `- **인물 사진 (${P}개)**: [DIRECTOR_PHOTO_PLACEHOLDER]` : ""}
+   ${G > 0 ? `- **유튜브 GIF (${G}개)**: [GIF_PLACEHOLDER_1] ~ [GIF_PLACEHOLDER_${G}]` : ""}
+   ${
+     gifSequences.filter((s) => s.length > 1).length > 0
+       ? `   (⚠️ 중요: ${gifSequences
+           .filter((s) => s.length > 1)
+           .map((s) => `[GIF_PLACEHOLDER_${s.join("], [GIF_PLACEHOLDER_")}]`)
+           .join(", ")}는 서로 인접한 시간대의 연속된 장면입니다. 반드시 같은 영역에 묶어서 배치하세요.)`
+       : ""
+   }
+   ${requiredAiCount > 0 ? `- **AI 생성 이미지 (${requiredAiCount}개)**: [IMAGE_PLACEHOLDER_1] ~ [IMAGE_PLACEHOLDER_${requiredAiCount}]` : ""}
+
+   **[삽입 지침]**
+   1. 본문 전체에 **총 ${totalAreaCount}개의 이미지 삽입 영역**을 설정하세요.
+   2. 위 미디어 리스트의 모든 플레이스홀더를 해당 영역들에 **하나도 빠짐없이** 분산 배치하세요.
+   3. 만약 미디어의 총 개수(${totalImages}개)가 영역의 개수(${totalAreaCount}개)보다 많다면, **한 영역에 여러 개의 플레이스홀더를 함께 삽입**하세요.
+      - 예: 한 지점에 인물 사진과 AI 이미지를 함께 배치하거나, 연관된 AI 이미지 2개를 묶어서 배치.
+   4. 한 영역에 묶이는 이미지는 **최대 3개**를 넘지 않아야 하며, 서로 문맥상 자연스럽게 어울려야 합니다.
+   5. 플레이스홀더는 반드시 다음 형식을 **글자 하나 틀리지 않고 똑같이** 사용하세요 (중간에 언더바를 추가하지 마세요):
+      - 인물 사진: \`<img src="[DIRECTOR_PHOTO_PLACEHOLDER]" alt="신뢰감을 주는 작성자 모습" style="width: 100%; max-width: 400px; margin: 20px auto; display: block; border-radius: 8px;" />\`
+      - 유튜브 GIF: \`<img src="[GIF_PLACEHOLDER_N]" alt="영상 설명" style="width: 100%; max-width: 600px; margin: 20px auto; display: block; border-radius: 8px;" />\`
+      - AI 이미지: \`<img src="[IMAGE_PLACEHOLDER_N]" alt="이미지 상세 설명" style="width: 100%; max-width: 600px; margin: 20px auto; display: block; border-radius: 8px;" />\`
+      - **⚠️ 매우 중요**: \`[IMAGE_PLACE_HOLDER_N]\` 또는 \`[GIF_PLACE_HOLDER_N]\` 처럼 중간에 언더바(_)를 더 넣으면 시스템이 인식하지 못합니다. 반드시 \`PLACEHOLDER\` (언더바 없음) 형식을 엄수하세요.
+   6. AI 이미지의 alt 속성에는 **데이터 수치나 비교 내용을 도표/그래프 형태로 묘사하는 내용을 포함하면 좋습니다.** 
+   7. 데이터 수치나 비교 내용이 아닌 문맥에 어울리는 일반적인 이미지라면 **이미지에 대한 구체적인 설명을 작성해주세요** (예: "노트북으로 작업 중인 모습", "세련된 사무실 내부")
+
 ${
   options.disclaimerEnabled
     ? `
@@ -425,28 +593,6 @@ ${
   본 게시물은 정보 제공 및 브랜딩을 목적으로 작성되었습니다. 
   내용 중 포함된 정보는 일반적인 참고용이며, 상세한 사항은 전문가와 상담하시기 바랍니다.
   </p>
-`
-    : ""
-}
-
-${
-  options.generateImageWithAi
-    ? `
-- **이미지 생성 및 삽입**:
-  - 글의 주요 섹션마다 관련 이미지를 생성하여 삽입해주세요.
-  - 이미지는 \`<img src="[IMAGE_PLACEHOLDER_N]" alt="설명" style="width: 100%; max-width: 600px; margin: 20px auto; display: block; border-radius: 8px;" />\` 형식으로 삽입해주세요.
-  - N은 1부터 시작하는 순서 번호입니다 (예: IMAGE_PLACEHOLDER_1, IMAGE_PLACEHOLDER_2, ...)
-  - alt 속성에는 이미지에 대한 구체적인 설명을 작성해주세요 (예: "노트북으로 작업 중인 모습", "세련된 사무실 내부")
-`
-    : ""
-}
-
-${
-  photo?.originalUrl
-    ? `
-- **인물/프로필 사진 삽입**:
-  - 글의 서론(인사말) 또는 본문 중간 적절한 위치에 인물 사진을 **반드시 1회** 삽입하세요.
-  - 삽입 형식: \`<img src="[DIRECTOR_PHOTO_PLACEHOLDER]" alt="신뢰감을 주는 작성자 모습" style="width: 100%; max-width: 400px; margin: 20px auto; display: block; border-radius: 8px;" />\`
 `
     : ""
 }

@@ -20,7 +20,10 @@ function cleanHtmlContent(html: string, maxLength: number = 3000): string {
 /**
  * YouTube URL을 분석하여 해당 자막을 기반으로 글쓰기 기획안을 생성합니다.
  */
-export async function generateContentPlanFromYoutube(url: string): Promise<{
+export async function generateContentPlanFromYoutube(
+  url: string,
+  initialContext?: { subject?: string; targetAudience?: string; keyMessage?: string }
+): Promise<{
   success: boolean;
   plan?: {
     subject: string;
@@ -43,7 +46,16 @@ export async function generateContentPlanFromYoutube(url: string): Promise<{
       .join(' ')
       .substring(0, 3000);
 
+    const contextPrompt = initialContext ? `
+[사용자의 초기 기획 의도]
+- 초기 주제: ${initialContext.subject || '없음'}
+- 초기 타겟: ${initialContext.targetAudience || '없음'}
+- 초기 핵심 메시지: ${initialContext.keyMessage || '없음'}
+
+위 사용자의 초기 의도를 바탕으로 YouTube 영상의 내용을 분석하여 기획안을 작성해주세요. 사용자의 의도가 영상의 정보와 자연스럽게 융합되도록 하고, 특히 타겟 독자와 핵심 메시지가 사용자의 의도를 반영하면서도 영상의 구체적인 근거를 통해 강화되도록 작성하세요.` : '';
+
     const prompt = `다음 YouTube 영상의 자막 내용을 분석하여 네이버 블로그 포스팅 기획안을 작성해주세요.
+${contextPrompt}
 
 영상 자막 내용: ${fullText}
 
@@ -103,7 +115,10 @@ export async function generateContentPlanFromYoutube(url: string): Promise<{
 /**
  * 블로그 URL을 분석하여 해당 글을 기반으로 글쓰기 기획안을 생성합니다.
  */
-export async function generateContentPlanFromUrl(url: string): Promise<{
+export async function generateContentPlanFromUrl(
+  url: string,
+  initialContext?: { subject?: string; targetAudience?: string; keyMessage?: string }
+): Promise<{
     success: boolean;
     plan?: {
       subject: string;
@@ -124,8 +139,17 @@ export async function generateContentPlanFromUrl(url: string): Promise<{
       const { title, content } = analysisResult.data;
       const cleanedContent = cleanHtmlContent(content, 3000);
   
+      const contextPrompt = initialContext ? `
+[사용자의 초기 기획 의도]
+- 초기 주제: ${initialContext.subject || '없음'}
+- 초기 타겟: ${initialContext.targetAudience || '없음'}
+- 초기 핵심 메시지: ${initialContext.keyMessage || '없음'}
+
+위 사용자의 초기 의도를 바탕으로 분석된 블로그 내용을 재구성하여 기획안을 작성해주세요. 사용자의 의도가 분석된 내용과 자연스럽게 융합되도록 하고, 특히 타겟 독자와 핵심 메시지가 사용자의 의도를 반영하면서도 분석된 내용의 강점을 취하도록 작성하세요.` : '';
+
       const prompt = `다음 네이버 블로그 포스트를 분석하여 최적화된 기획안을 작성해주세요.
-  
+  ${contextPrompt}
+
   원래 글 제목: ${title}
   원래 글 본문 요약: ${cleanedContent}
   
@@ -229,7 +253,10 @@ export interface BlogSearchResult {
 /**
  * 키워드 조합을 기반으로 구체적인 글쓰기 기획(주제, 타겟, 메시지) 세트를 생성합니다.
  */
-export async function generateContentPlansFromKeywords(keywords: string[]): Promise<{
+export async function generateContentPlansFromKeywords(
+  keywords: string[],
+  initialContext?: { subject?: string; targetAudience?: string; keyMessage?: string }
+): Promise<{
   success: boolean;
   plans: Array<{
     subject: string;
@@ -241,7 +268,16 @@ export async function generateContentPlansFromKeywords(keywords: string[]): Prom
 }> {
   try {
     const keywordString = keywords.join(', ');
+    const contextPrompt = initialContext ? `
+[사용자의 초기 기획 의도]
+- 초기 주제: ${initialContext.subject || '없음'}
+- 초기 타겟: ${initialContext.targetAudience || '없음'}
+- 초기 핵심 메시지: ${initialContext.keyMessage || '없음'}
+
+위 사용자의 초기 의도를 적극 반영하여 기획안을 작성해주세요. 각 버전은 핵심 키워드들을 활용하면서도 사용자가 처음에 가졌던 기획 의도와 타겟, 메시지를 구체화하고 발전시킨 형태여야 합니다.` : '';
+
     const prompt = `다음 5개의 핵심 키워드를 기반으로 네이버 블로그 포스팅 기획안을 3가지 버전으로 작성해주세요.
+${contextPrompt}
 각 버전은 서로 다른 관점이나 타겟을 가져야 합니다.
 
 핵심 키워드: ${keywordString}

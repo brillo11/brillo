@@ -1,10 +1,31 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Download, Plus, Info, Loader2 } from "lucide-react";
+import {
+  Download,
+  Plus,
+  Info,
+  Loader2,
+  Bug,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import { useBlogForm, BlogFormData } from "./BlogFormContext";
 import AccordionItem from "./AccordionItem";
 import { getYouTubeVideoMetadata } from "@/serverActions/youtube/youtube-metadata.actions";
+import { getYouTubeTranscript } from "@/serverActions/youtube/youtube-transcript.actions";
+
+/**
+ * MM:SS 형식을 초 단위로 변환
+ */
+function timeToSeconds(timeStr: string): number {
+  if (!timeStr) return 0;
+  const parts = timeStr.split(":");
+  if (parts.length === 2) {
+    return parseInt(parts[0] || "0") * 60 + parseInt(parts[1] || "0");
+  }
+  return parseInt(timeStr) || 0;
+}
 
 const StepGif: React.FC = () => {
   const { formData, updateFormData } = useBlogForm();
@@ -16,6 +37,11 @@ const StepGif: React.FC = () => {
   const [minute, setMinute] = useState("");
   const [second, setSecond] = useState("");
   const [isLoadingMetadata, setIsLoadingMetadata] = useState(false);
+  const [isLoadingTranscript, setIsLoadingTranscript] = useState(false);
+  const [transcript, setTranscript] = useState<
+    { text: string; start: number }[]
+  >([]);
+  const [showDebug, setShowDebug] = useState(false);
 
   // Initialize from global state if available
   const [startTimes, setStartTimes] = useState<string[]>(
@@ -32,12 +58,35 @@ const StepGif: React.FC = () => {
       const extractedId = extractVideoId(url);
       if (extractedId) {
         setVideoId(extractedId);
+        // URL이 변경되면 자막 데이터 초기화
+        setTranscript([]);
       } else {
         setVideoId("");
+        setTranscript([]);
       }
     }
     setStartTimes(formData.gif.startTimes || []);
   }, [formData.gif.youtubeUrl, formData.gif.startTimes, youtubeUrl]);
+
+  // 컴포넌트 마운트 시 또는 videoId가 있는데 자막이 없는 경우 자막 가져오기
+  useEffect(() => {
+    if (videoId && transcript.length === 0 && !isLoadingTranscript) {
+      const fetchTranscriptOnMount = async () => {
+        setIsLoadingTranscript(true);
+        try {
+          const transcriptResult = await getYouTubeTranscript(youtubeUrl);
+          if (transcriptResult.success && transcriptResult.transcript) {
+            setTranscript(transcriptResult.transcript);
+          }
+        } catch (err) {
+          console.error("Failed to fetch transcript on mount:", err);
+        } finally {
+          setIsLoadingTranscript(false);
+        }
+      };
+      fetchTranscriptOnMount();
+    }
+  }, [videoId, youtubeUrl]); // transcript.length와 isLoadingTranscript는 의존성에서 제외하여 무한 루프 방지
 
   const extractVideoId = (url: string) => {
     // Handle various YouTube URL formats
@@ -69,10 +118,21 @@ const StepGif: React.FC = () => {
         if (metadata.success && metadata.durationSeconds) {
           setVideoDuration(metadata.durationSeconds);
         }
+
+        // 자막 데이터도 함께 불러오기
+        setIsLoadingTranscript(true);
+        const transcriptResult = await getYouTubeTranscript(youtubeUrl);
+        if (transcriptResult.success && transcriptResult.transcript) {
+          setTranscript(transcriptResult.transcript);
+        } else {
+          setTranscript([]);
+          console.warn("Failed to load transcript:", transcriptResult.error);
+        }
       } catch (err) {
-        console.error("Failed to load metadata:", err);
+        console.error("Failed to load metadata/transcript:", err);
       } finally {
         setIsLoadingMetadata(false);
+        setIsLoadingTranscript(false);
       }
 
       // Only update global state when video is successfully loaded
@@ -86,6 +146,7 @@ const StepGif: React.FC = () => {
       );
       setVideoId("");
       setVideoDuration(null);
+      setTranscript([]);
     }
   };
 
@@ -144,6 +205,18 @@ const StepGif: React.FC = () => {
       ...prev,
       startTimes: newTimes,
     }));
+  };
+
+  // 특정 시간대의 자막 추출
+  const getContextForTime = (timeStr: string) => {
+    const startSec = timeToSeconds(timeStr);
+    const endSec = startSec + 5;
+
+    return transcript
+      .filter((item) => item.start >= startSec && item.start <= endSec)
+      .map((item) => item.text)
+      .join(" ")
+      .trim();
   };
 
   return (
@@ -246,35 +319,37 @@ const StepGif: React.FC = () => {
               {startTimes.map((time, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between bg-white/5 border border-white/5 px-4 py-3 rounded-xl shadow-sm group hover:border-[#33DB98]/30 transition-all"
+                  className="flex flex-col bg-white/5 border border-white/5 rounded-xl shadow-sm group hover:border-[#33DB98]/30 transition-all overflow-hidden"
                 >
-                  <div className="flex items-center gap-4">
-                    <span className="bg-[#33DB98]/10 text-[#33DB98] px-2 py-1 rounded-lg text-xs font-bold w-6 h-6 flex items-center justify-center border border-[#33DB98]/20">
-                      {index + 1}
-                    </span>
-                    <span className="font-mono text-gray-200 font-bold text-base">
-                      {time}
-                    </span>
-                    <span className="text-xs text-gray-500 font-medium">
-                      ~{" "}
-                      {(() => {
-                        const parts = time.split(":").map(Number);
-                        const m = parts[0] || 0;
-                        const s = parts[1] || 0;
-                        const totalSeconds = m * 60 + s + 5;
-                        const endM = Math.floor(totalSeconds / 60);
-                        const endS = totalSeconds % 60;
-                        return `${String(endM).padStart(2, "0")}:${String(endS).padStart(2, "0")}`;
-                      })()}{" "}
-                      (5초)
-                    </span>
+                  <div className="flex items-center justify-between px-4 py-3">
+                    <div className="flex items-center gap-4">
+                      <span className="bg-[#33DB98]/10 text-[#33DB98] px-2 py-1 rounded-lg text-xs font-bold w-6 h-6 flex items-center justify-center border border-[#33DB98]/20">
+                        {index + 1}
+                      </span>
+                      <span className="font-mono text-gray-200 font-bold text-base">
+                        {time}
+                      </span>
+                      <span className="text-xs text-gray-500 font-medium">
+                        ~{" "}
+                        {(() => {
+                          const parts = time.split(":").map(Number);
+                          const m = parts[0] || 0;
+                          const s = parts[1] || 0;
+                          const totalSeconds = m * 60 + s + 5;
+                          const endM = Math.floor(totalSeconds / 60);
+                          const endS = totalSeconds % 60;
+                          return `${String(endM).padStart(2, "0")}:${String(endS).padStart(2, "0")}`;
+                        })()}{" "}
+                        (5초)
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => handleRemoveTime(index)}
+                      className="text-gray-600 hover:text-red-400 p-2 rounded-xl hover:bg-red-400/10 transition-all opacity-0 group-hover:opacity-100"
+                    >
+                      <Plus size={18} className="rotate-45" />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => handleRemoveTime(index)}
-                    className="text-gray-600 hover:text-red-400 p-2 rounded-xl hover:bg-red-400/10 transition-all opacity-0 group-hover:opacity-100"
-                  >
-                    <Plus size={18} className="rotate-45" />
-                  </button>
                 </div>
               ))}
             </div>
@@ -288,6 +363,81 @@ const StepGif: React.FC = () => {
               </span>
             </div>
           )}
+
+          {/* Debug Area: Transcript Context */}
+          {/* {startTimes.length > 0 && (
+            <div className="mt-6 border border-[#33DB98]/20 rounded-2xl overflow-hidden bg-[#33DB98]/5">
+              <button
+                onClick={() => setShowDebug(!showDebug)}
+                className="w-full flex items-center justify-between px-4 py-3 bg-[#33DB98]/10 hover:bg-[#33DB98]/20 transition-all group"
+              >
+                <div className="flex items-center gap-2 text-[#33DB98] text-xs font-bold uppercase tracking-wider">
+                  <Bug size={14} /> 디버그: 추출될 자막 맥락 확인
+                </div>
+                {showDebug ? (
+                  <ChevronUp size={16} className="text-[#33DB98]" />
+                ) : (
+                  <ChevronDown size={16} className="text-[#33DB98]" />
+                )}
+              </button>
+
+              {showDebug && (
+                <div className="p-4 space-y-4 animate-in fade-in slide-in-from-top-1 duration-200">
+                  {isLoadingTranscript ? (
+                    <div className="flex flex-col items-center justify-center py-8 gap-3">
+                      <Loader2
+                        size={24}
+                        className="text-[#33DB98] animate-spin"
+                      />
+                      <p className="text-xs text-gray-400">
+                        자막 데이터를 불러오는 중입니다...
+                      </p>
+                    </div>
+                  ) : transcript.length === 0 ? (
+                    <div className="text-center py-6">
+                      <p className="text-xs text-red-400/70 italic">
+                        이 비디오에서 추출된 한국어 자막이 없습니다.
+                      </p>
+                      <button
+                        onClick={handleLoadVideo}
+                        className="mt-2 text-[10px] text-[#33DB98] underline underline-offset-2 hover:text-[#33DB98]/80"
+                      >
+                        자막 다시 불러오기
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <p className="text-[11px] text-[#33DB98]/70 font-medium leading-relaxed">
+                        * 아래 텍스트는 AI가 글을 쓸 때 각 GIF의 맥락으로
+                        참고하게 될 자막 내용입니다. (구간별 5초 추출)
+                      </p>
+                      {startTimes.map((time, idx) => {
+                        const context = getContextForTime(time);
+                        return (
+                          <div
+                            key={idx}
+                            className="bg-black/20 rounded-xl p-3 border border-white/5"
+                          >
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-[10px] font-bold text-[#33DB98] bg-[#33DB98]/10 px-1.5 py-0.5 rounded">
+                                GIF {idx + 1}
+                              </span>
+                              <span className="text-[10px] font-mono text-gray-500">
+                                {time} ~{" "}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-300 leading-relaxed italic">
+                              {context || "해당 구간에 추출된 자막이 없습니다."}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )} */}
 
           {/* <div className="flex flex-col gap-4">
             <button

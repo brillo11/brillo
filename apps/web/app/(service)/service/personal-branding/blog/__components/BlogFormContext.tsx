@@ -29,6 +29,11 @@ export interface BlogFormData {
     keyMessage: string;
     keywords: string[];
   };
+  initialPlanning: {
+    subject: string;
+    targetAudience: string;
+    keyMessage: string;
+  };
   options: {
     generateImageWithAi: boolean;
     disclaimerEnabled: boolean;
@@ -102,6 +107,11 @@ const defaultFormData: BlogFormData = {
     targetAudience: "",
     keyMessage: "",
     keywords: [],
+  },
+  initialPlanning: {
+    subject: "",
+    targetAudience: "",
+    keyMessage: "",
   },
   options: {
     generateImageWithAi: false,
@@ -183,6 +193,10 @@ export const BlogFormProvider: React.FC<{ children: ReactNode }> = ({
       contentPlanning: {
         ...defaultFormData.contentPlanning,
         ...loadedData.contentPlanning,
+      },
+      initialPlanning: {
+        ...defaultFormData.initialPlanning,
+        ...(loadedData.initialPlanning || {}),
       },
       options: { ...defaultFormData.options, ...loadedData.options },
       details: { ...defaultFormData.details, ...loadedData.details },
