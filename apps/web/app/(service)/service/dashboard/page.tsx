@@ -57,32 +57,32 @@ export default function DashboardPage() {
       <div>
         <h1 className="text-3xl font-bold text-white mb-2">대시보드</h1>
         <p className="text-gray-400">
-          Welcome back, Instructor. Here&apos;s your growth metrics.
+          강사님 환영합니다. 성장 지표를 확인해보세요.
         </p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
-          title="Total Revenue"
+          title="총 수익"
           value="$124,592"
           change="+12.5%"
           icon={DollarSign}
         />
         <StatCard
-          title="Active Students"
+          title="활성 수강생"
           value="1,429"
           change="+5.2%"
           icon={Users}
         />
         <StatCard
-          title="Content Reach"
+          title="콘텐츠 도달"
           value="850K"
           change="+24.3%"
           icon={TrendingUp}
         />
         <StatCard
-          title="SaaS Usage"
+          title="SaaS 사용량"
           value="89%"
           change="+2.1%"
           icon={Activity}
@@ -92,10 +92,10 @@ export default function DashboardPage() {
       {/* Main Chart */}
       <div className="bg-vzx-card border border-white/5 rounded-2xl p-6 h-[400px]">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-white">Revenue Growth</h2>
+          <h2 className="text-xl font-semibold text-white">수익 성장률</h2>
           <select className="bg-vzx-bg border border-white/10 text-white text-sm rounded-lg px-3 py-1 outline-none focus:border-[#33DB98]">
-            <option>Last 6 Months</option>
-            <option>Last Year</option>
+            <option>최근 6개월</option>
+            <option>최근 1년</option>
           </select>
         </div>
         <ResponsiveContainer width="100%" height="100%">
@@ -147,24 +147,24 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-vzx-card border border-white/5 rounded-2xl p-6">
           <h2 className="text-xl font-semibold text-white mb-4">
-            Content Pipeline
+            콘텐츠 파이프라인
           </h2>
           <div className="space-y-4">
             {[
               {
-                title: "SEO Masterclass Blog",
-                status: "Published",
-                date: "2h ago",
+                title: "SEO 마스터클래스 블로그",
+                status: "발행됨",
+                date: "2시간 전",
               },
               {
-                title: "Youtube Shorts - Week 4",
-                status: "Processing",
-                date: "5h ago",
+                title: "유튜브 쇼츠 - 4주차",
+                status: "처리중",
+                date: "5시간 전",
               },
               {
-                title: "Thread: 5 Ways to scale",
-                status: "Draft",
-                date: "1d ago",
+                title: "쓰레드: 확장하는 5가지 방법",
+                status: "초안",
+                date: "1일 전",
               },
             ].map((item, i) => (
               <div
@@ -174,9 +174,9 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-3">
                   <div
                     className={`w-2 h-2 rounded-full ${
-                      item.status === "Published"
+                      item.status === "발행됨"
                         ? "bg-[#33DB98]"
-                        : item.status === "Processing"
+                        : item.status === "처리중"
                           ? "bg-yellow-500"
                           : "bg-gray-500"
                     }`}
@@ -193,7 +193,7 @@ export default function DashboardPage() {
 
         <div className="bg-vzx-card border border-white/5 rounded-2xl p-6">
           <h2 className="text-xl font-semibold text-white mb-4">
-            SaaS Tools Health
+            SaaS 도구 상태
           </h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -203,13 +203,13 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   <div className="text-white font-medium">
-                    YouTube Rank Tracker
+                    유튜브 순위 추적기
                   </div>
-                  <div className="text-xs text-gray-400">Deployed • v2.1.0</div>
+                  <div className="text-xs text-gray-400">배포됨 • v2.1.0</div>
                 </div>
               </div>
               <div className="px-3 py-1 bg-green-900/30 text-green-400 text-xs rounded-full border border-green-800">
-                Operational
+                정상 작동
               </div>
             </div>
             <div className="flex items-center justify-between">
@@ -218,14 +218,12 @@ export default function DashboardPage() {
                   IG
                 </div>
                 <div>
-                  <div className="text-white font-medium">
-                    Hashtag Generator
-                  </div>
-                  <div className="text-xs text-gray-400">Deployed • v1.4.2</div>
+                  <div className="text-white font-medium">해시태그 생성기</div>
+                  <div className="text-xs text-gray-400">배포됨 • v1.4.2</div>
                 </div>
               </div>
               <div className="px-3 py-1 bg-green-900/30 text-green-400 text-xs rounded-full border border-green-800">
-                Operational
+                정상 작동
               </div>
             </div>
           </div>

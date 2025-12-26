@@ -1,5 +1,7 @@
 "use client";
 
+import { useState, useEffect } from "react";
+
 import { Check, FileText, Copy, ChevronRight, Loader2 } from "lucide-react";
 import { Button } from "@repo/ui/components/button";
 import { LoadingSpinner } from "@repo/ui/components/loading-spinner";
@@ -40,6 +42,33 @@ export function Step6Script({
   isGenerating = false,
   isLoading = false,
 }: Step6ScriptProps) {
+  const [progress, setProgress] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isGenerating) {
+      setProgress(0);
+      setSeconds(0);
+      const duration = 15000; // 15 seconds
+      const startTime = Date.now();
+
+      interval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const newProgress = Math.min((elapsed / duration) * 100, 100);
+        setProgress(newProgress);
+        setSeconds(Math.floor(elapsed / 1000));
+      }, 100); // UI update interval
+    } else {
+      setProgress(0);
+      setSeconds(0);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isGenerating]);
+
   const handleCopy = () => {
     if (scriptResponses) {
       const fullScript = `${scriptResponses.intro}\n\n${scriptResponses.selfIntro}\n\n${scriptResponses.chapters.map((ch) => `${ch.title}\n${ch.content}`).join("\n\n")}\n\n${scriptResponses.outro}`;
@@ -53,9 +82,39 @@ export function Step6Script({
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="text-center py-12">
           {isGenerating ? (
-            <>
-              <LoadingSpinner loadingText="대본 생성 중..." />
-            </>
+            <div className="flex flex-col items-center justify-center">
+              <div className="relative mb-4 w-12 h-12">
+                <svg
+                  className="w-full h-full transform -rotate-90"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    fill="transparent"
+                    className="text-white/10"
+                  />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    fill="transparent"
+                    strokeDasharray={2 * Math.PI * 10}
+                    strokeDashoffset={2 * Math.PI * 10 * (1 - progress / 100)}
+                    strokeLinecap="round"
+                    className="text-[#33DB98] transition-all duration-100 ease-linear"
+                  />
+                </svg>
+              </div>
+              <span className="text-lg font-medium text-white">
+                대본 생성 중... ({seconds}초)
+              </span>
+            </div>
           ) : (
             <>
               <p className="text-gray-400 mb-4">대본을 생성해주세요.</p>

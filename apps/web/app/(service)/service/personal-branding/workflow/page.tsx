@@ -198,7 +198,7 @@ function BrandingWorkflowContent() {
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 flex flex-col items-center justify-center">
             <Loader2 className="w-12 h-12 text-[#33DB98] animate-spin mb-4" />
             <p className="text-white font-medium animate-pulse">
-              Generating magic...
+              마법을 부리는 중...
             </p>
           </div>
         )}

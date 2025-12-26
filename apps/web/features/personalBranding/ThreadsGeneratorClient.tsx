@@ -381,7 +381,7 @@ export function ThreadsGeneratorClient({
           >
             {isPending ? (
               <>
-                <div className="relative mr-2 w-6 h-6">
+                <div className="relative mr-2 w-6 h-6 flex items-center justify-center">
                   <svg
                     className="w-full h-full transform -rotate-90"
                     viewBox="0 0 24 24"
@@ -409,7 +409,7 @@ export function ThreadsGeneratorClient({
                     />
                   </svg>
                 </div>
-                <span>가볍게 쓰레드 쓰느중... ({seconds}초)</span>
+                <span>가볍게 쓰레드 쓰는중... ({seconds}초)</span>
               </>
             ) : (
               <>

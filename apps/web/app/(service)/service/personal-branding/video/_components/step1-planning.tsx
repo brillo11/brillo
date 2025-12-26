@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 
 import {
   Loader2,
@@ -91,6 +92,60 @@ export function Step1Planning({
   isNextLoading,
 }: Step1PlanningProps) {
   const titles = titleResponses?.sets || [];
+
+  const [progress, setProgress] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+
+  const [nextStepProgress, setNextStepProgress] = useState(0);
+  const [nextStepSeconds, setNextStepSeconds] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isGenerating) {
+      setProgress(0);
+      setSeconds(0);
+      const duration = 15000; // 15 seconds
+      const startTime = Date.now();
+
+      interval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const newProgress = Math.min((elapsed / duration) * 100, 100);
+        setProgress(newProgress);
+        setSeconds(Math.floor(elapsed / 1000));
+      }, 100); // UI update interval
+    } else {
+      setProgress(0);
+      setSeconds(0);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isGenerating]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isNextLoading) {
+      setNextStepProgress(0);
+      setNextStepSeconds(0);
+      const duration = 15000; // 15 seconds
+      const startTime = Date.now();
+
+      interval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const newProgress = Math.min((elapsed / duration) * 100, 100);
+        setNextStepProgress(newProgress);
+        setNextStepSeconds(Math.floor(elapsed / 1000));
+      }, 100); // UI update interval
+    } else {
+      setNextStepProgress(0);
+      setNextStepSeconds(0);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isNextLoading]);
 
   return (
     <div className="grid gap-8 md:grid-cols-2 animate-fade-in">
@@ -215,8 +270,35 @@ export function Step1Planning({
           >
             {isGenerating ? (
               <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                썸네일 가이드 생성 중...
+                <div className="relative mr-2 w-6 h-6 flex items-center justify-center">
+                  <svg
+                    className="w-full h-full transform -rotate-90"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="transparent"
+                      className="text-black/10"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="transparent"
+                      strokeDasharray={2 * Math.PI * 10}
+                      strokeDashoffset={2 * Math.PI * 10 * (1 - progress / 100)}
+                      strokeLinecap="round"
+                      className="text-black transition-all duration-100 ease-linear"
+                    />
+                  </svg>
+                </div>
+                <span>썸네일 가이드 생성 중... ({seconds}초)</span>
               </>
             ) : (
               <>
@@ -300,8 +382,37 @@ export function Step1Planning({
                 >
                   {isNextLoading ? (
                     <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      다음 단계로 이동 중...
+                      <div className="relative mr-2 w-6 h-6 flex items-center justify-center">
+                        <svg
+                          className="w-full h-full transform -rotate-90"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            fill="transparent"
+                            className="text-black/10"
+                          />
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            fill="transparent"
+                            strokeDasharray={2 * Math.PI * 10}
+                            strokeDashoffset={
+                              2 * Math.PI * 10 * (1 - nextStepProgress / 100)
+                            }
+                            strokeLinecap="round"
+                            className="text-black transition-all duration-100 ease-linear"
+                          />
+                        </svg>
+                      </div>
+                      <span>기획 정리중... ({nextStepSeconds}초)</span>
                     </>
                   ) : (
                     <>
