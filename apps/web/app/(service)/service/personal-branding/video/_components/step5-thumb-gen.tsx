@@ -1,7 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Send, Image, Upload, Edit3, Youtube, FileText, CheckCircle2, X } from "lucide-react";
+import {
+  Loader2,
+  Send,
+  Image,
+  Upload,
+  Edit3,
+  Youtube,
+  FileText,
+  CheckCircle2,
+  X,
+} from "lucide-react";
 import { Textarea } from "@repo/ui/components/textarea";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
@@ -53,7 +63,7 @@ export function Step5ThumbGen({
 }: Step5ThumbGenProps) {
   // thumbnailResponses는 이제 S3 URL 또는 base64 (마이그레이션 호환)
   const displayUrl = thumbnailUrls;
-  
+
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [isFetchingScript, setIsFetchingScript] = useState(false);
   const [isScriptExpanded, setIsScriptExpanded] = useState(false);
@@ -68,21 +78,26 @@ export function Step5ThumbGen({
 
   const handleFetchScript = async () => {
     if (!youtubeUrl.trim()) {
-       toast.error("YouTube URL을 입력해주세요.");
-       return;
+      toast.error("YouTube URL을 입력해주세요.");
+      return;
     }
 
     setIsFetchingScript(true);
     try {
       const result = await getYouTubeTranscript(youtubeUrl);
-      
+
       if (result.success && result.transcript) {
         // Combine transcript parts into a single text
-        const fullScript = result.transcript.map((item: any) => item.text).join(" ");
+        const fullScript = result.transcript
+          .map((item: any) => item.text)
+          .join(" ");
         onReferenceScriptChange?.(fullScript);
         toast.success("대본 스타일을 성공적으로 불러왔습니다.");
       } else {
-        toast.error("자막을 불러오는데 실패했습니다: " + (result.error || "알 수 없는 오류"));
+        toast.error(
+          "자막을 불러오는데 실패했습니다: " +
+            (result.error || "알 수 없는 오류"),
+        );
       }
     } catch (error) {
       console.error("Script fetch error:", error);
@@ -107,9 +122,7 @@ export function Step5ThumbGen({
             {isGenerating && (
               <div className="absolute inset-0 bg-black/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center gap-3">
                 <Loader2 className="animate-spin text-[#33DB98]" size={48} />
-                <p className="font-medium text-gray-400">
-                  이미지 수정 중...
-                </p>
+                <p className="font-medium text-gray-400">이미지 수정 중...</p>
               </div>
             )}
 
@@ -124,64 +137,73 @@ export function Step5ThumbGen({
               </div>
             </div>
             <p className="mt-4 text-sm text-gray-500">
-              Based on: <span className="font-medium text-gray-400">"{selectedTitle}"</span>
+              Based on:{" "}
+              <span className="font-medium text-gray-400">
+                "{selectedTitle}"
+              </span>
             </p>
-            
+
             {/* New: Script Style Reference */}
             {onReferenceScriptChange && (
-               <div className="w-full max-w-lg mt-6 pt-6 border-t border-white/10">
-                 <div className="flex items-center justify-between mb-3">
-                    <Label className="text-sm font-medium text-gray-300 flex items-center gap-2">
-                       <Youtube size={16} className="text-red-500" />
-                       대본 스타일 참고 (선택사항)
-                    </Label>
-                 </div>
-                 <div className="flex gap-2 mb-3">
-                    <Input 
-                       placeholder="YouTube 영상 URL 입력" 
-                       value={youtubeUrl}
-                       onChange={(e) => setYoutubeUrl(e.target.value)}
-                       className="bg-black/40 border-white/10 text-xs h-9"
-                    />
-                    <Button 
-                       size="sm" 
-                       onClick={handleFetchScript} 
-                       disabled={isFetchingScript || !youtubeUrl}
-                       className="bg-[#33DB98]/20 text-[#33DB98] hover:bg-[#33DB98]/30 border border-[#33DB98]/50 h-9 px-3"
-                    >
-                       {isFetchingScript ? <Loader2 size={14} className="animate-spin" /> : "가져오기"}
-                    </Button>
-                 </div>
-                 
-                 {referenceScript && (
-                    <div className="bg-[#33DB98]/5 border border-[#33DB98]/20 rounded-lg p-3 relative transition-all">
-                       <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2 text-[#33DB98] text-xs font-bold">
-                             <CheckCircle2 size={12} />
-                             <span>스타일 적용됨</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                              <button 
-                                onClick={() => setIsScriptExpanded(!isScriptExpanded)}
-                                className="text-[10px] text-[#33DB98] hover:underline"
-                              >
-                                {isScriptExpanded ? "접기" : "전체 보기"}
-                              </button>
-                              <button
-                                onClick={handleRemoveScript}
-                                className="text-gray-500 hover:text-red-500 transition-colors"
-                                title="스타일 적용 취소"
-                              >
-                                <X size={14} />
-                              </button>
-                          </div>
-                       </div>
-                       <p className={`text-xs text-gray-400 italic ${isScriptExpanded ? "max-h-60 overflow-y-auto whitespace-pre-wrap" : "line-clamp-2"}`}>
-                          "{referenceScript}"
-                       </p>
+              <div className="w-full max-w-lg mt-6 pt-6 border-t border-white/10">
+                <div className="flex items-center justify-between mb-3">
+                  <Label className="text-sm font-medium text-gray-300 flex items-center gap-2">
+                    <Youtube size={16} className="text-red-500" />
+                    대본 스타일 참고 (선택사항)
+                  </Label>
+                </div>
+                <div className="flex gap-2 mb-3">
+                  <Input
+                    placeholder="YouTube 영상 URL 입력"
+                    value={youtubeUrl}
+                    onChange={(e) => setYoutubeUrl(e.target.value)}
+                    className="bg-black/40 border-white/10 text-xs h-9"
+                  />
+                  <Button
+                    size="sm"
+                    onClick={handleFetchScript}
+                    disabled={isFetchingScript || !youtubeUrl}
+                    className="bg-[#33DB98]/20 text-[#33DB98] hover:bg-[#33DB98]/30 border border-[#33DB98]/50 h-9 px-3"
+                  >
+                    {isFetchingScript ? (
+                      <Loader2 size={14} className="animate-spin" />
+                    ) : (
+                      "가져오기"
+                    )}
+                  </Button>
+                </div>
+
+                {referenceScript && (
+                  <div className="bg-[#33DB98]/5 border border-[#33DB98]/20 rounded-lg p-3 relative transition-all">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2 text-[#33DB98] text-xs font-bold">
+                        <CheckCircle2 size={12} />
+                        <span>스타일 적용됨</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setIsScriptExpanded(!isScriptExpanded)}
+                          className="text-[10px] text-[#33DB98] hover:underline"
+                        >
+                          {isScriptExpanded ? "접기" : "전체 보기"}
+                        </button>
+                        <button
+                          onClick={handleRemoveScript}
+                          className="text-gray-500 hover:text-red-500 transition-colors"
+                          title="스타일 적용 취소"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
                     </div>
-                 )}
-               </div>
+                    <p
+                      className={`text-xs text-gray-400 italic ${isScriptExpanded ? "max-h-60 overflow-y-auto whitespace-pre-wrap" : "line-clamp-2"}`}
+                    >
+                      "{referenceScript}"
+                    </p>
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
@@ -195,9 +217,7 @@ export function Step5ThumbGen({
                     <Edit3 size={18} className="text-[#33DB98]" />
                   </div>
                   <div>
-                    <p className="font-bold text-sm text-white">
-                      썸네일 수정
-                    </p>
+                    <p className="font-bold text-sm text-white">썸네일 수정</p>
                     <p className="text-xs text-gray-400">
                       원하는 변경사항을 입력하세요
                     </p>
@@ -205,7 +225,7 @@ export function Step5ThumbGen({
                 </div>
                 <div className="p-4 space-y-4 flex flex-col flex-1">
                   <div className="space-y-2 flex flex-col flex-1">
-                     {/* ... (Existing Edit Text Area) */}
+                    {/* ... (Existing Edit Text Area) */}
                     <Label className="text-sm font-medium text-gray-400">
                       수정 요청사항
                     </Label>
@@ -316,17 +336,17 @@ export function Step5ThumbGen({
             <Button
               onClick={() => onStepChange(6)}
               disabled={isLoading}
-              className="w-full py-3 bg-[#33DB98] text-black rounded-xl font-bold text-base hover:bg-[#33DB98]/90 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full h-12 text-lg bg-[#33DB98] text-black rounded-xl font-bold hover:bg-[#33DB98]/90 transition-all border-none flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="animate-spin" size={18} />
+                  <Loader2 className="animate-spin" size={20} />
                   <span>대본 생성 중...</span>
                 </>
               ) : (
                 <>
                   <span>대본 생성</span>
-                  <Send size={18} />
+                  <Send size={20} />
                 </>
               )}
             </Button>

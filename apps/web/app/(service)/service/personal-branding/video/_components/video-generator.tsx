@@ -17,7 +17,7 @@ export function VideoGenerator({ sessionId }: VideoGeneratorProps) {
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(
-    null
+    null,
   );
 
   const handleGenerate = async () => {
@@ -39,7 +39,7 @@ export function VideoGenerator({ sessionId }: VideoGeneratorProps) {
       if (result.success && result.videoUrl) {
         const uploadResult = await downloadAndUploadVeoVideo(
           result.videoUrl,
-          sessionId
+          sessionId,
         );
 
         if (uploadResult.success && uploadResult.s3Url) {
@@ -55,7 +55,7 @@ export function VideoGenerator({ sessionId }: VideoGeneratorProps) {
         }
       } else {
         toast.error(
-          "error" in result ? result.error : "비디오 생성에 실패했습니다."
+          "error" in result ? result.error : "비디오 생성에 실패했습니다.",
         );
       }
     } catch (error) {

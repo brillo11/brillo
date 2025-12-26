@@ -32,7 +32,11 @@ const STEP_LABELS: Record<string, string> = {
   SHORTS_TITLES: "쇼츠 제목",
 };
 
-export function AssistantHistory({ redirectOnDelete }: { redirectOnDelete?: string }) {
+export function AssistantHistory({
+  redirectOnDelete,
+}: {
+  redirectOnDelete?: string;
+}) {
   const router = useRouter();
   const [sessions, setSessions] = useState<AIAssistantSessionData[]>([]);
   const [selectedSession, setSelectedSession] =
@@ -93,7 +97,7 @@ export function AssistantHistory({ redirectOnDelete }: { redirectOnDelete?: stri
   const filteredSessions = sessions.filter(
     (session) =>
       session.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      session.titleMessage?.toLowerCase().includes(searchQuery.toLowerCase())
+      session.titleMessage?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   // Helper to safely parse JSON
@@ -125,7 +129,7 @@ export function AssistantHistory({ redirectOnDelete }: { redirectOnDelete?: stri
               generatedVideoUrl: url,
               generatedVideoType: type,
             }
-          : null
+          : null,
       );
       toast.success("영상 정보가 저장되었습니다.");
       loadSessions(); // Refresh list background
@@ -142,9 +146,10 @@ export function AssistantHistory({ redirectOnDelete }: { redirectOnDelete?: stri
     const titleData = safeParse(selectedSession.titleResponses);
     const selectedTitleSet =
       titleData?.sets?.[selectedSession.selectedTitleIndex ?? 0];
-    
+
     // Display Title
-    const displayTitle = selectedTitleSet?.videoTitle || selectedSession.title || "제목 없음";
+    const displayTitle =
+      selectedTitleSet?.videoTitle || selectedSession.title || "제목 없음";
 
     return (
       <div className="flex-1 min-h-screen bg-[#0A0A0A] overflow-y-auto animate-fade-in custom-scrollbar selection:bg-[#33DB98] selection:text-black">
@@ -174,7 +179,7 @@ export function AssistantHistory({ redirectOnDelete }: { redirectOnDelete?: stri
                 <span>•</span>
                 <span>
                   {new Date(selectedSession.createdAt).toLocaleDateString(
-                    "ko-KR"
+                    "ko-KR",
                   )}
                 </span>
               </div>
@@ -191,15 +196,18 @@ export function AssistantHistory({ redirectOnDelete }: { redirectOnDelete?: stri
         </div>
 
         <div className="max-w-6xl mx-auto p-8 pb-20">
-             <Step8VideoGeneration
-                selectedTitle={displayTitle}
-                thumbnailUrls={selectedSession.thumbnailUrls || undefined}
-                scriptResponses={scriptData}
-                metadataResponses={metadataData}
-                initialVideoUrl={selectedSession.generatedVideoUrl || undefined}
-                initialVideoType={(selectedSession.generatedVideoType as "VEO" | "HEYGEN") || undefined}
-                onVideoGenerated={handleVideoGenerated}
-             />
+          <Step8VideoGeneration
+            selectedTitle={displayTitle}
+            thumbnailUrls={selectedSession.thumbnailUrls || undefined}
+            scriptResponses={scriptData}
+            metadataResponses={metadataData}
+            initialVideoUrl={selectedSession.generatedVideoUrl || undefined}
+            initialVideoType={
+              (selectedSession.generatedVideoType as "VEO" | "HEYGEN") ||
+              undefined
+            }
+            onVideoGenerated={handleVideoGenerated}
+          />
         </div>
       </div>
     );
@@ -212,7 +220,9 @@ export function AssistantHistory({ redirectOnDelete }: { redirectOnDelete?: stri
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-white tracking-tight">작업 기록</h1>
+            <h1 className="text-3xl font-bold text-white tracking-tight">
+              작업 기록
+            </h1>
             <p className="text-gray-400 mt-1">
               AI Assistant로 생성한 콘텐츠를 확인하고 관리하세요.
             </p>

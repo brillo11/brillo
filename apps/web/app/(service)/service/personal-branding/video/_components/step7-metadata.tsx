@@ -120,10 +120,7 @@ export function Step7Metadata({
                 </div>
                 <div className="space-y-2 text-sm text-gray-400 font-mono bg-black/20 p-4 rounded-xl border border-white/10 h-48 overflow-y-auto">
                   {metadataResponses.timestamps.map((ts, i) => (
-                    <div
-                      key={i}
-                      className="hover:text-white transition-colors"
-                    >
+                    <div key={i} className="hover:text-white transition-colors">
                       {ts.time} {ts.title}
                     </div>
                   ))}

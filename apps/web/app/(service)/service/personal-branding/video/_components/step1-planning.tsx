@@ -1,7 +1,19 @@
 "use client";
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@repo/ui/components/tooltip";
-import { Loader2, Sparkles, Check, ChevronRight, HelpCircle, Play } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@repo/ui/components/tooltip";
+import {
+  Loader2,
+  Sparkles,
+  Check,
+  ChevronRight,
+  HelpCircle,
+  Play,
+} from "lucide-react";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { Button } from "@repo/ui/components/button";
@@ -86,7 +98,8 @@ export function Step1Planning({
             썸네일 가이드 생성하기
           </h2>
           <p className="text-gray-400">
-            주제와 타겟, 핵심 메시지를 입력하여 매력적인 썸네일 이미지 가이드를 선택해보세요.
+            주제와 타겟, 핵심 메시지를 입력하여 매력적인 썸네일 이미지 가이드를
+            선택해보세요.
           </p>
         </div>
 
@@ -122,7 +135,8 @@ export function Step1Planning({
 
             <div className="space-y-2">
               <Label htmlFor="keyInsights" className="text-gray-300">
-                핵심 인사이트 <span className="text-gray-500 text-xs">(선택)</span>
+                핵심 인사이트{" "}
+                <span className="text-gray-500 text-xs">(선택)</span>
               </Label>
               <Input
                 id="keyInsights"
@@ -136,7 +150,9 @@ export function Step1Planning({
           </div>
 
           <div className="space-y-2">
-            <Label className="text-gray-300">스타일 선택 <span className="text-red-400">*</span></Label>
+            <Label className="text-gray-300">
+              스타일 선택 <span className="text-red-400">*</span>
+            </Label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <TooltipProvider>
                 {VIDEO_STYLES.map((style) => (
@@ -150,7 +166,9 @@ export function Step1Planning({
                           : "bg-vzx-card border-white/5 hover:border-[#33DB98]/50 text-gray-400 hover:text-white"
                       }
                     `}
-                    onClick={() => !isGenerating && !isNextLoading && onStyleChange(style.id)}
+                    onClick={() =>
+                      !isGenerating && !isNextLoading && onStyleChange(style.id)
+                    }
                   >
                     <div className="flex items-center justify-between font-medium mb-1">
                       <span
@@ -179,9 +197,7 @@ export function Step1Planning({
                         </TooltipContent>
                       </Tooltip>
                     </div>
-                    <p className="text-xs text-gray-500">
-                      {style.desc}
-                    </p>
+                    <p className="text-xs text-gray-500">{style.desc}</p>
                   </div>
                 ))}
               </TooltipProvider>
@@ -190,7 +206,9 @@ export function Step1Planning({
 
           <Button
             onClick={onGenerate}
-            disabled={!topic.trim() || !selectedStyle || isGenerating || isNextLoading}
+            disabled={
+              !topic.trim() || !selectedStyle || isGenerating || isNextLoading
+            }
             className="w-full h-12 text-lg bg-[#33DB98] text-black hover:bg-[#33DB98]/90 font-bold border-none"
           >
             {isGenerating ? (
@@ -215,7 +233,7 @@ export function Step1Planning({
             <h2 className="text-xl font-semibold text-white mb-4">
               썸네일 가이드 선택
             </h2>
-            
+
             <div className="space-y-3 flex-1 overflow-y-auto pr-2 custom-scrollbar">
               {titles.map((set: any, idx: number) => {
                 const isSelected = selectedTitleIndex === idx;
@@ -228,7 +246,9 @@ export function Step1Planning({
                         ? "border-[#33DB98] bg-[#33DB98]/10"
                         : "border-white/10 bg-white/5 hover:border-[#33DB98]/50"
                     } ${
-                      isNextLoading ? "opacity-50 cursor-not-allowed pointer-events-none" : ""
+                      isNextLoading
+                        ? "opacity-50 cursor-not-allowed pointer-events-none"
+                        : ""
                     }`}
                   >
                     <div
@@ -257,7 +277,9 @@ export function Step1Planning({
                         <span className="text-xs font-bold text-[#33DB98] uppercase tracking-wider block mb-1">
                           썸네일 텍스트
                         </span>
-                        <p className={`text-sm mb-2 ${isSelected ? "text-gray-200" : "text-gray-400"}`}>
+                        <p
+                          className={`text-sm mb-2 ${isSelected ? "text-gray-200" : "text-gray-400"}`}
+                        >
                           {set.thumbnailTitle || set.thumbnailText}
                         </p>
                       </div>
@@ -272,7 +294,7 @@ export function Step1Planning({
                 <Button
                   onClick={() => onStepChange(2)} // Move to Step 2 (Thumb Guide)
                   disabled={isNextLoading}
-                  className="w-full h-12 bg-[#33DB98] text-black hover:bg-[#33DB98]/90 font-bold border-none"
+                  className="w-full h-12 text-lg bg-[#33DB98] text-black hover:bg-[#33DB98]/90 font-bold border-none"
                 >
                   {isNextLoading ? (
                     <>
