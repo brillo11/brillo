@@ -15,6 +15,7 @@ export interface HistoryItem {
   createdAt: Date | string;
   title: string;
   content: string;
+  formData?: any;
 }
 
 interface HistoryManagerProps {

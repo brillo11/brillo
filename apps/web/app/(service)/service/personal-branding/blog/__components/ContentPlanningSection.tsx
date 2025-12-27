@@ -23,6 +23,7 @@ import {
   analyzeToneAndStyleFromContent,
 } from "@/serverActions/blog/keyword-search";
 import { toast } from "sonner";
+import { getCompetitorStats } from "@/serverActions/blog/competitor-stats";
 
 interface GeneratedPlan {
   subject: string;
@@ -92,6 +93,9 @@ const ContentPlanningSection: React.FC<ContentPlanningSectionProps> = ({
 
   // 직접 수정 영역 확장 상태
   const [isManualEditExpanded, setIsManualEditExpanded] = useState(false);
+
+  // 권장 분량 상태 (미리 분석된 값을 기억)
+  const [recommendedLen, setRecommendedLen] = useState<string>("1000자");
 
   // 블로그 URL 자동 입력 관련 상태
   const [isGeneratingFromBlog, setIsGeneratingFromBlog] = useState(false);
@@ -196,23 +200,33 @@ const ContentPlanningSection: React.FC<ContentPlanningSectionProps> = ({
     setAnalyzedStyle(null);
 
     try {
-      // 1. 키워드 기반 기획안 생성과 본문 스타일 분석을 병렬로 진행
+      // 1. 키워드 기반 기획안 생성, 본문 스타일 분석, 상위 노출 포스트 통계 분석을 병렬로 진행
       const selectedPost = blogResults[idx];
 
-      const promises: [Promise<any>, Promise<any> | null] = [
-        generateContentPlansFromKeywords(
-          blogKeywords,
-          formData.initialPlanning,
-        ),
-        selectedPost?.fullContent
-          ? analyzeToneAndStyleFromContent(selectedPost.fullContent)
-          : null,
-      ];
+      const promises: [Promise<any>, Promise<any> | null, Promise<any> | null] =
+        [
+          generateContentPlansFromKeywords(
+            blogKeywords,
+            formData.initialPlanning,
+          ),
+          selectedPost?.fullContent
+            ? analyzeToneAndStyleFromContent(selectedPost.fullContent)
+            : null,
+          blogKeywords.length > 0 ? getCompetitorStats(blogKeywords[0]!) : null,
+        ];
 
-      const [planResult, styleResult] = await Promise.all(promises);
+      const [planResult, styleResult, statsResult] =
+        await Promise.all(promises);
 
       if (planResult.success) {
         setGeneratedPlans(planResult.plans);
+      }
+
+      // 통계 결과가 있으면 권장 분량 기억
+      let currentRecommendedLen = "1000자";
+      if (statsResult?.success) {
+        currentRecommendedLen = statsResult.recommendedLength;
+        setRecommendedLen(currentRecommendedLen);
       }
 
       if (styleResult?.success) {
@@ -229,7 +243,7 @@ const ContentPlanningSection: React.FC<ContentPlanningSectionProps> = ({
 
         updateFormData("details", (prev: any) => ({
           ...prev,
-          length: "1000자",
+          length: currentRecommendedLen, // 통계 기반 추천 길이 적용
           styleText: styleResult.styleAnalysis || "",
         }));
 
@@ -279,7 +293,7 @@ const ContentPlanningSection: React.FC<ContentPlanningSectionProps> = ({
 
     updateFormData("details", (prev: any) => ({
       ...prev,
-      length: "1000자",
+      length: recommendedLen, // 이미 확보된 권장 분량 즉시 적용
       styleText: finalStyle,
     }));
 
@@ -292,15 +306,20 @@ const ContentPlanningSection: React.FC<ContentPlanningSectionProps> = ({
     if (!blogUrl.trim()) return;
     setIsGeneratingFromBlog(true);
     try {
-      const result = await generateContentPlanFromUrl(
-        blogUrl,
-        formData.initialPlanning,
-      );
-      if (result.success && result.plan) {
-        applyContentPlan(result.plan);
+      // 기획안 생성과 통계 분석을 병렬로 진행
+      const [planResult, statsResult] = await Promise.all([
+        generateContentPlanFromUrl(blogUrl, formData.initialPlanning),
+        getCompetitorStats(blogUrl), // URL 기반 분석 (서버 액션 내부에서 처리됨)
+      ]);
+
+      if (planResult.success && planResult.plan) {
+        if (statsResult.success) {
+          setRecommendedLen(statsResult.recommendedLength);
+        }
+        applyContentPlan(planResult.plan);
         triggerAutoFillFeedback();
       } else {
-        alert(result.error || "블로그 분석 중 오류가 발생했습니다.");
+        alert(planResult.error || "블로그 분석 중 오류가 발생했습니다.");
       }
     } catch (error) {
       console.error("블로그 URL 분석 오류:", error);
@@ -315,15 +334,20 @@ const ContentPlanningSection: React.FC<ContentPlanningSectionProps> = ({
     if (!youtubeUrl.trim()) return;
     setIsGeneratingFromYoutube(true);
     try {
-      const result = await generateContentPlanFromYoutube(
-        youtubeUrl,
-        formData.initialPlanning,
-      );
-      if (result.success && result.plan) {
-        applyContentPlan(result.plan);
+      // 기획안 생성과 통계 분석을 병렬로 진행
+      const [planResult, statsResult] = await Promise.all([
+        generateContentPlanFromYoutube(youtubeUrl, formData.initialPlanning),
+        getCompetitorStats(youtubeUrl), // YouTube 키워드 기반 분석
+      ]);
+
+      if (planResult.success && planResult.plan) {
+        if (statsResult.success) {
+          setRecommendedLen(statsResult.recommendedLength);
+        }
+        applyContentPlan(planResult.plan);
         triggerAutoFillFeedback();
       } else {
-        alert(result.error || "YouTube 분석 중 오류가 발생했습니다.");
+        alert(planResult.error || "YouTube 분석 중 오류가 발생했습니다.");
       }
     } catch (error) {
       console.error("YouTube URL 분석 오류:", error);

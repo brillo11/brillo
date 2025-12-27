@@ -85,7 +85,7 @@ ${contextPrompt}
   "subject": "포스팅 주제 (영상의 핵심을 잘 보여주는 매력적인 제목)",
   "targetAudience": "타겟 독자 (이 글을 읽을 구체적인 페르소나)",
   "keyMessage": "핵심 메시지 및 강조점 (영상에서 전달하려는 핵심 가치와 강조해야 할 부분)",
-  "keywords": ["핵심 키워드 5개"],
+  "keywords": ["핵심 키워드 5개 (가장 핵심이 되는 메인 키워드를 첫 번째에 배치)"],
   "tone": "친절형" | "정중형" | "친근형",
   "styleAnalysis": "스타일 분석 지침에 따라 분석한 스타일 가이드"
 }`;
@@ -165,7 +165,7 @@ export async function generateContentPlanFromUrl(
     "subject": "포스팅 주제 (원래 글을 바탕으로 더 매력적으로 다듬은 제목)",
     "targetAudience": "타겟 독자 (이 글을 읽을 구체적인 페르소나)",
     "keyMessage": "핵심 메시지 및 강조점 (글에서 전달하려는 핵심 가치와 강조해야 할 부분)",
-    "keywords": ["핵심 키워드 5개"],
+    "keywords": ["핵심 키워드 5개 (가장 핵심이 되는 메인 키워드를 첫 번째에 배치)"],
     "tone": "친절형" | "정중형" | "친근형",
     "styleAnalysis": "원래 글의 문체, 단어 선택, 문장 구조 등을 바탕으로 한 상세 스타일 가이드"
   }`;
@@ -286,7 +286,7 @@ ${contextPrompt}
 1. subject (포스팅 주제: 클릭을 유도하는 매력적인 제목 형태)
 2. targetAudience (타겟 독자: 구체적인 페르소나)
 3. keyMessage (핵심 메시지 및 강조점: 글을 통해 전달하고자 하는 핵심 가치)
-4. keywords (핵심 키워드: 제공된 키워드를 적절히 활용하거나 보완한 5개 내외의 키워드)
+4. keywords (핵심 키워드: 제공된 키워드를 적절히 활용하거나 보완한 5개 내외의 키워드. **중요: 가장 핵심이 되는 메인 키워드를 반드시 리스트의 첫 번째에 배치하세요.**)
 
 응답 형식 예시:
 [
@@ -786,15 +786,16 @@ async function extractKeywordsFromContent(content: string): Promise<string[]> {
     const result = await generateText({
       model: "google/gemini-3-flash" as any,
       messages: [
-        { 
-          role: "user", 
+        {
+          role: "user",
           content: `다음 블로그 본문을 분석하여 검색 엔진 최적화(SEO)에 도움이 될만한 핵심 키워드 5개를 추출해주세요.
+**중요: 가장 핵심이 되는 메인 키워드를 반드시 첫 번째에 배치하세요.**
 결과는 반드시 쉼표(,)로만 구분된 텍스트여야 하며, 추가 설명이나 번호는 제외하세요.
-예시: 키워드1, 키워드2, 키워드3, 키워드4, 키워드5
+예시: 메인키워드, 서브키워드1, 서브키워드2, 서브키워드3, 서브키워드4
 
 본문 내용:
-${cleanText}` 
-        }
+${cleanText}`,
+        },
       ],
     });
 

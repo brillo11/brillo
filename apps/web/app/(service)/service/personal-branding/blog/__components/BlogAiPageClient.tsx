@@ -78,7 +78,12 @@ export const BlogAiPageContent: React.FC<BlogAiPageContentProps> = ({
       setIsLeftPanelCollapsed(true);
       setIsLeftPanelExpanded(false);
     }
-  }, [isGenerating, generatedContent]);
+  }, [
+    isGenerating,
+    generatedContent,
+    setIsLeftPanelCollapsed,
+    setIsLeftPanelExpanded,
+  ]);
 
   const handleExpandPanel = () => {
     setIsLeftPanelExpanded(true);
@@ -194,7 +199,9 @@ export const BlogAiPageContent: React.FC<BlogAiPageContentProps> = ({
         // 수정된 내용 히스토리에 저장
         saveToHistory(
           data.updatedContent,
-          selectedTitle || formData.contentPlanning.subject,
+          selectedTitle ||
+            formData.contentPlanning.subject ||
+            formData.initialPlanning.subject,
         );
       } else {
         throw new Error(data.error || "글 수정 실패");
@@ -215,8 +222,36 @@ export const BlogAiPageContent: React.FC<BlogAiPageContentProps> = ({
     setGeneratedContent("");
     setError("");
 
-    // 생성이 시작되면 진행 상황 영역으로 부드럽게 스크롤
-    progressRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    // 생성이 시작되면 진행 상황 영역으로 부드럽게 스크롤 (수동 애니메이션 방식)
+    if (progressRef.current) {
+      const startPosition = window.scrollY;
+      const targetPosition =
+        progressRef.current.getBoundingClientRect().top + startPosition - 200; // 약간의 상단 여유
+      const duration = 1000; // 1초 동안 더 여유 있게 이동
+      let startTime: number | null = null;
+
+      const animateScroll = (currentTime: number) => {
+        if (startTime === null) startTime = currentTime;
+        const elapsedTime = currentTime - startTime;
+        const progress = Math.min(elapsedTime / duration, 1);
+
+        // easeInOutCubic: 더 부드럽고 자연스러운 가속/감속 곡선
+        const easeInOutCubic = (t: number) =>
+          t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+        window.scrollTo(
+          0,
+          startPosition +
+            (targetPosition - startPosition) * easeInOutCubic(progress),
+        );
+
+        if (progress < 1) {
+          requestAnimationFrame(animateScroll);
+        }
+      };
+
+      requestAnimationFrame(animateScroll);
+    }
 
     try {
       const response = await fetch("/api/blog/generate", {
@@ -315,7 +350,9 @@ export const BlogAiPageContent: React.FC<BlogAiPageContentProps> = ({
                     // Save to history when done
                     saveToHistory(
                       finalContent,
-                      selectedTitle || formData.contentPlanning.subject,
+                      selectedTitle ||
+                        formData.contentPlanning.subject ||
+                        formData.initialPlanning.subject,
                     );
                   } else if (data.type === "error") {
                     setError(data.message);
@@ -400,7 +437,9 @@ export const BlogAiPageContent: React.FC<BlogAiPageContentProps> = ({
                 // Save to history when done
                 saveToHistory(
                   finalContent,
-                  selectedTitle || formData.contentPlanning.subject,
+                  selectedTitle ||
+                    formData.contentPlanning.subject ||
+                    formData.initialPlanning.subject,
                 );
               } else if (data.type === "error") {
                 setError(data.message);
@@ -542,13 +581,12 @@ export const BlogAiPageContent: React.FC<BlogAiPageContentProps> = ({
                     setIsLeftPanelCollapsed(true);
 
                     // 과거 생성 당시의 formData가 있다면 복원
-                    const itemAny = item as any;
-                    if (itemAny.formData) {
+                    if (item.formData) {
                       try {
                         const savedFormData =
-                          typeof itemAny.formData === "string"
-                            ? JSON.parse(itemAny.formData)
-                            : itemAny.formData;
+                          typeof item.formData === "string"
+                            ? JSON.parse(item.formData)
+                            : item.formData;
 
                         setFullFormData(savedFormData);
                         toast.success("당시 입력 설정을 불러왔습니다.");
