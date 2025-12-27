@@ -185,9 +185,9 @@ export function Step6Script({
             <div className="space-y-3">
               <div>
                 <span className="text-xs text-gray-400 block">제목</span>
-                <p className="font-medium text-sm text-white">
+                <div className="font-medium text-sm text-white">
                   <MarkdownRenderer content={selectedTitle} />
-                </p>
+                </div>
               </div>
               <div>
                 <span className="text-xs text-gray-400 block">주제</span>
@@ -219,9 +219,9 @@ export function Step6Script({
                   <h3 className="text-lg font-bold text-[#33DB98] flex items-center gap-2">
                     🎬 인트로 (30초)
                   </h3>
-                  <p className="whitespace-pre-wrap">
+                  <div className="whitespace-pre-wrap">
                     <MarkdownRenderer content={scriptResponses.intro} />
-                  </p>
+                  </div>
                 </div>
 
                 {/* Self Intro */}
@@ -229,9 +229,9 @@ export function Step6Script({
                   <h3 className="text-lg font-bold text-orange-600 flex items-center gap-2">
                     🎤 자기소개
                   </h3>
-                  <p className="whitespace-pre-wrap">
+                  <div className="whitespace-pre-wrap">
                     <MarkdownRenderer content={scriptResponses.selfIntro} />
-                  </p>
+                  </div>
                 </div>
 
                 {/* Chapters */}
@@ -240,7 +240,9 @@ export function Step6Script({
                     <h3 className="text-lg font-bold text-blue-600">
                       {chapter.title}
                     </h3>
-                    <p className="whitespace-pre-wrap">{chapter.content}</p>
+                    <div className="whitespace-pre-wrap">
+                      <MarkdownRenderer content={chapter.content} />
+                    </div>
                   </div>
                 ))}
 
@@ -249,9 +251,9 @@ export function Step6Script({
                   <h3 className="text-lg font-bold text-green-600 flex items-center gap-2">
                     🎬 마무리
                   </h3>
-                  <p className="whitespace-pre-wrap">
+                  <div className="whitespace-pre-wrap">
                     <MarkdownRenderer content={scriptResponses.outro} />
-                  </p>
+                  </div>
                 </div>
               </>
             ) : (

@@ -208,9 +208,9 @@ export function Step7Metadata({
                   </button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {metadataResponses.tags.map((t) => (
+                  {metadataResponses.tags.map((t, i) => (
                     <span
-                      key={t}
+                      key={`${t}-${i}`}
                       className="text-gray-300 bg-white/10 px-3 py-1.5 rounded-lg text-xs border border-white/5"
                     >
                       {t}

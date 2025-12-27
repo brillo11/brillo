@@ -1,4 +1,36 @@
-import { generateText } from "ai";
+import { generateText, generateObject } from "ai";
+import { z } from "zod";
+
+/**
+ * AI Gateway for Text/Object Generation
+ * Default Model: gemini-2.0-flash-exp
+ */
+export async function generateObjectAI<T>(
+  schema: z.ZodType<T>,
+  prompt: string,
+  system?: string,
+): Promise<{ success: boolean; data?: T; error?: string }> {
+  try {
+    console.log(`AI Gateway Request (gemini-3-flash):`, prompt.slice(0, 100) + "...");
+    const result = await generateObject({
+      model: "google/gemini-3-flash",
+      schema: schema,
+      prompt: prompt,
+      system: system,
+    });
+
+    return {
+      success: true,
+      data: result.object,
+    };
+  } catch (error) {
+    console.error("AI Gateway Error (generateObject):", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "알 수없는 오류가 발생했습니다.",
+    };
+  }
+}
 
 /**
  * 사용 모델: google/gemini-3-pro-image (Nanobanana Pro)
