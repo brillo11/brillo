@@ -180,13 +180,13 @@ export function Step6Script({
 
           <div className="bg-white/5 p-4 rounded-xl border border-white/10 shadow-sm">
             <h3 className="text-sm font-bold text-gray-400 uppercase mb-3">
-              메타데이터
+              영상 정보
             </h3>
             <div className="space-y-3">
               <div>
                 <span className="text-xs text-gray-400 block">제목</span>
                 <p className="font-medium text-sm text-white">
-                  {selectedTitle}
+                  <MarkdownRenderer content={selectedTitle} />
                 </p>
               </div>
               <div>
@@ -219,7 +219,9 @@ export function Step6Script({
                   <h3 className="text-lg font-bold text-[#33DB98] flex items-center gap-2">
                     🎬 인트로 (30초)
                   </h3>
-                  <p className="whitespace-pre-wrap">{scriptResponses.intro}</p>
+                  <p className="whitespace-pre-wrap">
+                    <MarkdownRenderer content={scriptResponses.intro} />
+                  </p>
                 </div>
 
                 {/* Self Intro */}
@@ -228,7 +230,7 @@ export function Step6Script({
                     🎤 자기소개
                   </h3>
                   <p className="whitespace-pre-wrap">
-                    {scriptResponses.selfIntro}
+                    <MarkdownRenderer content={scriptResponses.selfIntro} />
                   </p>
                 </div>
 
@@ -247,7 +249,9 @@ export function Step6Script({
                   <h3 className="text-lg font-bold text-green-600 flex items-center gap-2">
                     🎬 마무리
                   </h3>
-                  <p className="whitespace-pre-wrap">{scriptResponses.outro}</p>
+                  <p className="whitespace-pre-wrap">
+                    <MarkdownRenderer content={scriptResponses.outro} />
+                  </p>
                 </div>
               </>
             ) : (
