@@ -21,14 +21,16 @@ import {
 } from "@/serverActions/ai-assistant/ai-assistant-session.actions";
 import type { AIAssistantSessionData } from "@/serverActions/ai-assistant/ai-assistant-session.actions";
 import {
-  sendTitleResponses,
-  sendScriptResponses,
   sendThumbnailResponses,
   sendFixThumbnailResponses,
+} from "@/serverActions/ai-assistant/ai-assistant.actions";
+import {
+  sendTitleResponses,
+  sendScriptResponses,
+  sendThumbnailGuideResponses,
   sendMetadataResponses,
   sendShortsTitlesResponses,
-  sendThumbnailGuideResponses,
-} from "@/serverActions/ai-assistant/ai-assistant.actions";
+} from "@/serverActions/ai-assistant/ai-assistant-gateway.actions";
 
 interface AIAssistantClientProps {
   initialTopic?: string;
