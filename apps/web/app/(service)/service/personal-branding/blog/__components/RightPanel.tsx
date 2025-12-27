@@ -112,11 +112,12 @@ const RightPanel: React.FC<RightPanelProps> = ({
       return { characterCount: 0, imageCount: 0 };
     }
 
-    // HTML 태그 제거하여 텍스트만 추출
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = generatedContent;
-    const textContent = tempDiv.textContent || tempDiv.innerText || "";
-    const characterCount = textContent.length;
+    // HTML 태그 제거 및 공백 완전 제거하여 순수 텍스트만 추출
+    const textOnlyNoSpaces = generatedContent
+      .replace(/<[^>]+>/g, "")
+      .replace(/\s+/g, "")
+      .trim();
+    const characterCount = textOnlyNoSpaces.length;
 
     // 이미지 태그 개수 계산
     const imageMatches = generatedContent.match(/<img[^>]*>/gi);
@@ -415,7 +416,7 @@ const RightPanel: React.FC<RightPanelProps> = ({
                 <div className="bg-[#33DB98]/5 rounded-2xl p-4 border border-[#33DB98]/10">
                   <div className="flex justify-between items-start mb-1">
                     <div className="text-xs text-[#33DB98] font-medium">
-                      본문 글자수 (공백 포함)
+                      본문 글자수 (공백 제외)
                     </div>
                     {competitorStats && (
                       <div className="text-[10px] text-gray-500">
