@@ -34,8 +34,7 @@ export async function getYouTubeTranscript(youtubeUrl: string) {
 
     // 2. 한국어 자막 시도
     let transcript;
-    let lastError: any = null;
-    let attemptLog: Array<{
+    const attemptLog: Array<{
       language: string;
       success: boolean;
       error?: string;
@@ -187,7 +186,9 @@ export async function getYouTubeTranscript(youtubeUrl: string) {
       }
       return {
         text: item.text || item.utf8 || String(item),
-        start: item.offset ? item.offset / 1000 : item.start || 0,
+        // 로그 확인 결과: offset/start 값이 이미 초 단위(예: 0.42, 1.74)로 들어오고 있습니다.
+        // 기존에 1000으로 나누던 로직이 시간을 0.00042초 등으로 압축시켜버린 것이 원인이었습니다.
+        start: item.start ?? item.offset ?? 0,
       };
     });
 

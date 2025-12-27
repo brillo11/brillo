@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Loader2,
   Send,
@@ -63,6 +63,60 @@ export function Step5ThumbGen({
 }: Step5ThumbGenProps) {
   // thumbnailResponses는 이제 S3 URL 또는 base64 (마이그레이션 호환)
   const displayUrl = thumbnailUrls;
+
+  const [progress, setProgress] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isGenerating) {
+      setProgress(0);
+      setSeconds(0);
+      const duration = 120000; // 120 seconds
+      const startTime = Date.now();
+
+      interval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const newProgress = Math.min((elapsed / duration) * 100, 100);
+        setProgress(newProgress);
+        setSeconds(Math.floor(elapsed / 1000));
+      }, 100); // UI update interval
+    } else {
+      setProgress(0);
+      setSeconds(0);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isGenerating]);
+
+  const [scriptProgress, setScriptProgress] = useState(0);
+  const [scriptSeconds, setScriptSeconds] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isLoading) {
+      setScriptProgress(0);
+      setScriptSeconds(0);
+      const duration = 15000; // 15 seconds
+      const startTime = Date.now();
+
+      interval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const newProgress = Math.min((elapsed / duration) * 100, 100);
+        setScriptProgress(newProgress);
+        setScriptSeconds(Math.floor(elapsed / 1000));
+      }, 100); // UI update interval
+    } else {
+      setScriptProgress(0);
+      setScriptSeconds(0);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isLoading]);
 
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [isFetchingScript, setIsFetchingScript] = useState(false);
@@ -318,10 +372,39 @@ export function Step5ThumbGen({
                     className="w-full bg-[#33DB98] hover:bg-[#33DB98]/90 text-black font-semibold shadow-sm"
                   >
                     {isGenerating ? (
-                      <div className="flex items-center gap-2">
-                        <Edit3 size={16} />
-                        썸네일 수정 중...
-                      </div>
+                      <>
+                        <div className="relative mr-2 w-4 h-4 flex items-center justify-center">
+                          <svg
+                            className="w-full h-full transform -rotate-90"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="3"
+                              fill="transparent"
+                              className="text-black/10"
+                            />
+                            <circle
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="3"
+                              fill="transparent"
+                              strokeDasharray={2 * Math.PI * 10}
+                              strokeDashoffset={
+                                2 * Math.PI * 10 * (1 - progress / 100)
+                              }
+                              strokeLinecap="round"
+                              className="text-black transition-all duration-100 ease-linear"
+                            />
+                          </svg>
+                        </div>
+                        <span>수정 중... ({seconds}초)</span>
+                      </>
                     ) : (
                       <div className="flex items-center gap-2">
                         <Edit3 size={16} />
@@ -340,8 +423,37 @@ export function Step5ThumbGen({
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="animate-spin" size={20} />
-                  <span>대본 생성 중...</span>
+                  <div className="relative mr-2 w-6 h-6 flex items-center justify-center">
+                    <svg
+                      className="w-full h-full transform -rotate-90"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        fill="transparent"
+                        className="text-black/10"
+                      />
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        fill="transparent"
+                        strokeDasharray={2 * Math.PI * 10}
+                        strokeDashoffset={
+                          2 * Math.PI * 10 * (1 - scriptProgress / 100)
+                        }
+                        strokeLinecap="round"
+                        className="text-black transition-all duration-100 ease-linear"
+                      />
+                    </svg>
+                  </div>
+                  <span>대본 생성 중... ({scriptSeconds}초)</span>
                 </>
               ) : (
                 <>

@@ -16,6 +16,10 @@ import {
   Heart,
   Repeat,
   Send,
+  Bomb,
+  TrendingUp,
+  Glasses,
+  Gift,
 } from "lucide-react";
 import {
   generateThreadsContent,
@@ -58,6 +62,34 @@ const STYLES: {
     icon: Users,
     detail: "업계 네트워킹, 취미 공유, 반모/존모 친구 찾기",
   },
+  {
+    id: "FACT_BOMBER",
+    title: "팩트폭격 & 현실조언",
+    desc: "'뼈 맞아서 순살됨'",
+    icon: Bomb,
+    detail: "정신이 번쩍 드는 현실적인 조언, 쓴소리, 동기부여",
+  },
+  {
+    id: "BUILDING_IN_PUBLIC",
+    title: "성장 기록 & 스토리 리빙",
+    desc: "'같이 성장할 사람?'",
+    icon: TrendingUp,
+    detail: "실패와 배움을 투명하게 공유, 팬덤 형성",
+  },
+  {
+    id: "MY_WAY",
+    title: "마이웨이 (소신 발언)",
+    desc: "'난 좀 다른데?'",
+    icon: Glasses,
+    detail: "남 눈치 안 보는 독자적 시각, 힙한 태도",
+  },
+  {
+    id: "CURATION",
+    title: "큐레이션 & 정보요약",
+    desc: "'이거 하나면 끝!'",
+    icon: Gift,
+    detail: "뉴스/트렌드/꿀팁 3줄 요약, 떠먹여 주기",
+  },
 ];
 
 const TONES: {
@@ -75,6 +107,7 @@ export interface ThreadsGeneratorState {
   targetAudience: string;
   insight: string;
   selectedStyle: ThreadsStyle | null;
+  generatedStyle: ThreadsStyle | null;
   selectedTone: ThreadsTone;
   posts: string[];
 }
@@ -106,6 +139,9 @@ export function ThreadsGeneratorClient({
   const [selectedStyle, setSelectedStyle] = useState<ThreadsStyle | null>(
     initialData?.selectedStyle || null,
   );
+  const [generatedStyle, setGeneratedStyle] = useState<ThreadsStyle | null>(
+    initialData?.generatedStyle || null,
+  );
   const [selectedTone, setSelectedTone] = useState<ThreadsTone>(
     initialData?.selectedTone || "AUTO",
   );
@@ -113,12 +149,39 @@ export function ThreadsGeneratorClient({
   const [posts, setPosts] = useState<string[]>(initialData?.posts || []);
   const [isPending, startTransition] = useTransition();
 
+  const [progress, setProgress] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+
   useEffect(() => {
     if (initialTopic && !initialData?.topic) setTopic(initialTopic);
     if (initialTargetAudience && !initialData?.targetAudience)
       setTargetAudience(initialTargetAudience);
     if (initialInsight && !initialData?.insight) setInsight(initialInsight);
   }, [initialTopic, initialTargetAudience, initialInsight]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isPending) {
+      setProgress(0);
+      setSeconds(0);
+      const duration = 15000; // 15 seconds
+      const startTime = Date.now();
+
+      interval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const newProgress = Math.min((elapsed / duration) * 100, 100);
+        setProgress(newProgress);
+        setSeconds(Math.floor(elapsed / 1000));
+      }, 100); // UI update interval
+    } else {
+      setProgress(0);
+      setSeconds(0);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isPending]);
 
   // Sync state changes to parent
   useEffect(() => {
@@ -128,6 +191,7 @@ export function ThreadsGeneratorClient({
         targetAudience,
         insight,
         selectedStyle,
+        generatedStyle,
         selectedTone,
         posts,
       });
@@ -137,6 +201,7 @@ export function ThreadsGeneratorClient({
     targetAudience,
     insight,
     selectedStyle,
+    generatedStyle,
     selectedTone,
     posts,
     onDataChange,
@@ -163,6 +228,7 @@ export function ThreadsGeneratorClient({
         );
         if (result.success && result.posts) {
           setPosts(result.posts);
+          setGeneratedStyle(selectedStyle);
           toast.success("쓰레드 포스트가 생성되었습니다.");
         } else {
           toast.error(result.error || "생성에 실패했습니다.");
@@ -194,60 +260,56 @@ export function ThreadsGeneratorClient({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Left Column: Inputs */}
-        <div className="space-y-8">
-          <div className="space-y-6">
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="topic" className="text-gray-300">
+              주제
+            </Label>
+            <Input
+              id="topic"
+              placeholder="작성하고 싶은 주제를 입력하세요 (ex. 개발자 취업 현실)"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)]"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="topic" className="text-gray-300">
-                주제
+              <Label htmlFor="target" className="text-gray-300">
+                대상 고객 <span className="text-gray-500 text-xs">(선택)</span>
               </Label>
               <Input
-                id="topic"
-                placeholder="작성하고 싶은 주제를 입력하세요 (ex. 개발자 취업 현실)"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
+                id="target"
+                placeholder="ex. 취준생, 주니어 개발자"
+                value={targetAudience}
+                onChange={(e) => setTargetAudience(e.target.value)}
                 className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)]"
               />
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="target" className="text-gray-300">
-                  대상 고객{" "}
-                  <span className="text-gray-500 text-xs">(선택)</span>
-                </Label>
-                <Input
-                  id="target"
-                  placeholder="ex. 취준생, 주니어 개발자"
-                  value={targetAudience}
-                  onChange={(e) => setTargetAudience(e.target.value)}
-                  className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)]"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="insight" className="text-gray-300">
-                  핵심 인사이트{" "}
-                  <span className="text-gray-500 text-xs">(선택)</span>
-                </Label>
-                <Input
-                  id="insight"
-                  placeholder="ex. 코딩 실력보다 중요한 건 소통"
-                  value={insight}
-                  onChange={(e) => setInsight(e.target.value)}
-                  className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)]"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="insight" className="text-gray-300">
+                핵심 인사이트{" "}
+                <span className="text-gray-500 text-xs">(선택)</span>
+              </Label>
+              <Input
+                id="insight"
+                placeholder="ex. 코딩 실력보다 중요한 건 소통"
+                value={insight}
+                onChange={(e) => setInsight(e.target.value)}
+                className="bg-vzx-bg border-white/10 text-white placeholder:text-gray-500 focus-visible:border-[var(--vzx-accent)] focus-visible:ring-1 focus-visible:ring-[var(--vzx-accent)]"
+              />
             </div>
           </div>
 
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <Label className="text-gray-300">스타일 선택</Label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {STYLES.map((style) => (
-                  <div
-                    key={style.id}
-                    onClick={() => setSelectedStyle(style.id)}
-                    className={`
+          <div className="space-y-2">
+            <Label className="text-gray-300">스타일 선택</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {STYLES.map((style) => (
+                <div
+                  key={style.id}
+                  onClick={() => setSelectedStyle(style.id)}
+                  className={`
                       relative cursor-pointer transition-all duration-300 border rounded-2xl p-4
                       ${
                         selectedStyle === style.id
@@ -255,49 +317,49 @@ export function ThreadsGeneratorClient({
                           : "bg-vzx-card border-white/5 hover:border-[var(--vzx-accent)]/50 text-gray-400 hover:text-white"
                       }
                     `}
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <div
-                        className={`p-2 rounded-lg transition-colors ${
-                          selectedStyle === style.id
-                            ? "bg-[var(--vzx-accent)] text-black"
-                            : "bg-white/5 text-gray-400"
-                        }`}
-                      >
-                        <style.icon size={20} />
-                      </div>
-                      {selectedStyle === style.id && (
-                        <div className="w-2 h-2 rounded-full bg-[var(--vzx-accent)] animate-pulse" />
-                      )}
-                    </div>
-                    <h3
-                      className={`font-bold mb-1 transition-colors ${
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div
+                      className={`p-2 rounded-lg transition-colors ${
                         selectedStyle === style.id
-                          ? "text-[var(--vzx-accent)]"
-                          : "text-gray-200"
+                          ? "bg-[var(--vzx-accent)] text-black"
+                          : "bg-white/5 text-gray-400"
                       }`}
                     >
-                      {style.title}
-                    </h3>
-                    <p className="text-xs text-gray-500 leading-relaxed font-medium mb-1">
-                      {style.desc}
-                    </p>
-                    <p className="text-[10px] text-gray-500 leading-tight border-t border-white/5 pt-2 mt-2">
-                      {style.detail}
-                    </p>
+                      <style.icon size={20} />
+                    </div>
+                    {selectedStyle === style.id && (
+                      <div className="w-2 h-2 rounded-full bg-[var(--vzx-accent)] animate-pulse" />
+                    )}
                   </div>
-                ))}
-              </div>
+                  <h3
+                    className={`font-bold mb-1 transition-colors ${
+                      selectedStyle === style.id
+                        ? "text-[var(--vzx-accent)]"
+                        : "text-gray-200"
+                    }`}
+                  >
+                    {style.title}
+                  </h3>
+                  <p className="text-xs text-gray-500 leading-relaxed font-medium mb-1">
+                    {style.desc}
+                  </p>
+                  <p className="text-[10px] text-gray-500 leading-tight border-t border-white/5 pt-2 mt-2">
+                    {style.detail}
+                  </p>
+                </div>
+              ))}
             </div>
+          </div>
 
-            <div className="space-y-2">
-              <Label className="text-gray-300">소통방식</Label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {TONES.map((tone) => (
-                  <div
-                    key={tone.id}
-                    onClick={() => setSelectedTone(tone.id)}
-                    className={`
+          <div className="space-y-2">
+            <Label className="text-gray-300">소통방식</Label>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {TONES.map((tone) => (
+                <div
+                  key={tone.id}
+                  onClick={() => setSelectedTone(tone.id)}
+                  className={`
                       cursor-pointer text-center py-3 rounded-xl border transition-all duration-200 text-sm font-medium
                       ${
                         selectedTone === tone.id
@@ -305,11 +367,10 @@ export function ThreadsGeneratorClient({
                           : "bg-vzx-card border-white/5 text-gray-400 hover:text-white hover:border-white/20"
                       }
                     `}
-                  >
-                    {tone.label}
-                  </div>
-                ))}
-              </div>
+                >
+                  {tone.label}
+                </div>
+              ))}
             </div>
           </div>
 
@@ -320,7 +381,35 @@ export function ThreadsGeneratorClient({
           >
             {isPending ? (
               <>
-                <Loader2 className="animate-spin mr-2" /> 잡생각 정리하는 중...
+                <div className="relative mr-2 w-6 h-6 flex items-center justify-center">
+                  <svg
+                    className="w-full h-full transform -rotate-90"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="transparent"
+                      className="text-black/10"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="transparent"
+                      strokeDasharray={2 * Math.PI * 10}
+                      strokeDashoffset={2 * Math.PI * 10 * (1 - progress / 100)}
+                      strokeLinecap="round"
+                      className="text-black transition-all duration-100 ease-linear"
+                    />
+                  </svg>
+                </div>
+                <span>가볍게 쓰레드 쓰는중... ({seconds}초)</span>
               </>
             ) : (
               <>
@@ -332,7 +421,7 @@ export function ThreadsGeneratorClient({
 
         {/* Right Column: Preview */}
         <div className="space-y-6">
-          <div className="bg-[#101010] border border-white/10 rounded-3xl p-8 min-h-[600px] relative overflow-hidden">
+          <div className="bg-[#101010] border border-white/10 rounded-3xl p-6 min-h-[600px] relative overflow-hidden">
             {/* Background Pattern */}
 
             <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2 relative z-10">
@@ -340,6 +429,11 @@ export function ThreadsGeneratorClient({
                 <MessageCircle className="text-black fill-black" size={16} />
               </div> */}
               생성된 쓰레드
+              {generatedStyle && (
+                <span className="ml-2 px-3 py-1 rounded-full bg-[var(--vzx-accent)]/20 text-[var(--vzx-accent)] text-xs font-medium border border-[var(--vzx-accent)]/30">
+                  {STYLES.find((s) => s.id === generatedStyle)?.title}
+                </span>
+              )}
             </h2>
 
             {posts.length > 0 ? (

@@ -1,5 +1,7 @@
 "use client";
 
+import { useState, useEffect } from "react";
+
 import {
   Copy,
   Hash,
@@ -34,6 +36,33 @@ export function Step7Metadata({
   isGenerating = false,
   isLoading = false,
 }: Step7MetadataProps) {
+  const [completionProgress, setCompletionProgress] = useState(0);
+  const [completionSeconds, setCompletionSeconds] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isLoading) {
+      setCompletionProgress(0);
+      setCompletionSeconds(0);
+      const duration = 15000; // 15 seconds
+      const startTime = Date.now();
+
+      interval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const newProgress = Math.min((elapsed / duration) * 100, 100);
+        setCompletionProgress(newProgress);
+        setCompletionSeconds(Math.floor(elapsed / 1000));
+      }, 100); // UI update interval
+    } else {
+      setCompletionProgress(0);
+      setCompletionSeconds(0);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isLoading]);
+
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast.success(`${label}이 복사되었습니다.`);
@@ -203,8 +232,37 @@ export function Step7Metadata({
           >
             {isLoading ? (
               <>
-                <Loader2 className="animate-spin" size={20} />
-                로딩 중...
+                <div className="relative mr-2 w-6 h-6 flex items-center justify-center">
+                  <svg
+                    className="w-full h-full transform -rotate-90"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="transparent"
+                      className="text-black/10"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="transparent"
+                      strokeDasharray={2 * Math.PI * 10}
+                      strokeDashoffset={
+                        2 * Math.PI * 10 * (1 - completionProgress / 100)
+                      }
+                      strokeLinecap="round"
+                      className="text-black transition-all duration-100 ease-linear"
+                    />
+                  </svg>
+                </div>
+                <span>최종 확인 중... ({completionSeconds}초)</span>
               </>
             ) : (
               <>

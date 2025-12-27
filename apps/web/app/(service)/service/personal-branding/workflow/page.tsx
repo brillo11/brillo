@@ -83,6 +83,7 @@ function BrandingWorkflowContent() {
     targetAudience: "",
     insight: "",
     selectedStyle: null,
+    generatedStyle: null,
     selectedTone: "AUTO",
     posts: [],
   });
@@ -92,6 +93,7 @@ function BrandingWorkflowContent() {
     targetAudience: "",
     keyInsights: "",
     selectedStyle: null,
+    generatedStyle: null,
     pages: [],
     aspectRatio: "1:1",
   });
@@ -128,6 +130,13 @@ function BrandingWorkflowContent() {
       targetAudience: targetAudience,
       keyMessage: insight,
     }));
+
+    // 워크플로우 초기 기획안 고정
+    updateFormData("initialPlanning", {
+      subject: topic,
+      targetAudience: targetAudience,
+      keyMessage: insight,
+    });
 
     syncInitialData();
 
@@ -196,7 +205,7 @@ function BrandingWorkflowContent() {
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 flex flex-col items-center justify-center">
             <Loader2 className="w-12 h-12 text-[#33DB98] animate-spin mb-4" />
             <p className="text-white font-medium animate-pulse">
-              Generating magic...
+              마법을 부리는 중...
             </p>
           </div>
         )}
@@ -279,7 +288,7 @@ function BrandingWorkflowContent() {
                   onClick={handleStep2Submit}
                   className="text-sm font-bold text-black bg-[#33DB98] px-6 py-2.5 rounded-xl hover:bg-[#2bb880] transition flex items-center gap-2 shadow-lg shadow-[#33DB98]/20"
                 >
-                  블로그 확정 & 쓰레드 생성으로 이동
+                  쓰레드 생성
                   <ArrowRight size={16} />
                 </button>
               </div>
@@ -330,7 +339,7 @@ function BrandingWorkflowContent() {
           <div className="h-full flex flex-col">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-                <Instagram className="text-[#33DB98]" /> 캐러셀 생성
+                <Instagram className="text-[#33DB98]" /> 인스타그램 캐러셀 생성
               </h2>
               <div className="flex items-center gap-3">
                 <button

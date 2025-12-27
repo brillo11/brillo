@@ -2,6 +2,7 @@ import { generateText } from "ai";
 import "dotenv/config";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/shared/lib/auth";
+import { H3_STYLE } from "@/features/blog/constants";
 
 const DEFAULT_BRANDING_TEXT = `[자기소개 및 브랜드 슬로건]
 
@@ -42,9 +43,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const isDefaultBranding = !branding.brandingText || 
-                             branding.brandingText.trim() === "" || 
-                             branding.brandingText.trim() === DEFAULT_BRANDING_TEXT.trim();
+    const isDefaultBranding =
+      !branding.brandingText ||
+      branding.brandingText.trim() === "" ||
+      branding.brandingText.trim() === DEFAULT_BRANDING_TEXT.trim();
 
     const prompt = `
 # 당신의 역할
@@ -66,12 +68,16 @@ ${currentContent}
 4. **이미지 태그 보존:** 기존 글에 포함된 \`<img>\` 태그(src, alt, style 포함)는 절대 삭제하거나 변경하지 말고, 적절한 위치에 그대로 두세요.
 5. **순수 HTML 출력 (중요 !!!) :** \`<!DOCTYPE>\`, \`<html>\`, \`<head>\`, \`<body>\` 태그 없이 순수 콘텐츠 HTML만 출력하세요. 최상위는 \`<div>\`로 시작해야 합니다. 기존 전달된 블로그 글의 최상위는 \`\`\`html 로 싸져있지만, 이를 제거하고 순수 HTML 출력을 해주세요.
 
+    6. **헤딩 스타일링**: 새로 추가되거나 수정되는 \`h3\` 태그에는 반드시 다음 스타일을 적용하세요: "${H3_STYLE}"
+
 # 추가 문맥 (브랜딩 전략 유지 및 참고용)
 - **브랜딩 모드:** ${brandingMode}
 - **브랜딩 정보:** 
-${!isDefaultBranding 
-  ? branding.brandingText 
-  : "- 작성자 정보 없음 (객관적 통찰 및 보편적 권위 기반의 톤 유지)"}
+${
+  !isDefaultBranding
+    ? branding.brandingText
+    : "- 작성자 정보 없음 (객관적 통찰 및 보편적 권위 기반의 톤 유지)"
+}
 - **주제:** ${contentPlanning.subject}
 - **타겟:** ${contentPlanning.targetAudience}
 - **말투:** ${options.styleReference}
@@ -94,9 +100,11 @@ ${!isDefaultBranding
   } catch (error) {
     console.error("Refinement API Error:", error);
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : "Unknown error" },
+      {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 },
     );
   }
 }
-

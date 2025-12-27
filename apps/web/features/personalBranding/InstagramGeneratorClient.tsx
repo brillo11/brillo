@@ -33,6 +33,13 @@ import {
   Square,
   Sparkles,
   Download,
+  Magnet,
+  Target,
+  Siren,
+  ListOrdered,
+  Hammer,
+  BookOpen,
+  AlertOctagon,
 } from "lucide-react";
 
 const STYLES: {
@@ -40,13 +47,15 @@ const STYLES: {
   title: string;
   desc: string;
   pages: string;
+  icon: any;
   detail: string;
 }[] = [
   {
     id: "RETENTION",
-    title: "리텐션 (Retention)",
+    title: "리텐션",
     desc: "끝까지 읽게 만드는 몰입형 구조",
     pages: "8 페이지",
+    icon: Magnet,
     detail: "훅(1p) -> 공감 유도(2p) -> 핵심 정보(3~6p) -> 요약(7p) -> CTA(8p)",
   },
   {
@@ -54,6 +63,7 @@ const STYLES: {
     title: "AIDA",
     desc: "논리적인 설득과 상세 정보 전달",
     pages: "8 페이지",
+    icon: Target,
     detail: "Attention(1p) -> Interest(2~3p) -> Desire(4~6p) -> Action(7~8p)",
   },
   {
@@ -61,6 +71,7 @@ const STYLES: {
     title: "PAS",
     desc: "문제 제기와 해결책 제시 (광고성)",
     pages: "5 페이지",
+    icon: Siren,
     detail: "Problem(1p) -> Agitation(2~3p) -> Solution(4~5p)",
   },
   {
@@ -68,7 +79,42 @@ const STYLES: {
     title: "BAB",
     desc: "꿈과 희망, 변화를 보여주는 구조",
     pages: "6 페이지",
+    icon: Sparkles,
     detail: "Before(1~2p) -> After(3~4p) -> Bridge(5~6p)",
+  },
+  {
+    id: "LISTICLE",
+    title: "리스트형",
+    desc: "저장 부르는 꿀팁 모음",
+    pages: "8 페이지",
+    icon: ListOrdered,
+    detail: "인트로(1p) -> 팁 나열(2~6p) -> 요약 및 저장 유도(7~8p)",
+  },
+  {
+    id: "HOW_TO",
+    title: "하우투",
+    desc: "따라만 하면 완성되는 가이드",
+    pages: "8 페이지",
+    icon: Hammer,
+    detail:
+      "결과물(1p) -> 준비물(2p) -> 단계별 과정(3~6p) -> 완성 및 CTA(7~8p)",
+  },
+  {
+    id: "STORYTELLING",
+    title: "스토리텔링",
+    desc: "몰입감 있는 경험담 / 썰",
+    pages: "8 페이지",
+    icon: BookOpen,
+    detail: "배경(1p) -> 위기(2p) -> 갈등(3~4p) -> 해결(5~6p) -> 교훈(7~8p)",
+  },
+  {
+    id: "MISTAKES",
+    title: "실수 모음",
+    desc: "이것만 안 해도 절반은 성공!",
+    pages: "8 페이지",
+    icon: AlertOctagon,
+    detail:
+      "하지마라(1p) -> 실수1(2p) -> 실수2(3p) -> 실수3(4p) -> 해결책(5~6p) -> 요약(7~8p)",
   },
 ];
 
@@ -95,6 +141,7 @@ export interface InstagramGeneratorState {
   targetAudience: string;
   keyInsights: string;
   selectedStyle: InstagramStyle | null;
+  generatedStyle: InstagramStyle | null;
   pages: InstagramPageContent[];
   aspectRatio: InstagramAspectRatio;
 }
@@ -127,6 +174,9 @@ export function InstagramGeneratorClient({
   const [selectedStyle, setSelectedStyle] = useState<InstagramStyle | null>(
     initialData?.selectedStyle || null,
   );
+  const [generatedStyle, setGeneratedStyle] = useState<InstagramStyle | null>(
+    initialData?.generatedStyle || null,
+  );
   const [pages, setPages] = useState<InstagramPageContent[]>(
     initialData?.pages || [],
   );
@@ -138,6 +188,9 @@ export function InstagramGeneratorClient({
 
   const [isGeneratingImages, setIsGeneratingImages] = useState(false);
 
+  const [progress, setProgress] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+
   useEffect(() => {
     if (initialTopic && !initialData?.topic) setTopic(initialTopic);
     if (initialTargetAudience && !initialData?.targetAudience)
@@ -145,6 +198,33 @@ export function InstagramGeneratorClient({
     if (initialInsight && !initialData?.keyInsights)
       setKeyInsights(initialInsight);
   }, [initialTopic, initialTargetAudience, initialInsight]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    const isActive = isPending || isGeneratingImages;
+
+    if (isActive) {
+      setProgress(0);
+      setSeconds(0);
+      // Planning: 15s, Image Gen: 180s
+      const duration = isPending ? 15000 : 180000;
+      const startTime = Date.now();
+
+      interval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const newProgress = Math.min((elapsed / duration) * 100, 100);
+        setProgress(newProgress);
+        setSeconds(Math.floor(elapsed / 1000));
+      }, 100); // UI update interval
+    } else {
+      setProgress(0);
+      setSeconds(0);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isPending, isGeneratingImages]);
 
   // Sync state changes to parent
   useEffect(() => {
@@ -154,6 +234,7 @@ export function InstagramGeneratorClient({
         targetAudience,
         keyInsights,
         selectedStyle,
+        generatedStyle,
         pages,
         aspectRatio,
       });
@@ -163,6 +244,7 @@ export function InstagramGeneratorClient({
     targetAudience,
     keyInsights,
     selectedStyle,
+    generatedStyle,
     pages,
     aspectRatio,
     onDataChange,
@@ -237,6 +319,7 @@ export function InstagramGeneratorClient({
         );
         if (result.success && result.pages) {
           setPages(result.pages as InstagramPageContent[]);
+          setGeneratedStyle(selectedStyle);
           toast.success("카드 뉴스 기획이 생성되었습니다.");
         } else {
           toast.error(result.error || "생성에 실패했습니다.");
@@ -348,7 +431,8 @@ export function InstagramGeneratorClient({
         </div>
       )}
 
-      <div className="grid gap-8 md:grid-cols-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        {/* Left Column: Inputs */}
         <div className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="topic" className="text-gray-300">
@@ -412,6 +496,20 @@ export function InstagramGeneratorClient({
                     `}
                     onClick={() => !isPending && setSelectedStyle(style.id)}
                   >
+                    <div className="flex items-start justify-between mb-2">
+                      <div
+                        className={`p-2 rounded-lg transition-colors ${
+                          selectedStyle === style.id
+                            ? "bg-[var(--vzx-accent)] text-black"
+                            : "bg-white/5 text-gray-400"
+                        }`}
+                      >
+                        <style.icon size={20} />
+                      </div>
+                      {selectedStyle === style.id && (
+                        <div className="w-2 h-2 rounded-full bg-[var(--vzx-accent)] animate-pulse" />
+                      )}
+                    </div>
                     <div className="flex items-center justify-between font-medium mb-1">
                       <span
                         className={
@@ -422,25 +520,12 @@ export function InstagramGeneratorClient({
                       >
                         {style.title}
                       </span>
-
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div
-                            className="p-1 hover:bg-white/10 rounded-full transition-colors"
-                            onClick={(e) => {
-                              e.stopPropagation(); // Prevent card selection when clicking tooltip
-                            }}
-                          >
-                            <HelpCircle className="w-4 h-4 text-gray-500 hover:text-[var(--vzx-accent)]" />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent className="bg-vzx-card border-white/10 text-gray-300">
-                          <p>{style.detail}</p>
-                        </TooltipContent>
-                      </Tooltip>
                     </div>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 mb-2">
                       {style.desc} • {style.pages}
+                    </p>
+                    <p className="text-[10px] text-gray-500 leading-tight border-t border-white/5 pt-2 mt-2">
+                      {style.detail}
                     </p>
                   </div>
                 ))}
@@ -455,8 +540,35 @@ export function InstagramGeneratorClient({
           >
             {isPending ? (
               <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                기획 생성 중...
+                <div className="relative mr-2 w-6 h-6">
+                  <svg
+                    className="w-full h-full transform -rotate-90"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="transparent"
+                      className="text-black/10"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      fill="transparent"
+                      strokeDasharray={2 * Math.PI * 10}
+                      strokeDashoffset={2 * Math.PI * 10 * (1 - progress / 100)}
+                      strokeLinecap="round"
+                      className="text-black transition-all duration-100 ease-linear"
+                    />
+                  </svg>
+                </div>
+                <span>기획 생성 중... ({seconds}초)</span>
               </>
             ) : (
               <>
@@ -500,10 +612,41 @@ export function InstagramGeneratorClient({
                   className="flex-1 h-12 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-medium"
                 >
                   {isGeneratingImages ? (
-                    <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      이미지 생성 중...
-                    </>
+                    <div className="flex justify-center items-center gap-2 w-full h-full relative">
+                      <div className="relative mr-2 w-6 h-6 flex items-center justify-center">
+                        <svg
+                          className="w-full h-full transform -rotate-90"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            fill="transparent"
+                            className="text-white/20"
+                          />
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            fill="transparent"
+                            strokeDasharray={2 * Math.PI * 10}
+                            strokeDashoffset={
+                              2 * Math.PI * 10 * (1 - progress / 100)
+                            }
+                            strokeLinecap="round"
+                            className="text-white transition-all duration-100 ease-linear"
+                          />
+                        </svg>
+                      </div>
+                      <span className="text-white h-6 flex items-center">
+                        이미지 생성 중... ({seconds}초)
+                      </span>
+                    </div>
                   ) : (
                     <>
                       <Sparkles className="mr-2 h-5 w-5 text-yellow-400" />
@@ -530,12 +673,17 @@ export function InstagramGeneratorClient({
         </div>
 
         {/* Output Section */}
-        <div className="relative border border-white/5 rounded-2xl bg-vzx-card p-6 min-h-[500px]">
+        <div className="relative border border-white/5 rounded-3xl bg-vzx-card p-8 min-h-[600px]">
           {pages.length > 0 ? (
             <div className="space-y-4">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-white">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                   기획 결과 ({pages.length} 페이지)
+                  {generatedStyle && (
+                    <span className="ml-2 px-3 py-1 rounded-full bg-[var(--vzx-accent)]/20 text-[var(--vzx-accent)] text-xs font-medium border border-[var(--vzx-accent)]/30">
+                      {STYLES.find((s) => s.id === generatedStyle)?.title}
+                    </span>
+                  )}
                 </h2>
                 <Button
                   variant="outline"
