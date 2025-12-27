@@ -40,3 +40,4 @@ packages/database/generated/
 
 # Local env files
 .env.development.local
+.env
