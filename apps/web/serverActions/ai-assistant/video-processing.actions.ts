@@ -12,8 +12,21 @@ import { v4 as uuidv4 } from "uuid";
 import { requireStudent } from "@/shared/lib/auth-guards";
 
 // ffmpeg-static usually returns the path to the binary.
-// Since we added it to serverExternalPackages, it should behave correctly now.
+// In Vercel serverless environments, we might need to explicitly set permissions.
 if (ffmpegStatic) {
+  try {
+    // Check if file exists
+    if (fs.existsSync(ffmpegStatic)) {
+      // Ensure executable permissions (common issue in Lambda/Vercel)
+      fs.chmodSync(ffmpegStatic, 0o755);
+      console.log(`✅ FFmpeg permissions set for: ${ffmpegStatic}`);
+    } else {
+      console.error(`❌ FFmpeg binary not found at: ${ffmpegStatic}`);
+    }
+  } catch (err) {
+    console.warn("⚠️ Failed to set FFmpeg permissions:", err);
+  }
+
   ffmpeg.setFfmpegPath(ffmpegStatic);
   console.log(`✅ FFmpeg path configured: ${ffmpegStatic}`);
 } else {
