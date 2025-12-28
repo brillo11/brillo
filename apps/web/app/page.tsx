@@ -3,22 +3,21 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { loginWithEmail, loginWithSocial } from "@/shared/lib/auth-helpers";
-import { Card, CardContent } from "@repo/ui/components/card";
-import { Button } from "@repo/ui/components/button";
+
 import {
-  ChevronDown,
   ArrowRight,
+  ChevronDown,
+  Cpu,
+  Eye,
+  EyeOff,
+  FileText,
+  Instagram,
   Play,
   Sparkles,
-  FileText,
-  Share2,
   Video,
-  Zap,
-  Globe,
-  Cpu,
-  Twitter,
+  X,
   Youtube,
-  Instagram,
+  Zap,
 } from "lucide-react";
 import { useSession } from "@/shared/lib/auth-client";
 import { useRouter } from "next/navigation";
@@ -659,33 +658,33 @@ export default function HomePage() {
       {/* Login Modal */}
       {isLoginOpen && (
         <div
-          className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
           onClick={() => setIsLoginOpen(false)}
         >
-          <Card
-            className="w-full max-w-md border-none shadow-2xl max-h-[90vh] overflow-y-auto bg-vzx-card"
+          <div
+            className="w-full max-w-md bg-[#111] border border-white/10 rounded-3xl shadow-2xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <CardContent className="px-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-100">로그인</h2>
-                <Button
-                  variant="ghost"
-                  size="sm"
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="text-2xl font-bold text-white tracking-tight">
+                  로그인
+                </h2>
+                <button
                   onClick={() => setIsLoginOpen(false)}
-                  className="text-gray-400 hover:text-gray-600 bg-transparent"
+                  className="text-gray-500 hover:text-white transition-colors"
                 >
-                  ✕
-                </Button>
+                  <X size={24} />
+                </button>
               </div>
 
               {/* 카카오 로그인 */}
-              <div className="space-y-4 mb-6">
+              <div className="space-y-4 mb-8">
                 <button
                   onClick={() => handleSocialLogin("kakao")}
                   disabled={isSocialLoading}
                   type="button"
-                  className="relative flex w-full items-center justify-center gap-3 rounded-xl bg-[#FFE600] px-4 py-4 font-medium text-black hover:bg-[#FFE600]/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="relative flex w-full items-center justify-center gap-3 rounded-xl bg-[#FFE812] px-4 py-4 font-medium text-black hover:bg-[#FFE812]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <svg
                     width="24"
@@ -702,18 +701,19 @@ export default function HomePage() {
                   </svg>
                   {isSocialLoading ? "로그인 중..." : "카카오로 시작하기"}
                 </button>
-                {/* <div className="text-center text-slate-600 text-sm">
-                  수강생 여러분은 위 버튼을 클릭해주세요
-                </div> */}
               </div>
 
-              <div className="text-center mt-6 pt-6 border-t border-slate-100">
+              <div className="text-center pt-6 border-t border-white/10">
                 <button
                   type="button"
                   onClick={() => setIsAdminFormOpen(!isAdminFormOpen)}
-                  className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
+                  className="text-xs text-gray-500 hover:text-gray-300 transition-colors flex items-center justify-center gap-1 mx-auto"
                 >
-                  관리자 로그인 {isAdminFormOpen ? "닫기 ▲" : "열기 ▼"}
+                  관리자 로그인{" "}
+                  <ChevronDown
+                    size={14}
+                    className={`transition-transform duration-300 ${isAdminFormOpen ? "rotate-180" : ""}`}
+                  />
                 </button>
               </div>
 
@@ -721,29 +721,30 @@ export default function HomePage() {
                 <form
                   id="admin-form"
                   onSubmit={handleSubmit}
-                  className="space-y-4 mt-6 pt-6 border-t border-slate-200 animate-fadeIn"
+                  className="space-y-5 mt-6 animate-fade-in"
                 >
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
-                    <p className="text-xs text-amber-800 font-medium">
-                      ⚠️ 관리자 전용 로그인
+                  <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 mb-4 flex items-center gap-2">
+                    <span className="text-amber-500">⚠️</span>
+                    <p className="text-xs text-amber-500 font-medium">
+                      관리자 전용 로그인입니다.
                     </p>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                      아이디<span className="text-red-500 ml-1">*</span>
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-400">
+                      아이디
                     </label>
                     <input
                       name="email"
-                      placeholder="아이디를 입력하세요"
+                      placeholder="admin@vizionx.io"
                       required={true}
                       value={credentials.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 text-base text-slate-900 border rounded-xl transition-all focus:ring-2 focus:border-transparent placeholder-slate-400 border-slate-300 focus:ring-blue-500"
+                      className="w-full px-4 py-3 bg-[#1A1A1A] border border-white/10 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-vzx-accent/50 focus:bg-[#222] transition-colors"
                       type="email"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-400">
                       비밀번호
                     </label>
                     <div className="relative">
@@ -754,50 +755,19 @@ export default function HomePage() {
                         required={true}
                         value={credentials.password}
                         onChange={handleChange}
-                        className="appearance-none relative block w-full px-4 py-3 pr-12 border border-slate-300 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white placeholder-slate-400"
-                        placeholder="비밀번호를 입력하세요"
+                        className="w-full px-4 py-3 pr-12 bg-[#1A1A1A] border border-white/10 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-vzx-accent/50 focus:bg-[#222] transition-colors"
+                        placeholder="••••••••"
                         type={showPassword ? "text" : "password"}
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
                       >
                         {showPassword ? (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
-                            />
-                          </svg>
+                          <EyeOff size={18} />
                         ) : (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                            />
-                          </svg>
+                          <Eye size={18} />
                         )}
                       </button>
                     </div>
@@ -805,14 +775,14 @@ export default function HomePage() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="group relative w-full flex justify-center py-3 px-6 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="w-full flex justify-center py-3 px-6 rounded-xl text-sm font-bold text-black bg-white hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
                     {isLoading ? "로그인 중..." : "관리자 로그인"}
                   </button>
                 </form>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       )}
     </div>
