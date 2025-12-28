@@ -3,7 +3,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 // @ts-ignore
 import ffmpeg from "fluent-ffmpeg";
 // @ts-ignore
-import ffmpegStatic from "ffmpeg-static";
+import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
 import fs from "fs";
 import path from "path";
 import os from "os";
@@ -13,9 +13,11 @@ import { requireStudent } from "@/shared/lib/auth-guards";
 export const runtime = "nodejs";
 
 // Configure FFmpeg path
-if (ffmpegStatic) {
-  ffmpeg.setFfmpegPath(ffmpegStatic);
-  console.log(`✅ FFmpeg path configured (API): ${ffmpegStatic}`);
+if (ffmpegInstaller.path) {
+  ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+  console.log(`✅ FFmpeg path configured (API): ${ffmpegInstaller.path}`);
+} else {
+  console.error("❌ FFmpeg binary not found (API)");
 }
 
 const s3Client = new S3Client({
