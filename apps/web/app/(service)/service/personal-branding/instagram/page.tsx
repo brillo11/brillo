@@ -1,5 +1,9 @@
 import { InstagramGeneratorClient } from "@/features/personalBranding/InstagramGeneratorClient";
 
 export default function Instagram() {
-  return <InstagramGeneratorClient />;
+  return (
+    <div className="py-6">
+      <InstagramGeneratorClient />
+    </div>
+  );
 }
