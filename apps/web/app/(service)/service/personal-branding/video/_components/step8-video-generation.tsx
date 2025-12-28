@@ -92,7 +92,17 @@ export function Step8VideoGeneration({
     toast.info("숏폼으로 변환 중입니다... (약 1분 소요)");
 
     try {
-      const result = await convertVideoToShorts(videoUrl);
+      // 서버 액션 대신 API Route 호출 (번들링 문제 해결)
+      // const result = await convertVideoToShorts(videoUrl);
+      const response = await fetch("/api/ai-assistant/transcode", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ videoUrl }),
+      });
+
+      const result = await response.json();
 
       if (result.success && result.videoUrl) {
         toast.success("변환이 완료되었습니다.");

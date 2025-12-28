@@ -415,11 +415,11 @@ export function AIAssistantClient({
     // 쇼츠 제목 생성 후 다음 스텝으로 이동
     setIsShortsTitlesLoading(true);
     try {
-      const response = await sendShortsTitlesResponses(currentSessionId);
-      const updates = { shortsTitlesResponses: response, step: "COMPLETE" };
-      await saveSessionData(updates);
+      // const response = await sendShortsTitlesResponses(currentSessionId);
+      // const updates = { shortsTitlesResponses: response, step: "COMPLETE" };
+      // await saveSessionData(updates);
       await handleStepChange(8);
-      toast.success("쇼츠 제목이 생성되었습니다.");
+      // toast.success("쇼츠 제목이 생성되었습니다.");
     } catch (error) {
       console.error("Failed to generate shorts titles:", error);
       toast.error("쇼츠 제목 생성에 실패했습니다.");
