@@ -361,7 +361,7 @@ export function AIAssistantClient({
 
     try {
       const response = await sendScriptResponses(currentSessionId);
-      const updates = { scriptResponses: response, step: "METADATA" };
+      const updates = { scriptResponses: response, step: "SCRIPT" };
       await saveSessionData(updates);
       toast.success("대본이 생성되었습니다.");
     } catch (error) {
@@ -372,24 +372,6 @@ export function AIAssistantClient({
     }
   };
 
-  const handleMetadataGenerate = async () => {
-    if (!currentSessionId) return;
-
-    setIsMetadataLoading(true);
-
-    try {
-      const response = await sendMetadataResponses(currentSessionId);
-      const updates = { metadataResponses: response, step: "SHORTS_TITLES" };
-      await saveSessionData(updates);
-      toast.success("메타데이터가 생성되었습니다.");
-    } catch (error) {
-      console.error("Failed to generate metadata:", error);
-      toast.error("메타데이터 생성에 실패했습니다.");
-    } finally {
-      setIsMetadataLoading(false);
-    }
-  };
-
   const handleScriptNext = async () => {
     if (!currentSessionId) return;
 
@@ -397,7 +379,7 @@ export function AIAssistantClient({
     setIsMetadataLoading(true);
     try {
       const response = await sendMetadataResponses(currentSessionId);
-      const updates = { metadataResponses: response, step: "SHORTS_TITLES" };
+      const updates = { metadataResponses: response, step: "METADATA" };
       await saveSessionData(updates);
       await handleStepChange(7);
       toast.success("메타데이터가 생성되었습니다.");
@@ -631,7 +613,6 @@ export function AIAssistantClient({
                 ? undefined
                 : (sessionData.scriptResponses as any)
             }
-            onGenerate={handleScriptGenerate}
             onStepChange={handleScriptNext}
             isGenerating={isScriptLoading}
             isLoading={isMetadataLoading}
@@ -640,7 +621,6 @@ export function AIAssistantClient({
         {currentStep === 7 && (
           <Step7Metadata
             metadataResponses={sessionData.metadataResponses}
-            onGenerate={handleMetadataGenerate}
             onStepChange={handleMetadataNext}
             isGenerating={isMetadataLoading}
             isLoading={isShortsTitlesLoading}

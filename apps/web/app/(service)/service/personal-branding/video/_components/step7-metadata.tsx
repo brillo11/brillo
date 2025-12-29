@@ -5,13 +5,8 @@ import { useState, useEffect } from "react";
 import {
   Copy,
   Hash,
-  Tag,
-  Clock,
-  FileText,
   ChevronRight,
-  Loader2,
 } from "lucide-react";
-import { Button } from "@repo/ui/components/button";
 import { LoadingSpinner } from "@repo/ui/components/loading-spinner";
 import { toast } from "sonner";
 import type { Step } from "./types";
@@ -23,7 +18,6 @@ interface Step7MetadataProps {
     hashtags?: string[];
     tags?: string[];
   };
-  onGenerate?: () => void;
   onStepChange?: (step: Step) => void;
   isGenerating?: boolean;
   isLoading?: boolean;
@@ -31,7 +25,6 @@ interface Step7MetadataProps {
 
 export function Step7Metadata({
   metadataResponses,
-  onGenerate,
   onStepChange,
   isGenerating = false,
   isLoading = false,
@@ -79,15 +72,6 @@ export function Step7Metadata({
           ) : (
             <>
               <p className="text-gray-500 mb-4">메타데이터를 생성해주세요.</p>
-              {onGenerate && (
-                <Button
-                  onClick={onGenerate}
-                  disabled={isGenerating}
-                  className="px-10 py-4 bg-[#33DB98] text-black rounded-xl font-bold text-lg hover:shadow-lg disabled:opacity-70 transition-all flex items-center gap-2 mx-auto hover:bg-[#33DB98]/90"
-                >
-                  메타데이터 생성
-                </Button>
-              )}
             </>
           )}
         </div>

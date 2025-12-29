@@ -12,7 +12,6 @@ import {
 import { Button } from "@repo/ui/components/button";
 import { toast } from "sonner";
 import { cn } from "@repo/ui/lib/utils";
-import { convertVideoToShorts } from "@/serverActions/ai-assistant/video-processing.actions";
 
 import {
   generateHeyGenVideo,
@@ -93,8 +92,6 @@ export function Step8VideoGeneration({
     toast.info("숏폼으로 변환 중입니다... (약 1분 소요)");
 
     try {
-      // 서버 액션 대신 API Route 호출 (번들링 문제 해결)
-      // const result = await convertVideoToShorts(videoUrl);
       const response = await fetch("/api/ai-assistant/transcode", {
         method: "POST",
         headers: {

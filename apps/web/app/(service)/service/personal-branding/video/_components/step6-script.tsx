@@ -26,7 +26,6 @@ interface Step6ScriptProps {
   selectedTitle: string;
   topic: string;
   scriptResponses?: ScriptResponse;
-  onGenerate?: () => void;
   onStepChange?: (step: Step) => void;
   isGenerating?: boolean;
   isLoading?: boolean;
@@ -37,7 +36,6 @@ export function Step6Script({
   selectedTitle,
   topic,
   scriptResponses,
-  onGenerate,
   onStepChange,
   isGenerating = false,
   isLoading = false,
@@ -145,15 +143,6 @@ export function Step6Script({
           ) : (
             <>
               <p className="text-gray-400 mb-4">대본을 생성해주세요.</p>
-              {onGenerate && (
-                <Button
-                  onClick={onGenerate}
-                  disabled={isGenerating}
-                  className="px-10 py-4 bg-[#33DB98] text-black rounded-xl font-bold text-lg hover:shadow-lg disabled:opacity-70 transition-all flex items-center gap-2 mx-auto hover:bg-[#33DB98]/90"
-                >
-                  대본 생성
-                </Button>
-              )}
             </>
           )}
         </div>
