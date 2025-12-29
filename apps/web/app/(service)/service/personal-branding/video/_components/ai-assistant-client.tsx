@@ -613,7 +613,6 @@ export function AIAssistantClient({
                 ? undefined
                 : (sessionData.scriptResponses as any)
             }
-            onGenerate={handleScriptGenerate}
             onStepChange={handleScriptNext}
             isGenerating={isScriptLoading}
             isLoading={isMetadataLoading}
