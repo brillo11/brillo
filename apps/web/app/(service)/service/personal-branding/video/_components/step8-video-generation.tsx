@@ -19,6 +19,7 @@ import {
   checkHeyGenVideoStatus,
 } from "@/serverActions/ai-assistant/heygen.actions";
 import { generateAvatarIntroVideo } from "@/serverActions/ai-assistant/veo.actions";
+import MarkdownRenderer from "./MarkdownRenderer";
 
 interface Step8VideoGenerationProps {
   selectedTitle: string;
@@ -293,7 +294,7 @@ export function Step8VideoGeneration({
                 </p>
                 <div className="p-4 bg-black/20 rounded-xl border border-white/5">
                   <h4 className="text-xl font-bold text-white leading-normal">
-                    {selectedTitle}
+                    <MarkdownRenderer content={selectedTitle} />
                   </h4>
                 </div>
                 {metadataResponses?.description && (
