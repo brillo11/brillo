@@ -22,6 +22,7 @@ import {
 import type { AIAssistantSessionData } from "@/serverActions/ai-assistant/ai-assistant-session.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import MarkdownRenderer from "./MarkdownRenderer";
 
 const STEP_LABELS: Record<string, string> = {
   TITLE: "제목 생성",
@@ -164,7 +165,9 @@ export function AssistantHistory({
             </button>
             <div>
               <h2 className="text-xl font-bold text-white leading-tight">
-                {selectedSession.title || "제목 없음"}
+                <MarkdownRenderer
+                  content={selectedSession.title || "제목 없음"}
+                />
               </h2>
               <div className="flex items-center gap-2 text-xs text-gray-500">
                 <span
@@ -311,7 +314,9 @@ export function AssistantHistory({
                   </div>
 
                   <h3 className="font-bold text-gray-200 mb-2 line-clamp-2 leading-snug group-hover:text-white transition-colors">
-                    {session.title || session.titleMessage || "제목 없음"}
+                    <MarkdownRenderer
+                      content={session.title || session.titleMessage || "제목 없음"}
+                    />
                   </h3>
 
                   <div className="mt-auto pt-4 flex items-center gap-4 text-xs text-gray-500 border-t border-white/5">
