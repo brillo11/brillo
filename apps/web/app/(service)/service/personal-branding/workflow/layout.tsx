@@ -1,4 +1,4 @@
-export const maxDuration = 600; // Allow execution up to 5 minutes
+export const maxDuration = 800; // Allow execution up to 5 minutes
 
 export default function WorkflowLayout({
   children,
