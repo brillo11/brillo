@@ -31,6 +31,7 @@ const STEP_LABELS: Record<string, string> = {
   SCRIPT: "대본 작성",
   METADATA: "메타데이터",
   SHORTS_TITLES: "쇼츠 제목",
+  COMPLETE: "완료",
 };
 
 export function AssistantHistory({
