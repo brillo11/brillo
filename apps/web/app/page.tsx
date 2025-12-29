@@ -19,6 +19,7 @@ import {
   Youtube,
   Zap,
 } from "lucide-react";
+import { Button } from "@repo/ui/components/button";
 import { useSession } from "@/shared/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { PATH } from "@/shared/consts/path";
@@ -205,6 +206,10 @@ export default function HomePage() {
       <section className="pt-40 pb-20 px-8 relative overflow-hidden">
         {/* Decorative background glow */}
         <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-vzx-accent/10 rounded-full blur-[120px] -z-10" />
+
+        <Button onClick={handleStartService}>
+          {session?.user ? "대시보드" : "로그인"}
+        </Button>
 
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-gray-400 animate-fade-in-up">
