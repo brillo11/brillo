@@ -11,13 +11,10 @@ export default function RootLayout({
   return (
     <div className={`mx-auto scroll-smooth font-sans antialiased shadow-sm`}>
       <ServiceProviders>
-        <header className="fixed top-0 left-0 right-0 z-[100] h-[84px] bg-black">
-          {/* Top black bars from design */}
-          <div className="absolute top-7 left-0 w-full h-14 bg-black" />
-
-          <div className="relative max-w-[1280px] mx-auto h-full px-4 xl:px-0">
+        <header className="fixed top-0 left-0 right-0 z-[100] h-14 bg-black">
+          <div className="relative max-w-screen-xl mx-auto top-0 h-full px-4 xl:px-0 flex items-center">
             {/* Logo */}
-            <Link href="/" className="absolute top-[39px] left-[18px]">
+            <Link href="/">
               <img
                 className="w-[93px] h-[35px] object-contain"
                 alt="Brillo Logo"
@@ -26,7 +23,7 @@ export default function RootLayout({
             </Link>
 
             {/* Navigation */}
-            <div className="hidden md:inline-flex items-center gap-[33px] absolute top-[49px] left-1/2 -translate-x-1/2">
+            <div className="hidden md:inline-flex items-center gap-[33px] absolute left-1/2 -translate-x-1/2">
               {["About", "Woman", "Man", "VIP/Celeb", "FAQ"].map((item) => (
                 <Link
                   key={item}
@@ -39,7 +36,7 @@ export default function RootLayout({
             </div>
 
             {/* User Icon / Login */}
-            <div className="absolute top-[46px] right-4 lg:right-0">
+            <div className="absolute right-4 lg:right-0">
               <LoginButton />
             </div>
           </div>
