@@ -370,6 +370,9 @@ export default function HomePage() {
         <h2 className="[font-family:'Playfair_Display',Helvetica] font-normal text-black text-[28px] leading-[normal] mb-12">
           Visual Making Process
         </h2>
+        {/* <div className="relative w-[330px] h-[180px]">
+          <div className="top-0 left-32 w-[330px] h-[180px] rounded-[30px] border-[none] bg-[linear-gradient(180deg,rgba(244,244,244,1)_0%,rgba(255,255,255,1)_100%)] before:content-[''] before:absolute before:inset-0 before:p-px before:rounded-[30px] before:[background:linear-gradient(106deg,rgba(242,242,242,1)_0%,rgba(134,134,134,1)_50%,rgba(242,242,242,1)_100%)] before:[-webkit-mask:linear-gradient(#fff_0_0)_content-box,linear-gradient(#fff_0_0)] before:[-webkit-mask-composite:xor] before:[mask-composite:exclude] before:z-[1] before:pointer-events-none" />
+        </div> */}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
           {[
@@ -412,7 +415,7 @@ export default function HomePage() {
           ].map((item, index) => (
             <div
               key={index}
-              className="w-full h-[180px] rounded-[30px] relative bg-white border border-gray-100 shadow-sm flex flex-col justify-end p-8 overflow-hidden group hover:shadow-md transition-shadow"
+              className="w-full h-[180px] rounded-[30px] relative bg-gradient-to-b from-[#F4F4F4] to-[#FFFFFF] border border-gray-100 shadow-sm flex flex-col justify-end p-8 overflow-hidden group hover:shadow-md transition-shadow"
             >
               <div className="absolute top-[25px] left-[23px] w-12 h-12 rounded-full flex items-center justify-center shadow-md bg-zinc-900">
                 <img
