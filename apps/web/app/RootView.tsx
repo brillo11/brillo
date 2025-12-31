@@ -9,9 +9,9 @@ export default function RootView() {
       <div className="flex flex-col items-center justify-center gap-4">
         {/* <pre>{JSON.stringify(users, null, 2)}</pre> */}
         <h1 className="text-2xl font-bold">Hello World</h1>
-        <Button size="sm" asChild>
-          <Link href="/detail">상세 페이지 확인하기</Link>
-        </Button>
+        <Link href="/detail">
+          <Button size="sm">상세 페이지 확인하기</Button>
+        </Link>
       </div>
     </div>
   );

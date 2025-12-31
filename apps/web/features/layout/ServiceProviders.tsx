@@ -22,7 +22,7 @@ export async function ServiceProviders({
 
   return (
     <ServiceClientProviders>
-      <ServiceSidebar />
+      {/* <ServiceSidebar /> */}
       <div className="flex flex-col flex-1 w-full min-h-screen">
         <ServiceHeader />
         <div className="flex-1 bg-vzx-bg/80">{children}</div>

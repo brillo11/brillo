@@ -119,14 +119,13 @@ export function ServiceSidebar() {
 
                   if (item.subMenus) {
                     return (
-                      <Collapsible
+                      <li
                         key={item.id}
-                        asChild
-                        defaultOpen={true}
+                        suppressHydrationWarning
                         className="group/collapsible"
                       >
-                        <li suppressHydrationWarning>
-                          <CollapsibleTrigger asChild>
+                        <Collapsible defaultOpen={true}>
+                          <CollapsibleTrigger>
                             <button
                               suppressHydrationWarning
                               className={`group w-full text-left px-4 py-3 rounded-xl flex items-center justify-between text-sm font-medium transition-all duration-200 ${
@@ -202,8 +201,8 @@ export function ServiceSidebar() {
                               })}
                             </ul>
                           </CollapsibleContent>
-                        </li>
-                      </Collapsible>
+                        </Collapsible>
+                      </li>
                     );
                   } else {
                     return (
