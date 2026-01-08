@@ -13,7 +13,7 @@ export function ServiceHeader() {
   return (
     <header className="h-20 bg-vzx-bg/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-8 z-40 sticky top-0">
       <div className="flex items-center gap-4 text-gray-500">
-        <span className="text-sm">VizionX</span>
+        <span className="text-sm">brillo</span>
         <span className="text-gray-700">/</span>
         <span className="text-white font-medium capitalize">{currentView}</span>
       </div>

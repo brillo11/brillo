@@ -1,5 +1,5 @@
 export const METADATA = {
-  TITLE: "VizionX",
+  TITLE: "brillo",
   DESCRIPTION: "",
   THUMBNAIL: "/thumbnail.png",
   COMPANY_NAME: "TALOS WORKS",

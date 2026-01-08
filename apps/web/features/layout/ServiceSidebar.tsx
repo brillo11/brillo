@@ -68,7 +68,7 @@ export function ServiceSidebar() {
                 VZX
               </div> */}
               {/* <span className="font-bold text-base tracking-tight text-white">
-                VizionX
+                brillo
               </span> */}
             </Link>
           </div>
