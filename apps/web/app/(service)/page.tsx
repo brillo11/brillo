@@ -195,7 +195,7 @@ export default function HomePage() {
                   alt="Element"
                   src="https://c.animaapp.com/oAayiH1p/img/------4@2x.png"
                 />
-                <div className="absolute top-[123px] left-[352px] w-[35px] h-[35px] bg-[#ffffff4a] rounded-[354.17px] border-0 border-none backdrop-blur-[2.33px] backdrop-brightness-[100%] [-webkit-backdrop-filter:blur(2.33px)_brightness(100%)]" />
+                {/* <div className="absolute top-[123px] left-[352px] w-[35px] h-[35px] bg-[#ffffff4a] rounded-[354.17px] border-0 border-none backdrop-blur-[2.33px] backdrop-brightness-[100%] [-webkit-backdrop-filter:blur(2.33px)_brightness(100%)]" /> */}
                 <div className="absolute top-[234px] left-0 w-[510px] h-[106px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.6)_100%)]" />
                 <div className="absolute top-[301px] left-[98px] [font-family:'Playfair_Display',Helvetica] font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
                   Before
@@ -499,32 +499,11 @@ export default function HomePage() {
       </div>
 
       {/* Footer Info */}
-      <div className="bg-black px-4 py-16 flex flex-col gap-1">
-        <div className="max-w-screen-xl mx-auto w-full">
-          <div className="w-[42px] h-[29px] [font-family:'SUIT-Bold',Helvetica] font-bold text-[#2e2e2e] text-base tracking-[0] leading-[28.8px] whitespace-nowrap">
-            브릴로
-          </div>
-          <p className=" h-24 [font-family:'SUIT-Regular',Helvetica] font-normal text-[#2e2e2e] text-[13.1px] tracking-[0] leading-[23.6px]">
-            사업자등록번호: 182-47-01062&nbsp;&nbsp; 대표자: 안태욱 <br />
-            통신판매업신고번호: 2025-서울강남-04764
-            <br />
-            소재지: 서울시 강남구 테헤란로 83길 18 4층
-            <br />
-            이메일: brillo11@naver.com&nbsp;&nbsp; 전화번호: 070 8095 5688
-          </p>
-        </div>
-      </div>
 
-      <div className="absolute top-[1272px] left-[766px] w-[35px] h-[35px] bg-[#ffffff4a] rounded-[352.9px] border-0 border-none backdrop-blur-[2.32px] backdrop-brightness-[100%] [-webkit-backdrop-filter:blur(2.32px)_brightness(100%)]" />
+      {/* <div className="absolute top-[1272px] left-[766px] w-[35px] h-[35px] bg-[#ffffff4a] rounded-[352.9px] border-0 border-none backdrop-blur-[2.32px] backdrop-brightness-[100%] [-webkit-backdrop-filter:blur(2.32px)_brightness(100%)]" /> */}
 
       {/* Decorative / Gradient Elements */}
       <div className="absolute top-20 left-[calc(50.00%_-_822px)] w-[1751px] h-[1217px]" />
-
-      <img
-        className="fixed bottom-8 right-8 w-[84px] h-12 aspect-[1.74] object-cover z-50 cursor-pointer hover:scale-105 transition-transform"
-        alt="Inquiry"
-        src="https://c.animaapp.com/oAayiH1p/img/21091175afdf2-1@2x.png"
-      />
 
       {/* Login Modal (Floating) */}
       {isLoginOpen && (

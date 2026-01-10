@@ -2,6 +2,8 @@
 import { ServiceProviders } from "@/features/layout/ServiceProviders";
 import Link from "next/link";
 import { LoginButton } from "@/features/auth/LoginButton";
+import { Footer } from "@/features/layout/components/Footer";
+import { ContactFloatButton } from "@/features/layout/components/ContactFloatButton";
 
 export default function RootLayout({
   children,
@@ -24,13 +26,19 @@ export default function RootLayout({
 
             {/* Navigation */}
             <div className="hidden md:inline-flex items-center gap-[33px] absolute left-1/2 -translate-x-1/2">
-              {["About", "Woman", "Man", "VIP/Celeb", "FAQ"].map((item) => (
+              {[
+                { label: "About", href: "/about" },
+                { label: "Woman", href: "#" },
+                { label: "Man", href: "#" },
+                { label: "VIP/Celeb", href: "#" },
+                { label: "FAQ", href: "#" },
+              ].map((item) => (
                 <Link
-                  key={item}
-                  href="#"
+                  key={item.label}
+                  href={item.href}
                   className="relative w-fit [font-family:'Playfair_Display',Helvetica] font-medium text-white text-xs tracking-[-0.24px] leading-[normal] hover:text-gray-300 transition-colors"
                 >
-                  {item}
+                  {item.label}
                 </Link>
               ))}
             </div>
@@ -44,6 +52,8 @@ export default function RootLayout({
 
         {/* Main Content */}
         <div className="bg-white">{children}</div>
+        <Footer />
+        <ContactFloatButton />
       </ServiceProviders>
     </div>
   );
