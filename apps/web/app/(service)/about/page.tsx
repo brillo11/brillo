@@ -57,14 +57,14 @@ export default function AboutPage() {
                   src="/img/vip-women-1-1.png"
                 />
 
-                <article className="w-[305px] flex flex-col items-start gap-10">
-                  <h2 className="relative w-[219px] mt-[-1.00px] [font-family:'SUIT-Bold',Helvetica] font-bold text-black text-sm tracking-[0] leading-[21px]">
+                <article className="w-full md:w-[305px] flex flex-col items-start gap-10">
+                  <h2 className="relative md:text-left text-center w-full md:w-[219px] mt-[-1.00px] [font-family:'SUIT-Bold',Helvetica] font-bold text-black text-sm tracking-[0] leading-[21px]">
                     당신의 외모가
                     <br />
                     당신에 대해 많은 것을 말해주는 시대
                   </h2>
 
-                  <p className="relative w-[282px] mr-[-25.00px] [font-family:'DM_Serif_Display',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
+                  <p className="relative md:text-left text-center w-full md:w-[282px] mr-[-25.00px] [font-family:'DM_Serif_Display',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
                     <span className="[font-family:'DM_Serif_Display',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
                       BRILLO
                     </span>
@@ -80,7 +80,7 @@ export default function AboutPage() {
                     </span>
                   </p>
 
-                  <p className="relative w-[278px] mr-[-21.00px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
+                  <p className="relative md:text-left text-center w-full md:w-[278px] mr-[-21.00px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
                     <span className="[font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
                       당신의 외모와 스타일은 곧 당신의 언어입니다.
                       <br />
@@ -96,7 +96,7 @@ export default function AboutPage() {
                     </span>
                   </p>
 
-                  <p className="relative w-[279px] mr-[-22.00px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
+                  <p className="relative md:text-left text-center w-full md:w-[279px] mr-[-22.00px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
                     <span className="[font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
                       그{" "}
                     </span>
@@ -126,9 +126,9 @@ export default function AboutPage() {
               className="pt-32 relative mx-auto"
               aria-labelledby="philosophy-section"
             >
-              <div className="flex flex-col md:flex-row gap-14 mx-auto justify-center">
-                <article className="w-[305px] top-0 left-0 flex flex-col items-start gap-10">
-                  <p className="relative w-[305px] mt-[-1.00px] mr-[-17.00px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
+              <div className="flex flex-col-reverse md:flex-row gap-14 mx-auto justify-center">
+                <article className="w-full md:text-left text-center  md:w-[305px] top-0 left-0 flex flex-col items-start gap-10">
+                  <p className="relative w-full md:w-[305px] mt-[-1.00px] mr-[-17.00px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
                     <span className="[font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
                       누구나 본능적으로 멋지고 아름다워지길 원합니다.
                       <br />
@@ -144,7 +144,7 @@ export default function AboutPage() {
                     </span>
                   </p>
 
-                  <p className="relative w-[321px] mr-[-33.00px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
+                  <p className="relative md:text-left text-center  w-full md:w-[321px] mr-[-33.00px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
                     <span className="[font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
                       외모는 더 이상 타고나는 것이 아닙니다.
                       <br />
@@ -157,7 +157,7 @@ export default function AboutPage() {
                     </span>
                   </p>
 
-                  <p className="relative w-[321px] mr-[-33.00px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
+                  <p className="relative md:text-left text-center  w-full md:w-[321px] mr-[-33.00px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
                     <span className="[font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
                       아직 알지 못할 뿐,
                       <br />
@@ -171,7 +171,7 @@ export default function AboutPage() {
                     </span>
                   </p>
 
-                  <p className="relative w-[179px] text-sm leading-[21px] [font-family:'DM_Serif_Display',Helvetica] font-normal text-black tracking-[0]">
+                  <p className="relative md:text-left text-center  w-full md:w-[179px] text-sm leading-[21px] [font-family:'DM_Serif_Display',Helvetica] font-normal text-black tracking-[0]">
                     <span className="[font-family:'DM_Serif_Display',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
                       BRILLO
                     </span>
@@ -196,12 +196,12 @@ export default function AboutPage() {
         <section className="block bg-black">
           <div className="mx-auto pt-14 pb-32 flex flex-col md:flex-row gap-14 flex justify-center px-4">
             <img
-              className="w-full md:w-72 h-[360px] object-cover"
+              className="w-full md:w-72 w-[300px] object-cover"
               alt="Representative profile portrait"
               src="/img/rectangle-17.png"
             />
 
-            <article className="w-full md:w-[356px] h-[222px]">
+            <article className="w-full md:w-[305px]">
               <h2
                 id="representative-section"
                 className="w-[286px] [font-family:'SUIT-Medium',Helvetica] font-medium text-white text-2xl tracking-[0] leading-9"
