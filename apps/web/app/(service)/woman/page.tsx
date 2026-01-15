@@ -7,7 +7,7 @@ export default function WomanPage() {
   return (
     <div className="bg-[#f7f3f0] w-full">
       <div
-        className="max-w-[1280px] min-h-[2762px] relative mx-auto pt-40"
+        className="max-w-screen-xl min-h-[2762px] relative mx-auto pt-40"
         data-model-id="1:1241"
       >
         <div className="flex justify-center gap-12">
