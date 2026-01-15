@@ -4,26 +4,6 @@ export default function WomanPage() {
       className="bg-[#f7f3f0] w-full min-w-[1280px] min-h-[2762px] relative"
       data-model-id="1:1241"
     >
-      <div className="absolute top-0 left-0 w-[1280px] h-7 bg-white" />
-
-      <div className="absolute top-7 left-0 w-[1280px] h-14 bg-white" />
-
-      <img
-        className="absolute top-[39px] left-[18px] w-[93px] h-[35px]"
-        alt="Group"
-        src="/page/woman/group-2.png"
-      />
-
-      <div className="absolute top-[46px] left-[1238px] w-5 h-5">
-        <img
-          className="absolute w-[66.67%] h-[87.50%] top-[4.17%] left-[16.67%]"
-          alt="Vector"
-          src="/page/woman/vector.svg"
-        />
-      </div>
-
-      <div className="absolute top-[2579px] left-[calc(50.00%_-_640px)] w-[1280px] h-[183px] bg-white" />
-
       <img
         className="absolute top-[156px] left-[304px] w-[297px] h-[297px] object-cover"
         alt="Vip women"
@@ -192,43 +172,6 @@ export default function WomanPage() {
           전혀 다른 결과를 이끌어낼 수 있습니다.
         </span>
       </p>
-
-      <div className="absolute top-[2606px] left-32 w-[309px] h-[129px] flex flex-col gap-1">
-        <div className="w-[42px] h-[29px] [font-family:'SUIT-Bold',Helvetica] font-bold text-[#c2c2c2] text-base tracking-[0] leading-[28.8px] whitespace-nowrap">
-          브릴로
-        </div>
-
-        <p className="w-[305px] h-24 [font-family:'SUIT-Regular',Helvetica] font-normal text-[#c2c2c2] text-[13.1px] tracking-[0] leading-[23.6px]">
-          사업자등록번호: 182-47-01062&nbsp;&nbsp; 대표자: 안태욱 <br />
-          통신판매업신고번호: 2025-서울강남-04764
-          <br />
-          소재지: 서울시 강남구 테헤란로 83길 18 4층
-          <br />
-          이메일: brillo11@naver.com&nbsp;&nbsp; 전화번호: 070 8095 5688
-        </p>
-      </div>
-
-      <div className="inline-flex items-center gap-3 absolute top-[49px] left-[calc(50.00%_-_110px)]">
-        <div className="relative w-fit mt-[-1.00px] [font-family:'Playfair_Display',Helvetica] font-medium text-black text-xs tracking-[-0.24px] leading-[normal]">
-          About
-        </div>
-
-        <div className="relative w-fit mt-[-1.00px] [font-family:'Playfair_Display',Helvetica] font-medium text-black text-xs tracking-[-0.24px] leading-[normal]">
-          Woman
-        </div>
-
-        <div className="relative w-fit mt-[-1.00px] [font-family:'Playfair_Display',Helvetica] font-medium text-black text-xs tracking-[-0.24px] leading-[normal]">
-          Man
-        </div>
-
-        <div className="relative w-fit mt-[-1.00px] [font-family:'Playfair_Display',Helvetica] font-medium text-black text-xs tracking-[-0.24px] leading-[normal]">
-          VIP/Celeb
-        </div>
-
-        <div className="relative w-fit mt-[-1.00px] [font-family:'Playfair_Display',Helvetica] font-medium text-black text-xs tracking-[-0.24px] leading-[normal]">
-          FAQ
-        </div>
-      </div>
 
       <p className="absolute top-[507px] left-[644px] [font-family:'SUIT-Bold',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
         <span className="font-bold">
