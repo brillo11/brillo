@@ -1,4 +1,9 @@
+"use client";
+
+import { useState } from "react";
+
 export default function WomanPage() {
+  const [activeTab, setActiveTab] = useState("서비스 소개");
   return (
     <div className="bg-[#f7f3f0] w-full">
       <div
@@ -76,36 +81,64 @@ export default function WomanPage() {
               </div>
             </div>
 
-            <div className="absolute top-[446px] left-[640px] w-[100px] h-[37px] border-b [border-bottom-style:solid] border-black" />
-
-            <div className="absolute top-[446px] left-[740px] w-[100px] h-[37px] border-b [border-bottom-style:solid] border-[#d6d6d6]" />
-
-            <div className="absolute top-[446px] left-[840px] w-[100px] h-[37px] border-b [border-bottom-style:solid] border-[#d6d6d6]" />
-
-            <div className="absolute top-[454px] left-[658px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm text-center tracking-[0] leading-[21px] whitespace-nowrap">
-              서비스 소개
+            {/* Tabs */}
+            <div className="flex w-full border-b border-[#d6d6d6]">
+              {["서비스 소개", "리뷰", "서비스규정"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`flex-1 pb-3 text-center text-sm transition-colors relative ${
+                    activeTab === tab
+                      ? "text-black border-b border-black -mb-[1px]"
+                      : "text-black hover:text-black"
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
             </div>
 
-            <div className="absolute top-[454px] left-[780px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm text-center tracking-[0] leading-[21px] whitespace-nowrap">
-              리뷰
+            {/* Tab Content Placeholder */}
+            <div className="min-h-[100px] text-sm text-gray-600">
+              {activeTab === "서비스 소개" && (
+                <div className="space-y-2">
+                  <div className="space-y-2 text-sm leading-relaxed text-black">
+                    <p className="font-bold">
+                      • 데이터 기반 정밀 진단 + 극대화 전략 설계
+                    </p>
+                    <p>
+                      • 피부시술과 성형 포함 맞춤형{" "}
+                      <span className="font-serif font-bold">
+                        Visual Roadmap
+                      </span>{" "}
+                      제공
+                    </p>
+                  </div>
+                </div>
+              )}
+              {activeTab === "리뷰" && <p>등록된 리뷰가 없습니다.</p>}
+              {activeTab === "서비스규정" && <p>서비스 규정 내용입니다.</p>}
             </div>
 
-            <div className="absolute top-[454px] left-[859px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm text-center tracking-[0] leading-[21px] whitespace-nowrap">
-              서비스규정
+            <div className="grid grid-cols-2 gap-3">
+              <button className="h-[37px] flex items-center justify-center border border-black bg-transparent text-black text-sm hover:bg-gray-50 transition-colors">
+                문의하기
+              </button>
+              <button className="h-[37px] flex items-center justify-center border border-black bg-black text-white text-sm hover:bg-gray-800 transition-colors">
+                구매하기
+              </button>
             </div>
           </div>
         </div>
 
-        <div className="absolute top-[600px] left-[644px] w-[145px] h-[37px] border border-solid border-black" />
-
-        <div className="absolute top-[600px] left-[796px] w-[145px] h-[37px] bg-black border border-solid" />
-
-        <div className="absolute top-[608px] left-[692px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px] whitespace-nowrap">
-          문의하기
-        </div>
-
-        <div className="absolute top-[608px] left-[844px] [font-family:'SUIT-Regular',Helvetica] font-normal text-white text-sm text-center tracking-[0] leading-[21px] whitespace-nowrap">
-          구매하기
+        <div className="relative w-full max-w-4xl mx-auto mt-36">
+          <img
+            className="w-full h-auto object-cover"
+            alt="Consultation"
+            src="/page/woman/1.png"
+          />
+          <div className="absolute top-0 left-0 w-1/4 h-full bg-gradient-to-r from-[#f7f3f0] to-transparent" />
+          <div className="absolute top-0 right-0 w-1/4 h-full bg-gradient-to-l from-[#f7f3f0] to-transparent" />
         </div>
 
         <div className="absolute w-[1019px] h-[340px] top-[2180px] left-[131px]">
@@ -173,39 +206,6 @@ export default function WomanPage() {
         <div className="absolute top-[2180px] left-[1054px] w-24 h-[340px] bg-[linear-gradient(270deg,rgba(247,243,240,1)_0%,rgba(247,243,240,0)_100%)]" />
 
         <div className="absolute top-[2180px] left-[131px] w-24 h-[340px] rotate-180 bg-[linear-gradient(270deg,rgba(247,243,240,1)_0%,rgba(247,243,240,0)_100%)]" />
-
-        <img
-          className="absolute top-[809px] left-[calc(50.00%_-_434px)] w-[869px] h-[412px] object-cover"
-          alt="Element"
-          src="/page/woman/1.png"
-        />
-
-        <div className="absolute top-[809px] left-[206px] w-[254px] h-[412px] bg-[linear-gradient(270deg,rgba(247,243,240,0)_0%,rgba(247,243,240,1)_100%)]" />
-
-        <div className="absolute top-[809px] left-[829px] w-[254px] h-[412px] rotate-180 bg-[linear-gradient(270deg,rgba(247,243,240,0)_0%,rgba(247,243,240,1)_100%)]" />
-
-        <p className="absolute top-[507px] left-[644px] [font-family:'SUIT-Bold',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
-          <span className="font-bold">
-            • 데이터 기반 정밀 진단 + 극대화 전략 설계
-            <br />
-          </span>
-
-          <span className="[font-family:'SUIT-Regular',Helvetica]">
-            • 피부시술과 성형 포함 맞춤형{" "}
-          </span>
-
-          <span className="[font-family:'DM_Serif_Display',Helvetica]">
-            Visual Roadmap
-          </span>
-
-          <span className="[font-family:'SUIT-Regular',Helvetica]"> 제공</span>
-        </p>
-
-        <img
-          className="fixed top-[731px] left-[1174px] w-[84px] h-12 aspect-[1.74] object-cover"
-          alt="Element"
-          src="/page/woman/21091175afdf2-1.png"
-        />
       </div>
     </div>
   );
