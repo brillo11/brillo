@@ -1,200 +1,212 @@
 export default function WomanPage() {
   return (
-    <div
-      className="bg-[#f7f3f0] w-full min-w-[1280px] min-h-[2762px] relative"
-      data-model-id="1:1241"
-    >
-      <img
-        className="absolute top-[156px] left-[304px] w-[297px] h-[297px] object-cover"
-        alt="Vip women"
-        src="/page/woman/vip-women-1-1.png"
-      />
+    <div className="bg-[#f7f3f0] w-full">
+      <div
+        className="max-w-[1280px] min-h-[2762px] relative mx-auto pt-40"
+        data-model-id="1:1241"
+      >
+        <div className="flex justify-center gap-12">
+          {/* // 좌측 인물 */}
+          <div className="flex flex-col gap-8 items-center">
+            <img
+              className="w-[297px] h-[297px] object-cover"
+              alt="Vip women"
+              src="/page/woman/vip-women-1-1.png"
+            />
+            <div className="w-[158px] h-1 bg-[#d9d9d9] rounded-[300px]">
+              <div className="left-[374px] w-8 h-1 bg-[#6f6f6f] rounded-[300px]" />
+            </div>
+          </div>
 
-      <div className="absolute top-[481px] left-[374px] w-[158px] h-1 bg-[#d9d9d9] rounded-[300px]" />
+          {/* 우측 설명 */}
+          <div className="flex flex-col gap-8">
+            <p className="[font-family:'SUIT-Bold',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
+              <span className="font-bold">
+                당신의 매력은 이미 존재합니다.
+                <br />
+              </span>
 
-      <div className="absolute top-[481px] left-[374px] w-8 h-1 bg-[#6f6f6f] rounded-[300px]" />
+              <span className="[font-family:'DM_Serif_Display',Helvetica]">
+                BRILLO
+              </span>
 
-      <div className="absolute top-[392px] left-[644px] w-[297px] h-[37px] border border-solid border-black" />
+              <span className="font-bold">
+                는 당신의 아름다움이
+                <br />
+                자연스럽게 피어나는 순간을 만들어갑니다.
+              </span>
+            </p>
 
-      <p className="absolute top-[400px] left-[661px] [font-family:'DM_Serif_Display',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px] whitespace-nowrap">
-        <span className="[font-family:'DM_Serif_Display',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
-          Visual Consulting
-        </span>
+            <p className="left-[641px] w-[324px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
+              <span className="[font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
+                여성의 비주얼은 단순한 외모를 넘어,
+                <br />
+              </span>
 
-        <span className="[font-family:'SUIT-Regular',Helvetica]"> (90분)</span>
-      </p>
+              <span className="[font-family:'SUIT-Bold',Helvetica] font-bold">
+                매력과 자신감을 전하는 언어
+              </span>
 
-      <div className="absolute top-[446px] left-[640px] w-[100px] h-[37px] border-b [border-bottom-style:solid] border-black" />
+              <span className="[font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
+                가 됩니다.
+                <br />한 번의 스타일 전환이 일상과 커리어, 관계의 무대에서
+                <br />
+                전혀 다른 결과를 이끌어낼 수 있습니다.
+              </span>
+            </p>
 
-      <div className="absolute top-[446px] left-[740px] w-[100px] h-[37px] border-b [border-bottom-style:solid] border-[#d6d6d6]" />
+            <div className="relative border border-black px-4 py-2 mt-4">
+              <p className="[font-family:'DM_Serif_Display',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px] whitespace-nowrap">
+                <span className="[font-family:'DM_Serif_Display',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
+                  Visual Consulting
+                </span>
 
-      <div className="absolute top-[446px] left-[840px] w-[100px] h-[37px] border-b [border-bottom-style:solid] border-[#d6d6d6]" />
+                <span className="[font-family:'SUIT-Regular',Helvetica]">
+                  {" "}
+                  (90분)
+                </span>
+              </p>
 
-      <div className="absolute top-[454px] left-[658px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm text-center tracking-[0] leading-[21px] whitespace-nowrap">
-        서비스 소개
-      </div>
+              <div className="absolute top-1.5 right-2 w-6 h-6">
+                <img
+                  className="absolute w-[35.36%] h-[23.57%] top-[38.93%] left-[32.32%]"
+                  alt="Vector"
+                  src="/page/woman/vector-1.svg"
+                />
+              </div>
+            </div>
 
-      <div className="absolute top-[454px] left-[780px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm text-center tracking-[0] leading-[21px] whitespace-nowrap">
-        리뷰
-      </div>
+            <div className="absolute top-[446px] left-[640px] w-[100px] h-[37px] border-b [border-bottom-style:solid] border-black" />
 
-      <div className="absolute top-[454px] left-[859px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm text-center tracking-[0] leading-[21px] whitespace-nowrap">
-        서비스규정
-      </div>
+            <div className="absolute top-[446px] left-[740px] w-[100px] h-[37px] border-b [border-bottom-style:solid] border-[#d6d6d6]" />
 
-      <div className="absolute top-[600px] left-[644px] w-[145px] h-[37px] border border-solid border-black" />
+            <div className="absolute top-[446px] left-[840px] w-[100px] h-[37px] border-b [border-bottom-style:solid] border-[#d6d6d6]" />
 
-      <div className="absolute top-[600px] left-[796px] w-[145px] h-[37px] bg-black border border-solid" />
+            <div className="absolute top-[454px] left-[658px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm text-center tracking-[0] leading-[21px] whitespace-nowrap">
+              서비스 소개
+            </div>
 
-      <div className="absolute top-[608px] left-[692px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px] whitespace-nowrap">
-        문의하기
-      </div>
+            <div className="absolute top-[454px] left-[780px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm text-center tracking-[0] leading-[21px] whitespace-nowrap">
+              리뷰
+            </div>
 
-      <div className="absolute top-[608px] left-[844px] [font-family:'SUIT-Regular',Helvetica] font-normal text-white text-sm text-center tracking-[0] leading-[21px] whitespace-nowrap">
-        구매하기
-      </div>
+            <div className="absolute top-[454px] left-[859px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm text-center tracking-[0] leading-[21px] whitespace-nowrap">
+              서비스규정
+            </div>
+          </div>
+        </div>
 
-      <div className="absolute top-[399px] left-[909px] w-6 h-6">
+        <div className="absolute top-[600px] left-[644px] w-[145px] h-[37px] border border-solid border-black" />
+
+        <div className="absolute top-[600px] left-[796px] w-[145px] h-[37px] bg-black border border-solid" />
+
+        <div className="absolute top-[608px] left-[692px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px] whitespace-nowrap">
+          문의하기
+        </div>
+
+        <div className="absolute top-[608px] left-[844px] [font-family:'SUIT-Regular',Helvetica] font-normal text-white text-sm text-center tracking-[0] leading-[21px] whitespace-nowrap">
+          구매하기
+        </div>
+
+        <div className="absolute w-[1019px] h-[340px] top-[2180px] left-[131px]">
+          <div className="absolute top-px left-[509px] w-[514px] h-[340px]">
+            <img
+              className="absolute top-0 left-px w-[255px] h-[340px] aspect-[0.75] object-cover"
+              alt="F"
+              src="/page/woman/f.png"
+            />
+
+            <img
+              className="absolute top-0 left-64 w-[253px] h-[340px] aspect-[0.74] object-cover"
+              alt="F"
+              src="/page/woman/f-1.png"
+            />
+
+            <div className="absolute top-[234px] left-0 w-[510px] h-[106px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.6)_100%)]" />
+
+            <div className="absolute top-[301px] left-[98px] [font-family:'Playfair_Display',Helvetica] font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
+              Before
+            </div>
+
+            <div className="absolute top-[301px] left-[359px] [font-family:'Playfair_Display',Helvetica] font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
+              After
+            </div>
+          </div>
+
+          <div className="absolute top-0 left-0 w-[514px] h-[340px]">
+            <img
+              className="absolute top-0 left-0 w-[255px] h-[340px] aspect-[0.75] object-cover"
+              alt="Element"
+              src="/page/woman/4-2x.png"
+            />
+
+            <img
+              className="top-0 left-[255px] w-[255px] h-[340px] absolute aspect-[0.75] object-cover"
+              alt="Element"
+              src="/page/woman/4.png"
+            />
+
+            <div className="absolute top-[234px] left-0 w-[510px] h-[106px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.6)_100%)]" />
+
+            <div className="absolute top-[301px] left-[98px] [font-family:'Playfair_Display',Helvetica] font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
+              Before
+            </div>
+
+            <div className="absolute top-[301px] left-[359px] [font-family:'Playfair_Display',Helvetica] font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
+              After
+            </div>
+          </div>
+        </div>
+
         <img
-          className="absolute w-[35.36%] h-[23.57%] top-[38.93%] left-[32.32%]"
-          alt="Vector"
-          src="/page/woman/vector-1.svg"
+          className="top-[1400px] left-[386px] w-[483px] h-[644px] absolute aspect-[0.75] object-cover"
+          alt="Element"
+          src="/page/woman/4-1.png"
+        />
+
+        <img
+          className="absolute top-[2082px] left-[calc(50.00%_-_26px)] w-[52px] h-[13px]"
+          alt="Frame"
+          src="/page/woman/frame-98.svg"
+        />
+
+        <div className="absolute top-[2180px] left-[1054px] w-24 h-[340px] bg-[linear-gradient(270deg,rgba(247,243,240,1)_0%,rgba(247,243,240,0)_100%)]" />
+
+        <div className="absolute top-[2180px] left-[131px] w-24 h-[340px] rotate-180 bg-[linear-gradient(270deg,rgba(247,243,240,1)_0%,rgba(247,243,240,0)_100%)]" />
+
+        <img
+          className="absolute top-[809px] left-[calc(50.00%_-_434px)] w-[869px] h-[412px] object-cover"
+          alt="Element"
+          src="/page/woman/1.png"
+        />
+
+        <div className="absolute top-[809px] left-[206px] w-[254px] h-[412px] bg-[linear-gradient(270deg,rgba(247,243,240,0)_0%,rgba(247,243,240,1)_100%)]" />
+
+        <div className="absolute top-[809px] left-[829px] w-[254px] h-[412px] rotate-180 bg-[linear-gradient(270deg,rgba(247,243,240,0)_0%,rgba(247,243,240,1)_100%)]" />
+
+        <p className="absolute top-[507px] left-[644px] [font-family:'SUIT-Bold',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
+          <span className="font-bold">
+            • 데이터 기반 정밀 진단 + 극대화 전략 설계
+            <br />
+          </span>
+
+          <span className="[font-family:'SUIT-Regular',Helvetica]">
+            • 피부시술과 성형 포함 맞춤형{" "}
+          </span>
+
+          <span className="[font-family:'DM_Serif_Display',Helvetica]">
+            Visual Roadmap
+          </span>
+
+          <span className="[font-family:'SUIT-Regular',Helvetica]"> 제공</span>
+        </p>
+
+        <img
+          className="fixed top-[731px] left-[1174px] w-[84px] h-12 aspect-[1.74] object-cover"
+          alt="Element"
+          src="/page/woman/21091175afdf2-1.png"
         />
       </div>
-
-      <div className="absolute w-[1019px] h-[340px] top-[2180px] left-[131px]">
-        <div className="absolute top-px left-[509px] w-[514px] h-[340px]">
-          <img
-            className="absolute top-0 left-px w-[255px] h-[340px] aspect-[0.75] object-cover"
-            alt="F"
-            src="/page/woman/f.png"
-          />
-
-          <img
-            className="absolute top-0 left-64 w-[253px] h-[340px] aspect-[0.74] object-cover"
-            alt="F"
-            src="/page/woman/f-1.png"
-          />
-
-          <div className="absolute top-[234px] left-0 w-[510px] h-[106px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.6)_100%)]" />
-
-          <div className="absolute top-[301px] left-[98px] [font-family:'Playfair_Display',Helvetica] font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
-            Before
-          </div>
-
-          <div className="absolute top-[301px] left-[359px] [font-family:'Playfair_Display',Helvetica] font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
-            After
-          </div>
-        </div>
-
-        <div className="absolute top-0 left-0 w-[514px] h-[340px]">
-          <img
-            className="absolute top-0 left-0 w-[255px] h-[340px] aspect-[0.75] object-cover"
-            alt="Element"
-            src="/page/woman/4-2x.png"
-          />
-
-          <img
-            className="top-0 left-[255px] w-[255px] h-[340px] absolute aspect-[0.75] object-cover"
-            alt="Element"
-            src="/page/woman/4.png"
-          />
-
-          <div className="absolute top-[234px] left-0 w-[510px] h-[106px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.6)_100%)]" />
-
-          <div className="absolute top-[301px] left-[98px] [font-family:'Playfair_Display',Helvetica] font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
-            Before
-          </div>
-
-          <div className="absolute top-[301px] left-[359px] [font-family:'Playfair_Display',Helvetica] font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
-            After
-          </div>
-        </div>
-      </div>
-
-      <img
-        className="top-[1400px] left-[386px] w-[483px] h-[644px] absolute aspect-[0.75] object-cover"
-        alt="Element"
-        src="/page/woman/4-1.png"
-      />
-
-      <img
-        className="absolute top-[2082px] left-[calc(50.00%_-_26px)] w-[52px] h-[13px]"
-        alt="Frame"
-        src="/page/woman/frame-98.svg"
-      />
-
-      <div className="absolute top-[2180px] left-[1054px] w-24 h-[340px] bg-[linear-gradient(270deg,rgba(247,243,240,1)_0%,rgba(247,243,240,0)_100%)]" />
-
-      <div className="absolute top-[2180px] left-[131px] w-24 h-[340px] rotate-180 bg-[linear-gradient(270deg,rgba(247,243,240,1)_0%,rgba(247,243,240,0)_100%)]" />
-
-      <img
-        className="absolute top-[809px] left-[calc(50.00%_-_434px)] w-[869px] h-[412px] object-cover"
-        alt="Element"
-        src="/page/woman/1.png"
-      />
-
-      <div className="absolute top-[809px] left-[206px] w-[254px] h-[412px] bg-[linear-gradient(270deg,rgba(247,243,240,0)_0%,rgba(247,243,240,1)_100%)]" />
-
-      <div className="absolute top-[809px] left-[829px] w-[254px] h-[412px] rotate-180 bg-[linear-gradient(270deg,rgba(247,243,240,0)_0%,rgba(247,243,240,1)_100%)]" />
-
-      <p className="absolute top-[156px] left-[641px] [font-family:'SUIT-Bold',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
-        <span className="font-bold">
-          당신의 매력은 이미 존재합니다.
-          <br />
-        </span>
-
-        <span className="[font-family:'DM_Serif_Display',Helvetica]">
-          BRILLO
-        </span>
-
-        <span className="font-bold">
-          는 당신의 아름다움이
-          <br />
-          자연스럽게 피어나는 순간을 만들어갑니다.
-        </span>
-      </p>
-
-      <p className="absolute top-[250px] left-[641px] w-[324px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
-        <span className="[font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
-          여성의 비주얼은 단순한 외모를 넘어,
-          <br />
-        </span>
-
-        <span className="[font-family:'SUIT-Bold',Helvetica] font-bold">
-          매력과 자신감을 전하는 언어
-        </span>
-
-        <span className="[font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
-          가 됩니다.
-          <br />한 번의 스타일 전환이 일상과 커리어, 관계의 무대에서
-          <br />
-          전혀 다른 결과를 이끌어낼 수 있습니다.
-        </span>
-      </p>
-
-      <p className="absolute top-[507px] left-[644px] [font-family:'SUIT-Bold',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
-        <span className="font-bold">
-          • 데이터 기반 정밀 진단 + 극대화 전략 설계
-          <br />
-        </span>
-
-        <span className="[font-family:'SUIT-Regular',Helvetica]">
-          • 피부시술과 성형 포함 맞춤형{" "}
-        </span>
-
-        <span className="[font-family:'DM_Serif_Display',Helvetica]">
-          Visual Roadmap
-        </span>
-
-        <span className="[font-family:'SUIT-Regular',Helvetica]"> 제공</span>
-      </p>
-
-      <img
-        className="fixed top-[731px] left-[1174px] w-[84px] h-12 aspect-[1.74] object-cover"
-        alt="Element"
-        src="/page/woman/21091175afdf2-1.png"
-      />
     </div>
   );
 }
