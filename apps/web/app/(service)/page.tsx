@@ -145,7 +145,17 @@ export default function HomePage() {
   return (
     <div className="bg-white overflow-hidden w-full min-w-full lg:min-w-[1280px] min-h-[4585px] relative mx-auto">
       {/* 히어로 섹션 */}
-      <div className="relative w-full h-screen bg-[#00000061]">
+      <div className="relative w-full h-screen">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/brillo_main.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-[#00000061]" />
         <div className="flex flex-col w-[324px] items-start gap-[18px] absolute bottom-40 left-8 md:left-[150px] max-w-screen-xl mx-auto">
           <div className="flex flex-col items-start gap-2.5 relative self-stretch w-full flex-[0_0_auto]">
             <div className="relative self-stretch mt-[-1.00px] [font-family:'SUIT-Bold',Helvetica] font-bold text-white text-[32px] tracking-[0] leading-[48px]">
