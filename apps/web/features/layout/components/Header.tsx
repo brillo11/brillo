@@ -12,11 +12,11 @@ export function Header() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-[100] h-14 transition-colors duration-300",
+        "fixed top-0 left-0 right-0 z-[100] h-21 pt-7 transition-colors duration-300",
         isDarkHeader ? "bg-black" : "bg-white border-b border-gray-100/50",
       )}
     >
-      <div className="relative max-w-screen-xl mx-auto top-0 h-full px-4 xl:px-0 flex items-center">
+      <div className="relative w-full mx-auto top-0 h-full px-4 xl:px-[18px] flex items-center">
         {/* Logo */}
         <Link href="/">
           <img
@@ -25,7 +25,7 @@ export function Header() {
               !isDarkHeader && "invert",
             )}
             alt="Brillo Logo"
-            src="https://c.animaapp.com/oAayiH1p/img/group-2@2x.png"
+            src="/images/layout/brillo-logo-text.png"
           />
         </Link>
 
@@ -41,12 +41,10 @@ export function Header() {
             <Link
               key={item.label}
               href={item.href}
-              className={cn(
-                "relative w-fit [font-family:'Playfair_Display',Helvetica] font-medium text-xs tracking-[-0.24px] leading-[normal] transition-colors duration-300",
-                isDarkHeader
-                  ? "text-white hover:text-gray-300"
-                  : "text-black hover:text-gray-600",
-              )}
+              className="relative w-fit font-playfair font-medium text-xs tracking-[-0.24px] leading-[normal] transition-colors duration-300"
+              style={{
+                color: isDarkHeader ? "#FFFFFF" : "#111111",
+              }}
             >
               {item.label}
             </Link>
@@ -56,7 +54,7 @@ export function Header() {
         {/* User Icon / Login */}
         <div
           className={cn(
-            "absolute right-4 lg:right-0 transition-all duration-300",
+            "absolute right-4 lg:right-[18px] transition-all duration-300",
             !isDarkHeader && "invert opacity-80 hover:opacity-100",
           )}
         >

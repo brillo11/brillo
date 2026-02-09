@@ -27,7 +27,7 @@ export default function AboutPage() {
                 BRILLO ;
               </h1>
 
-              <p className="text-center mt-4 w-full [font-family:'SUIT-Medium',Helvetica] font-medium text-[#242424] text-2xl text-center tracking-[11.76px] leading-9 whitespace-nowrap">
+              <p className="text-center mt-4 w-full font-suit font-medium text-[#242424] text-2xl text-center tracking-[11.76px] leading-9 whitespace-nowrap">
                 빛·광채·찬란함
               </p>
 
@@ -204,7 +204,7 @@ export default function AboutPage() {
             <article className="w-full md:w-[305px]">
               <h2
                 id="representative-section"
-                className="w-[286px] [font-family:'SUIT-Medium',Helvetica] font-medium text-white text-2xl tracking-[0] leading-9"
+                className="w-[286px] font-suit font-medium text-white text-2xl tracking-[0] leading-9"
               >
                 대표소개
               </h2>
@@ -223,7 +223,7 @@ export default function AboutPage() {
                         aria-hidden="true"
                       />
                     )}
-                    <p className="[font-family:'SUIT-Medium',Helvetica] font-normal text-white text-base tracking-[0] leading-6">
+                    <p className="font-suit font-normal text-white text-base tracking-[0] leading-6">
                       {info.includes("BRILLO") ? (
                         <>
                           <span className="font-medium">

@@ -178,9 +178,6 @@ importers:
       '@repo/eslint-config':
         specifier: workspace:^
         version: link:../../packages/eslint-config
-      '@repo/longform-database':
-        specifier: workspace:*
-        version: link:../../packages/longform-database
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -305,46 +302,6 @@ importers:
       typescript-eslint:
         specifier: ^8.24.1
         version: 8.24.1(eslint@9.27.0(jiti@2.6.1))(typescript@5.7.3)
-
-  packages/longform-database:
-    dependencies:
-      '@prisma/adapter-pg':
-        specifier: ^7.1.0
-        version: 7.1.0
-      pg:
-        specifier: ^8.13.0
-        version: 8.16.3
-    devDependencies:
-      '@prisma/client':
-        specifier: ^7.1.0
-        version: 7.1.0(prisma@7.1.0(@types/react@19.0.10)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3))(typescript@5.9.3)
-      '@prisma/config':
-        specifier: ^7.1.0
-        version: 7.1.0
-      '@repo/eslint-config':
-        specifier: workspace:^
-        version: link:../eslint-config
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      '@types/pg':
-        specifier: ^8.11.0
-        version: 8.16.0
-      eslint:
-        specifier: ^9.17.0
-        version: 9.27.0(jiti@2.6.1)
-      prisma:
-        specifier: ^7.1.0
-        version: 7.1.0(@types/react@19.0.10)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3)
-      tsup:
-        specifier: ^8.3.5
-        version: 8.5.0(jiti@2.6.1)(postcss@8.5.6)(tsx@4.19.4)(typescript@5.9.3)
-      tsx:
-        specifier: ^4.19.2
-        version: 4.19.4
-      typescript:
-        specifier: ^5.7.2
-        version: 5.9.3
 
   packages/typescript-config: {}
 
@@ -6890,6 +6847,7 @@ snapshots:
       zeptomatch: 2.0.2
     transitivePeerDependencies:
       - typescript
+    optional: true
 
   '@prisma/driver-adapter-utils@7.1.0':
     dependencies:
@@ -10725,6 +10683,7 @@ snapshots:
       - magicast
       - react
       - react-dom
+    optional: true
 
   prismjs@1.30.0: {}
 
@@ -11534,34 +11493,6 @@ snapshots:
       - tsx
       - yaml
 
-  tsup@8.5.0(jiti@2.6.1)(postcss@8.5.6)(tsx@4.19.4)(typescript@5.9.3):
-    dependencies:
-      bundle-require: 5.1.0(esbuild@0.25.1)
-      cac: 6.7.14
-      chokidar: 4.0.3
-      consola: 3.4.0
-      debug: 4.4.0
-      esbuild: 0.25.1
-      fix-dts-default-cjs-exports: 1.0.1
-      joycon: 3.1.1
-      picocolors: 1.1.1
-      postcss-load-config: 6.0.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.19.4)
-      resolve-from: 5.0.0
-      rollup: 4.35.0
-      source-map: 0.8.0-beta.0
-      sucrase: 3.35.0
-      tinyexec: 0.3.2
-      tinyglobby: 0.2.12
-      tree-kill: 1.2.2
-    optionalDependencies:
-      postcss: 8.5.6
-      typescript: 5.9.3
-    transitivePeerDependencies:
-      - jiti
-      - supports-color
-      - tsx
-      - yaml
-
   tsx@4.19.4:
     dependencies:
       esbuild: 0.25.1
@@ -11792,6 +11723,7 @@ snapshots:
   valibot@1.2.0(typescript@5.9.3):
     optionalDependencies:
       typescript: 5.9.3
+    optional: true
 
   validate-npm-package-name@5.0.1: {}
 

@@ -157,11 +157,11 @@ export default function WomanPage() {
 
             <div className="absolute top-[234px] left-0 w-[510px] h-[106px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.6)_100%)]" />
 
-            <div className="absolute top-[301px] left-[98px] [font-family:'Playfair_Display',Helvetica] font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
+            <div className="absolute top-[301px] left-[98px] font-playfair font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
               Before
             </div>
 
-            <div className="absolute top-[301px] left-[359px] [font-family:'Playfair_Display',Helvetica] font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
+            <div className="absolute top-[301px] left-[359px] font-playfair font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
               After
             </div>
           </div>
@@ -181,11 +181,11 @@ export default function WomanPage() {
 
             <div className="absolute top-[234px] left-0 w-[510px] h-[106px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.6)_100%)]" />
 
-            <div className="absolute top-[301px] left-[98px] [font-family:'Playfair_Display',Helvetica] font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
+            <div className="absolute top-[301px] left-[98px] font-playfair font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
               Before
             </div>
 
-            <div className="absolute top-[301px] left-[359px] [font-family:'Playfair_Display',Helvetica] font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
+            <div className="absolute top-[301px] left-[359px] font-playfair font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
               After
             </div>
           </div>
