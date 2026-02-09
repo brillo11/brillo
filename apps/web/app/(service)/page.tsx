@@ -6,83 +6,8 @@ import { loginWithEmail, loginWithSocial } from "@/shared/lib/auth-helpers";
 import { Eye, EyeOff, X } from "lucide-react";
 import { useAtom } from "jotai";
 import { loginModalOpenAtom } from "@/features/auth/login-modal-atom";
-
-const REVIEWS = [
-  {
-    age: "남 42세, 이○○, 노량진 1타 강사",
-    stars: "group-17@2x.png",
-    starsWidth: "15px",
-    text: (
-      <>
-        “브릴로 서비스를 받고 나서 외모뿐 아니라 <br />
-        라이프스타일까지 바뀌었습니다.
-        <br />
-        수강생들도, 동료 강사들도, 지인들도 <br />
-        저를 대하는 태도가 달라졌거든요.
-        <br />
-        지금은 비주얼은 물론 인테리어, 리빙, 호텔 등 전부 <br />
-        대표님의 감각을 믿고 매니지먼트를 맡깁니다.”
-      </>
-    ),
-  },
-  {
-    age: "여 30세, 정○○, 온라인 강사",
-    stars: "group-17-3@2x.png",
-    starsWidth: "58px",
-    text: (
-      <>
-        “상담에서 제 니즈를 바로 캐치하는 순간 <br />
-        프로임을 느꼈어요. 어느 것 하나 <br />
-        대충 하지 않는게 신뢰가 확 생기더라고요.
-        <br />그 덕에 제 매력을 극대화하는 비주얼을 <br />
-        확실히 알았습니다.”
-      </>
-    ),
-  },
-  {
-    age: "남 24세, 이○, 인플루언서 지망",
-    stars: "group-17-3@2x.png",
-    starsWidth: "58px",
-    text: (
-      <>
-        “컨설팅 받고 난 뒤 인생에서 제일 행복한 <br />
-        생일을 보냈어요.외모 스트레스가 사라지고, <br />
-        매일 변하는 제 모습이 보여요.
-        <br />
-        자신감도 엄청 올라서 꼭 주변에 추천하고 싶어요.”
-      </>
-    ),
-  },
-  {
-    age: "여 34세, 강○○, 개인 브랜드 대표",
-    stars: "group-17-3@2x.png",
-    starsWidth: "58px",
-    text: (
-      <>
-        “이렇게 전체 상태를 정확하게 <br />
-        정리해준 곳은처음이에요. 영업이 아닌 <br />
-        솔직한 추천이라 신뢰도가 진짜 높아요.
-        <br />
-        앞으로 외모 고민은 무조건 여기로 올 거예요.”
-      </>
-    ),
-  },
-  {
-    age: "남 20세, 김○○, 아이돌 지망생",
-    stars: "group-17-4@2x.png",
-    starsWidth: "15px",
-    text: (
-      <>
-        “연습생이라 외모가 중요한데 해야 할 걸 <br />딱 정리해줘서 큰 도움이
-        됐어요.
-        <br />
-        우선순위가 잡히니까 불안이 사라지고 <br />
-        자신감이 생기더라고요. 대형 엔터 출신 답게 ‘화면에 어떻게 보여야
-        하는지’까지 정확히 알려줘요.”
-      </>
-    ),
-  },
-];
+import { BeforeAfterGallery } from "@/features/home/components/BeforeAfterGallery";
+import { ReviewsCarousel } from "@/features/home/components/ReviewsCarousel";
 
 export default function HomePage() {
   const [credentials, setCredentials] = useState({
@@ -143,7 +68,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="bg-white overflow-hidden w-full min-w-full lg:min-w-[1280px] min-h-[4585px] relative mx-auto">
+    <div className="bg-white overflow-hidden w-full min-w-full lg:min-w-[1280px] relative mx-auto mt-21">
       {/* 히어로 섹션 */}
       <div className="relative w-full h-screen">
         <video
@@ -175,8 +100,8 @@ export default function HomePage() {
       {/* Rebirth Quote */}
       <div className="relative py-20 bg-black">
         <div className="max-w-screen-xl mx-auto">
-          <p className="mx-auto font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
-            <span className="font-normal text-white text-xl tracking-[0]">
+          <p className="mx-auto font-normal text-white text-xl text-center tracking-[0] leading-[normal] font-playfair">
+            <span className="text-white text-xl tracking-[0]">
               It’s not just a change, It’s a{" "}
             </span>
             <span className="font-bold">Rebirth</span>
@@ -185,78 +110,27 @@ export default function HomePage() {
             </span>
           </p>
 
-          <p className="mx-auto w-[354px] font-medium text-white text-2xl text-center tracking-[-1.44px] leading-9">
+          <p className="mx-auto w-[354px] font-medium text-white text-2xl text-center tracking-[-1.44px] leading-9 mt-2">
             단순한 변화가 아닌, 새로운 당신
           </p>
         </div>
 
         <div className="flex flex-col gap-4 items-center">
           <div className="w-full pb-20">
-            <div className="w-full flex items-center justify-center gap-4 mt-20">
-              {/* Before/After Images 1 */}
-              <div className="relative w-[514px] h-[340px] flex">
-                <img
-                  className="top-0 left-0 w-[255px] h-[340px] aspect-[0.75] object-cover"
-                  alt="Element"
-                  src="https://c.animaapp.com/oAayiH1p/img/----4@2x.png"
-                />
-                <img
-                  className="top-0 left-[255px] w-[255px] h-[340px] aspect-[0.75] object-cover"
-                  alt="Element"
-                  src="https://c.animaapp.com/oAayiH1p/img/------4@2x.png"
-                />
-                {/* <div className="absolute top-[123px] left-[352px] w-[35px] h-[35px] bg-[#ffffff4a] rounded-[354.17px] border-0 border-none backdrop-blur-[2.33px] backdrop-brightness-[100%] [-webkit-backdrop-filter:blur(2.33px)_brightness(100%)]" /> */}
-                <div className="absolute top-[234px] left-0 w-[510px] h-[106px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.6)_100%)]" />
-                <div className="absolute top-[301px] left-[98px] [font-family:'Playfair_Display',Helvetica] font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
-                  Before
-                </div>
-                <div className="absolute top-[301px] left-[359px] [font-family:'Playfair_Display',Helvetica] font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
-                  After
-                </div>
-              </div>
-
-              {/* Before/After Images 2 */}
-              <div className="relative w-[514px] h-[340px] flex">
-                <img
-                  className="top-0 left-px w-[255px] h-[340px] aspect-[0.75] object-cover"
-                  alt="F"
-                  src="https://c.animaapp.com/oAayiH1p/img/----f@2x.png"
-                />
-                <img
-                  className="top-0 left-64 w-[253px] h-[340px] aspect-[0.74] object-cover"
-                  alt="F"
-                  src="https://c.animaapp.com/oAayiH1p/img/-----f-1@2x.png"
-                />
-                <div className="absolute top-[234px] left-0 w-[510px] h-[106px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.6)_100%)]" />
-                <div className="absolute top-[301px] left-[98px] [font-family:'Playfair_Display',Helvetica] font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
-                  Before
-                </div>
-                <div className="absolute top-[301px] left-[359px] [font-family:'Playfair_Display',Helvetica] font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
-                  After
-                </div>
-              </div>
-            </div>
-
-            <img
-              className="w-12 h-3 mx-auto mt-4"
-              alt="Frame"
-              src="https://c.animaapp.com/oAayiH1p/img/frame-88.svg"
-            />
+            <BeforeAfterGallery />
           </div>
 
           {/* Main Hero Description Text */}
-          <p className="font-normal text-white text-base text-center tracking-[0] leading-6">
+          <p className="font-medium font-suit text-white text-base text-center tracking-[0] leading-6">
             <span className="font-medium">전 </span>
-            <span className="[font-family:'Playfair_Display',Helvetica] font-medium">
-              SM Entertainment
-            </span>
+            <span className="font-medium font-playfair">SM Entertainment </span>
             <span className="font-medium">
               출신 비주얼 디렉터
               <br />
               수많은 아티스트와 브랜드의 변화를 이끌어온 경험
               <br />
             </span>
-            <span className="[font-family:'SUIT-Bold',Helvetica] font-bold">
+            <span className="font-bold">
               이제, 그 노하우를 온전히 당신에게 선사합니다
             </span>
           </p>
@@ -265,23 +139,23 @@ export default function HomePage() {
         <img
           className="w-px h-[275px] object-cover mx-auto my-20"
           alt="Line"
-          src="https://c.animaapp.com/oAayiH1p/img/line-1.svg"
+          src="/images/home/vertical-line.svg"
         />
 
         {/* All About Visual Title */}
         <div className="flex flex-col w-[354px] items-start gap-[19.65px] mx-auto">
           <div className="flex flex-col items-start gap-[10.92px] relative self-stretch w-full flex-[0_0_auto]">
-            <div className="relative self-stretch mt-[-1.09px] [font-family:'DM_Serif_Display',Helvetica] font-normal text-white text-[32px] text-center tracking-[0] leading-[normal]">
+            <div className="relative self-stretch mt-[-1.09px] font-dm-serif font-normal text-white text-[32px] text-center tracking-[0] leading-[normal]">
               ALL About VISUAL
             </div>
-            <p className="relative self-stretch font-medium text-white text-2xl text-center tracking-[0] leading-9">
+            <p className="relative self-stretch font-medium font-suit text-white text-2xl text-center tracking-[0] leading-9">
               당신의 비주얼을 새롭게 정의하는 <br />
               프리미엄 솔루션
             </p>
           </div>
         </div>
       </div>
-      <div className="h-[204px] rotate-180 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,1)_100%)]" />
+      <div className="h-[204px] bg-gradient-to-b from-black to-transparent -mt-px" />
 
       {/* 4카드 섹션 */}
       <div className="py-20 mx-auto max-w-screen-xl px-4 xl:px-0">
@@ -290,14 +164,14 @@ export default function HomePage() {
           <div className="flex flex-col gap-6">
             <img
               className="w-full aspect-[246/288] object-cover"
-              src="https://c.animaapp.com/oAayiH1p/img/rectangle-49@2x.png"
+              src="/images/home/card-1.png"
               alt="Visual Consulting"
             />
             <div className="space-y-4">
-              <h3 className="[font-family:'Playfair_Display',Helvetica] font-bold text-black text-[22px] leading-[33px]">
+              <h3 className="font-playfair font-bold text-black text-[22px] leading-[33px]">
                 Visual Consulting
               </h3>
-              <p className="[font-family:'SUIT-Medium',Helvetica] font-medium text-black text-[13px] leading-[19.5px]">
+              <p className="font-suit font-medium text-black text-[13px] leading-[19.5px]">
                 당신의 모든 시각적 요소를 낱낱이 진단하고
                 <br />
                 이를 극대화·최적화 하기 위한
@@ -311,14 +185,14 @@ export default function HomePage() {
           <div className="flex flex-col gap-6">
             <img
               className="w-full aspect-[246/288] object-cover"
-              src="https://c.animaapp.com/oAayiH1p/img/rectangle-48@2x.png"
+              src="/images/home/card-2.png"
               alt="Signature Look Styling"
             />
             <div className="space-y-4">
-              <h3 className="[font-family:'Playfair_Display',Helvetica] font-bold text-black text-[22px] leading-[33px]">
+              <h3 className="font-playfair font-bold text-black text-[22px] leading-[33px]">
                 Signature Look Styling
               </h3>
-              <p className="[font-family:'SUIT-Medium',Helvetica] font-medium text-black text-[13px] leading-[19.5px]">
+              <p className="font-suit font-medium text-black text-[13px] leading-[19.5px]">
                 트렌드가 아닌, 아이덴티티에 집중합니다.
                 <br />
                 당신만의 무드와 라이프스타일을 반영한
@@ -332,14 +206,14 @@ export default function HomePage() {
           <div className="flex flex-col gap-6">
             <img
               className="w-full aspect-[246/288] object-cover"
-              src="https://c.animaapp.com/oAayiH1p/img/rectangle-50@2x.png"
+              src="/images/home/card-3.png"
               alt="Total Visual Making"
             />
             <div className="space-y-4">
-              <h3 className="[font-family:'Playfair_Display',Helvetica] font-bold text-black text-[22px] leading-[33px]">
+              <h3 className="font-playfair font-bold text-black text-[22px] leading-[33px]">
                 Total Visual Making
               </h3>
-              <p className="[font-family:'SUIT-Medium',Helvetica] font-medium text-black text-[13px] leading-[19.5px]">
+              <p className="font-suit font-medium text-black text-[13px] leading-[19.5px]">
                 컨설팅-스타일링-헤어&페이셜 메이크오버-
                 <br />
                 프로필 촬영까지. 머리부터 발끝까지 당신의
@@ -353,14 +227,14 @@ export default function HomePage() {
           <div className="flex flex-col gap-6">
             <img
               className="w-full aspect-[246/288] object-cover"
-              src="https://c.animaapp.com/oAayiH1p/img/rectangle-51@2x.png"
+              src="/images/home/card-4.png"
               alt="VIP & Celeb Directing"
             />
             <div className="space-y-4">
-              <h3 className="[font-family:'Playfair_Display',Helvetica] font-bold text-black text-[22px] leading-[33px]">
+              <h3 className="font-playfair font-bold text-black text-[22px] leading-[33px]">
                 VIP & Celeb Directing
               </h3>
-              <p className="[font-family:'SUIT-Medium',Helvetica] font-medium text-black text-[13px] leading-[19.5px]">
+              <p className="font-suit font-medium text-black text-[13px] leading-[19.5px]">
                 비즈니스, 촬영, 그리고 무대와 영상 등 특별한
                 <br />
                 순간 가장 빛나는 당신을 위한 프라이빗 케어.
@@ -377,7 +251,7 @@ export default function HomePage() {
       {/* Visual Making Process */}
       {/* Visual Making Process */}
       <div className="mx-auto max-w-screen-xl px-4 xl:px-0 py-20 relative">
-        <h2 className="[font-family:'Playfair_Display',Helvetica] font-normal text-black text-[28px] leading-[normal] mb-12">
+        <h2 className="font-playfair font-normal text-black text-[28px] leading-[normal] mb-12">
           Visual Making Process
         </h2>
         {/* <div className="relative w-[330px] h-[180px]">
@@ -389,37 +263,37 @@ export default function HomePage() {
             {
               step: "1. 사진 & 체크리스트 준비",
               desc: "정밀 진단을 위한 기초 단계",
-              icon: "file-image-fill.svg",
+              icon: "/images/home/icon-file-image.svg",
               bg: "linear-gradient(180deg,rgba(0,0,0,1)_0%,rgba(102,102,102,1)_100%)",
             },
             {
               step: "2. 심층 컨설팅",
               desc: "데이터 기반 분석과 맞춤 전략 설계",
-              icon: "macbook-fill.svg",
+              icon: "/images/home/icon-macbook.svg",
               bg: "linear-gradient(180deg,rgba(0,0,0,1)_0%,rgba(102,102,102,1)_100%)",
             },
             {
               step: "3. 퍼스널 스타일링",
               desc: "목적· 예산· 체형을 반영한 실전 코디네이션",
-              icon: "presentation-fill.svg",
+              icon: "/images/home/icon-presentation.svg",
               bg: "linear-gradient(180deg,rgba(0,0,0,1)_0%,rgba(102,102,102,1)_100%)",
             },
             {
               step: "4. 헤어 & 메이크업",
               desc: "전문 아티스트와 함께 나만의 비주얼 완성",
-              icon: "brush-fill.svg",
+              icon: "/images/home/icon-brush.svg",
               bg: "linear-gradient(180deg,rgba(0,0,0,1)_0%,rgba(102,102,102,1)_100%)",
             },
             {
               step: "5. 프로필 스냅 촬영",
               desc: "완성된 나만의 비주얼을 기록",
-              icon: "camera-2-fill.svg",
+              icon: "/images/home/icon-camera.svg",
               bg: "linear-gradient(180deg,rgba(0,0,0,1)_0%,rgba(102,102,102,1)_100%)",
             },
             {
               step: "6. 맞춤 리포트 제공",
               desc: "지속가능한 자기 관리 가이드",
-              icon: "file-chart-fill.svg",
+              icon: "/images/home/icon-file-chart.svg",
               bg: "linear-gradient(180deg,rgba(0,0,0,1)_0%,rgba(102,102,102,1)_100%)",
             },
           ].map((item, index) => (
@@ -429,16 +303,16 @@ export default function HomePage() {
             >
               <div className="absolute top-[25px] left-[23px] w-12 h-12 rounded-full flex items-center justify-center shadow-md bg-zinc-900">
                 <img
-                  src={`https://c.animaapp.com/oAayiH1p/img/${item.icon}`}
+                  src={item.icon}
                   alt="icon"
                   className="w-6 h-6 invert brightness-0 filter"
                 />
               </div>
               <div className="flex flex-col items-start gap-2 relative z-10">
-                <h3 className="[font-family:'SUIT-Medium',Helvetica] font-medium text-black text-2xl leading-9">
+                <h3 className="font-suit font-medium text-black text-2xl leading-9">
                   {item.step}
                 </h3>
-                <p className="[font-family:'SUIT-Medium',Helvetica] font-medium text-black text-base leading-6 text-gray-600">
+                <p className="font-suit font-medium text-black text-base leading-6 text-gray-600">
                   {item.desc}
                 </p>
               </div>
@@ -448,65 +322,23 @@ export default function HomePage() {
         </div>
 
         {/* Dashed Line (Optional: simplified as a border or hr behind) */}
-        <div className="hidden lg:block absolute top-[calc(50%+40px)] left-0 w-full h-px border-t border-dashed border-gray-300 -z-0" />
+        {/* Process Flow Lines (Full Screen Width) */}
+        <div className="hidden lg:block absolute w-screen left-1/2 -translate-x-1/2 inset-y-0 pointer-events-none -z-0">
+          <div className="max-w-screen-xl mx-auto w-full h-full relative font-bold">
+            {/* Row 1: Start from Center of Card 1 -> End Screen Edge */}
+            {/* Using calc to position from center of first column (1/6 of container) */}
+            <div className="absolute top-[260px] right-[calc(-50vw+50%)] left-[16.666%] border-t border-dashed border-gray-800" />
+
+            {/* Row 2: Start from Screen Edge -> Center of Card 6 */}
+            <div className="absolute top-[464px] left-[calc(-50vw+50%)] -right-[3%] border-t border-dashed border-gray-800">
+              <div className="absolute -right-1.5 -top-1.5 w-3 h-3 border-t border-r border-gray-800 rotate-45" />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Footer Area Backgrounds */}
-      <div className="block relative">
-        <div className="left-0 w-full h-[372px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,1)_100%)] flex flex-col justify-center items-center">
-          <p className="[font-family:'SUIT-Medium',Helvetica] font-normal text-white text-[26.2px] text-center tracking-[0] leading-[39.3px]">
-            <span className="font-medium">
-              실제 고객의 변화, <br />
-              그들의 이야기가{" "}
-            </span>
-            <span className="[font-family:'Playfair_Display',Helvetica] font-medium">
-              BRILLO
-            </span>
-            <span className="font-medium">의 증거입니다.</span>
-          </p>
-        </div>
-        <div className="left-0 w-full  bg-black relative flex flex-col items-center justify-start py-20 overflow-hidden">
-          {/* Side Gradients */}
-          <div className="absolute top-1/2 -translate-y-1/2 left-[-106px] w-[408px] h-[196px] rotate-90 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,1)_100%)] z-20 pointer-events-none" />
-          <div className="absolute top-1/2 -translate-y-1/2 right-[-106px] w-[408px] h-[196px] rotate-90 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,1)_100%)] z-20 pointer-events-none" />
-
-          {/* Reviews Scroll Container */}
-          <div className="w-full flex overflow-x-auto no-scrollbar relative z-10 px-4">
-            <div className="flex gap-8 pb-8 min-w-max mx-auto px-20">
-              {REVIEWS.map((review, i) => (
-                <div
-                  key={i}
-                  className="flex flex-col w-[294px] items-center gap-2 relative flex-shrink-0"
-                >
-                  <p className="relative self-stretch mt-[-1.00px] [font-family:'SUIT-Light',Helvetica] font-light text-white text-xl text-center tracking-[0] leading-[30px]">
-                    {review.age}
-                  </p>
-                  <img
-                    className="relative h-[11.6px]"
-                    style={{ width: review.starsWidth }}
-                    alt="Stars"
-                    src={`https://c.animaapp.com/oAayiH1p/img/${review.stars}`}
-                  />
-                  <p className="relative self-stretch bg-[linear-gradient(90deg,rgba(255,255,255,1)_0%,rgba(255,255,255,0.5)_100%)] [-webkit-background-clip:text] bg-clip-text [-webkit-text-fill-color:transparent] [text-fill-color:transparent] [font-family:'SUIT-Light',Helvetica] font-light text-transparent text-sm text-center tracking-[0] leading-[21px]">
-                    {review.text}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <img
-            className="w-[108px] h-3 my-6"
-            alt="Frame"
-            src="https://c.animaapp.com/oAayiH1p/img/frame-79.svg"
-          />
-
-          <div className="[font-family:'Pretendard-Medium',Helvetica] font-medium text-[#ffffff99] text-sm tracking-[-0.28px] leading-[normal] underline cursor-pointer hover:text-white transition-colors">
-            더 많은 리뷰 보기→
-          </div>
-        </div>
-        {/* <div className="w-full h-[183px] bg-[#0c0c0c]" /> */}
-      </div>
+      <ReviewsCarousel />
 
       {/* Footer Info */}
 
@@ -625,7 +457,7 @@ export default function HomePage() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full flex justify-center py-3 px-6 rounded-xl text-sm font-bold text-black bg-white hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="w-full flex justify-center py-3 px-6 rounded-xl tex[font-family:'SUIT-Bold',Helvetica] text-black bg-white hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
                     {isLoading ? "로그인 중..." : "관리자 로그인"}
                   </button>

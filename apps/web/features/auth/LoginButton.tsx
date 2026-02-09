@@ -24,7 +24,7 @@ export function LoginButton() {
       <img
         className="w-5 h-5 opacity-90 group-hover:opacity-100 transition-opacity"
         alt="User login"
-        src="https://c.animaapp.com/oAayiH1p/img/user-3-line.svg"
+        src="/images/auth/user-login-icon.svg"
       />
     </button>
   );
