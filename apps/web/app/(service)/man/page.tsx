@@ -12,9 +12,9 @@ import {
   CommandItem,
   CommandList,
 } from "@repo/ui/components/command";
-import { WomanMainCarousel } from "@/features/woman/components/WomanMainCarousel";
-import { WomanStyleCarousel } from "@/features/woman/components/WomanStyleCarousel";
-import { WomanGalleryCarousel } from "@/features/woman/components/WomanGalleryCarousel";
+import { ManMainCarousel } from "@/features/man/components/ManMainCarousel";
+import { ManStyleCarousel } from "@/features/man/components/ManStyleCarousel";
+import { ManGalleryCarousel } from "@/features/man/components/ManGalleryCarousel";
 
 const SERVICES = {
   "90min": {
@@ -130,7 +130,7 @@ const SERVICES = {
   },
 };
 
-export default function WomanPage() {
+export default function ManPage() {
   const [activeTab, setActiveTab] = useState("서비스 소개");
   const [selectedService, setSelectedService] =
     useState<keyof typeof SERVICES>("90min");
@@ -144,45 +144,43 @@ export default function WomanPage() {
       >
         <div className="flex flex-col md:flex-row justify-center items-center md:items-start gap-8 md:gap-12">
           {/* // 좌측 인물 */}
-          <WomanMainCarousel />
+          <ManMainCarousel />
 
           {/* 우측 설명 */}
           <div className="flex flex-col gap-8 items-center md:items-start text-center md:text-left">
             <p className="[font-family:'SUIT-Bold',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
               <span className="font-bold">
-                당신의 매력은 이미 존재합니다.
+                남자의 비주얼은 곧 경쟁력입니다.
                 <br />
-              </span>
-
-              <span className="[font-family:'DM_Serif_Display',Helvetica]">
-                BRILLO
-              </span>
-
-              <span className="font-bold">
-                는 당신의 아름다움이
+                수많은 연구는 다음 사실을 증명합니다.
                 <br />
-                자연스럽게 피어나는 순간을 만들어갑니다.
+                ‘외모가 커리어와 성적 매력에 직접적 영향을 준다.’
+                <br />잘 관리된 이미지는 연봉· 성과· 평판에서
+                <br />
+                프리미엄을 만들어냅니다.
               </span>
             </p>
-
             <p className="w-[324px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
               <span className="[font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
-                여성의 비주얼은 단순한 외모를 넘어,
+                하지만 <span className="font-bold font-playfair">BRILLO</span>가
+                제안하는 것은
                 <br />
-              </span>
-
-              <span className="[font-family:'SUIT-Bold',Helvetica] font-bold">
-                매력과 자신감을 전하는 언어
-              </span>
-
-              <span className="[font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
-                가 됩니다.
-                <br />한 번의 스타일 전환이 일상과 커리어, 관계의 무대에서
+                단순 잘생김이 아닙니다. 당신의 위치와 목적에 맞는
                 <br />
-                전혀 다른 결과를 이끌어낼 수 있습니다.
+                <span className="font-bold">가치와 품격을 표현하는 비주얼</span>
+                입니다.
               </span>
             </p>
-
+            <p className="w-[324px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
+              <span className="[font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
+                데이터로 설득하고, 전략으로 설계하며,
+                <br />
+                디테일로 완성합니다.{" "}
+                <span className="font-bold">
+                  이제 남자의 비주얼은 선택이 아닌 필수 자산입니다.
+                </span>
+              </span>
+            </p>
             <div className="mt-4 w-[324px]">
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger className="w-full h-auto border border-black rounded-none px-4 py-2 text-left focus:ring-0 relative flex items-center justify-between cursor-pointer data-[state=open]:bg-black/5">
@@ -240,7 +238,6 @@ export default function WomanPage() {
                 </PopoverContent>
               </Popover>
             </div>
-
             {/* Tabs */}
             <div className="flex w-full border-b border-[#d6d6d6]">
               {["서비스 소개", "리뷰", "서비스규정"].map((tab) => (
@@ -257,7 +254,6 @@ export default function WomanPage() {
                 </button>
               ))}
             </div>
-
             {/* Tab Content Placeholder */}
             <div className="min-h-[100px] text-sm text-gray-600 w-[324px] break-keep">
               {activeTab === "서비스 소개" && (
@@ -274,7 +270,6 @@ export default function WomanPage() {
                 </div>
               )}
             </div>
-
             <div className="grid grid-cols-2 gap-3 w-full">
               <button className="h-[37px] flex items-center justify-center border border-black bg-transparent text-black text-sm hover:bg-gray-50 transition-colors">
                 문의하기
@@ -287,21 +282,24 @@ export default function WomanPage() {
         </div>
 
         {/* Consultation Image */}
-        <div className="relative w-full max-w-4xl mx-auto mt-36">
+        <div className="relative w-full max-w-4xl mx-auto mt-36 flex">
           <img
-            className="w-full h-auto object-cover"
+            className="w-1/2 h-auto object-cover"
             alt="Consultation"
-            src="/page/woman/1.png"
+            src="/page/man/office-1.png"
           />
+          <img
+            className="w-1/2 h-auto object-cover"
+            alt="Consultation"
+            src="/page/man/office-2.png"
+          />
+
           <div className="absolute top-0 left-0 w-1/4 h-full bg-gradient-to-r from-[#f7f3f0] to-transparent" />
           <div className="absolute top-0 right-0 w-1/4 h-full bg-gradient-to-l from-[#f7f3f0] to-transparent" />
         </div>
-
-        {/* Style Carousel */}
-        <WomanStyleCarousel />
-
-        {/* Before/After Gallery */}
-        <WomanGalleryCarousel />
+        <div className="md:mt-[180px] mt-[120px] w-full max-w-4xl mx-auto">
+          <ManGalleryCarousel />
+        </div>
       </div>
     </div>
   );

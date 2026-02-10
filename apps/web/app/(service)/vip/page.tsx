@@ -12,73 +12,66 @@ import {
   CommandItem,
   CommandList,
 } from "@repo/ui/components/command";
-import { WomanMainCarousel } from "@/features/woman/components/WomanMainCarousel";
-import { WomanStyleCarousel } from "@/features/woman/components/WomanStyleCarousel";
-import { WomanGalleryCarousel } from "@/features/woman/components/WomanGalleryCarousel";
+import { VipMainCarousel } from "@/features/vip/components/VipMainCarousel";
 
 const SERVICES = {
-  "90min": {
-    label: "Visual Consulting (90분)",
-    title: "Visual Consulting",
-    duration: "90분",
+  project: {
+    label: "프로젝트 단위 관리",
+    title: "프로젝트 단위 관리 (1개월 / 3개월 / 6개월)",
     description: (
-      <div className="text-sm leading-relaxed text-black">
-        <div className="flex items-start gap-1 font-bold">
+      <div className="text-sm leading-relaxed text-black font-suit">
+        <div className="flex items-start gap-1">
           <span className="shrink-0">•</span>
-          <span>데이터 기반 정밀 진단 + 극대화 전략 설계</span>
+          <span>지속적 업그레이드 + 풀케어 매니지먼트</span>
         </div>
         <div className="flex items-start gap-1">
           <span className="shrink-0">•</span>
           <span>
-            피부시술과 성형 포함 맞춤형{" "}
-            <span className="font-bold font-playfair">Visual Roadmap</span> 제공
+            고급 회원 전용 <span className="font-bold">연간 멤버십</span>{" "}
+            프로그램 운영
           </span>
         </div>
       </div>
     ),
   },
-  "240min": {
-    label: "Fashion Styling (240분)",
-    title: "Fashion Styling",
-    duration: "240분",
+  skin: {
+    label: "피부 & 성형 컨시어지",
+    title: "피부 & 성형 컨시어지",
     description: (
-      <div className="text-sm leading-relaxed text-black">
-        <div className="flex items-start gap-1 font-bold">
+      <div className="text-sm leading-relaxed text-black font-suit">
+        <div className="flex items-start gap-1">
           <span className="shrink-0">•</span>
-          <span>나만의 시각적인 매력을 차별화 하는 동행 퍼스널 쇼핑</span>
+          <span>전문 피부과· 성형외과 협업</span>
         </div>
         <div className="flex items-start gap-1">
           <span className="shrink-0">•</span>
-          <p className="font-bold font-playfair">
-            Signature Look Styling
-            <span className="font-normal">
-              {" "}
-              - 아이덴티티와 라이프스타일 반영
-            </span>
-          </p>
-        </div>
-      </div>
-    ),
-  },
-  "420min": {
-    label: "Total Visual Making (420분)",
-    title: "Total Visual Making",
-    duration: "420분",
-    description: (
-      <div className="text-sm leading-relaxed text-black">
-        <div className="flex items-start gap-1">
-          <span className="shrink-0">•</span>
-          <p>
-            <span className="font-bold font-playfair">Full Package</span> -
-            컨설팅· 동행 쇼핑· 헤어 & 메이크업· 프로필 촬영
-          </p>
+          <span>최적화된 시술 및 수술 플랜 제안 (회복 관리 포함)</span>
         </div>
         <div className="flex items-start gap-1">
           <span className="shrink-0">•</span>
           <span>
-            필요 시 메디컬 연계 →
-            <span className="font-bold">드라마틱한 변화 지원</span>
+            불필요한 시술/수술은 배제, <br />꼭 필요한 업그레이드만 제안
           </span>
+        </div>
+      </div>
+    ),
+  },
+  private: {
+    label: "프라이빗 컨설팅과 공간",
+    title: "프라이빗 컨설팅과 공간",
+    description: (
+      <div className="text-sm leading-relaxed text-black font-suit">
+        <div className="flex items-start gap-1">
+          <span className="shrink-0">•</span>
+          <span>호텔 라운지· 프라이빗 공간 진행</span>
+        </div>
+        <div className="flex items-start gap-1">
+          <span className="shrink-0">•</span>
+          <span>시간· 장소 맞춤형 예약</span>
+        </div>
+        <div className="flex items-start gap-1">
+          <span className="shrink-0">•</span>
+          <span>비밀 보장 시스템 (보안 계약, 촬영물 관리)</span>
         </div>
       </div>
     ),
@@ -130,10 +123,10 @@ const SERVICES = {
   },
 };
 
-export default function WomanPage() {
+export default function VipPage() {
   const [activeTab, setActiveTab] = useState("서비스 소개");
   const [selectedService, setSelectedService] =
-    useState<keyof typeof SERVICES>("90min");
+    useState<keyof typeof SERVICES>("project");
   const [open, setOpen] = useState(false);
 
   return (
@@ -144,54 +137,64 @@ export default function WomanPage() {
       >
         <div className="flex flex-col md:flex-row justify-center items-center md:items-start gap-8 md:gap-12">
           {/* // 좌측 인물 */}
-          <WomanMainCarousel />
+          <VipMainCarousel />
 
           {/* 우측 설명 */}
           <div className="flex flex-col gap-8 items-center md:items-start text-center md:text-left">
             <p className="[font-family:'SUIT-Bold',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
-              <span className="font-bold">
-                당신의 매력은 이미 존재합니다.
-                <br />
-              </span>
-
-              <span className="[font-family:'DM_Serif_Display',Helvetica]">
-                BRILLO
-              </span>
-
-              <span className="font-bold">
-                는 당신의 아름다움이
-                <br />
-                자연스럽게 피어나는 순간을 만들어갑니다.
-              </span>
+              당신의 외모는 단순한 모습이 아니라
+              <br />곧 <span className="font-bold">브랜드</span>이자{" "}
+              <span className="font-bold">애티튜드</span>입니다.
             </p>
-
             <p className="w-[324px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
-              <span className="[font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
-                여성의 비주얼은 단순한 외모를 넘어,
-                <br />
+              평범함으로는 더 이상 경쟁할 수 없습니다.
+              <br />
+              시선을 사로잡고, 기억에 남으며, 무대와 화면에서
+              <br />
+              빛나는 순간을 위해{" "}
+              <span className="font-bold font-playfair">BRILLO</span>는
+              <br />
+              <span className="font-bold">
+                프라이빗 퍼스널 비주얼 매니지먼트
               </span>
-
-              <span className="[font-family:'SUIT-Bold',Helvetica] font-bold">
-                매력과 자신감을 전하는 언어
-              </span>
-
-              <span className="[font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
-                가 됩니다.
-                <br />한 번의 스타일 전환이 일상과 커리어, 관계의 무대에서
-                <br />
-                전혀 다른 결과를 이끌어낼 수 있습니다.
-              </span>
+              를 제공합니다.
             </p>
-
+            <p className="w-[324px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
+              단순히 ‘잘생기고 예뻐 보이는 것’은
+              <br />
+              충분하지 않습니다.{" "}
+              <span className="font-bold">
+                차별화된 시그니처 비주얼 <br />
+                아이덴티티가
+              </span>{" "}
+              필요합니다.
+            </p>
+            <p className="w-[324px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
+              프로필 사진 한 장
+              <br />
+              오디션과 출사의 순간
+              <br />
+              무대와 카메라 앞의 짧은 클립
+              <br />
+              중요한 비즈니스 미팅
+            </p>
+            <p className="w-[324px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
+              그 모든 장면이 당신의 전부를 설명합니다.
+              <br />
+              <span className="font-bold font-playfair">BRILLO</span>는 그
+              순간을 최고의 결과로 완성합니다.
+            </p>
+            <p className="w-[324px] [font-family:'SUIT-Regular',Helvetica] font-normal text-black text-sm tracking-[0] leading-[21px]">
+              <span className="font-bold">존재 자체가 무대가 되는 순간.</span>
+              <br />
+              <span className="font-bold font-playfair">BRILLO</span>는 그
+              순간을 위한 파트너입니다.
+            </p>
             <div className="mt-4 w-[324px]">
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger className="w-full h-auto border border-black rounded-none px-4 py-2 text-left focus:ring-0 relative flex items-center justify-between cursor-pointer data-[state=open]:bg-black/5">
-                  <div className="font-serif text-black text-sm">
+                  <div className="font-suit text-black text-sm">
                     {SERVICES[selectedService].title}
-                    <span className="font-suit">
-                      {" "}
-                      ({SERVICES[selectedService].duration})
-                    </span>
                   </div>
                   <div className="absolute top-1.5 right-2 w-6 h-6 pointer-events-none">
                     <img
@@ -223,14 +226,9 @@ export default function WomanPage() {
                               );
                               setOpen(false);
                             }}
-                            className="cursor-pointer font-serif text-sm rounded-none! border-b border-black last:border-b-0 px-4 py-2 bg-[#f7f3f0] aria-selected:bg-black/5 aria-selected:text-black data-[selected=true]:bg-black/5 data-[selected=true]:text-black text-black"
+                            className="cursor-pointer font-suit text-sm rounded-none! border-b border-black last:border-b-0 px-4 py-2 bg-[#f7f3f0] aria-selected:bg-black/5 aria-selected:text-black data-[selected=true]:bg-black/5 data-[selected=true]:text-black text-black"
                           >
-                            <span className="font-serif">{service.title}</span>
-                            <span className="font-suit">
-                              {" "}
-                              ({service.duration})
-                            </span>
-                            {/* Hide Default Check Icon */}{" "}
+                            <span className="font-suit">{service.title}</span>
                             <span className="hidden" />
                           </CommandItem>
                         ))}
@@ -240,7 +238,6 @@ export default function WomanPage() {
                 </PopoverContent>
               </Popover>
             </div>
-
             {/* Tabs */}
             <div className="flex w-full border-b border-[#d6d6d6]">
               {["서비스 소개", "리뷰", "서비스규정"].map((tab) => (
@@ -257,7 +254,6 @@ export default function WomanPage() {
                 </button>
               ))}
             </div>
-
             {/* Tab Content Placeholder */}
             <div className="min-h-[100px] text-sm text-gray-600 w-[324px] break-keep">
               {activeTab === "서비스 소개" && (
@@ -274,7 +270,6 @@ export default function WomanPage() {
                 </div>
               )}
             </div>
-
             <div className="grid grid-cols-2 gap-3 w-full">
               <button className="h-[37px] flex items-center justify-center border border-black bg-transparent text-black text-sm hover:bg-gray-50 transition-colors">
                 문의하기
@@ -285,23 +280,6 @@ export default function WomanPage() {
             </div>
           </div>
         </div>
-
-        {/* Consultation Image */}
-        <div className="relative w-full max-w-4xl mx-auto mt-36">
-          <img
-            className="w-full h-auto object-cover"
-            alt="Consultation"
-            src="/page/woman/1.png"
-          />
-          <div className="absolute top-0 left-0 w-1/4 h-full bg-gradient-to-r from-[#f7f3f0] to-transparent" />
-          <div className="absolute top-0 right-0 w-1/4 h-full bg-gradient-to-l from-[#f7f3f0] to-transparent" />
-        </div>
-
-        {/* Style Carousel */}
-        <WomanStyleCarousel />
-
-        {/* Before/After Gallery */}
-        <WomanGalleryCarousel />
       </div>
     </div>
   );

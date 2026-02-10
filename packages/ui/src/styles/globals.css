@@ -139,6 +139,7 @@
     "Segoe UI Symbol", sans-serif;
   --font-playfair: var(--font-playfair);
   --font-dm-serif: var(--font-dm-serif);
+  --font-serif: var(--font-dm-serif), Helvetica, serif;
   --font-suit: "SUIT", sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
