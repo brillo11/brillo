@@ -255,7 +255,7 @@ export default function VipPage() {
               ))}
             </div>
             {/* Tab Content Placeholder */}
-            <div className="min-h-[100px] text-sm text-gray-600 w-[324px] break-keep">
+            <div className="min-h-[100px] text-sm text-gray-600 w-[324px] break-keep text-start">
               {activeTab === "서비스 소개" && (
                 <div className="space-y-2">
                   {SERVICES[selectedService].description}
