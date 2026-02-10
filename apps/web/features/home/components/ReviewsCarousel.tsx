@@ -272,9 +272,6 @@ export const ReviewsCarousel = () => {
                 key={i}
                 className={cn(
                   "flex flex-col w-[294px] items-center gap-2 relative flex-shrink-0 cursor-pointer transition-all duration-300",
-                  i % REAL_LENGTH === activeIndex
-                    ? "opacity-100 scale-100"
-                    : "opacity-50 hover:opacity-100 scale-95",
                 )}
                 onClick={() => handleInteract(i % REAL_LENGTH)}
               >
@@ -296,7 +293,7 @@ export const ReviewsCarousel = () => {
         </div>
 
         {/* Navigation Dots */}
-        <div className="flex justify-center gap-1.5 z-20 relative">
+        <div className="flex justify-center gap-1.5 z-20 relative mt-2">
           {REVIEWS.map((_, i) => (
             <button
               key={i}

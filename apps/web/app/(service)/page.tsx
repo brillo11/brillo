@@ -81,24 +81,26 @@ export default function HomePage() {
           <source src="/brillo_main.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-[#00000061]" />
-        <div className="flex flex-col w-[324px] items-start gap-[18px] absolute bottom-40 left-8 md:left-[150px] max-w-screen-xl mx-auto">
-          <div className="flex flex-col items-start gap-2.5 relative self-stretch w-full flex-[0_0_auto]">
-            <div className="relative self-stretch mt-[-1.00px] [font-family:'SUIT-Bold',Helvetica] font-bold text-white text-[32px] tracking-[0] leading-[48px]">
-              외모, 그 이상의 변화
+        <div className="absolute bottom-40 left-4 md:left-[150px] w-full max-w-screen-xl mx-auto px-4 md:px-0">
+          <div className="flex flex-col items-start gap-[18px] max-w-lg">
+            <div className="flex flex-col items-start gap-2.5 relative self-stretch w-full flex-[0_0_auto]">
+              <div className="relative self-stretch font-suit font-bold text-white text-[32px] md:text-[40px] leading-tight">
+                외모, 그 이상의 변화
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col items-start gap-2.5 relative self-stretch w-full flex-[0_0_auto]">
-            <div className="relative self-stretch mt-[-1.00px] [font-family:'Pretendard-Medium',Helvetica] font-medium text-white text-xl tracking-[0] leading-[30px]">
-              프리미엄 퍼스널 비주얼디렉팅
-              <br />
-              브릴로
+            <div className="flex flex-col items-start gap-2.5 relative self-stretch w-full flex-[0_0_auto]">
+              <div className="relative self-stretch font-pretendard font-medium text-white text-xl md:text-2xl leading-[30px]">
+                프리미엄 퍼스널 비주얼디렉팅
+                <br />
+                브릴로
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Rebirth Quote */}
-      <div className="relative py-20 bg-black">
+      <div className="relative py-20 bg-black px-4">
         <div className="max-w-screen-xl mx-auto">
           <p className="mx-auto font-normal text-white text-xl text-center tracking-[0] leading-[normal] font-playfair">
             <span className="text-white text-xl tracking-[0]">
@@ -110,7 +112,7 @@ export default function HomePage() {
             </span>
           </p>
 
-          <p className="mx-auto w-[354px] font-medium text-white text-2xl text-center tracking-[-1.44px] leading-9 mt-2">
+          <p className="mx-auto max-w-md font-medium text-white text-2xl text-center tracking-[-1.44px] leading-9 mt-2">
             단순한 변화가 아닌, 새로운 당신
           </p>
         </div>
@@ -121,7 +123,7 @@ export default function HomePage() {
           </div>
 
           {/* Main Hero Description Text */}
-          <p className="font-medium font-suit text-white text-base text-center tracking-[0] leading-6">
+          <p className="font-medium font-suit text-white text-base text-center tracking-[0] leading-6 break-keep">
             <span className="font-medium">전 </span>
             <span className="font-medium font-playfair">SM Entertainment </span>
             <span className="font-medium">
@@ -143,12 +145,12 @@ export default function HomePage() {
         />
 
         {/* All About Visual Title */}
-        <div className="flex flex-col w-[354px] items-start gap-[19.65px] mx-auto">
-          <div className="flex flex-col items-start gap-[10.92px] relative self-stretch w-full flex-[0_0_auto]">
-            <div className="relative self-stretch mt-[-1.09px] font-dm-serif font-normal text-white text-[32px] text-center tracking-[0] leading-[normal]">
+        <div className="flex flex-col w-full max-w-sm items-center gap-[19.65px] mx-auto text-center">
+          <div className="flex flex-col items-center gap-[10.92px] relative self-stretch w-full flex-[0_0_auto]">
+            <div className="relative self-stretch font-serif font-normal text-white text-[32px] tracking-[0] leading-[normal]">
               ALL About VISUAL
             </div>
-            <p className="relative self-stretch font-medium font-suit text-white text-2xl text-center tracking-[0] leading-9">
+            <p className="relative self-stretch font-medium font-suit text-white text-2xl tracking-[0] leading-9">
               당신의 비주얼을 새롭게 정의하는 <br />
               프리미엄 솔루션
             </p>
@@ -159,7 +161,7 @@ export default function HomePage() {
 
       {/* 4카드 섹션 */}
       <div className="py-20 mx-auto max-w-screen-xl px-4 xl:px-0">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Card 1 */}
           <div className="flex flex-col gap-6">
             <img
@@ -168,14 +170,14 @@ export default function HomePage() {
               alt="Visual Consulting"
             />
             <div className="space-y-4">
-              <h3 className="font-playfair font-bold text-black text-[22px] leading-[33px]">
+              <h3 className="font-serif font-bold text-black text-[22px] leading-[33px]">
                 Visual Consulting
               </h3>
-              <p className="font-suit font-medium text-black text-[13px] leading-[19.5px]">
+              <p className="font-suit font-medium text-black text-[13px] leading-[19.5px] break-keep">
                 당신의 모든 시각적 요소를 낱낱이 진단하고
-                <br />
+                <br className="hidden md:block" />
                 이를 극대화·최적화 하기 위한
-                <br />
+                <br className="hidden md:block" />
                 당신만의 비주얼 로드맵을 설계합니다.
               </p>
             </div>
@@ -189,14 +191,14 @@ export default function HomePage() {
               alt="Signature Look Styling"
             />
             <div className="space-y-4">
-              <h3 className="font-playfair font-bold text-black text-[22px] leading-[33px]">
+              <h3 className="font-serif font-bold text-black text-[22px] leading-[33px]">
                 Signature Look Styling
               </h3>
-              <p className="font-suit font-medium text-black text-[13px] leading-[19.5px]">
+              <p className="font-suit font-medium text-black text-[13px] leading-[19.5px] break-keep">
                 트렌드가 아닌, 아이덴티티에 집중합니다.
-                <br />
+                <br className="hidden md:block" />
                 당신만의 무드와 라이프스타일을 반영한
-                <br />
+                <br className="hidden md:block" />
                 시그니처 룩 스타일링.
               </p>
             </div>
@@ -210,14 +212,14 @@ export default function HomePage() {
               alt="Total Visual Making"
             />
             <div className="space-y-4">
-              <h3 className="font-playfair font-bold text-black text-[22px] leading-[33px]">
+              <h3 className="font-serif font-bold text-black text-[22px] leading-[33px]">
                 Total Visual Making
               </h3>
-              <p className="font-suit font-medium text-black text-[13px] leading-[19.5px]">
+              <p className="font-suit font-medium text-black text-[13px] leading-[19.5px] break-keep">
                 컨설팅-스타일링-헤어&페이셜 메이크오버-
-                <br />
+                <br className="hidden md:block" />
                 프로필 촬영까지. 머리부터 발끝까지 당신의
-                <br />
+                <br className="hidden md:block" />
                 비주얼에 차별화를 만듭니다.
               </p>
             </div>
@@ -231,16 +233,16 @@ export default function HomePage() {
               alt="VIP & Celeb Directing"
             />
             <div className="space-y-4">
-              <h3 className="font-playfair font-bold text-black text-[22px] leading-[33px]">
+              <h3 className="font-serif font-bold text-black text-[22px] leading-[33px]">
                 VIP & Celeb Directing
               </h3>
-              <p className="font-suit font-medium text-black text-[13px] leading-[19.5px]">
+              <p className="font-suit font-medium text-black text-[13px] leading-[19.5px] break-keep">
                 비즈니스, 촬영, 그리고 무대와 영상 등 특별한
-                <br />
+                <br className="hidden md:block" />
                 순간 가장 빛나는 당신을 위한 프라이빗 케어.
-                <br />
+                <br className="hidden md:block" />
                 시술과 성형 메디컬 연계까지 확장, 드라마틱한
-                <br />
+                <br className="hidden md:block" />
                 변화를 지원합니다.
               </p>
             </div>
@@ -249,14 +251,10 @@ export default function HomePage() {
       </div>
 
       {/* Visual Making Process */}
-      {/* Visual Making Process */}
       <div className="mx-auto max-w-screen-xl px-4 xl:px-0 py-20 relative">
-        <h2 className="font-playfair font-normal text-black text-[28px] leading-[normal] mb-12">
+        <h2 className="font-serif font-normal text-black text-[28px] leading-[normal] mb-12">
           Visual Making Process
         </h2>
-        {/* <div className="relative w-[330px] h-[180px]">
-          <div className="top-0 left-32 w-[330px] h-[180px] rounded-[30px] border-[none] bg-[linear-gradient(180deg,rgba(244,244,244,1)_0%,rgba(255,255,255,1)_100%)] before:content-[''] before:absolute before:inset-0 before:p-px before:rounded-[30px] before:[background:linear-gradient(106deg,rgba(242,242,242,1)_0%,rgba(134,134,134,1)_50%,rgba(242,242,242,1)_100%)] before:[-webkit-mask:linear-gradient(#fff_0_0)_content-box,linear-gradient(#fff_0_0)] before:[-webkit-mask-composite:xor] before:[mask-composite:exclude] before:z-[1] before:pointer-events-none" />
-        </div> */}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
           {[
@@ -316,17 +314,14 @@ export default function HomePage() {
                   {item.desc}
                 </p>
               </div>
-              {/* Gradient Border Effect Simulation if needed, using simple border for now for cleanliness */}
             </div>
           ))}
         </div>
 
-        {/* Dashed Line (Optional: simplified as a border or hr behind) */}
         {/* Process Flow Lines (Full Screen Width) */}
         <div className="hidden lg:block absolute w-screen left-1/2 -translate-x-1/2 inset-y-0 pointer-events-none -z-0">
           <div className="max-w-screen-xl mx-auto w-full h-full relative font-bold">
             {/* Row 1: Start from Center of Card 1 -> End Screen Edge */}
-            {/* Using calc to position from center of first column (1/6 of container) */}
             <div className="absolute top-[260px] right-[calc(-50vw+50%)] left-[16.666%] border-t border-dashed border-gray-800" />
 
             {/* Row 2: Start from Screen Edge -> Center of Card 6 */}
@@ -340,12 +335,8 @@ export default function HomePage() {
       {/* Footer Area Backgrounds */}
       <ReviewsCarousel />
 
-      {/* Footer Info */}
-
-      {/* <div className="absolute top-[1272px] left-[766px] w-[35px] h-[35px] bg-[#ffffff4a] rounded-[352.9px] border-0 border-none backdrop-blur-[2.32px] backdrop-brightness-[100%] [-webkit-backdrop-filter:blur(2.32px)_brightness(100%)]" /> */}
-
       {/* Decorative / Gradient Elements */}
-      <div className="absolute top-20 left-[calc(50.00%_-_822px)] w-[1751px] h-[1217px]" />
+      <div className="absolute top-20 left-1/2 -translate-x-1/2 w-full max-w-[1751px] h-[1217px] pointer-events-none" />
 
       {/* Login Modal (Floating) */}
       {isLoginOpen && (
@@ -457,7 +448,7 @@ export default function HomePage() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full flex justify-center py-3 px-6 rounded-xl tex[font-family:'SUIT-Bold',Helvetica] text-black bg-white hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="w-full flex justify-center py-3 px-6 rounded-xl font-suit font-bold text-black bg-white hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
                     {isLoading ? "로그인 중..." : "관리자 로그인"}
                   </button>
