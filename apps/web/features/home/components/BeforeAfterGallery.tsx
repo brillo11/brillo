@@ -27,38 +27,39 @@ const CAROUSEL_ITEMS = [
 export const BeforeAfterGallery = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const handleDotClick = (index: number) => {
+    setCurrentIndex(index);
+  };
+
   return (
     <div className="flex flex-col items-center gap-8 mt-20">
-      <div className="relative w-[1024px] h-[680px] flex overflow-hidden">
-        {CAROUSEL_ITEMS.map((item, index) => (
-          <div
-            key={index}
-            className={cn(
-              "absolute inset-0 transition-opacity duration-500 flex",
-              index === currentIndex
-                ? "opacity-100 z-10"
-                : "opacity-0 z-0 pointer-events-none",
-            )}
-          >
-            <img
-              className="w-[510px] h-[680px] aspect-[0.75] object-cover"
-              alt="Before"
-              src={item.before}
-            />
-            <img
-              className="w-[510px] h-[680px] aspect-[0.75] object-cover"
-              alt="After"
-              src={item.after}
-            />
-            <div className="absolute top-[468px] left-0 w-[1020px] h-[212px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.6)_100%)]" />
-            <div className="absolute top-[632px] left-[255px] -translate-x-1/2 font-playfair font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
-              Before
+      <div className="relative w-[514px] lg:w-[1040px] h-[340px] flex overflow-hidden">
+        <div
+          className="flex transition-transform duration-500 ease-in-out gap-3"
+          style={{ transform: `translateX(-${currentIndex * (514 + 12)}px)` }}
+        >
+          {CAROUSEL_ITEMS.map((item, index) => (
+            <div key={index} className="relative w-[514px] h-[340px] shrink-0">
+              <img
+                className="absolute top-0 left-0 w-[255px] h-[340px] aspect-[0.75] object-cover"
+                alt="Before"
+                src={item.before}
+              />
+              <img
+                className="absolute top-0 left-[255px] w-[255px] h-[340px] aspect-[0.75] object-cover"
+                alt="After"
+                src={item.after}
+              />
+              <div className="absolute top-[234px] left-0 w-[510px] h-[106px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.6)_100%)]" />
+              <div className="absolute top-[301px] left-[98px] font-playfair font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
+                Before
+              </div>
+              <div className="absolute top-[301px] left-[359px] font-playfair font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
+                After
+              </div>
             </div>
-            <div className="absolute top-[632px] left-[765px] -translate-x-1/2 font-playfair font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
-              After
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* Navigation Buttons */}
@@ -66,8 +67,11 @@ export const BeforeAfterGallery = () => {
         {CAROUSEL_ITEMS.map((_, index) => (
           <button
             key={index}
-            onClick={() => setCurrentIndex(index)}
-            className="group relative flex flex-col items-center justify-center"
+            onClick={() => handleDotClick(index)}
+            className={cn(
+              "group relative flex flex-col items-center justify-center",
+              index === CAROUSEL_ITEMS.length - 1 && "lg:hidden",
+            )}
           >
             <img
               className={cn(
