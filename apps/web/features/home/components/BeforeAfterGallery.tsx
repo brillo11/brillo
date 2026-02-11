@@ -29,7 +29,7 @@ export const BeforeAfterGallery = () => {
 
   return (
     <div className="flex flex-col items-center gap-8 mt-20">
-      <div className="relative w-[514px] h-[340px] flex overflow-hidden">
+      <div className="relative w-[1024px] h-[680px] flex overflow-hidden">
         {CAROUSEL_ITEMS.map((item, index) => (
           <div
             key={index}
@@ -41,20 +41,20 @@ export const BeforeAfterGallery = () => {
             )}
           >
             <img
-              className="w-[255px] h-[340px] aspect-[0.75] object-cover"
+              className="w-[510px] h-[680px] aspect-[0.75] object-cover"
               alt="Before"
               src={item.before}
             />
             <img
-              className="w-[255px] h-[340px] aspect-[0.75] object-cover"
+              className="w-[510px] h-[680px] aspect-[0.75] object-cover"
               alt="After"
               src={item.after}
             />
-            <div className="absolute top-[234px] left-0 w-[510px] h-[106px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.6)_100%)]" />
-            <div className="absolute top-[301px] left-[98px] font-playfair font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
+            <div className="absolute top-[468px] left-0 w-[1020px] h-[212px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.6)_100%)]" />
+            <div className="absolute top-[632px] left-[255px] -translate-x-1/2 font-playfair font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
               Before
             </div>
-            <div className="absolute top-[301px] left-[359px] font-playfair font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
+            <div className="absolute top-[632px] left-[765px] -translate-x-1/2 font-playfair font-normal text-white text-xl text-center tracking-[0] leading-[normal]">
               After
             </div>
           </div>
