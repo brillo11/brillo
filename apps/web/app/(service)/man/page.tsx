@@ -15,6 +15,14 @@ import {
 import { ManMainCarousel } from "@/features/man/components/ManMainCarousel";
 import { ManStyleCarousel } from "@/features/man/components/ManStyleCarousel";
 import { ManGalleryCarousel } from "@/features/man/components/ManGalleryCarousel";
+import { usePayment } from "@/features/payment/hooks/use-payment";
+import { GuestPaymentModal } from "@/features/payment/components/GuestPaymentModal";
+
+const SERVICE_PRICES = {
+  "90min": 180000,
+  "240min": 500000,
+  "420min": 800000,
+};
 
 const SERVICES = {
   "90min": {
@@ -135,6 +143,24 @@ export default function ManPage() {
   const [selectedService, setSelectedService] =
     useState<keyof typeof SERVICES>("90min");
   const [open, setOpen] = useState(false);
+
+  const {
+    requestPayment,
+    isModalOpen,
+    closeModal,
+    handleGuestSubmit,
+    isLoading,
+  } = usePayment();
+
+  const handlePurchase = () => {
+    const amount = SERVICE_PRICES[selectedService];
+    const serviceTitle = SERVICES[selectedService].title;
+
+    requestPayment({
+      amount,
+      orderName: serviceTitle,
+    });
+  };
 
   return (
     <div className="bg-[#f7f3f0] w-full min-h-screen flex flex-col items-center pb-20">
@@ -274,10 +300,20 @@ export default function ManPage() {
               <button className="h-[37px] flex items-center justify-center border border-black bg-transparent text-black text-sm hover:bg-gray-50 transition-colors">
                 문의하기
               </button>
-              <button className="h-[37px] flex items-center justify-center border border-black bg-black text-white text-sm hover:bg-gray-800 transition-colors">
+              <button
+                onClick={handlePurchase}
+                className="h-[37px] flex items-center justify-center border border-black bg-black text-white text-sm hover:bg-gray-800 transition-colors"
+              >
                 구매하기
               </button>
             </div>
+
+            <GuestPaymentModal
+              isOpen={isModalOpen}
+              onClose={closeModal}
+              onSubmit={handleGuestSubmit}
+              isLoading={isLoading}
+            />
           </div>
         </div>
 

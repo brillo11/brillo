@@ -13,6 +13,14 @@ import {
   CommandList,
 } from "@repo/ui/components/command";
 import { VipMainCarousel } from "@/features/vip/components/VipMainCarousel";
+import { usePayment } from "@/features/payment/hooks/use-payment";
+import { GuestPaymentModal } from "@/features/payment/components/GuestPaymentModal";
+
+const SERVICE_PRICES = {
+  project: 3000000,
+  skin: 1000000,
+  private: 2000000,
+};
 
 const SERVICES = {
   project: {
@@ -128,6 +136,24 @@ export default function VipPage() {
   const [selectedService, setSelectedService] =
     useState<keyof typeof SERVICES>("project");
   const [open, setOpen] = useState(false);
+
+  const {
+    requestPayment,
+    isModalOpen,
+    closeModal,
+    handleGuestSubmit,
+    isLoading,
+  } = usePayment();
+
+  const handlePurchase = () => {
+    const amount = SERVICE_PRICES[selectedService];
+    const serviceTitle = SERVICES[selectedService].title;
+
+    requestPayment({
+      amount,
+      orderName: serviceTitle,
+    });
+  };
 
   return (
     <div className="bg-[#f7f3f0] w-full min-h-screen flex flex-col items-center pb-20">
@@ -274,10 +300,20 @@ export default function VipPage() {
               <button className="h-[37px] flex items-center justify-center border border-black bg-transparent text-black text-sm hover:bg-gray-50 transition-colors">
                 문의하기
               </button>
-              <button className="h-[37px] flex items-center justify-center border border-black bg-black text-white text-sm hover:bg-gray-800 transition-colors">
+              <button
+                onClick={handlePurchase}
+                className="h-[37px] flex items-center justify-center border border-black bg-black text-white text-sm hover:bg-gray-800 transition-colors"
+              >
                 구매하기
               </button>
             </div>
+
+            <GuestPaymentModal
+              isOpen={isModalOpen}
+              onClose={closeModal}
+              onSubmit={handleGuestSubmit}
+              isLoading={isLoading}
+            />
           </div>
         </div>
       </div>
