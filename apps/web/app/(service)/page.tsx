@@ -76,7 +76,7 @@ export default function HomePage() {
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover md:scale-[105%] md:object-top"
         >
           <source src="/brillo_main.mp4" type="video/mp4" />
         </video>
