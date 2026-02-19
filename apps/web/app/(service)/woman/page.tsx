@@ -15,6 +15,14 @@ import {
 import { WomanMainCarousel } from "@/features/woman/components/WomanMainCarousel";
 import { WomanStyleCarousel } from "@/features/woman/components/WomanStyleCarousel";
 import { WomanGalleryCarousel } from "@/features/woman/components/WomanGalleryCarousel";
+import { usePayment } from "@/features/payment/hooks/use-payment";
+import { GuestPaymentModal } from "@/features/payment/components/GuestPaymentModal";
+
+const SERVICE_PRICES = {
+  "90min": 180000,
+  "240min": 500000,
+  "420min": 800000,
+};
 
 const SERVICES = {
   "90min": {
@@ -135,6 +143,24 @@ export default function WomanPage() {
   const [selectedService, setSelectedService] =
     useState<keyof typeof SERVICES>("90min");
   const [open, setOpen] = useState(false);
+
+  const {
+    requestPayment,
+    isModalOpen,
+    closeModal,
+    handleGuestSubmit,
+    isLoading,
+  } = usePayment();
+
+  const handlePurchase = () => {
+    const amount = SERVICE_PRICES[selectedService];
+    const serviceTitle = SERVICES[selectedService].title;
+
+    requestPayment({
+      amount,
+      orderName: serviceTitle,
+    });
+  };
 
   return (
     <div className="bg-[#f7f3f0] w-full min-h-screen flex flex-col items-center pb-20">
@@ -279,12 +305,22 @@ export default function WomanPage() {
               <button className="h-[37px] flex items-center justify-center border border-black bg-transparent text-black text-sm hover:bg-gray-50 transition-colors">
                 문의하기
               </button>
-              <button className="h-[37px] flex items-center justify-center border border-black bg-black text-white text-sm hover:bg-gray-800 transition-colors">
+              <button
+                onClick={handlePurchase}
+                className="h-[37px] flex items-center justify-center border border-black bg-black text-white text-sm hover:bg-gray-800 transition-colors"
+              >
                 구매하기
               </button>
             </div>
           </div>
         </div>
+
+        <GuestPaymentModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          onSubmit={handleGuestSubmit}
+          isLoading={isLoading}
+        />
 
         {/* Consultation Image */}
         <div className="relative w-full max-w-4xl mx-auto mt-36">

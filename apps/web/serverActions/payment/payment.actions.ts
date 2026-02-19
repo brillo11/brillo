@@ -46,7 +46,7 @@ interface TossErrorResponse {
 
 export async function updatePaymentStatus(
   paymentId: bigint,
-  status: ORDER_STATUS
+  status: ORDER_STATUS,
 ) {
   try {
     const updatedPayment = await prisma.order.update({
@@ -71,7 +71,7 @@ export async function confirmPayment(
   data: PaymentConfirmRequest,
   env: "test" | "live" = "test",
   isEvent: boolean = false,
-  eventText: string | null = null
+  eventText: string | null = null,
 ) {
   try {
     // 1. 결제 세션 검증
@@ -111,7 +111,7 @@ export async function confirmPayment(
           orderId: data.orderId,
           amount: data.amount,
         }),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -128,7 +128,7 @@ export async function confirmPayment(
     const newPayment = await createPaymentRecord(
       result,
       data.userId?.toString(),
-      env === ("test" as "test" | "live")
+      env === ("test" as "test" | "live"),
     );
 
     await prisma.paymentSession.delete({
@@ -144,7 +144,7 @@ export async function confirmPayment(
           data: { points: { increment: pointsToAdd } },
         });
         console.log(
-          `포인트 충전 완료: User ${data.userId} +${pointsToAdd} points`
+          `포인트 충전 완료: User ${data.userId} +${pointsToAdd} points`,
         );
       }
     }
@@ -177,7 +177,7 @@ export async function confirmPayment(
 
 async function handleTossPaymentError(
   errorResponse: TossErrorResponse,
-  data: PaymentConfirmRequest
+  data: PaymentConfirmRequest,
 ) {
   const { code, message } = errorResponse;
 
@@ -219,12 +219,12 @@ async function handleTossPaymentError(
 export async function createPaymentRecord(
   paymentData: TossPaymentResponse,
   userId: string | undefined,
-  isTest: boolean = false
+  isTest: boolean = false,
 ) {
   try {
-    if (!userId) {
-      throw new Error("userId가 없습니다");
-    }
+    // if (!userId) {
+    //   throw new Error("userId가 없습니다");
+    // }
     const payment = await prisma.order.create({
       data: {
         amount: paymentData.totalAmount,
@@ -257,7 +257,7 @@ export async function createRefundRecord(
   orderId: bigint,
   amount: number,
   tossRefundKey: string,
-  reason: string
+  reason: string,
 ) {
   try {
     const refund = await prisma.refund.create({
@@ -289,7 +289,7 @@ export async function updateRefundStatus(
   refundId: bigint,
   status: REFUND_STATUS,
   tossRefundKey?: string,
-  refundMethod?: string
+  refundMethod?: string,
 ) {
   try {
     const updatedRefund = await prisma.refund.update({
@@ -322,7 +322,7 @@ export async function cancelPaymentInDB(
   cancelReason: string,
   tossRefundKey: string,
   isPartial: boolean = false,
-  amount: number | null
+  amount: number | null,
 ) {
   try {
     const updatedPayment = await prisma.order.update({
@@ -345,7 +345,7 @@ export async function cancelPaymentInDB(
       updatedPayment.id,
       amount || updatedPayment.amount,
       tossRefundKey,
-      cancelReason
+      cancelReason,
     );
 
     console.log("데이터베이스 결제 취소 및 환불 내역 기록 완료:", {
@@ -366,7 +366,7 @@ export async function cancelPayment(
   paymentKey: string,
   cancelReason: string,
   amount: number | null,
-  isPartial: boolean = false
+  isPartial: boolean = false,
 ) {
   try {
     const widgetSecretKey = process.env.TOSS_LIVE_SECRET_KEY;
@@ -382,7 +382,7 @@ export async function cancelPayment(
           "Content-Type": "application/json",
         },
         body: `{"cancelReason":"${cancelReason}", "cancelAmount": ${amount}}`,
-      }
+      },
     );
     if (!response.ok) {
       throw new Error("결제 취소 실패");
@@ -397,7 +397,7 @@ export async function cancelPayment(
         cancelReason,
         result.paymentKey, // 토스페이먼츠 환불 키
         isPartial,
-        amount
+        amount,
       );
     }
 
