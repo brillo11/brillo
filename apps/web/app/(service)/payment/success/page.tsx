@@ -27,14 +27,29 @@ function PaymentSuccessContent() {
 
     const processPayment = async () => {
       try {
+        let guestInfo = undefined;
+        const storedInfo = sessionStorage.getItem("GUEST_PAYMENT_INFO");
+        if (storedInfo) {
+          try {
+            guestInfo = JSON.parse(storedInfo);
+            // Clear it so it isn't reused accidentally
+            sessionStorage.removeItem("GUEST_PAYMENT_INFO");
+          } catch (e) {
+            console.error("Failed to parse guest info", e);
+          }
+        }
+
         await confirmPayment(
           {
             paymentKey,
             orderId,
             amount: Number(amount),
           },
-          "test",
-        ); // Always test mode as per requirements
+          "test", // Always test mode as per requirements
+          false,
+          null,
+          guestInfo,
+        );
         setStatus("success");
       } catch (error: any) {
         console.error("Payment confirmation error:", error);

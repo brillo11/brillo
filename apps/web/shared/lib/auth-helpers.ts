@@ -80,6 +80,7 @@ export async function loginWithEmail(email: string, password: string) {
  */
 export async function loginWithSocial(
   provider: "naver" | "kakao" | "google" | "apple",
+  callbackURL?: string,
 ) {
   try {
     console.log("loginWithSocial", provider);
@@ -92,7 +93,7 @@ export async function loginWithSocial(
 
     await betterSignIn.social({
       provider,
-      callbackURL: PATH.HOME, // 메인 페이지('/')로 리다이렉트
+      callbackURL: callbackURL || PATH.HOME, // 전달받은 경로로 가거나 메인 페이지('/')로 리다이렉트
     });
     return { success: true };
   } catch (error: any) {

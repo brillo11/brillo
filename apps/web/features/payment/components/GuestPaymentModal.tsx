@@ -28,6 +28,7 @@ interface GuestPaymentModalProps {
 export interface GuestUserInfo {
   name: string;
   gender: "male" | "female";
+  age: string;
   phone: string;
   email: string;
 }
@@ -41,6 +42,7 @@ export function GuestPaymentModal({
   const [userInfo, setUserInfo] = useState<GuestUserInfo>({
     name: "",
     gender: "female",
+    age: "",
     phone: "",
     email: "",
   });
@@ -58,7 +60,7 @@ export function GuestPaymentModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userInfo.name || !userInfo.phone || !userInfo.email) {
+    if (!userInfo.name || !userInfo.age || !userInfo.phone || !userInfo.email) {
       alert("모든 정보를 입력해주세요.");
       return;
     }
@@ -117,6 +119,21 @@ export function GuestPaymentModal({
                 </SelectItem>
               </SelectContent>
             </Select>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="age" className="text-black font-medium">
+              나이
+            </Label>
+            <Input
+              id="age"
+              name="age"
+              type="number"
+              value={userInfo.age}
+              onChange={handleChange}
+              placeholder="예: 25"
+              required
+              className="bg-white border-black rounded-none focus-visible:ring-0 focus-visible:border-black h-12"
+            />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="phone" className="text-black font-medium">

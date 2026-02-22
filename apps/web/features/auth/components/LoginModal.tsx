@@ -20,7 +20,7 @@ export function LoginModal() {
   const handleSocialLogin = async (provider: "kakao") => {
     setIsSocialLoading(true);
     try {
-      const result = await loginWithSocial(provider);
+      const result = await loginWithSocial(provider, pathname);
       if (!result.success) {
         toast.error(result.error || "카카오 로그인에 실패했습니다.");
       }

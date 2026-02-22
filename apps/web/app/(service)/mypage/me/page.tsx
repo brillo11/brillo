@@ -140,6 +140,19 @@ export default function MyPageMe() {
             </button>
           </form>
         </div>
+
+        {/* 로그아웃 버튼 */}
+        <div className="pt-8 border-t border-[#d4d4d4]">
+          <button
+            onClick={async () => {
+              await authClient.signOut();
+              window.location.href = "/";
+            }}
+            className="w-full h-12 bg-black text-white text-sm font-semibold rounded-none hover:bg-gray-800 transition-colors"
+          >
+            로그아웃
+          </button>
+        </div>
       </div>
     </div>
   );

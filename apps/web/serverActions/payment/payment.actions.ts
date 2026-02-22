@@ -23,6 +23,7 @@ interface PaymentConfirmRequest {
   orderId: string;
   amount: number;
   userId?: bigint;
+  guestInfo?: any;
 }
 
 interface TossPaymentResponse {
@@ -125,10 +126,36 @@ export async function confirmPayment(
     const result: TossPaymentResponse = await response.json();
 
     // 3. paymentKey와 orderId 필수 저장 (토스페이먼츠 권장사항)
+    let descriptionExt = "";
+    if (data.guestInfo) {
+      if (data.userId) {
+        // Find existing user to merge misc
+        const existingUser = await prisma.user.findUnique({
+          where: { id: data.userId.toString() },
+          select: { misc: true },
+        });
+        const currentMisc =
+          existingUser?.misc && typeof existingUser.misc === "object"
+            ? existingUser.misc
+            : {};
+        const newMisc = {
+          ...currentMisc,
+          reservationInfo: data.guestInfo,
+        };
+        await prisma.user.update({
+          where: { id: data.userId.toString() },
+          data: { misc: newMisc as any },
+        });
+      }
+      // Add info string to order description
+      descriptionExt = ` | 예약자 정보: 이름(${data.guestInfo.name}), 성별(${data.guestInfo.gender}), 나이(${data.guestInfo.age}), 연락처(${data.guestInfo.phone})`;
+    }
+
     const newPayment = await createPaymentRecord(
       result,
       data.userId?.toString(),
       env === ("test" as "test" | "live"),
+      descriptionExt,
     );
 
     await prisma.paymentSession.delete({
@@ -220,6 +247,7 @@ export async function createPaymentRecord(
   paymentData: TossPaymentResponse,
   userId: string | undefined,
   isTest: boolean = false,
+  descriptionExt: string = "",
 ) {
   try {
     // if (!userId) {
@@ -236,6 +264,7 @@ export async function createPaymentRecord(
         userId: userId || "1",
         paymentKey: paymentData.paymentKey,
         isTest: isTest,
+        description: descriptionExt ? descriptionExt : undefined,
       },
     });
 

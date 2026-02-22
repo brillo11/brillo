@@ -42,6 +42,11 @@ export function usePayment() {
       const customerEmail = userInfo?.email || session?.user?.email || "";
       const customerMobilePhone = userInfo?.phone || "";
 
+      // Store guest info in sessionStorage to retrieve after redirect
+      if (userInfo) {
+        sessionStorage.setItem("GUEST_PAYMENT_INFO", JSON.stringify(userInfo));
+      }
+
       // Construct success/fail URLs
       const origin = window.location.origin;
 
@@ -75,14 +80,9 @@ export function usePayment() {
   };
 
   const requestPayment = (data: PaymentData) => {
-    if (session?.user) {
-      // Logged in user - proceed directly
-      processPayment(data);
-    } else {
-      // Guest user - open modal
-      setPendingPayment(data);
-      setIsModalOpen(true);
-    }
+    // Guest or logged-in user - always open modal to confirm info (name, gender, age, etc)
+    setPendingPayment(data);
+    setIsModalOpen(true);
   };
 
   const handleGuestSubmit = (userInfo: GuestUserInfo) => {
