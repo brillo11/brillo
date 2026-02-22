@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const IMAGES = [
   "/page/woman/vip-women-1-1.png",
@@ -11,6 +11,13 @@ const IMAGES = [
 
 export function WomanMainCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % IMAGES.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();

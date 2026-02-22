@@ -8,6 +8,7 @@ import { useAtom } from "jotai";
 import { loginModalOpenAtom } from "@/features/auth/login-modal-atom";
 import { BeforeAfterGallery } from "@/features/home/components/BeforeAfterGallery";
 import { ReviewsCarousel } from "@/features/home/components/ReviewsCarousel";
+import Link from "next/link";
 
 export default function HomePage() {
   const [credentials, setCredentials] = useState({
@@ -406,13 +407,19 @@ export default function HomePage() {
               <div className="mt-6 text-center w-full">
                 <p className="font-suit text-[#666666] text-xs">
                   로그인 시 브릴로의{" "}
-                  <span className="underline cursor-pointer hover:text-white transition-colors">
+                  <Link
+                    href="/terms"
+                    className="underline hover:text-white transition-colors"
+                  >
                     이용약관
-                  </span>{" "}
+                  </Link>{" "}
                   및{" "}
-                  <span className="underline cursor-pointer hover:text-white transition-colors">
+                  <Link
+                    href="/privacy"
+                    className="underline hover:text-white transition-colors"
+                  >
                     개인정보처리방침
-                  </span>
+                  </Link>
                   에 동의하게 됩니다.
                 </p>
               </div>

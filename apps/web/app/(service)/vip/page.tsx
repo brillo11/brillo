@@ -293,6 +293,16 @@ export default function VipPage() {
                 <div className="space-y-2">{SERVICE_REGULATION}</div>
               )}
             </div>
+
+            <div className="w-[324px] flex justify-between items-center pt-2 pb-4 border-t border-[#d6d6d6]">
+              <span className="font-suit font-medium text-black text-sm">
+                결제 금액
+              </span>
+              <span className="font-suit font-bold text-black text-lg tracking-tight">
+                별도문의
+              </span>
+            </div>
+
             <div className="w-full">
               <button className="w-full h-[37px] flex items-center justify-center border border-black bg-transparent text-black text-sm hover:bg-gray-50 transition-colors">
                 문의하기
