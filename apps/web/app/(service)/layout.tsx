@@ -5,6 +5,7 @@ import { LoginButton } from "@/features/auth/LoginButton";
 import { Footer } from "@/features/layout/components/Footer";
 import { ContactFloatButton } from "@/features/layout/components/ContactFloatButton";
 import { Header } from "@/features/layout/components/Header";
+import { LoginModal } from "@/features/auth/components/LoginModal";
 
 export default function RootLayout({
   children,
@@ -15,6 +16,7 @@ export default function RootLayout({
     <div className={`mx-auto scroll-smooth font-sans antialiased shadow-sm`}>
       <ServiceProviders>
         <Header />
+        <LoginModal />
 
         {/* Main Content */}
         <div className="bg-white">{children}</div>

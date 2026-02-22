@@ -16,17 +16,11 @@ model User {
   nickname                    String      @unique @default("")
   role                        ROLE        @default(STUDENT)
   status                      USER_STATUS @default(UNKNOWN)
-  bizName                     String      @default("")
-  bizNumber                   String      @default("")
   expiredAt                   DateTime    @default(now())
   lastLoginAt                 DateTime    @default(now())
   lastPaidAt                  DateTime    @default(now())
-  maxProductCount             Int         @default(200)
-  maxUploadProductCount       Int         @default(0)
   memo                        String      @default("")
   points                      Int         @default(0)
-  remainingProductCount       Int         @default(200)
-  remainingUploadProductCount Int         @default(0)
   email                       String?     @unique
   emailVerified               Boolean     @default(false)
   image                       String?

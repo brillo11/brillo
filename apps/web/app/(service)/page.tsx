@@ -2,13 +2,9 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { loginWithEmail, loginWithSocial } from "@/shared/lib/auth-helpers";
-import { Eye, EyeOff, X } from "lucide-react";
-import { useAtom } from "jotai";
-import { loginModalOpenAtom } from "@/features/auth/login-modal-atom";
+import { loginWithEmail } from "@/shared/lib/auth-helpers";
 import { BeforeAfterGallery } from "@/features/home/components/BeforeAfterGallery";
 import { ReviewsCarousel } from "@/features/home/components/ReviewsCarousel";
-import Link from "next/link";
 
 export default function HomePage() {
   const [credentials, setCredentials] = useState({
@@ -16,25 +12,6 @@ export default function HomePage() {
     password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [isSocialLoading, setIsSocialLoading] = useState(false);
-  const [isLoginOpen, setIsLoginOpen] = useAtom(loginModalOpenAtom);
-  const [isAdminFormOpen, setIsAdminFormOpen] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-
-  const handleSocialLogin = async (provider: "kakao") => {
-    setIsSocialLoading(true);
-    try {
-      const result = await loginWithSocial(provider);
-      if (!result.success) {
-        toast.error(result.error || "카카오 로그인에 실패했습니다.");
-      }
-    } catch (error) {
-      console.error("Social login error:", error);
-      toast.error("카카오 로그인 중 오류가 발생했습니다.");
-    } finally {
-      setIsSocialLoading(false);
-    }
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -338,95 +315,6 @@ export default function HomePage() {
 
       {/* Decorative / Gradient Elements */}
       <div className="absolute top-20 left-1/2 -translate-x-1/2 w-full max-w-[1751px] h-[1217px] pointer-events-none" />
-
-      {/* Login Modal (Floating) */}
-      {isLoginOpen && (
-        <div
-          className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md transition-all duration-300"
-          onClick={() => setIsLoginOpen(false)}
-        >
-          <div
-            className="w-full max-w-[400px] bg-black border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="relative p-8 md:p-10 flex flex-col items-center">
-              <button
-                onClick={() => setIsLoginOpen(false)}
-                className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors"
-                aria-label="Close"
-              >
-                <X size={24} />
-              </button>
-
-              <div className="flex flex-col items-center mt-2 mb-10 w-full space-y-6">
-                <img
-                  className="w-[100px] object-contain"
-                  alt="Brillo Logo"
-                  src="/images/layout/brillo-logo-text.png"
-                />
-
-                <div className="text-center space-y-3">
-                  <h2 className="font-playfair font-normal text-white text-[26px] tracking-[0.05em] uppercase">
-                    Login
-                  </h2>
-                  <p className="font-suit font-medium text-[13px] text-gray-400 tracking-tight break-keep">
-                    단순한 변화가 아닌, 새로운 당신
-                    <br />
-                    프리미엄 퍼스널 비주얼디렉팅
-                  </p>
-                </div>
-              </div>
-
-              {/* 카카오 로그인 */}
-              <div className="w-full mb-2">
-                <button
-                  onClick={() => handleSocialLogin("kakao")}
-                  disabled={isSocialLoading}
-                  type="button"
-                  className="relative flex w-full items-center justify-center gap-3 rounded-xl bg-[#FEE500] px-4 py-[18px] font-suit font-bold text-[#191919] hover:bg-[#FEE500]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 18 18"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="absolute left-6"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M9 2C4.029 2 0 4.966 0 8.625C0 10.982 1.572 13.045 3.992 14.238C3.791 14.88 3.097 17.203 3.056 17.373C3.056 17.373 3.036 17.433 3.072 17.464C3.107 17.494 3.167 17.485 3.167 17.485C3.364 17.456 5.626 15.908 6.551 15.228C7.324 15.424 8.146 15.534 9 15.534C13.971 15.534 18 12.568 18 8.909C18 5.25 13.971 2 9 2Z"
-                      fill="#191919"
-                    />
-                  </svg>
-                  {isSocialLoading ? "로그인 중..." : "카카오로 시작하기"}
-                </button>
-              </div>
-
-              <div className="mt-6 text-center w-full">
-                <p className="font-suit text-[#666666] text-xs">
-                  로그인 시 브릴로의{" "}
-                  <Link
-                    href="/terms"
-                    className="underline hover:text-white transition-colors"
-                  >
-                    이용약관
-                  </Link>{" "}
-                  및{" "}
-                  <Link
-                    href="/privacy"
-                    className="underline hover:text-white transition-colors"
-                  >
-                    개인정보처리방침
-                  </Link>
-                  에 동의하게 됩니다.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
