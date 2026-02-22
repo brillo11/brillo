@@ -298,7 +298,7 @@ export const ReviewsCarousel = () => {
             <button
               key={i}
               onClick={() => handleInteract(i)}
-              className="group relative flex flex-col items-center justify-center"
+              className="group relative flex flex-col items-center justify-center h-[12px]"
             >
               <img
                 className={cn(

@@ -341,49 +341,80 @@ export default function HomePage() {
       {/* Login Modal (Floating) */}
       {isLoginOpen && (
         <div
-          className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md transition-all duration-300"
           onClick={() => setIsLoginOpen(false)}
         >
           <div
-            className="w-full max-w-md bg-[#111] border border-white/10 rounded-3xl shadow-2xl max-h-[90vh] overflow-y-auto"
+            className="w-full max-w-[400px] bg-black border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-8">
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-bold text-white tracking-widest">
-                  LOGIN
-                </h2>
-                <button
-                  onClick={() => setIsLoginOpen(false)}
-                  className="text-gray-500 hover:text-white transition-colors"
-                >
-                  <X size={24} />
-                </button>
+            <div className="relative p-8 md:p-10 flex flex-col items-center">
+              <button
+                onClick={() => setIsLoginOpen(false)}
+                className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors"
+                aria-label="Close"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="flex flex-col items-center mt-2 mb-10 w-full space-y-6">
+                <img
+                  className="w-[100px] object-contain"
+                  alt="Brillo Logo"
+                  src="/images/layout/brillo-logo-text.png"
+                />
+
+                <div className="text-center space-y-3">
+                  <h2 className="font-playfair font-normal text-white text-[26px] tracking-[0.05em] uppercase">
+                    Login
+                  </h2>
+                  <p className="font-suit font-medium text-[13px] text-gray-400 tracking-tight break-keep">
+                    단순한 변화가 아닌, 새로운 당신
+                    <br />
+                    프리미엄 퍼스널 비주얼디렉팅
+                  </p>
+                </div>
               </div>
 
               {/* 카카오 로그인 */}
-              <div className="space-y-4 mb-8">
+              <div className="w-full mb-2">
                 <button
                   onClick={() => handleSocialLogin("kakao")}
                   disabled={isSocialLoading}
                   type="button"
-                  className="relative flex w-full items-center justify-center gap-3 rounded-xl bg-[#FFE812] px-4 py-4 font-medium text-black hover:bg-[#FFE812]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="relative flex w-full items-center justify-center gap-3 rounded-xl bg-[#FEE500] px-4 py-[18px] font-suit font-bold text-[#191919] hover:bg-[#FEE500]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  {/* Kakao Icon */}
                   <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="absolute left-5"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 18 18"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="absolute left-6"
                   >
                     <path
-                      d="M12 3C6.477 3 2 6.477 2 11c0 2.558 1.523 4.85 3.889 6.262L5.5 21l3.889-1.889C10.5 19.5 11.2 19.6 12 19.6c5.523 0 10-3.477 10-8.6S17.523 3 12 3z"
-                      fill="currentColor"
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M9 2C4.029 2 0 4.966 0 8.625C0 10.982 1.572 13.045 3.992 14.238C3.791 14.88 3.097 17.203 3.056 17.373C3.056 17.373 3.036 17.433 3.072 17.464C3.107 17.494 3.167 17.485 3.167 17.485C3.364 17.456 5.626 15.908 6.551 15.228C7.324 15.424 8.146 15.534 9 15.534C13.971 15.534 18 12.568 18 8.909C18 5.25 13.971 2 9 2Z"
+                      fill="#191919"
                     />
                   </svg>
                   {isSocialLoading ? "로그인 중..." : "카카오로 시작하기"}
                 </button>
+              </div>
+
+              <div className="mt-6 text-center w-full">
+                <p className="font-suit text-[#666666] text-xs">
+                  로그인 시 브릴로의{" "}
+                  <span className="underline cursor-pointer hover:text-white transition-colors">
+                    이용약관
+                  </span>{" "}
+                  및{" "}
+                  <span className="underline cursor-pointer hover:text-white transition-colors">
+                    개인정보처리방침
+                  </span>
+                  에 동의하게 됩니다.
+                </p>
               </div>
             </div>
           </div>

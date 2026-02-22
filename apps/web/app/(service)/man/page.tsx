@@ -19,10 +19,56 @@ import { usePayment } from "@/features/payment/hooks/use-payment";
 import { GuestPaymentModal } from "@/features/payment/components/GuestPaymentModal";
 
 const SERVICE_PRICES = {
-  "90min": 180000,
-  "240min": 500000,
-  "420min": 800000,
+  "90min": 330000,
+  "240min": 770000,
+  "420min": 990000,
 };
+
+const SERVICE_REGULATION = (
+  <div className="text-sm leading-relaxed text-black">
+    <div className="flex items-start gap-1">
+      <span className="shrink-0">•</span>
+      <span>오프라인 서비스 입니다.</span>
+    </div>
+    <div className="flex items-start gap-1">
+      <span className="shrink-0">•</span>
+      <span>결제완료 후 일정이 픽스됩니다.</span>
+    </div>
+    <div className="flex items-start gap-1">
+      <span className="shrink-0">•</span>
+      <span>지각 및 노쇼에 대한 책임은 본인에게 있습니다.</span>
+    </div>
+    <div className="flex items-start gap-1">
+      <span className="shrink-0">•</span>
+      <span>
+        서비스~4일 전 취소 위약금 30%, ~1일 전 50%, <br />
+        당일 취소는 불가합니다.
+      </span>
+    </div>
+    <div className="flex items-start gap-1 font-bold">
+      <span className="shrink-0">•</span>
+      <span>
+        리포트는 리뷰 작성을 조건으로 발송 드리며 일주일 <br />
+        정도 소요됩니다.
+      </span>
+    </div>
+    <br />
+    <div className="flex items-start gap-1 font-bold">
+      <span className="shrink-0">•</span>
+      <span>
+        동행 서비스시 발생하는 쇼핑, 헤어&메이크업 등의 <br />
+        비용은 별도입니다.
+      </span>
+    </div>
+    <div className="flex items-start gap-1 font-bold">
+      <span className="shrink-0">•</span>
+      <span>
+        리뷰 및 사진은 마케팅적으로 활용될 수 있으며 <br />
+        동의하지 않을 권리가 있습니다.
+      </span>
+    </div>
+  </div>
+);
 
 const SERVICES = {
   "90min": {
@@ -86,51 +132,6 @@ const SERVICES = {
           <span>
             필요 시 메디컬 연계 →
             <span className="font-bold">드라마틱한 변화 지원</span>
-          </span>
-        </div>
-      </div>
-    ),
-    regulation: (
-      <div className="text-sm leading-relaxed text-black">
-        <div className="flex items-start gap-1">
-          <span className="shrink-0">•</span>
-          <span>오프라인 서비스 입니다.</span>
-        </div>
-        <div className="flex items-start gap-1">
-          <span className="shrink-0">•</span>
-          <span>결제완료 후 일정이 픽스됩니다.</span>
-        </div>
-        <div className="flex items-start gap-1">
-          <span className="shrink-0">•</span>
-          <span>지각 및 노쇼에 대한 책임은 본인에게 있습니다.</span>
-        </div>
-        <div className="flex items-start gap-1">
-          <span className="shrink-0">•</span>
-          <span>
-            서비스~4일 전 취소 위약금 30%, ~1일 전 50%, <br />
-            당일 취소는 불가합니다.
-          </span>
-        </div>
-        <div className="flex items-start gap-1 font-bold">
-          <span className="shrink-0">•</span>
-          <span>
-            리포트는 리뷰 작성을 조건으로 발송 드리며 일주일 <br />
-            정도 소요됩니다.
-          </span>
-        </div>
-        <br />
-        <div className="flex items-start gap-1 font-bold">
-          <span className="shrink-0">•</span>
-          <span>
-            동행 서비스시 발생하는 쇼핑, 헤어&메이크업 등의 <br />
-            비용은 별도입니다.
-          </span>
-        </div>
-        <div className="flex items-start gap-1 font-bold">
-          <span className="shrink-0">•</span>
-          <span>
-            리뷰 및 사진은 마케팅적으로 활용될 수 있으며 <br />
-            동의하지 않을 권리가 있습니다.
           </span>
         </div>
       </div>
@@ -289,13 +290,19 @@ export default function ManPage() {
               )}
               {activeTab === "리뷰" && <p>등록된 리뷰가 없습니다.</p>}
               {activeTab === "서비스규정" && (
-                <div className="space-y-2">
-                  {"regulation" in SERVICES[selectedService]
-                    ? (SERVICES[selectedService] as any).regulation
-                    : "서비스 규정 내용입니다."}
-                </div>
+                <div className="space-y-2">{SERVICE_REGULATION}</div>
               )}
             </div>
+
+            <div className="w-[324px] flex justify-between items-center pt-2 pb-4 border-t border-[#d6d6d6]">
+              <span className="font-suit font-medium text-black text-sm">
+                결제 금액
+              </span>
+              <span className="font-suit font-bold text-black text-lg tracking-tight">
+                {SERVICE_PRICES[selectedService].toLocaleString()}원
+              </span>
+            </div>
+
             <div className="grid grid-cols-2 gap-3 w-full">
               <button className="h-[37px] flex items-center justify-center border border-black bg-transparent text-black text-sm hover:bg-gray-50 transition-colors">
                 문의하기
