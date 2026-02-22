@@ -13,8 +13,6 @@ const onboardingSchema = z.object({
     .string()
     .regex(/^010-\d{4}-\d{4}$/, "올바른 휴대폰 번호 형식이 아닙니다."),
   nickname: z.string().min(1, "별명이 생성되지 않았습니다."),
-  // cohortId: z.string().optional(), // tubeinsight might not need this mandatory
-  bizName: z.string().min(1, "사업자명을 입력해주세요."), // 사업자명 필수
 });
 
 export async function submitOnboarding(prevState: any, formData: FormData) {
@@ -31,8 +29,6 @@ export async function submitOnboarding(prevState: any, formData: FormData) {
       name: formData.get("name"),
       phoneNumber: formData.get("phoneNumber"),
       nickname: formData.get("nickname"),
-      // cohortId: formData.get("cohortId"),
-      bizName: formData.get("bizName"),
     };
 
     const validatedFields = onboardingSchema.safeParse(rawData);
@@ -43,7 +39,7 @@ export async function submitOnboarding(prevState: any, formData: FormData) {
       };
     }
 
-    const { name, phoneNumber, nickname, bizName } = validatedFields.data;
+    const { name, phoneNumber, nickname } = validatedFields.data;
 
     await prisma.user.update({
       where: { id: session.user.id },
@@ -51,8 +47,6 @@ export async function submitOnboarding(prevState: any, formData: FormData) {
         name,
         phoneNumber,
         nickname,
-        // cohortId: cohortId ? BigInt(cohortId) : undefined,
-        bizName: bizName || "",
         status: USER_STATUS.PENDING, // 승인 대기 상태로 변경
       },
     });

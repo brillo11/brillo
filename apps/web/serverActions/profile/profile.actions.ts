@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 
 export async function getProfileSettings() {
   const session = await requireStudent();
-  
+
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: {
@@ -17,7 +17,7 @@ export async function getProfileSettings() {
       image: true,
       heygenAvatarId: true,
       heygenVoiceId: true,
-    },
+    } as any,
   });
 
   return user;
@@ -34,7 +34,7 @@ export async function updateProfileSettings(data: {
     data: {
       heygenAvatarId: data.heygenAvatarId,
       heygenVoiceId: data.heygenVoiceId,
-    },
+    } as any,
   });
 
   revalidatePath("/service/profile");

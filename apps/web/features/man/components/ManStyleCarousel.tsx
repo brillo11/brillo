@@ -4,10 +4,10 @@ import { useState, useCallback } from "react";
 import { cn } from "@/shared/lib/utils";
 
 const IMAGES = [
-  "/page/woman/4-1.png",
-  "/page/woman/4-1.png",
-  "/page/woman/4-1.png",
-  "/page/woman/4-1.png",
+  "/page/man/process1.png",
+  "/page/man/process2.png",
+  "/page/man/process3.png",
+  "/page/man/process4.png",
 ];
 
 export function ManStyleCarousel() {

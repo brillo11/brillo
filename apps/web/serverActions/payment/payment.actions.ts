@@ -141,7 +141,7 @@ export async function confirmPayment(
       if (pointsToAdd > 0 && data.userId) {
         await prisma.user.update({
           where: { id: data.userId.toString() },
-          data: { points: { increment: pointsToAdd } },
+          data: { points: { increment: pointsToAdd } } as any,
         });
         console.log(
           `포인트 충전 완료: User ${data.userId} +${pointsToAdd} points`,

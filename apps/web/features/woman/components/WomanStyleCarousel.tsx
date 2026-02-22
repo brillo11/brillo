@@ -4,10 +4,10 @@ import { useState, useCallback } from "react";
 import { cn } from "@/shared/lib/utils";
 
 const IMAGES = [
-  "/page/woman/4-1.png",
-  "/page/woman/4-1.png",
-  "/page/woman/4-1.png",
-  "/page/woman/4-1.png",
+  "/page/woman/process1.png",
+  "/page/woman/process2.png",
+  "/page/woman/process3.png",
+  "/page/woman/process4.png",
 ];
 
 export function WomanStyleCarousel() {
@@ -55,7 +55,7 @@ export function WomanStyleCarousel() {
           <button
             key={i}
             onClick={() => goToSlide(i)}
-            className="group relative flex flex-col items-center justify-center"
+            className="group relative flex flex-col items-center justify-center h-[12px]"
           >
             <img
               className={cn(

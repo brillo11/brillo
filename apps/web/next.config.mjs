@@ -1,5 +1,13 @@
 /** @type {import('next').NextConfig} */
 import { PrismaPlugin } from "@prisma/nextjs-monorepo-workaround-plugin";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 const nextConfig = {
   transpilePackages: ["@repo/ui"],
@@ -7,6 +15,10 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: "10mb",
     },
+  },
+  env: {
+    DATABASE_URL: process.env.DATABASE_URL,
+    DIRECT_URL: process.env.DIRECT_URL,
   },
   serverExternalPackages: ["@ffmpeg-installer/ffmpeg", "fluent-ffmpeg"],
   images: {

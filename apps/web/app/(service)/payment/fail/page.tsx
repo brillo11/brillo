@@ -1,10 +1,11 @@
 "use client";
 
+import React, { Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@repo/ui/components/button";
 import { XCircle } from "lucide-react";
 
-export default function PaymentFailPage() {
+function PaymentFailContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const message =
@@ -39,5 +40,13 @@ export default function PaymentFailPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PaymentFailPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen">Loading...</div>}>
+      <PaymentFailContent />
+    </Suspense>
   );
 }

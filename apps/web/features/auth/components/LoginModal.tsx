@@ -126,7 +126,7 @@ export function LoginModal() {
 
           <div className="mt-6 text-center w-full">
             <p className="font-suit text-[#666666] text-xs">
-              로그인 시 브릴로의{" "}
+              로그인 시 브릴로의 <br />
               <Link
                 href="/terms"
                 className={cn(

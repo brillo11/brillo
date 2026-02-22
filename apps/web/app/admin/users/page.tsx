@@ -1,6 +1,8 @@
 import { format } from "date-fns";
 import { User, prisma, USER_STATUS } from "@repo/database";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminUsersPage() {
   const users = await prisma.user.findMany({
     orderBy: {
