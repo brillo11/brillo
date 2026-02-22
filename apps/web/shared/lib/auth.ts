@@ -18,7 +18,7 @@ const prismaWithLogging = new Proxy(prisma, {
                 console.log("👤 새 사용자 생성 시도");
                 console.log(
                   "네이버에서 받은 원본 데이터:",
-                  JSON.stringify(args[0]?.data, null, 2)
+                  JSON.stringify(args[0]?.data, null, 2),
                 );
 
                 // 네이버(mobile)와 카카오(phone_number)의 전화번호를 phoneNumber로 변환
@@ -34,14 +34,14 @@ const prismaWithLogging = new Proxy(prisma, {
 
                 console.log(
                   "최종 저장 데이터:",
-                  JSON.stringify(args[0]?.data, null, 2)
+                  JSON.stringify(args[0]?.data, null, 2),
                 );
               }
               if (prop === "account") {
                 console.log("🔗 소셜 계정 연결");
                 console.log(
                   "계정 데이터:",
-                  JSON.stringify(args[0]?.data, null, 2)
+                  JSON.stringify(args[0]?.data, null, 2),
                 );
               }
 
@@ -50,7 +50,7 @@ const prismaWithLogging = new Proxy(prisma, {
               if (prop === "user") {
                 console.log(
                   "✅ 사용자 생성 완료:",
-                  JSON.stringify(result, null, 2)
+                  JSON.stringify(result, null, 2),
                 );
               }
 
@@ -140,7 +140,7 @@ export const auth: any = betterAuth({
   callbacks: {
     async session({ session, user }: { session: any; user: any }) {
       // 세션에 사용자 role과 status 포함
-        return {
+      return {
         ...session,
         user: {
           ...session.user,
@@ -163,11 +163,11 @@ export const auth: any = betterAuth({
       scope: ["account_email", "profile_nickname"] as string[], // 필요한 동의 항목
       disableDefaultScope: true, // 기본 스코프(profile_image 등) 비활성화
     },
-    // google: {
-    //   clientId: process.env.GOOGLE_CLIENT_ID || "",
-    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-    //   scope: ["email", "profile"] as string[], // 구글에서 제공하는 기본 정보
-    // },
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      // scope: ["email", "profile"] as string[], // 구글에서 제공하는 기본 정보
+    },
   },
 } as const);
 

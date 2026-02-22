@@ -54,11 +54,13 @@ export default function HomePage() {
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover md:scale-[105%] md:object-top"
+          className="absolute inset-0 w-full h-full object-cover md:object-[50%_10%] md:scale-[148%]"
         >
           <source src="/brillo_main.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-[#00000061]" />
+        <div className="absolute inset-0 bg-black opacity-38" />
+        {/* <div className="absolute inset-0 bg-black opacity-38" /> */}
+        {/* <div className="absolute inset-0 bg-black opcity-[38]" /> */}
         <div className="absolute bottom-40 left-4 md:left-[150px] w-full max-w-screen-xl mx-auto px-4 md:px-0">
           <div className="flex flex-col items-start gap-[18px] max-w-lg">
             <div className="flex flex-col items-start gap-2.5 relative self-stretch w-full flex-[0_0_auto]">
