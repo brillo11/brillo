@@ -304,9 +304,14 @@ export default function VipPage() {
             </div>
 
             <div className="w-full">
-              <button className="w-full h-[37px] flex items-center justify-center border border-black bg-transparent text-black text-sm hover:bg-gray-50 transition-colors">
+              <a
+                href="http://pf.kakao.com/_xgatxbG"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full h-[37px] flex items-center justify-center border border-black bg-transparent text-black text-sm hover:bg-gray-50 transition-colors"
+              >
                 문의하기
-              </button>
+              </a>
             </div>
 
             <GuestPaymentModal

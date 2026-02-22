@@ -3,6 +3,7 @@ import { prisma } from "@repo/database";
 import { auth } from "@/shared/lib/auth";
 import { headers } from "next/headers";
 import { format } from "date-fns";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,7 @@ export default async function MyPageOrders() {
   const orders = await prisma.order.findMany({
     where: { userId: session.user.id },
     orderBy: { createdAt: "desc" },
+    include: { review: true },
   });
 
   return (
@@ -68,6 +70,24 @@ export default async function MyPageOrders() {
                   >
                     {order.paymentKey ? `Key: ${order.paymentKey}` : "No Key"}
                   </div>
+
+                  {order.status === "결제완료" && !order.review && (
+                    <div className="mt-3 md:mt-4 flex justify-end">
+                      <Link
+                        href={`/mypage/reviews/new?orderId=${order.id}`}
+                        className="inline-block px-4 py-1.5 text-xs font-suit font-medium bg-black text-white hover:bg-gray-800 transition-colors"
+                      >
+                        리뷰 남기기
+                      </Link>
+                    </div>
+                  )}
+                  {order.review && (
+                    <div className="mt-3 md:mt-4 flex justify-end">
+                      <span className="inline-block px-4 py-1.5 text-xs font-suit font-medium border border-[#d4d4d4] text-[#000000]/50 bg-gray-50">
+                        리뷰 작성 완료
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

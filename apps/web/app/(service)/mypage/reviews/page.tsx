@@ -16,7 +16,10 @@ export default async function MyPageReviews() {
   }
 
   const reviews = await prisma.review.findMany({
-    where: { userId: session.user.id },
+    where: {
+      userId: session.user.id,
+      isPublished: true,
+    },
     orderBy: { createdAt: "desc" },
   });
 

@@ -21,6 +21,12 @@ export default function AdminLayout({ children }: PropsWithChildren) {
           >
             결제내역 관리
           </Link>
+          <Link
+            href="/admin/reviews"
+            className="block px-4 py-2 hover:bg-gray-50 rounded-md"
+          >
+            리뷰 관리
+          </Link>
         </nav>
       </aside>
       <main className="flex-1 overflow-auto p-8">{children}</main>

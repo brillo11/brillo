@@ -179,6 +179,7 @@ model Order {
   userId       String
   user         User         @relation(fields: [userId], references: [id])
   refunds      Refund[]
+  review       Review?
 
   @@index([userId])
   @@index([merchantUid])
@@ -306,9 +307,15 @@ model Review {
   rating    Int      @default(5) // 별점
   nickname  String   @default("") // 닉네임
   content   String   @default("") // 리뷰 내용
+
+  isPublished Boolean @default(true)
   
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
+  orderId   BigInt?  @unique
+  order     Order?   @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  
   @@index([userId])
 }
+
