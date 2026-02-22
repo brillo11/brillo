@@ -1,5 +1,5 @@
 {
-  "prisma.pinToPrisma6": true,
+  "prisma.pinToPrisma6": false,
   "editor.tabSize": 2,
   "editor.insertSpaces": true
 }

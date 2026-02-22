@@ -20,21 +20,11 @@ model User {
   lastLoginAt                 DateTime    @default(now())
   lastPaidAt                  DateTime    @default(now())
   memo                        String      @default("")
-  points                      Int         @default(0)
   email                       String?     @unique
   emailVerified               Boolean     @default(false)
   image                       String?
   updatedAt                   DateTime    @default(now()) @updatedAt
   phoneNumber                 String?
-
-  // 학습 프로필 필드
-  learningLevel   String? // 초급, 중급, 고급 등
-  learningGoals   String? // 학습 목표 텍스트
-  learningHistory Json?   @default("{}") // 학습 이력
-
-  // HeyGen 설정
-  heygenAvatarId String? // HeyGen Avatar ID
-  heygenVoiceId  String? // HeyGen Voice ID
 
   misc Json @default("{}")
 
@@ -43,17 +33,7 @@ model User {
   posts       Post[]       @relation("AuthoredPosts")
   postLikes   PostLike[]
   comments    Comment[]
-  pointOrders PointOrder[]
   orders      Order[]
-
-  submissions Submission[]
-
-  cohortId BigInt?
-  cohort   Cohort? @relation(fields: [cohortId], references: [id])
-
-  aiAssistantSessions AIAssistantSession[]
-  blogTemplates       BlogTemplate[]
-  blogPostHistories   BlogPostHistory[]
 
   @@index([email])
 }
@@ -101,78 +81,6 @@ model Account {
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([providerId, accountId])
-  @@index([userId])
-}
-
-model Class {
-  id        BigInt   @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @default("")
-  slug      String   @unique
-  misc      Json     @default("{}")
-
-  cohorts Cohort[]
-
-  @@index([slug])
-}
-
-model Cohort {
-  id          BigInt   @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  title       String   @default("")
-  totalWeek   Int      @default(0)
-  startDate   DateTime
-  endDate     DateTime
-  cohortOrder Int      @default(0)
-
-  slug String @unique
-  misc Json   @default("{}")
-
-  users    User[]
-  missions Mission[]
-
-  classId BigInt
-  class   Class? @relation(fields: [classId], references: [id])
-
-  @@index([slug])
-}
-
-model Mission {
-  id          BigInt   @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  title       String   @default("")
-  description String   @default("")
-  dueDate     DateTime
-  misc        Json     @default("{}")
-  week        Int      @default(0)
-
-  // YouTube 연동 필드
-  youtubeUrl      String? // YouTube 영상 URL
-  youtubeVideoId  String? // 추출된 YouTube Video ID
-  autoPersonalize Boolean @default(false) // 자동 개인화 여부
-
-  submissions Submission[]
-
-  cohortId BigInt
-  cohort   Cohort? @relation(fields: [cohortId], references: [id])
-}
-
-model Submission {
-  id        BigInt   @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  content   String   @default("")
-  misc      Json     @default("{}")
-
-  missionId BigInt
-  mission   Mission? @relation(fields: [missionId], references: [id])
-  userId    String
-  user      User?    @relation(fields: [userId], references: [id])
-
-  @@index([missionId])
   @@index([userId])
 }
 
@@ -249,34 +157,6 @@ model Log {
   content   Json     @default("{}")
 }
 
-model PointOrder {
-  id          BigInt       @id @default(autoincrement())
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  amount      Int
-  status      ORDER_STATUS
-  orderName   String       @default("") // 주문명
-  description String? // 결제 설명
-
-  email       String   @default("")
-  name        String   @default("")
-  calendar    CALENDAR
-  birthYear   Int
-  birthMonth  Int
-  birthDay    Int
-  birthHour   Int
-  birthMinute Int
-  gender      GENDER
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  productId BigInt
-  product   Product @relation(fields: [productId], references: [id])
-
-  @@index([userId])
-}
-
 model Order {
   id           BigInt       @id @default(autoincrement())
   createdAt    DateTime     @default(now())
@@ -335,22 +215,6 @@ model Refund {
   @@index([orderId])
   @@index([status])
   @@index([createdAt])
-}
-
-model YoutubeApiKey {
-  id          String    @id @default(uuid())
-  keyName     String    @unique // API 키 이름 (환경 변수 이름, 예: "YOUTUBE_DATA_API_KEY", "YOUTUBE_DATA_API_KEY_2")
-  isActive    Boolean   @default(true) // 활성화 여부
-  dailyQuota  Int       @default(10000) // 일일 할당량 (기본 10,000 units)
-  dailyUsage  Int       @default(0) // 오늘 사용량
-  lastResetAt DateTime  @default(now()) // 마지막 리셋 시간
-  lastUsedAt  DateTime? // 마지막 사용 시간
-  totalUsage  BigInt    @default(0) // 총 사용량
-  updatedAt   DateTime  @updatedAt
-  createdAt   DateTime  @default(now())
-
-  @@index([keyName])
-  @@index([isActive])
 }
 
 enum ROLE {
@@ -427,83 +291,7 @@ model Product {
 
   viewCount Int @default(0) // 조회수
 
-  pointOrders PointOrder[]
-
   @@index([category])
   @@index([featured])
   @@index([inStock])
-}
-
-model AIAssistantSession {
-  id             String  @id @default(uuid())
-  userId         String
-  conversationId String // 외부 AI 서비스 conversation ID (OpenAI, Claude 등)
-  title          String? // 세션 제목 (titleMessage 기반)
-
-  // Step 2: Topic
-  titleMessage String? // 주제/토픽 메시지
-
-  // Step 3: Title
-  titleResponses     Json? // 생성된 제목 세트 (복잡한 구조)
-  selectedTitle      String? // 선택된 영상 제목
-  selectedTitleIndex Int? // 선택된 제목 인덱스
-
-  // Step 4: Thumbnail Guide
-  thumbnailGuideResponses     Json? // 생성된 썸네일 가이드 (복잡한 구조)
-  selectedThumbnailGuideIndex Int? // 선택된 가이드 인덱스
-
-  // Step 5: Thumbnail
-  thumbnailUrls String? // S3에 저장된 썸네일 이미지 URL
-
-  // Step 6: Script
-  scriptResponses Json? // 생성된 대본 (구조화된 JSON)
-
-  // Step 7: Metadata
-  metadataResponses Json? // 메타데이터 (설명, 타임스탬프, 해시태그, 태그)
-
-  // Step 8: Shorts Titles (Legacy but kept for compatibility) / Video Generation
-  shortsTitlesResponses Json? // 쇼츠 제목 (각 챕터별 2~3개)
-
-  // Step 8: Generated Video
-  generatedVideoUrl  String? // 생성된 영상 URL (S3 or External)
-  generatedVideoType String? // 'VEO' | 'HEYGEN'
-
-  // Progress
-  step String? // 현재 단계 (TITLE, THUMBNAIL_GUIDE, THUMBNAIL, SCRIPT, METADATA, SHORTS_TITLES)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([createdAt])
-  @@index([conversationId])
-  @@index([step])
-}
-
-model BlogTemplate {
-  id        String   @id @default(uuid())
-  userId    String
-  name      String
-  formData  Json     @default("{}")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([createdAt])
-}
-
-model BlogPostHistory {
-  id        String   @id @default(uuid())
-  userId    String
-  title     String
-  content   String
-  formData  Json     @default("{}")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([createdAt])
 }

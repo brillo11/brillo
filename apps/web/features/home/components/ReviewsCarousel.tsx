@@ -4,8 +4,8 @@ import { cn } from "@/shared/lib/utils";
 const REVIEWS = [
   {
     age: "남 42세, 이○○, 노량진 1타 강사",
-    stars: "/images/home/review-stars-1.png",
-    starsWidth: "15px",
+    stars: "/images/home/review-stars-2.png",
+    starsWidth: "58px",
     text: (
       <>
         “브릴로 서비스를 받고 나서 외모뿐 아니라 <br />
@@ -63,8 +63,8 @@ const REVIEWS = [
   },
   {
     age: "남 20세, 김○○, 아이돌 지망생",
-    stars: "/images/home/review-stars-3.png",
-    starsWidth: "15px",
+    stars: "/images/home/review-stars-2.png",
+    starsWidth: "58px",
     text: (
       <>
         “연습생이라 외모가 중요한데 해야 할 걸 <br />딱 정리해줘서 큰 도움이
