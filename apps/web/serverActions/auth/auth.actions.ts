@@ -39,13 +39,13 @@ function validateNickname(nickname: string): void {
  * @returns 중복 여부 (true: 중복됨, false: 사용 가능)
  */
 export async function checkNicknameDuplication(
-  nickname: string
+  nickname: string,
 ): Promise<boolean> {
   // 닉네임 유효성 검사
   validateNickname(nickname);
 
   try {
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.user.findFirst({
       where: {
         nickname: nickname,
       },

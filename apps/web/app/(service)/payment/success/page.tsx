@@ -44,11 +44,9 @@ function PaymentSuccessContent() {
             paymentKey,
             orderId,
             amount: Number(amount),
+            guestInfo,
           },
           "test", // Always test mode as per requirements
-          false,
-          null,
-          guestInfo,
         );
         setStatus("success");
       } catch (error: any) {

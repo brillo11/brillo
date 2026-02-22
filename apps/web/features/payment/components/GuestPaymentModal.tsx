@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +25,8 @@ interface GuestPaymentModalProps {
   isLoading: boolean;
 }
 
+import { useSession } from "@/shared/lib/auth-client";
+
 export interface GuestUserInfo {
   name: string;
   gender: "male" | "female";
@@ -39,6 +41,8 @@ export function GuestPaymentModal({
   onSubmit,
   isLoading,
 }: GuestPaymentModalProps) {
+  const { data: session } = useSession();
+
   const [userInfo, setUserInfo] = useState<GuestUserInfo>({
     name: "",
     gender: "female",
@@ -46,6 +50,28 @@ export function GuestPaymentModal({
     phone: "",
     email: "",
   });
+
+  // Load from session if available
+  useEffect(() => {
+    if (session?.user && isOpen) {
+      const savedInfo = (session.user as any)?.misc?.reservationInfo;
+      if (savedInfo) {
+        setUserInfo({
+          name: savedInfo.name || session.user.name || "",
+          gender: savedInfo.gender || "female",
+          age: savedInfo.age || "",
+          phone: savedInfo.phone || "",
+          email: savedInfo.email || session.user.email || "",
+        });
+      } else {
+        setUserInfo((prev) => ({
+          ...prev,
+          name: session.user.name || "",
+          email: session.user.email || "",
+        }));
+      }
+    }
+  }, [session, isOpen]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -164,6 +190,13 @@ export function GuestPaymentModal({
               className="bg-white border-black rounded-none focus-visible:ring-0 focus-visible:border-black h-12"
             />
           </div>
+
+          {session?.user && (
+            <div className="text-xs text-black/60 pt-2">
+              로그인한 사용자의 입력 정보는 다음 이용을 위해 저장됩니다.
+            </div>
+          )}
+
           <div className="flex justify-end gap-3 mt-4">
             <Button
               type="button"
