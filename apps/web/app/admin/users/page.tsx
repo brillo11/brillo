@@ -12,29 +12,29 @@ export default async function AdminUsersPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Users</h2>
+      <h2 className="text-2xl font-bold">회원 관리</h2>
 
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                ID / Name
+                ID / 이름
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Email
+                이메일
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Role
+                권한
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
+                상태
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Points
+                포인트
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Joined At
+                가입일
               </th>
             </tr>
           </thead>
@@ -43,7 +43,7 @@ export default async function AdminUsersPage() {
               <tr key={user.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">
-                    {user.name || "N/A"}
+                    {user.name || "없음"}
                   </div>
                   <div
                     className="text-sm text-gray-500 truncate w-32"
@@ -54,7 +54,7 @@ export default async function AdminUsersPage() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">
-                    {user.email || "N/A"}
+                    {user.email || "없음"}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -80,7 +80,7 @@ export default async function AdminUsersPage() {
             {users.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
-                  No users found.
+                  가입된 회원이 없습니다.
                 </td>
               </tr>
             )}

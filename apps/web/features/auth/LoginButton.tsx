@@ -13,7 +13,7 @@ export function LoginButton() {
 
   const handleClick = () => {
     if (session?.user) {
-      router.push(PATH.SERVICE_DASHBOARD);
+      router.push("/mypage/me");
     } else {
       setIsLoginOpen(true);
     }

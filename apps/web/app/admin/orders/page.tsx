@@ -15,7 +15,7 @@ export default async function AdminOrdersPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Orders</h2>
+      <h2 className="text-2xl font-bold">결제내역 관리</h2>
 
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
@@ -25,22 +25,22 @@ export default async function AdminOrdersPage() {
                 ID
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Order Name
+                주문명
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                User
+                사용자
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Amount
+                결제 금액
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
+                결제 상태
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Payment Key
+                결제 키 (Payment Key)
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date
+                결제 일시
               </th>
             </tr>
           </thead>
@@ -57,10 +57,10 @@ export default async function AdminOrdersPage() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">
-                    {order.user?.name || "N/A"}
+                    {order.user?.name || "알 수 없음"}
                   </div>
                   <div className="text-sm text-gray-500">
-                    {order.user?.email || "N/A"}
+                    {order.user?.email || "이메일 없음"}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
@@ -82,7 +82,7 @@ export default async function AdminOrdersPage() {
                       {order.paymentKey}
                     </span>
                   ) : (
-                    "N/A"
+                    "없음"
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -93,7 +93,7 @@ export default async function AdminOrdersPage() {
             {orders.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
-                  No orders found.
+                  결제 내역이 없습니다.
                 </td>
               </tr>
             )}

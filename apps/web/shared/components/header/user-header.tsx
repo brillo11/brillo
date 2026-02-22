@@ -36,7 +36,7 @@ export function UserHeader({ className }: UserHeaderProps) {
     if (pathname.includes(PATH.ADMIN_ROOT)) {
       return PATH.ADMIN_PROFILE;
     }
-    return PATH.SERVICE_PROFILE;
+    return "/mypage/me";
   };
 
   if (isLoading || !user) {
@@ -51,7 +51,7 @@ export function UserHeader({ className }: UserHeaderProps) {
     <header
       className={cn(
         "sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm",
-        className
+        className,
       )}
     >
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
@@ -85,7 +85,7 @@ export function UserHeader({ className }: UserHeaderProps) {
               <ChevronDown
                 className={cn(
                   "h-4 w-4 text-slate-500 transition-transform",
-                  isDropdownOpen && "rotate-180"
+                  isDropdownOpen && "rotate-180",
                 )}
               />
             </button>

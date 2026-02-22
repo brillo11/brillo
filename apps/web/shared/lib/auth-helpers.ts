@@ -15,7 +15,7 @@ import { PATH } from "../consts/path";
 export async function signUpWithEmail(
   email: string,
   password: string,
-  name?: string
+  name?: string,
 ) {
   try {
     const result = await betterSignUp.email({
@@ -53,9 +53,7 @@ export async function loginWithEmail(email: string, password: string) {
       email,
       password,
       callbackURL:
-        email === "student.test@gmail.com"
-          ? PATH.SERVICE_ROOT
-          : PATH.ADMIN_ROOT,
+        email === "student.test@gmail.com" ? PATH.HOME : PATH.ADMIN_ROOT,
     });
 
     if (result?.error) {
@@ -81,7 +79,7 @@ export async function loginWithEmail(email: string, password: string) {
  * 소셜 로그인 (네이버, 카카오, 구글 등)
  */
 export async function loginWithSocial(
-  provider: "naver" | "kakao" | "google" | "apple"
+  provider: "naver" | "kakao" | "google" | "apple",
 ) {
   try {
     console.log("loginWithSocial", provider);
@@ -94,7 +92,7 @@ export async function loginWithSocial(
 
     await betterSignIn.social({
       provider,
-      callbackURL: PATH.SERVICE_ROOT, // 미들웨어(middleware.ts)가 상태(UNKNOWN/PENDING)에 따라 적절한 페이지로 리다이렉트 처리함
+      callbackURL: PATH.HOME, // 메인 페이지('/')로 리다이렉트
     });
     return { success: true };
   } catch (error: any) {

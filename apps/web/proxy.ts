@@ -8,6 +8,10 @@ export async function proxy(request: NextRequest) {
   });
   const { pathname } = request.nextUrl;
 
+  if (pathname === "/admin" || pathname === PATH.ADMIN_ROOT) {
+    return NextResponse.redirect(new URL("/admin/users", request.url));
+  }
+
   // 공개 경로 (로그인 불필요)
   const publicPaths = [
     // PATH.AUTH_LOGIN,
@@ -16,6 +20,19 @@ export async function proxy(request: NextRequest) {
     "/api/auth",
     "/favicon.ico",
   ];
+
+  // 로그인한 상태가 아니라면 /mypage로 접근 불가
+  if (!session?.user && pathname.startsWith("/mypage")) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
+  // 어드민이 아니라면 /admin 접근 불가
+  if (
+    (!session?.user || (session?.user as any).role !== "ADMIN") &&
+    pathname.startsWith("/admin")
+  ) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
 
   return NextResponse.next();
 
@@ -48,8 +65,8 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  // 관리자 페이지 보호 - 로그인만 확인 (role 검증 제거)
-  if (pathname.startsWith(PATH.ADMIN_ROOT)) {
+  // 관리자 및 마이페이지 보호 - 로그인만 확인 (role 검증 제거)
+  if (pathname.startsWith(PATH.ADMIN_ROOT) || pathname.startsWith("/mypage")) {
     // 미인증 사용자 → 로그인 페이지로
     if (!session || !session.user) {
       console.log("🚫 Unauthenticated user redirected to login");
@@ -57,7 +74,7 @@ export async function proxy(request: NextRequest) {
       const response = NextResponse.redirect(loginUrl);
       response.headers.set(
         "Cache-Control",
-        "no-cache, no-store, max-age=0, must-revalidate"
+        "no-cache, no-store, max-age=0, must-revalidate",
       );
       return response;
     }
@@ -80,6 +97,7 @@ export const config = {
   matcher: [
     "/admin/:path*",
     "/student/:path*", // 학생 페이지 추가 (온보딩 체크 위함)
+    "/mypage/:path*", // 마이페이지 보호
     "/api/admin/:path*",
     "/auth/:path*", // 로그인/회원가입 페이지도 체크 (이미 로그인된 경우 리다이렉트)
     // 결제 페이지도 인증 필요
