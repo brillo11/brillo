@@ -34,6 +34,14 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
+  if (
+    session?.user &&
+    session?.user.role === "ADMIN" &&
+    pathname === "/admin"
+  ) {
+    return NextResponse.redirect(new URL("/admin/users", request.url));
+  }
+
   return NextResponse.next();
 
   if (
