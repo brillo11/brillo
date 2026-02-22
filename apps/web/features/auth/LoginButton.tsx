@@ -21,11 +21,15 @@ export function LoginButton() {
 
   return (
     <button onClick={handleClick} className="block group">
-      <img
-        className="w-5 h-5 opacity-90 group-hover:opacity-100 transition-opacity"
-        alt="User login"
-        src="/images/auth/user-login-icon.svg"
-      />
+      {session?.user ? (
+        <img
+          className="w-5 h-5 opacity-90 group-hover:opacity-100 transition-opacity"
+          alt="User login"
+          src="/images/auth/user-login-icon.svg"
+        />
+      ) : (
+        <span className="text-sm font-medium text-white">로그인</span>
+      )}
     </button>
   );
 }

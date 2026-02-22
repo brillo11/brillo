@@ -22,7 +22,7 @@ export function Header() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-[100] h-21 pt-7 transition-colors duration-300",
+        "fixed top-0 left-0 right-0 z-[100] h-14 transition-colors duration-300",
         isDarkHeader ? "bg-black" : "bg-white border-b border-gray-100/50",
       )}
     >

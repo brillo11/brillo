@@ -68,7 +68,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="bg-white overflow-hidden w-full min-w-full lg:min-w-[1280px] relative mx-auto mt-21">
+    <div className="bg-white overflow-hidden w-full min-w-full lg:min-w-[1280px] relative mx-auto mt-14">
       {/* 히어로 섹션 */}
       <div className="relative w-full h-screen">
         <video
@@ -385,75 +385,6 @@ export default function HomePage() {
                   {isSocialLoading ? "로그인 중..." : "카카오로 시작하기"}
                 </button>
               </div>
-
-              <div className="text-center pt-6 border-t border-white/10">
-                <button
-                  type="button"
-                  onClick={() => setIsAdminFormOpen(!isAdminFormOpen)}
-                  className="text-xs text-gray-500 hover:text-gray-300 transition-colors flex items-center justify-center gap-1 mx-auto"
-                >
-                  관리자 로그인
-                </button>
-              </div>
-
-              {isAdminFormOpen && (
-                <form
-                  id="admin-form"
-                  onSubmit={handleSubmit}
-                  className="space-y-5 mt-6 animate-fade-in"
-                >
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-400">
-                      아이디
-                    </label>
-                    <input
-                      name="email"
-                      placeholder="admin@brillo.kr"
-                      required={true}
-                      value={credentials.email}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-[#1A1A1A] border border-white/10 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-white/30 focus:bg-[#222] transition-colors"
-                      type="email"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-400">
-                      비밀번호
-                    </label>
-                    <div className="relative">
-                      <input
-                        id="password"
-                        name="password"
-                        autoComplete="current-password"
-                        required={true}
-                        value={credentials.password}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 pr-12 bg-[#1A1A1A] border border-white/10 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-white/30 focus:bg-[#222] transition-colors"
-                        placeholder="••••••••"
-                        type={showPassword ? "text" : "password"}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
-                      >
-                        {showPassword ? (
-                          <EyeOff size={18} />
-                        ) : (
-                          <Eye size={18} />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full flex justify-center py-3 px-6 rounded-xl font-suit font-bold text-black bg-white hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                  >
-                    {isLoading ? "로그인 중..." : "관리자 로그인"}
-                  </button>
-                </form>
-              )}
             </div>
           </div>
         </div>
