@@ -14,7 +14,7 @@ model User {
   createdAt                   DateTime    @default(now())
   name                        String      @default("")
   nickname                    String      @default("")
-  role                        ROLE        @default(STUDENT)
+  role                        ROLE        @default(USER)
   status                      USER_STATUS @default(ACTIVE)
   expiredAt                   DateTime    @default(now())
   lastLoginAt                 DateTime    @default(now())
@@ -222,6 +222,7 @@ enum ROLE {
   SUPER_ADMIN
   ADMIN
   STUDENT
+  USER
 }
 
 enum GENDER {

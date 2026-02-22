@@ -96,7 +96,6 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/admin/:path*",
-    "/student/:path*", // 학생 페이지 추가 (온보딩 체크 위함)
     "/mypage/:path*", // 마이페이지 보호
     "/api/admin/:path*",
     "/auth/:path*", // 로그인/회원가입 페이지도 체크 (이미 로그인된 경우 리다이렉트)

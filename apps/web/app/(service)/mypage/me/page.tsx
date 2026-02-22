@@ -1,10 +1,28 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSession, authClient } from "@/shared/lib/auth-client";
+import { getLoginProvider } from "./actions";
 
 export default function MyPageMe() {
   const { data: session } = useSession();
+
+  const [provider, setProvider] = useState<string>("-");
+
+  useEffect(() => {
+    getLoginProvider().then((res) => {
+      if (res) {
+        const labels: Record<string, string> = {
+          kakao: "카카오 (Kakao)",
+          naver: "네이버 (Naver)",
+          google: "구글 (Google)",
+          credential: "이메일 계정 (Email)",
+          email: "이메일 계정 (Email)",
+        };
+        setProvider(labels[res] || res);
+      }
+    });
+  }, []);
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -48,6 +66,12 @@ export default function MyPageMe() {
             기본 정보
           </h2>
           <div className="space-y-4 font-suit text-sm text-black">
+            <div className="flex justify-between items-center pb-2 border-b border-[#d4d4d4]">
+              <span className="font-semibold w-32">가입 연동 플랫폼</span>
+              <span className="flex-1 text-[#000000]/70 text-right md:text-left">
+                {provider}
+              </span>
+            </div>
             <div className="flex justify-between items-center pb-2 border-b border-[#d4d4d4]">
               <span className="font-semibold w-32">가입 이메일</span>
               <span className="flex-1 text-[#000000]/70 text-right md:text-left">
