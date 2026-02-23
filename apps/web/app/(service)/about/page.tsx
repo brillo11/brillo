@@ -1,16 +1,4 @@
 export default function AboutPage() {
-  const bulletPoints = Array(6).fill("/img/group-26.png");
-
-  const representativeInfo = [
-    "프리미엄 퍼스널 비주얼디렉팅 BRILLO 대표",
-    "국내 최대 전문가 플랫폼 크* 뷰티· 패션 분야 1위",
-    "네이버 지식iN 뷰티· 성형 분야 엑스퍼트",
-    "",
-    "前 SM Entertainment",
-    "前 뷰티· 패션· 라이프스타일 메거진 뷰티 테스터",
-    "경희대학교 졸업",
-  ];
-
   return (
     <div className="bg-black w-full relative" data-model-id="1:1179">
       {/* Header and Nav removed as per request */}
@@ -30,9 +18,21 @@ export default function AboutPage() {
                 BRILLO ;
               </h1>
 
-              <p className="text-center mt-4 w-full font-suit font-medium text-[#242424] text-2xl tracking-[11.76px] leading-9 whitespace-nowrap">
-                빛·광채·찬란함
-              </p>
+              <div className="text-center mt-4 w-full font-suit font-medium text-[#242424] text-2xl leading-9 flex gap-2 mx-auto justify-center items-center">
+                <span>빛</span>
+                <img
+                  src="/icons/about/star.svg"
+                  alt="star"
+                  className="w-3 h-3 object-contain shrink-0 mx-1"
+                />
+                <span className="tracking-[0.25em]">광 채</span>
+                <img
+                  src="/icons/about/star.svg"
+                  alt="star"
+                  className="w-3 h-3 object-contain shrink-0 mx-1"
+                />
+                <span className="tracking-[0.25em]">찬 란 함</span>
+              </div>
             </section>
 
             <section
@@ -54,7 +54,7 @@ export default function AboutPage() {
                   </h2>
 
                   <p className="text-center md:text-left font-serif font-normal text-black text-sm leading-[21px]">
-                    <span className="font-serif font-bold">BRILLO</span>
+                    <span className="font-serif">BRILLO</span>
                     <span className="font-suit">
                       는 단순 외모의 변화를 넘어,
                       <br />
@@ -161,52 +161,99 @@ export default function AboutPage() {
         </div>
 
         <section className="block bg-black">
-          <div className="mx-auto pt-14 pb-32 flex flex-col md:flex-row gap-14 justify-center items-center md:items-start px-4 max-w-screen-lg">
+          <div className="mx-auto pt-14 pb-32 flex flex-col md:flex-row gap-14 justify-center items-center md:items-center px-4 max-w-screen-lg">
             <img
               className="w-full max-w-[300px] object-cover"
               alt="Representative profile portrait"
               src="/img/rectangle-17.png"
             />
 
-            <article className="w-full md:w-auto">
+            <article className="w-full md:w-auto flex flex-col justify-center h-full">
               <h2
                 id="representative-section"
-                className="font-suit font-medium text-white text-2xl leading-9 mb-8 text-center md:text-left"
+                className="font-suit font-medium text-white text-2xl leading-9 mb-[18px] text-center md:text-left"
               >
                 대표소개
               </h2>
 
               <div className="w-full max-w-md">
-                {representativeInfo.map((info, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start gap-[11px] mb-[10px]"
-                  >
-                    {info && (
-                      <img
-                        className="w-2.5 h-[13px] mt-[3px] flex-shrink-0"
-                        alt=""
-                        src="/img/group-26.png"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <p className="font-suit font-normal text-white text-base leading-6">
-                      {info.includes("BRILLO") ? (
-                        <>
-                          <span className="font-medium">
-                            프리미엄 퍼스널 비주얼디렉팅{" "}
-                          </span>
-                          <span className="font-playfair">BRILLO</span>
-                          <span className="font-medium"> 대표</span>
-                        </>
-                      ) : info.includes("SM Entertainment") ? (
-                        <span className="font-playfair">{info}</span>
-                      ) : (
-                        <span className="font-medium">{info}</span>
-                      )}
-                    </p>
-                  </div>
-                ))}
+                <div className="flex items-center gap-[11px]">
+                  <img
+                    className="w-2.5 h-[13px] mt-[3px] flex-shrink-0"
+                    alt=""
+                    src="/img/group-26.png"
+                    aria-hidden="true"
+                  />
+                  <p className="font-suit font-normal text-white text-base leading-6">
+                    <span className="font-medium">
+                      프리미엄 퍼스널 비주얼디렉팅{" "}
+                    </span>
+                    <span className="font-serif">BRILLO</span>
+                    <span className="font-medium"> 대표</span>
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-[11px]">
+                  <img
+                    className="w-2.5 h-[13px] mt-[3px] flex-shrink-0"
+                    alt=""
+                    src="/img/group-26.png"
+                    aria-hidden="true"
+                  />
+                  <p className="font-suit font-medium text-white text-base leading-6">
+                    국내 최대 전문가 플랫폼 크* 뷰티· 패션 분야 1위
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-[11px]">
+                  <img
+                    className="w-2.5 h-[13px] mt-[3px] flex-shrink-0"
+                    alt=""
+                    src="/img/group-26.png"
+                    aria-hidden="true"
+                  />
+                  <p className="font-suit font-medium text-white text-base leading-6">
+                    네이버 지식iN 뷰티· 성형 분야 엑스퍼트
+                  </p>
+                </div>
+
+                <div className="mb-[10px] h-6" aria-hidden="true" />
+
+                <div className="flex items-center gap-[11px]">
+                  <img
+                    className="w-2.5 h-[13px] mt-[3px] flex-shrink-0"
+                    alt=""
+                    src="/img/group-26.png"
+                    aria-hidden="true"
+                  />
+                  <p className="font-playfair text-white text-base leading-6">
+                    前 <span className="font-serif">SM Entertainment</span>
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-[11px]">
+                  <img
+                    className="w-2.5 h-[13px] mt-[3px] flex-shrink-0"
+                    alt=""
+                    src="/img/group-26.png"
+                    aria-hidden="true"
+                  />
+                  <p className="font-suit font-medium text-white text-base leading-6">
+                    前 뷰티· 패션· 라이프스타일 메거진 뷰티 테스터
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-[11px]">
+                  <img
+                    className="w-2.5 h-[13px] mt-[3px] flex-shrink-0"
+                    alt=""
+                    src="/img/group-26.png"
+                    aria-hidden="true"
+                  />
+                  <p className="font-suit font-medium text-white text-base leading-6">
+                    경희대학교 졸업
+                  </p>
+                </div>
               </div>
             </article>
           </div>
