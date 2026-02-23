@@ -104,7 +104,6 @@ export default function HomePage() {
 
           {/* Main Hero Description Text */}
           <p className="font-medium font-suit text-white text-base text-center tracking-[0] leading-6 break-keep">
-            <span className="font-medium">전 </span>
             <span className="font-medium font-playfair">SM Entertainment </span>
             <span className="font-medium">
               출신 비주얼 디렉터
