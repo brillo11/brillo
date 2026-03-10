@@ -88,28 +88,28 @@ const SERVICES = {
       </div>
     ),
   },
-  skin: {
-    label: "피부 & 성형 컨시어지",
-    title: "피부 & 성형 컨시어지",
-    description: (
-      <div className="text-sm leading-relaxed text-black font-suit">
-        <div className="flex items-start gap-1">
-          <span className="shrink-0">•</span>
-          <span>전문 피부과· 성형외과 협업</span>
-        </div>
-        <div className="flex items-start gap-1">
-          <span className="shrink-0">•</span>
-          <span>최적화된 시술 및 수술 플랜 제안 (회복 관리 포함)</span>
-        </div>
-        <div className="flex items-start gap-1">
-          <span className="shrink-0">•</span>
-          <span>
-            불필요한 시술/수술은 배제, <br />꼭 필요한 업그레이드만 제안
-          </span>
-        </div>
-      </div>
-    ),
-  },
+  // skin: {
+  //   label: "피부 & 성형 컨시어지",
+  //   title: "피부 & 성형 컨시어지",
+  //   description: (
+  //     <div className="text-sm leading-relaxed text-black font-suit">
+  //       <div className="flex items-start gap-1">
+  //         <span className="shrink-0">•</span>
+  //         <span>전문 피부과· 성형외과 협업</span>
+  //       </div>
+  //       <div className="flex items-start gap-1">
+  //         <span className="shrink-0">•</span>
+  //         <span>최적화된 시술 및 수술 플랜 제안 (회복 관리 포함)</span>
+  //       </div>
+  //       <div className="flex items-start gap-1">
+  //         <span className="shrink-0">•</span>
+  //         <span>
+  //           불필요한 시술/수술은 배제, <br />꼭 필요한 업그레이드만 제안
+  //         </span>
+  //       </div>
+  //     </div>
+  //   ),
+  // },
   private: {
     label: "프라이빗 컨설팅과 공간",
     title: "프라이빗 컨설팅과 공간",
