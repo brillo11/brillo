@@ -15,15 +15,15 @@ async function main() {
   console.log("Seeding Man and Woman products...");
 
   const womanProducts = [
-    {
-      name: "Visual Consulting (90분) - Woman",
-      description:
-        "데이터 기반 정밀 진단 + 극대화 전략 설계. 피부시술과 성형 포함 맞춤형 Visual Roadmap 제공",
-      price: 330000,
-      category: "Woman",
-      tags: ["90min", "Consulting", "Visual"],
-      featured: true,
-    },
+    // {
+    //   name: "Visual Consulting (90분) - Woman",
+    //   description:
+    //     "데이터 기반 정밀 진단 + 극대화 전략 설계. 피부시술과 성형 포함 맞춤형 Visual Roadmap 제공",
+    //   price: 330000,
+    //   category: "Woman",
+    //   tags: ["90min", "Consulting", "Visual"],
+    //   featured: true,
+    // },
     {
       name: "Fashion Styling (240분) - Woman",
       description:
