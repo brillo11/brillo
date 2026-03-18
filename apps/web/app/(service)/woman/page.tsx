@@ -81,13 +81,13 @@ const SERVICES = {
           <span className="shrink-0">•</span>
           <span>데이터 기반 정밀 진단 + 극대화 전략 설계</span>
         </div>
-        <div className="flex items-start gap-1">
+        {/* <div className="flex items-start gap-1">
           <span className="shrink-0">•</span>
           <span>
             피부시술과 성형 포함 맞춤형{" "}
             <span className="font-bold font-playfair">Visual Roadmap</span> 제공
           </span>
-        </div>
+        </div> */}
       </div>
     ),
   },
