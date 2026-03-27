@@ -29,7 +29,7 @@ import { useSession } from "@/shared/lib/auth-client";
 
 export interface GuestUserInfo {
   name: string;
-  gender: "male" | "female";
+  gender: "male" | "female" | "";
   age: string;
   phone: string;
   email: string;
@@ -45,7 +45,7 @@ export function GuestPaymentModal({
 
   const [userInfo, setUserInfo] = useState<GuestUserInfo>({
     name: "",
-    gender: "female",
+    gender: "",
     age: "",
     phone: "",
     email: "",
@@ -58,7 +58,7 @@ export function GuestPaymentModal({
       if (savedInfo) {
         setUserInfo({
           name: savedInfo.name || session.user.name || "",
-          gender: savedInfo.gender || "female",
+          gender: savedInfo.gender || "",
           age: savedInfo.age || "",
           phone: savedInfo.phone || "",
           email: savedInfo.email || session.user.email || "",
@@ -80,13 +80,13 @@ export function GuestPaymentModal({
 
   const handleGenderChange = (value: string | null) => {
     if (value) {
-      setUserInfo((prev) => ({ ...prev, gender: value as "male" | "female" }));
+      setUserInfo((prev) => ({ ...prev, gender: value as "male" | "female" | "" }));
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userInfo.name || !userInfo.age || !userInfo.phone || !userInfo.email) {
+    if (!userInfo.name || !userInfo.gender || !userInfo.age || !userInfo.phone || !userInfo.email) {
       alert("모든 정보를 입력해주세요.");
       return;
     }
@@ -120,28 +120,28 @@ export function GuestPaymentModal({
             <Label htmlFor="gender" className="text-black font-medium">
               성별
             </Label>
-            <Select value={userInfo.gender} onValueChange={handleGenderChange}>
+            <Select value={userInfo.gender || undefined} onValueChange={handleGenderChange}>
               <SelectTrigger className="bg-white border-black rounded-none focus:ring-0 focus:border-black h-12">
                 <SelectValue>
-                  {userInfo.gender === "female"
-                    ? "여성"
-                    : userInfo.gender === "male"
-                      ? "남성"
-                      : "성별 선택"}
+                  {userInfo.gender === "male"
+                    ? "남성"
+                    : userInfo.gender === "female"
+                      ? "여성"
+                      : "선택"}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-white border-black rounded-none">
-                <SelectItem
-                  value="female"
-                  className="rounded-none focus:bg-[#f7f3f0] focus:text-black cursor-pointer"
-                >
-                  여성
-                </SelectItem>
                 <SelectItem
                   value="male"
                   className="rounded-none focus:bg-[#f7f3f0] focus:text-black cursor-pointer"
                 >
                   남성
+                </SelectItem>
+                <SelectItem
+                  value="female"
+                  className="rounded-none focus:bg-[#f7f3f0] focus:text-black cursor-pointer"
+                >
+                  여성
                 </SelectItem>
               </SelectContent>
             </Select>

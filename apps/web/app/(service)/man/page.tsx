@@ -288,7 +288,19 @@ export default function ManPage() {
                   {SERVICES[selectedService].description}
                 </div>
               )}
-              {activeTab === "리뷰" && <p>등록된 리뷰가 없습니다.</p>}
+              {activeTab === "리뷰" && (
+                <div className="space-y-3">
+                  <p>등록된 리뷰가 없습니다.</p>
+                  <a
+                    href="https://kmong.com/gig/534658#gig-rate-evaluation"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block text-sm text-black underline underline-offset-4 hover:text-gray-600"
+                  >
+                    더 많은 리뷰보기
+                  </a>
+                </div>
+              )}
               {activeTab === "서비스규정" && (
                 <div className="space-y-2">{SERVICE_REGULATION}</div>
               )}

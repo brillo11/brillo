@@ -15,7 +15,7 @@ export function VipMainCarousel() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % IMAGES.length);
-    }, 3000);
+    }, 1500);
     return () => clearInterval(interval);
   }, []);
 
