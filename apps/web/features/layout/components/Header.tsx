@@ -26,7 +26,7 @@ export function Header() {
         isDarkHeader ? "bg-black" : "bg-white border-b border-gray-100/50",
       )}
     >
-      <div className="relative w-full mx-auto top-0 h-full px-4 xl:px-[18px] flex items-center justify-between md:justify-normal">
+      <div className="relative w-full mx-auto top-0 h-full px-4 xl:px-[18px] flex items-center justify-between md:justify-normal max-w-[1200px]">
         {/* Mobile Hamburger - Left */}
         <MobileSidebar isDark={isDarkHeader} navItems={navItems} />
 

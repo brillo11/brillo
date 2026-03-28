@@ -242,10 +242,11 @@ export const ReviewsCarousel = () => {
   return (
     <div className="block relative">
       <div className="left-0 w-full h-[372px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,1)_100%)] flex flex-col justify-center items-center">
-        <p className="font-suit font-normal text-white text-[26.2px] text-center tracking-[0] leading-[39.3px]">
+        <p className="font-suit font-normal text-white text-2xl text-center tracking-[0]">
           <span className="font-medium">
-            실제 고객의 변화, <br />
-            그들의 이야기가{" "}
+            실제 고객의 변화, <br className="hidden md:block" />
+            그들의 <br className="md:hidden block" />
+            이야기가{" "}
           </span>
           <span className="font-playfair font-medium">BRILLO</span>
           <span className="font-medium">의 증거입니다.</span>

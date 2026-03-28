@@ -6,7 +6,7 @@ export default function AboutPage() {
       <main className="relative">
         <div className="relative block">
           <div className="absolute w-full h-full bg-[linear-gradient(158deg,rgba(255,240,216,1)_0%,rgba(255,255,255,1)_62%)]" />
-          <div className="relative pt-48 pb-32 px-4">
+          <div className="relative pt-48 pb-32 px-4 ">
             <section
               className="w-full flex flex-col items-center"
               aria-labelledby="hero-title"
@@ -39,21 +39,21 @@ export default function AboutPage() {
               className="relative pt-32 mx-auto max-w-screen-lg"
               aria-labelledby="about-section"
             >
-              <div className="flex flex-col md:flex-row gap-14 justify-center items-center md:items-start">
+              <div className="flex flex-col md:flex-row gap-14 justify-center items-center w-full">
                 <img
-                  className="w-full max-w-[300px] aspect-[0.96] object-cover"
+                  className="w-full md:w-[360px] shrink-0 aspect-[0.96] object-cover"
                   alt="VIP woman portrait showcasing premium styling"
                   src="/img/vip-women-1-1.png"
                 />
 
-                <article className="w-full md:w-auto flex flex-col items-center md:items-start gap-10">
-                  <h2 className="text-center md:text-left font-suit font-bold text-black text-sm leading-[21px]">
+                <article className="w-full md:w-[360px] flex flex-col items-center md:items-start gap-10 text-base">
+                  <h2 className="text-center md:text-left font-suit font-bold text-black leading-[21px]">
                     당신의 외모가
                     <br />
                     당신에 대해 많은 것을 말해주는 시대
                   </h2>
 
-                  <p className="text-center md:text-left font-serif font-normal text-black text-sm leading-[21px]">
+                  <p className="text-center md:text-left font-serif font-normal text-black leading-[21px]">
                     <span className="font-serif">BRILLO</span>
                     <span className="font-suit">
                       는 단순 외모의 변화를 넘어,
@@ -65,7 +65,7 @@ export default function AboutPage() {
                     <span className="font-suit">합니다.</span>
                   </p>
 
-                  <p className="text-center md:text-left font-suit font-normal text-black text-sm leading-[21px]">
+                  <p className="text-center md:text-left font-suit font-normal text-black leading-[21px]">
                     <span className="font-suit">
                       당신의 외모와 스타일은 곧 당신의 언어입니다.
                       <br />
@@ -79,7 +79,7 @@ export default function AboutPage() {
                     <span className="font-suit">있습니다.</span>
                   </p>
 
-                  <p className="text-center md:text-left font-suit font-normal text-black text-sm leading-[21px]">
+                  <p className="text-center md:text-left font-suit font-normal text-black leading-[21px]">
                     <span className="font-suit">그 </span>
                     <span className="font-suit font-bold">말이</span>
                     <span className="font-suit">
@@ -101,9 +101,9 @@ export default function AboutPage() {
               className="pt-32 relative mx-auto max-w-screen-lg"
               aria-labelledby="philosophy-section"
             >
-              <div className="flex flex-col-reverse md:flex-row gap-14 justify-center items-center md:items-start">
-                <article className="w-full md:w-auto flex flex-col items-center md:items-start gap-10">
-                  <p className="text-center md:text-left font-suit font-normal text-black text-sm leading-[21px]">
+              <div className="flex flex-col-reverse md:flex-row gap-14 justify-center items-center w-full">
+                <article className="w-full md:w-[360px] flex flex-col items-center md:items-start gap-10 text-base">
+                  <p className="text-center md:text-left font-suit font-normal text-black leading-[21px]">
                     <span className="font-suit">
                       누구나 본능적으로 멋지고 아름다워지길 원합니다.
                       <br />
@@ -115,7 +115,7 @@ export default function AboutPage() {
                     <span className="font-suit">이 필요합니다.</span>
                   </p>
 
-                  <p className="text-center md:text-left font-suit font-normal text-black text-sm leading-[21px]">
+                  <p className="text-center md:text-left font-suit font-normal text-black leading-[21px]">
                     <span className="font-suit">
                       외모는 더 이상 타고나는 것이 아닙니다.
                       <br />
@@ -126,7 +126,7 @@ export default function AboutPage() {
                     <span className="font-suit">입니다.</span>
                   </p>
 
-                  <p className="text-center md:text-left font-suit font-normal text-black text-sm leading-[21px]">
+                  <p className="text-center md:text-left font-suit font-normal text-black leading-[21px]">
                     <span className="font-suit">
                       아직 알지 못할 뿐,
                       <br />
@@ -140,7 +140,7 @@ export default function AboutPage() {
                     </span>
                   </p>
 
-                  <p className="text-center md:text-left font-serif font-normal text-black text-sm leading-[21px]">
+                  <p className="text-center md:text-left font-serif font-normal text-black leading-[21px]">
                     <span className="font-serif">BRILLO</span>
                     <span className="font-suit">
                       에서
@@ -151,7 +151,7 @@ export default function AboutPage() {
                 </article>
 
                 <img
-                  className="w-full max-w-[300px] aspect-[0.96] object-cover"
+                  className="w-full md:w-[360px] shrink-0 aspect-[0.96] object-cover"
                   alt="VIP woman portrait demonstrating visual transformation"
                   src="/img/vip-women-1-1-1.png"
                 />

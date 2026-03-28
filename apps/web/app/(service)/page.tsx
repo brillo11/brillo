@@ -83,7 +83,7 @@ export default function HomePage() {
       <div className="relative py-20 bg-black px-4">
         <div className="max-w-screen-xl mx-auto">
           <p className="mx-auto font-normal text-white text-xl text-center tracking-[0] leading-[normal] font-playfair">
-            <span className="text-white text-xl tracking-[0]">
+            <span className="text-white text-2xl tracking-[0]">
               It’s not just a change, It’s a{" "}
             </span>
             <span className="font-bold">Rebirth</span>
@@ -103,7 +103,7 @@ export default function HomePage() {
           </div>
 
           {/* Main Hero Description Text */}
-          <p className="font-medium font-suit text-white text-base text-center tracking-[0] leading-6 break-keep">
+          <p className="font-medium font-suit text-white text-2xl text-center leading-9 break-keep">
             <span className="font-medium font-playfair">SM Entertainment </span>
             <span className="font-medium">
               출신 비주얼 디렉터
@@ -140,7 +140,7 @@ export default function HomePage() {
 
       {/* 4카드 섹션 */}
       <div className="py-20 mx-auto max-w-screen-xl px-4 xl:px-0">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[111px] md:gap-8">
           {/* Card 1 */}
           <div className="flex flex-col gap-6">
             <img
@@ -149,14 +149,14 @@ export default function HomePage() {
               alt="Visual Consulting"
             />
             <div className="space-y-4">
-              <h3 className="font-serif font-bold text-black text-[22px] leading-[33px]">
+              <h3 className="font-playfair font-bold text-black text-[22px] leading-[33px]">
                 Visual Consulting
               </h3>
-              <p className="font-suit font-medium text-black text-[13px] leading-[19.5px] break-keep">
+              <p className="font-suit font-medium text-black text-[16px] leading-[24px] break-keep">
                 당신의 모든 시각적 요소를 낱낱이 진단하고
-                <br className="hidden md:block" />
+                <br />
                 이를 극대화·최적화 하기 위한
-                <br className="hidden md:block" />
+                <br />
                 당신만의 비주얼 로드맵을 설계합니다.
               </p>
             </div>
@@ -170,14 +170,14 @@ export default function HomePage() {
               alt="Signature Look Styling"
             />
             <div className="space-y-4">
-              <h3 className="font-serif font-bold text-black text-[22px] leading-[33px]">
+              <h3 className="font-playfair font-bold text-black text-[22px] leading-[33px]">
                 Signature Look Styling
               </h3>
-              <p className="font-suit font-medium text-black text-[13px] leading-[19.5px] break-keep">
+              <p className="font-suit font-medium text-black text-[16px] leading-[24px] break-keep">
                 트렌드가 아닌, 아이덴티티에 집중합니다.
-                <br className="hidden md:block" />
+                <br />
                 당신만의 무드와 라이프스타일을 반영한
-                <br className="hidden md:block" />
+                <br />
                 시그니처 룩 스타일링.
               </p>
             </div>
@@ -191,14 +191,14 @@ export default function HomePage() {
               alt="Total Visual Making"
             />
             <div className="space-y-4">
-              <h3 className="font-serif font-bold text-black text-[22px] leading-[33px]">
+              <h3 className="font-playfair font-bold text-black text-[22px] leading-[33px]">
                 Total Visual Making
               </h3>
-              <p className="font-suit font-medium text-black text-[13px] leading-[19.5px] break-keep">
+              <p className="font-suit font-medium text-black text-[16px] leading-[24px] break-keep">
                 컨설팅-스타일링-헤어&페이셜 메이크오버-
-                <br className="hidden md:block" />
+                <br />
                 프로필 촬영까지. 머리부터 발끝까지 당신의
-                <br className="hidden md:block" />
+                <br />
                 비주얼에 차별화를 만듭니다.
               </p>
             </div>
@@ -212,16 +212,16 @@ export default function HomePage() {
               alt="VIP & Celeb Directing"
             />
             <div className="space-y-4">
-              <h3 className="font-serif font-bold text-black text-[22px] leading-[33px]">
+              <h3 className="font-playfair font-bold text-black text-[22px] leading-[33px]">
                 VIP & Celeb Directing
               </h3>
-              <p className="font-suit font-medium text-black text-[13px] leading-[19.5px] break-keep">
+              <p className="font-suit font-medium text-black text-[16px] leading-[24px] break-keep">
                 비즈니스, 촬영, 그리고 무대와 영상 등 특별한
-                <br className="hidden md:block" />
+                <br />
                 순간 가장 빛나는 당신을 위한 프라이빗 케어.
-                <br className="hidden md:block" />
+                <br />
                 시술과 성형 메디컬 연계까지 확장, 드라마틱한
-                <br className="hidden md:block" />
+                <br />
                 변화를 지원합니다.
               </p>
             </div>

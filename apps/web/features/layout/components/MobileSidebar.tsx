@@ -27,7 +27,7 @@ export function MobileSidebar({ isDark, navItems }: MobileSidebarProps) {
       <SheetContent
         side="left"
         className={cn(
-          "w-full p-0 border-none transition-colors duration-300",
+          "!w-1/2 p-0 border-none transition-colors duration-300",
           isDark ? "bg-black" : "bg-white",
         )}
       >
@@ -38,7 +38,7 @@ export function MobileSidebar({ isDark, navItems }: MobileSidebarProps) {
                 key={item.label}
                 href={item.href}
                 className={cn(
-                  "font-playfair text-3xl font-medium transition-colors duration-300 hover:opacity-70",
+                  "font-playfair text-xl font-medium transition-colors duration-300 hover:opacity-70",
                   isDark ? "text-white" : "text-black",
                 )}
                 onClick={() => setIsOpen(false)}
