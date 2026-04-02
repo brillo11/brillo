@@ -36,6 +36,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="shortcut icon" href="https://brillo.kr/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="https://brillo.kr/favicon.ico" type="image/x-icon" />
         <link
           rel="stylesheet"
           as="style"
