@@ -2,7 +2,7 @@ import "@repo/ui/globals.css";
 import { Providers } from "./providers";
 import { Toaster } from "@repo/ui/components/sonner";
 import { Metadata } from "next";
-import { METADATA } from "@/shared/consts/metadata";
+import { getAbsoluteUrl, getSiteUrl, METADATA } from "@/shared/consts/metadata";
 
 import { Playfair_Display, DM_Serif_Display } from "next/font/google";
 
@@ -18,13 +18,39 @@ const dmSerif = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
-  title: `${METADATA.TITLE}`,
-  description: `${METADATA.DESCRIPTION}`,
+  metadataBase: new URL(getSiteUrl()),
+  title: METADATA.TITLE,
+  description: METADATA.DESCRIPTION,
+  alternates: {
+    canonical: "/",
+  },
+  icons: {
+    icon: [{ url: "/favicon.ico", sizes: "any" }],
+    shortcut: ["/favicon.ico"],
+  },
   openGraph: {
-    title: `${METADATA.TITLE}`,
-    description: `${METADATA.DESCRIPTION}`,
-    images: [METADATA.getThumbnailUrl()],
+    title: METADATA.TITLE,
+    description: METADATA.DESCRIPTION,
+    url: "/",
+    siteName: METADATA.COMPANY_NAME,
+    locale: "ko_KR",
+    images: [
+      {
+        url: METADATA.getThumbnailUrl(),
+      },
+    ],
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: METADATA.TITLE,
+    description: METADATA.DESCRIPTION,
+    images: [getAbsoluteUrl(METADATA.THUMBNAIL)],
+  },
+  verification: {
+    other: {
+      "naver-site-verification": "af692bab7fa2f69735a7a041a4d81597",
+    },
   },
 };
 
@@ -34,10 +60,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ko" suppressHydrationWarning>
       <head>
-        <link rel="shortcut icon" href="https://brillo.kr/favicon.ico" type="image/x-icon" />
-        <link rel="icon" href="https://brillo.kr/favicon.ico" type="image/x-icon" />
         <link
           rel="stylesheet"
           as="style"
