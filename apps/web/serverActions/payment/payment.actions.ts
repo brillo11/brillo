@@ -8,6 +8,8 @@ import {
 import { revalidatePath } from "next/cache";
 import { Order } from "@repo/database";
 import { Refund } from "@repo/database";
+import { auth } from "@/shared/lib/auth";
+import { headers } from "next/headers";
 
 interface PaymentRequest {
   amount: number;
@@ -55,7 +57,7 @@ export async function updatePaymentStatus(
         id: paymentId,
       },
       data: {
-        status,
+        status: status as any,
         updatedAt: new Date(),
       },
     });
@@ -75,6 +77,18 @@ export async function confirmPayment(
   eventText: string | null = null,
 ) {
   try {
+    // 0. 서버에서 현재 사용자 세션 가져오기
+    let currentUserId: string | undefined = data.userId?.toString();
+    if (!currentUserId) {
+      try {
+        const headersList = await headers();
+        const userSession = await auth.api.getSession({ headers: headersList });
+        currentUserId = userSession?.user?.id;
+      } catch (e) {
+        console.log("세션 조회 실패 (비로그인 사용자)", e);
+      }
+    }
+
     // 1. 결제 세션 검증
     const sessionValidation = await validatePaymentSession({
       orderId: data.orderId,
@@ -153,7 +167,7 @@ export async function confirmPayment(
 
     const newPayment = await createPaymentRecord(
       result,
-      data.userId?.toString(),
+      currentUserId,
       env === ("test" as "test" | "live"),
       descriptionExt,
     );
@@ -256,12 +270,12 @@ export async function createPaymentRecord(
     const payment = await prisma.order.create({
       data: {
         amount: paymentData.totalAmount,
-        status: ORDER_STATUS.PAID,
+        status: "PAID" as any,
         method: paymentData.method,
         merchantUid: paymentData.orderId, // 필수 저장
         pgProvider: "tosspayments",
         receiptUrl: paymentData.receipt?.url,
-        userId: userId || "1",
+        userId: userId!,
         paymentKey: paymentData.paymentKey,
         isTest: isTest,
         description: descriptionExt ? descriptionExt : undefined,
@@ -295,7 +309,7 @@ export async function createRefundRecord(
         amount: amount as number,
         reason,
         tossRefundKey,
-        status: REFUND_STATUS.COMPLETED,
+        status: "COMPLETED" as any,
       },
     });
 
@@ -324,7 +338,7 @@ export async function updateRefundStatus(
     const updatedRefund = await prisma.refund.update({
       where: { id: refundId },
       data: {
-        status,
+        status: status as any,
         tossRefundKey,
         refundMethod,
         processedAt:
@@ -359,9 +373,9 @@ export async function cancelPaymentInDB(
         merchantUid: orderId,
       },
       data: {
-        status: isPartial
-          ? ORDER_STATUS.PARTIAL_REFUNDED
-          : ORDER_STATUS.PARTIAL_REFUNDED,
+        status: (isPartial
+          ? "PARTIAL_REFUNDED"
+          : "REFUNDED") as any,
         refundReason: cancelReason,
         refundedAt: new Date(),
         isRefunded: true,

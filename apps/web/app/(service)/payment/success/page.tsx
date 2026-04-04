@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { confirmPayment } from "@/serverActions/payment/payment.actions";
 import { Button } from "@repo/ui/components/button";
@@ -13,8 +13,12 @@ function PaymentSuccessContent() {
     "loading",
   );
   const [errorMessage, setErrorMessage] = useState("");
+  const isProcessing = useRef(false);
 
   useEffect(() => {
+    if (isProcessing.current) return;
+    isProcessing.current = true;
+
     const paymentKey = searchParams.get("paymentKey");
     const orderId = searchParams.get("orderId");
     const amount = searchParams.get("amount");
@@ -79,10 +83,10 @@ function PaymentSuccessContent() {
               <h1 className="text-2xl font-bold font-suit">
                 결제가 완료되었습니다
               </h1>
-              <p className="text-gray-600">
+              {/* <p className="text-gray-600">
                 예약이 성공적으로 접수되었습니다.
                 <br />곧 안내 문자가 발송될 예정입니다.
-              </p>
+              </p> */}
             </div>
             <Button
               className="w-full bg-black text-white hover:bg-gray-800"
