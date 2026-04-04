@@ -170,6 +170,7 @@ export async function confirmPayment(
       currentUserId,
       env === ("test" as "test" | "live"),
       descriptionExt,
+      (sessionValidation as any).session?.orderName,
     );
 
     await prisma.paymentSession.delete({
@@ -262,6 +263,7 @@ export async function createPaymentRecord(
   userId: string | undefined,
   isTest: boolean = false,
   descriptionExt: string = "",
+  orderName?: string,
 ) {
   try {
     // if (!userId) {
@@ -278,6 +280,7 @@ export async function createPaymentRecord(
         userId: userId!,
         paymentKey: paymentData.paymentKey,
         isTest: isTest,
+        orderName: orderName || "서비스 이용료",
         description: descriptionExt ? descriptionExt : undefined,
       },
     });

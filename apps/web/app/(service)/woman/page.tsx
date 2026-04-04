@@ -155,11 +155,11 @@ export default function WomanPage() {
 
   const handlePurchase = () => {
     const amount = SERVICE_PRICES[selectedService];
-    const serviceTitle = SERVICES[selectedService].title;
+    const service = SERVICES[selectedService];
 
     requestPayment({
       amount,
-      orderName: serviceTitle,
+      orderName: `Woman > ${service.title} (${service.duration})`,
     });
   };
 

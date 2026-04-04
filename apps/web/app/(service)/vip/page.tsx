@@ -148,11 +148,11 @@ export default function VipPage() {
 
   const handlePurchase = () => {
     const amount = SERVICE_PRICES[selectedService];
-    const serviceTitle = SERVICES[selectedService].title;
+    const service = SERVICES[selectedService];
 
     requestPayment({
       amount,
-      orderName: serviceTitle,
+      orderName: `VIP > ${service.label}`,
     });
   };
 

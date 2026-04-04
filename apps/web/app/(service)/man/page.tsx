@@ -155,11 +155,11 @@ export default function ManPage() {
 
   const handlePurchase = () => {
     const amount = SERVICE_PRICES[selectedService];
-    const serviceTitle = SERVICES[selectedService].title;
+    const service = SERVICES[selectedService];
 
     requestPayment({
       amount,
-      orderName: serviceTitle,
+      orderName: `Man > ${service.title} (${service.duration})`,
     });
   };
 
