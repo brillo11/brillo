@@ -42,6 +42,24 @@ export function usePayment() {
       const customerEmail = userInfo?.email || session?.user?.email || "";
       const customerMobilePhone = userInfo?.phone || "";
 
+      // Create PaymentSession on the server before requesting payment
+      try {
+        const { createPaymentSession } = await import(
+          "@/serverActions/payment/payment-session.actions"
+        );
+        
+        await createPaymentSession({
+          orderId,
+          amount: data.amount,
+          orderName: data.orderName,
+        });
+      } catch (sessionError) {
+        console.error("Failed to create payment session:", sessionError);
+        alert("결제 세션 생성 중 오류가 발생했습니다.");
+        setIsLoading(false);
+        return;
+      }
+
       // Store guest info in sessionStorage to retrieve after redirect
       if (userInfo) {
         sessionStorage.setItem("GUEST_PAYMENT_INFO", JSON.stringify(userInfo));

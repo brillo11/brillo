@@ -120,7 +120,7 @@ export function GuestPaymentModal({
             <Label htmlFor="gender" className="text-black font-medium">
               성별
             </Label>
-            <Select value={userInfo.gender || undefined} onValueChange={handleGenderChange}>
+            <Select value={userInfo.gender} onValueChange={handleGenderChange}>
               <SelectTrigger className="bg-white border-black rounded-none focus:ring-0 focus:border-black h-12">
                 <SelectValue>
                   {userInfo.gender === "male"
