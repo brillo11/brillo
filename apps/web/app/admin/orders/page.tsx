@@ -1,5 +1,5 @@
 import { prisma, ORDER_STATUS } from "@repo/database";
-import { format } from "date-fns";
+import { kdayjs } from "@/shared/lib/utils/dayjs";
 import { requireAdmin } from "@/shared/lib/auth-guards";
 
 export const dynamic = "force-dynamic";
@@ -146,7 +146,7 @@ export default async function AdminOrdersPage() {
                     )}
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {format(new Date(order.createdAt), "yyyy-MM-dd HH:mm")}
+                    {kdayjs(order.createdAt).format("YYYY-MM-DD HH:mm")}
                   </td>
                 </tr>
               );

@@ -2,7 +2,7 @@ import React from "react";
 import { prisma } from "@repo/database";
 import { auth } from "@/shared/lib/auth";
 import { headers } from "next/headers";
-import { format } from "date-fns";
+import { kdayjs } from "@/shared/lib/utils/dayjs";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -42,7 +42,7 @@ export default async function MyPageOrders() {
               >
                 <div>
                   <div className="text-sm font-playfair text-[#000000]/60 mb-2">
-                    {format(new Date(order.createdAt), "yyyy.MM.dd HH:mm")}
+                    {kdayjs(order.createdAt).format("YYYY.MM.DD HH:mm")}
                   </div>
                   <h3 className="font-suit text-base font-bold text-black mb-1">
                     {order.orderName || "서비스 이용료"}
