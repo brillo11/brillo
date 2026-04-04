@@ -53,16 +53,42 @@ export default async function MyPageOrders() {
                       {order.amount.toLocaleString()}원
                     </span>
                   </div>
+                  {(() => {
+                    try {
+                      const desc = order.description
+                        ? JSON.parse(order.description)
+                        : null;
+                      const info = desc?.reservationInfo;
+                      if (!info) return null;
+                      return (
+                        <div className="mt-2 text-xs font-suit text-[#000000]/60 space-y-0.5">
+                          <div>
+                            예약자: {info.name}
+                            {info.gender === "male"
+                              ? " (남)"
+                              : info.gender === "female"
+                                ? " (여)"
+                                : ""}
+                            {info.age ? ` · ${info.age}세` : ""}
+                          </div>
+                          {info.phone && <div>연락처: {info.phone}</div>}
+                          {info.email && <div>이메일: {info.email}</div>}
+                        </div>
+                      );
+                    } catch {
+                      return null;
+                    }
+                  })()}
                 </div>
                 <div className="mt-4 md:mt-0 text-left md:text-right">
                   <span
                     className={`inline-block px-3 py-1 text-xs font-suit font-bold border ${
-                      order.status === "결제완료"
+                      (order.status as string) === "결제완료" || (order.status as string) === "PAID"
                         ? "border-black text-black bg-transparent"
                         : "border-[#d4d4d4] text-[#000000]/50"
                     }`}
                   >
-                    {order.status}
+                    {(order.status as string) === "PAID" ? "결제완료" : order.status}
                   </span>
                   <div
                     className="text-[11px] font-playfair text-[#000000]/40 mt-3 truncate w-32 md:w-auto"
@@ -71,7 +97,7 @@ export default async function MyPageOrders() {
                     {order.paymentKey ? `Key: ${order.paymentKey}` : "No Key"}
                   </div>
 
-                  {order.status === "결제완료" && !order.review && (
+                  {((order.status as string) === "결제완료" || (order.status as string) === "PAID") && !order.review && (
                     <div className="mt-3 md:mt-4 flex justify-end">
                       <Link
                         href={`/mypage/reviews/new?orderId=${order.id}`}

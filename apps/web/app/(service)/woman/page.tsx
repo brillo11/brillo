@@ -17,6 +17,7 @@ import { WomanStyleCarousel } from "@/features/woman/components/WomanStyleCarous
 import { WomanGalleryCarousel } from "@/features/woman/components/WomanGalleryCarousel";
 import { usePayment } from "@/features/payment/hooks/use-payment";
 import { GuestPaymentModal } from "@/features/payment/components/GuestPaymentModal";
+import { PublicReviewList } from "@/features/payment/components/PublicReviewList";
 
 const SERVICE_PRICES = {
   "90min": 330000,
@@ -294,15 +295,7 @@ export default function WomanPage() {
               )}
               {activeTab === "리뷰" && (
                 <div className="space-y-3">
-                  <p>등록된 리뷰가 없습니다.</p>
-                  <a
-                    href="https://kmong.com/gig/534658#gig-rate-evaluation"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block text-sm text-black underline underline-offset-4 hover:text-gray-600"
-                  >
-                    더 많은 리뷰보기
-                  </a>
+                  <PublicReviewList orderNamePrefix="Woman" />
                 </div>
               )}
               {activeTab === "서비스규정" && (

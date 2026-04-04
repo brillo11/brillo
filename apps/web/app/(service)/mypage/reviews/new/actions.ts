@@ -41,10 +41,12 @@ export async function submitReviewAction(formData: FormData) {
       return { success: false, error: "권한이 없습니다." };
     }
 
-    if (order.status !== "결제완료") {
+    console.log("리뷰 작성 - order status 확인:", JSON.stringify(order.status), typeof order.status);
+
+    if ((order.status as string) !== "결제완료" && (order.status as string) !== "PAID") {
       return {
         success: false,
-        error: "결제가 완료된 주문만 리뷰를 작성할 수 있습니다.",
+        error: `결제가 완료된 주문만 리뷰를 작성할 수 있습니다. (현재: ${order.status})`,
       };
     }
 

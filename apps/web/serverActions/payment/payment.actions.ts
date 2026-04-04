@@ -140,12 +140,11 @@ export async function confirmPayment(
     const result: TossPaymentResponse = await response.json();
 
     // 3. paymentKey와 orderId 필수 저장 (토스페이먼츠 권장사항)
-    let descriptionExt = "";
-    if (data.guestInfo) {
-      if (data.userId) {
-        // Find existing user to merge misc
+    if (data.guestInfo && currentUserId) {
+      // Save reservation info to user.misc for future use
+      try {
         const existingUser = await prisma.user.findUnique({
-          where: { id: data.userId.toString() },
+          where: { id: currentUserId },
           select: { misc: true },
         });
         const currentMisc =
@@ -157,20 +156,20 @@ export async function confirmPayment(
           reservationInfo: data.guestInfo,
         };
         await prisma.user.update({
-          where: { id: data.userId.toString() },
+          where: { id: currentUserId },
           data: { misc: newMisc as any },
         });
+      } catch (e) {
+        console.log("사용자 misc 업데이트 실패", e);
       }
-      // Add info string to order description
-      descriptionExt = ` | 예약자 정보: 이름(${data.guestInfo.name}), 성별(${data.guestInfo.gender}), 나이(${data.guestInfo.age}), 연락처(${data.guestInfo.phone})`;
     }
 
     const newPayment = await createPaymentRecord(
       result,
       currentUserId,
       env === ("test" as "test" | "live"),
-      descriptionExt,
       (sessionValidation as any).session?.orderName,
+      data.guestInfo || undefined,
     );
 
     await prisma.paymentSession.delete({
@@ -262,26 +261,36 @@ export async function createPaymentRecord(
   paymentData: TossPaymentResponse,
   userId: string | undefined,
   isTest: boolean = false,
-  descriptionExt: string = "",
   orderName?: string,
+  guestInfo?: any,
 ) {
   try {
-    // if (!userId) {
-    //   throw new Error("userId가 없습니다");
-    // }
+    // Build description as JSON with reservation info
+    const descriptionData = guestInfo
+      ? JSON.stringify({
+          reservationInfo: {
+            name: guestInfo.name,
+            gender: guestInfo.gender,
+            age: guestInfo.age,
+            phone: guestInfo.phone,
+            email: guestInfo.email,
+          },
+        })
+      : undefined;
+
     const payment = await prisma.order.create({
       data: {
         amount: paymentData.totalAmount,
         status: "PAID" as any,
         method: paymentData.method,
-        merchantUid: paymentData.orderId, // 필수 저장
+        merchantUid: paymentData.orderId,
         pgProvider: "tosspayments",
         receiptUrl: paymentData.receipt?.url,
         userId: userId!,
         paymentKey: paymentData.paymentKey,
         isTest: isTest,
         orderName: orderName || "서비스 이용료",
-        description: descriptionExt ? descriptionExt : undefined,
+        description: descriptionData,
       },
     });
 
