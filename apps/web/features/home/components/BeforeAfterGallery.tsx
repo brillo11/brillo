@@ -13,14 +13,19 @@ const CAROUSEL_ITEMS = [
     label: "Case 2",
   },
   {
-    before: "/images/home/before-after-1-before.png",
-    after: "/images/home/before-after-1-after.png",
+    before: "/images/home/before-after-3-before.png",
+    after: "/images/home/before-after-3-after.png",
     label: "Case 3",
   },
   {
-    before: "/images/home/before-after-2-before.png",
-    after: "/images/home/before-after-2-after.png",
+    before: "/images/home/before-after-4-before.png",
+    after: "/images/home/before-after-4-after.png",
     label: "Case 4",
+  },
+  {
+    before: "/images/home/before-after-5-before.png",
+    after: "/images/home/before-after-5-after.png",
+    label: "Case 5",
   },
 ];
 
@@ -30,9 +35,9 @@ const ITEMS_COUNT = CAROUSEL_ITEMS.length;
 // (appending 2 items ensures the desktop view showing 2 at a time doesn't run empty)
 const DISPLAY_ITEMS = [
   CAROUSEL_ITEMS[ITEMS_COUNT - 1], // index 0 (clone of last)
-  ...CAROUSEL_ITEMS,               // index 1..4
-  CAROUSEL_ITEMS[0],               // index 5 (clone of first)
-  CAROUSEL_ITEMS[1],               // index 6 (clone of second)
+  ...CAROUSEL_ITEMS, // index 1..4
+  CAROUSEL_ITEMS[0], // index 5 (clone of first)
+  CAROUSEL_ITEMS[1], // index 6 (clone of second)
 ];
 
 export const BeforeAfterGallery = () => {
@@ -122,19 +127,19 @@ export const BeforeAfterGallery = () => {
   const activeIndex = (currentIndex - 1 + ITEMS_COUNT) % ITEMS_COUNT;
 
   return (
-    <div 
-      className="flex flex-col items-center gap-8 mt-20 select-none touch-pan-y"
+    <div
+      className="flex flex-col items-center gap-6 mt-20 select-none touch-pan-y"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative w-[514px] lg:w-[1040px] h-[340px] flex overflow-hidden">
+      <div className="relative flex overflow-hidden w-[var(--slide-width)] lg:w-[calc(var(--slide-width)*2+12px)] aspect-[514/340] lg:aspect-[1040/340] [--slide-width:min(calc(100vw-40px),514px)]">
         <div
           className={cn(
             "flex gap-3",
-            isTransitioning && "transition-transform duration-500 ease-in-out"
+            isTransitioning && "transition-transform duration-500 ease-in-out",
           )}
-          style={{ 
-            transform: `translateX(calc(-${currentIndex * (514 + 12)}px + ${offsetX}px))` 
+          style={{
+            transform: `translateX(calc(-${currentIndex} * (var(--slide-width) + 12px) + ${offsetX}px))`,
           }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
@@ -144,24 +149,27 @@ export const BeforeAfterGallery = () => {
           {DISPLAY_ITEMS.map((item, index) => {
             if (!item) return null;
             return (
-              <div key={index} className="relative w-[514px] h-[340px] shrink-0 pointer-events-none">
+              <div
+                key={index}
+                className="relative shrink-0 pointer-events-none w-[var(--slide-width)] h-full"
+              >
                 <img
-                  className="absolute top-0 left-0 w-[255px] h-[340px] aspect-[0.75] object-cover pointer-events-none"
+                  className="absolute top-0 left-0 w-1/2 h-full object-cover pointer-events-none"
                   alt="Before"
                   src={item.before}
                   draggable={false}
                 />
                 <img
-                  className="absolute top-0 left-[255px] w-[255px] h-[340px] aspect-[0.75] object-cover pointer-events-none"
+                  className="absolute top-0 left-1/2 w-1/2 h-full object-cover pointer-events-none"
                   alt="After"
                   src={item.after}
                   draggable={false}
                 />
-                <div className="absolute top-[234px] left-0 w-[510px] h-[106px] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.6)_100%)] pointer-events-none" />
-                <div className="absolute top-[301px] left-[98px] font-playfair font-normal text-white text-xl text-center tracking-[0] leading-[normal] pointer-events-none">
+                <div className="absolute bottom-0 left-0 w-full h-[31%] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.6)_100%)] pointer-events-none" />
+                <div className="absolute bottom-[5.5%] left-[25%] -translate-x-1/2 font-playfair font-normal text-white text-lg sm:text-xl text-center tracking-[0] leading-[normal] pointer-events-none">
                   Before
                 </div>
-                <div className="absolute top-[301px] left-[359px] font-playfair font-normal text-white text-xl text-center tracking-[0] leading-[normal] pointer-events-none">
+                <div className="absolute bottom-[5.5%] left-[75%] -translate-x-1/2 font-playfair font-normal text-white text-lg sm:text-xl text-center tracking-[0] leading-[normal] pointer-events-none">
                   After
                 </div>
               </div>
@@ -182,9 +190,7 @@ export const BeforeAfterGallery = () => {
             <img
               className={cn(
                 "transition-all duration-300 pointer-events-none",
-                index === activeIndex
-                  ? "w-[11px] h-[11px]"
-                  : "w-[5px] h-[5px]",
+                index === activeIndex ? "w-[11px] h-[11px]" : "w-[5px] h-[5px]",
               )}
               alt={index === activeIndex ? "Active" : "Inactive"}
               src={

@@ -82,17 +82,17 @@ export default function HomePage() {
       {/* Rebirth Quote */}
       <div className="relative py-20 bg-black px-4">
         <div className="max-w-screen-xl mx-auto">
-          <p className="mx-auto font-normal text-white text-xl text-center tracking-[0] leading-[normal] font-playfair">
-            <span className="text-white text-2xl tracking-[0]">
+          <p className="mx-auto font-normal text-white text-lg sm:text-xl md:text-2xl text-center tracking-[0] leading-[normal] font-playfair">
+            <span className="text-white text-lg sm:text-xl md:text-2xl tracking-[0]">
               It’s not just a change, It’s a{" "}
             </span>
             <span className="font-bold">Rebirth</span>
-            <span className="font-normal text-white text-xl tracking-[0]">
+            <span className="font-normal text-white text-lg sm:text-xl md:text-2xl tracking-[0]">
               .
             </span>
           </p>
 
-          <p className="mx-auto max-w-md font-medium text-white text-2xl text-center tracking-[-1.44px] leading-9 mt-2">
+          <p className="mx-auto max-w-md font-medium text-white text-base sm:text-lg md:text-2xl text-center tracking-tight md:tracking-[-1.44px] leading-6 sm:leading-7 md:leading-9 mt-2">
             단순한 변화가 아닌, 새로운 당신
           </p>
         </div>
@@ -103,7 +103,7 @@ export default function HomePage() {
           </div>
 
           {/* Main Hero Description Text */}
-          <p className="font-medium font-suit text-white text-2xl text-center leading-9 break-keep">
+          <p className="font-medium font-suit text-white text-base sm:text-lg md:text-2xl text-center leading-6 sm:leading-7 md:leading-9 break-keep">
             <span className="font-medium font-playfair">SM Entertainment </span>
             <span className="font-medium">
               출신 비주얼 디렉터
@@ -126,10 +126,10 @@ export default function HomePage() {
         {/* All About Visual Title */}
         <div className="flex flex-col w-full max-w-sm items-center gap-[19.65px] mx-auto text-center">
           <div className="flex flex-col items-center gap-[10.92px] relative self-stretch w-full flex-[0_0_auto]">
-            <div className="relative self-stretch font-serif font-normal text-white text-[32px] tracking-[0] leading-[normal]">
+            <div className="relative self-stretch font-serif font-normal text-white text-2xl sm:text-xl md:text-2xl tracking-[0] leading-[normal]">
               ALL About VISUAL
             </div>
-            <p className="relative self-stretch font-medium font-suit text-white text-2xl tracking-[0] leading-9">
+            <p className="relative self-stretch font-medium font-suit text-white text-base sm:text-lg md:text-2xl tracking-[0] leading-6 sm:leading-7 md:leading-9">
               당신의 비주얼을 새롭게 정의하는 <br />
               프리미엄 솔루션
             </p>

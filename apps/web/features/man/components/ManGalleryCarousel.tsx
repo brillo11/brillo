@@ -87,8 +87,9 @@ export const ManGalleryCarousel = () => {
   useEffect(() => {
     const loop = (time: number) => {
       if (lastTimeRef.current) {
-        // Speed: 0.5px per frame for smooth flow
-        positionRef.current += 0.5;
+        // Dynamic Speed: Faster on mobile (0.7px), normal on desktop (0.5px)
+        const speed = viewportWidth < 768 ? 0.7 : 0.5;
+        positionRef.current += speed;
 
         if (positionRef.current >= TOTAL_SET_WIDTH * 3) {
           positionRef.current -= TOTAL_SET_WIDTH;

@@ -5,7 +5,7 @@ import { cn } from "@/shared/lib/utils";
 
 const FAQS = [
   {
-    question: "Q. 온라인인가요 오프라인인가요?",
+    question: "온라인인가요 오프라인인가요?",
     answer: (
       <>
         브릴로 퍼스널 비주얼디렉팅은 누구나 <br />
@@ -26,7 +26,7 @@ const FAQS = [
     ),
   },
   {
-    question: "Q. 결제 후 서비스가 어떻게 진행되나요?",
+    question: "결제 후 서비스가 어떻게 진행되나요?",
     answer: (
       <>
         결제 후 일정을 먼저 픽스합니다. <br />
@@ -38,7 +38,7 @@ const FAQS = [
     ),
   },
   {
-    question: "Q. 일정을 변경하고 싶은데 가능한가요?",
+    question: "일정을 변경하고 싶은데 가능한가요?",
     answer: (
       <>
         일정 변경은 기존 예정된 서비스일 기준 3일 전까지 <br />
@@ -52,7 +52,7 @@ const FAQS = [
     ),
   },
   {
-    question: "Q. 환불 규정이 궁금해요.",
+    question: "환불 규정이 궁금해요.",
     answer: (
       <>
         서비스 당일 기준 3일, 4일 전 : 위약금 30%
@@ -64,7 +64,12 @@ const FAQS = [
     ),
   },
   {
-    question: "Q. 동행 일정 진행 시 쇼핑 및 헤어&메이크업 비용은 별도인가요?",
+    question: (
+      <>
+        동행 일정 진행 시 쇼핑 및 헤어&메이크업 <br className="md:hidden" />
+        비용은 별도인가요?
+      </>
+    ),
     answer: (
       <>
         그렇습니다.
@@ -81,7 +86,12 @@ const FAQS = [
     ),
   },
   {
-    question: "Q. 피부과 시술이나 성형 수술, 뷰티 제품 관련해서도 다루나요?",
+    question: (
+      <>
+        피부과 시술이나 성형 수술, <br className="md:hidden" />
+        뷰티 제품 관련해서도 다루나요?
+      </>
+    ),
     answer: (
       <>
         내가 원하는 수준의 아름다움과 멋을 위해서 <br />
@@ -104,7 +114,7 @@ const FAQS = [
     ),
   },
   {
-    question: "Q. 피드백 리포트는 뭔가요?",
+    question: "피드백 리포트는 뭔가요?",
     answer: (
       <>
         브릴로는 단순 외모의 변화만을 추구하는 것이 아닌, <br />
@@ -121,7 +131,12 @@ const FAQS = [
     ),
   },
   {
-    question: "Q. 인플루언서, 연예인, 배우를 지망하는데 특화서비스가 있나요?",
+    question: (
+      <>
+        인플루언서, 연예인, 배우를 <br className="md:hidden" />
+        지망하는데 특화서비스가 있나요?
+      </>
+    ),
     answer: (
       <>
         실물뿐만 아니라 화면과 영상에 나오는 나의 비주얼 <br />
@@ -168,9 +183,9 @@ export default function FAQPage() {
                   className="flex justify-between items-start cursor-pointer group text-[14px]"
                   onClick={() => toggleFAQ(index)}
                 >
-                  <h3 className="font-suit leading-relaxed text-black max-w-[50%] whitespace-pre-wrap font-bold">
-                    <span className="font-playfair">Q</span>
-                    {faq.question.slice(1)}
+                  <h3 className="font-suit leading-relaxed text-black max-w-[90%] font-bold flex items-start gap-1">
+                    <span className="font-playfair shrink-0 -mt-0.5">Q.</span>
+                    <span className="whitespace-pre-wrap">{faq.question}</span>
                   </h3>
                   <button className="shrink-0 w-6 h-6 flex items-center justify-center relative">
                     <div

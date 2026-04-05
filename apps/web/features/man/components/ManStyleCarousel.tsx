@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { cn } from "@/shared/lib/utils";
 
 const IMAGES = [
@@ -24,6 +24,13 @@ export function ManStyleCarousel() {
   const goToSlide = (index: number) => {
     setCurrentIndex(index);
   };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      handleNext();
+    }, 1500);
+    return () => clearInterval(timer);
+  }, [handleNext]);
 
   return (
     <div className="mt-32 w-full flex flex-col items-center">
@@ -55,7 +62,7 @@ export function ManStyleCarousel() {
           <button
             key={i}
             onClick={() => goToSlide(i)}
-            className="group relative flex flex-col items-center justify-center"
+            className="group relative flex flex-col items-center justify-center h-[12px] cursor-pointer"
           >
             <img
               className={cn(
