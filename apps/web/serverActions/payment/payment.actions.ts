@@ -457,12 +457,100 @@ export async function cancelPayment(
     }
 
     revalidatePath("/admin/payment");
+    revalidatePath("/admin/orders");
     return {
       success: true,
       cancellation: result,
     };
   } catch (error) {
     console.error("결제 취소 오류:", error);
+    throw new Error("결제 취소에 실패했습니다");
+  }
+}
+
+/**
+ * 관리자 전용 결제 취소
+ * - order ID로 주문을 찾아서 paymentKey와 isTest 여부를 자동 판별
+ * - Toss API에 취소 요청 후 DB 상태도 업데이트
+ */
+export async function cancelOrderByAdmin(
+  orderId: bigint,
+  cancelReason: string = "관리자 결제 취소",
+) {
+  try {
+    // 1. 주문 조회
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+    });
+
+    if (!order) {
+      throw new Error("주문을 찾을 수 없습니다");
+    }
+
+    if (!order.paymentKey) {
+      throw new Error("paymentKey가 없어 취소할 수 없습니다");
+    }
+
+    if (order.isRefunded) {
+      throw new Error("이미 환불 처리된 주문입니다");
+    }
+
+    // 2. isTest 여부에 따라 secret key 선택
+    const widgetSecretKey = order.isTest
+      ? process.env.TOSS_SECRET_KEY
+      : process.env.TOSS_LIVE_SECRET_KEY;
+
+    if (!widgetSecretKey) {
+      throw new Error("토스페이먼츠 시크릿 키가 설정되지 않았습니다");
+    }
+
+    const encryptedSecretKey =
+      "Basic " + Buffer.from(widgetSecretKey + ":").toString("base64");
+
+    // 3. 토스 결제 취소 API 호출
+    const response = await fetch(
+      `https://api.tosspayments.com/v1/payments/${order.paymentKey}/cancel`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: encryptedSecretKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cancelReason,
+        }),
+      },
+    );
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => ({}));
+      console.error("토스 결제 취소 실패 응답:", errorBody);
+      throw new Error(
+        `결제 취소 실패: ${(errorBody as any).message || response.statusText}`,
+      );
+    }
+
+    const result = await response.json();
+
+    // 4. DB 상태 업데이트
+    await cancelPaymentInDB(
+      result.orderId,
+      cancelReason,
+      result.paymentKey,
+      false,
+      order.amount,
+    );
+
+    revalidatePath("/admin/orders");
+    return {
+      success: true,
+      cancellation: result,
+    };
+  } catch (error) {
+    console.error("관리자 결제 취소 오류:", error);
+    if (error instanceof Error) {
+      throw error;
+    }
     throw new Error("결제 취소에 실패했습니다");
   }
 }

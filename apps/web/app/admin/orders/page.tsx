@@ -1,6 +1,7 @@
 import { prisma, ORDER_STATUS } from "@repo/database";
 import { kdayjs } from "@/shared/lib/utils/dayjs";
 import { requireAdmin } from "@/shared/lib/auth-guards";
+import { CancelOrderButton } from "./CancelOrderButton";
 
 export const dynamic = "force-dynamic";
 
@@ -63,6 +64,9 @@ export default async function AdminOrdersPage() {
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 결제일시
               </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                관리
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -70,6 +74,7 @@ export default async function AdminOrdersPage() {
               const info = parseReservationInfo(order.description);
               const statusStr = order.status as string;
               const isPaid = statusStr === "결제완료" || statusStr === "PAID";
+              const isRefunded = order.isRefunded || statusStr === "환불완료" || statusStr === "REFUNDED" || statusStr === "결제취소" || statusStr === "CANCELED";
 
               return (
                 <tr key={order.id.toString()} className="hover:bg-gray-50">
@@ -148,12 +153,25 @@ export default async function AdminOrdersPage() {
                   <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                     {kdayjs(order.createdAt).format("YYYY-MM-DD HH:mm")}
                   </td>
+                  <td className="px-4 py-4 whitespace-nowrap text-sm">
+                    {isPaid && !isRefunded && order.paymentKey ? (
+                      <CancelOrderButton
+                        orderId={order.id.toString()}
+                        orderName={order.orderName || "서비스 이용료"}
+                        amount={order.amount}
+                      />
+                    ) : isRefunded ? (
+                      <span className="px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-500 rounded-full">
+                        취소됨
+                      </span>
+                    ) : null}
+                  </td>
                 </tr>
               );
             })}
             {orders.length === 0 && (
               <tr>
-                <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
+                <td colSpan={9} className="px-6 py-12 text-center text-gray-500">
                   결제 내역이 없습니다.
                 </td>
               </tr>
