@@ -28,9 +28,7 @@ export function PublicReviewList({ orderNamePrefix }: PublicReviewListProps) {
   }, [orderNamePrefix]);
 
   if (loading) {
-    return (
-      <p className="font-suit text-sm text-[#000000]/50">로딩 중...</p>
-    );
+    return <p className="font-suit text-sm text-[#000000]/50">로딩 중...</p>;
   }
 
   if (reviews.length === 0) {
@@ -70,9 +68,7 @@ export function PublicReviewList({ orderNamePrefix }: PublicReviewListProps) {
                     <Star
                       key={i}
                       className={`w-3.5 h-3.5 ${
-                        i < normalizedRating
-                          ? "fill-current"
-                          : "text-[#d4d4d4]"
+                        i < normalizedRating ? "fill-current" : "text-[#d4d4d4]"
                       }`}
                     />
                   ))}
@@ -96,15 +92,6 @@ export function PublicReviewList({ orderNamePrefix }: PublicReviewListProps) {
           </div>
         );
       })}
-
-      <a
-        href="https://kmong.com/gig/534658#gig-rate-evaluation"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-block text-sm text-black underline underline-offset-4 hover:text-gray-600 mt-2"
-      >
-        더 많은 리뷰보기
-      </a>
     </div>
   );
 }

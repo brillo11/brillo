@@ -317,9 +317,14 @@ export const ReviewsCarousel = () => {
           ))}
         </div>
 
-        <div className="font-pretendard font-medium text-[#ffffff99] text-sm tracking-[-0.28px] leading-[normal] underline cursor-pointer hover:text-white transition-colors mt-10">
+        <a
+          href="https://kmong.com/gig/534658#gig-rate-evaluation"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-pretendard font-medium text-[#ffffff99] text-sm tracking-[-0.28px] leading-[normal] underline cursor-pointer hover:text-white transition-colors mt-10"
+        >
           더 많은 리뷰 보기→
-        </div>
+        </a>
       </div>
     </div>
   );
