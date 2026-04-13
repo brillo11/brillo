@@ -198,6 +198,8 @@ export async function confirmPayment(
     });
 
     revalidatePath("/admin/payment");
+    revalidatePath("/admin/orders");
+    revalidatePath("/(service)/mypage/orders");
     return {
       success: true,
       payment: result,
