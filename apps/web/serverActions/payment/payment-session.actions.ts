@@ -7,6 +7,8 @@ interface CreatePaymentSessionRequest {
   amount: number;
   orderName: string;
   userId?: bigint;
+  guestInfo?: any;
+  env?: "test" | "live";
 }
 
 interface ValidatePaymentSessionRequest {
@@ -14,7 +16,7 @@ interface ValidatePaymentSessionRequest {
   amount: number;
 }
 
-const PAYMENT_SESSION_EXPIRY_MINUTES = 5;
+const PAYMENT_SESSION_EXPIRY_MINUTES = 30;
 
 export async function createPaymentSession(data: CreatePaymentSessionRequest) {
   try {
@@ -38,6 +40,8 @@ export async function createPaymentSession(data: CreatePaymentSessionRequest) {
         userId: data.userId,
         expiresAt,
         status: "PENDING",
+        guestInfo: data.guestInfo || undefined,
+        env: data.env || "test",
       },
     });
 

@@ -70,6 +70,65 @@ export async function updatePaymentStatus(
   }
 }
 
+/**
+ * 토스페이먼츠 결제 취소 헬퍼 (보상 트랜잭션용)
+ * - confirm 성공 후 DB 저장 실패 시 호출
+ */
+async function cancelTossPayment(
+  paymentKey: string,
+  reason: string,
+  env: "test" | "live" = "test",
+): Promise<boolean> {
+  try {
+    const secretKey =
+      env === "live"
+        ? process.env.TOSS_LIVE_SECRET_KEY
+        : process.env.TOSS_SECRET_KEY;
+
+    if (!secretKey) {
+      console.error("보상 트랜잭션 실패 — 시크릿 키 없음:", {
+        paymentKey,
+        reason,
+      });
+      return false;
+    }
+
+    const encoded = "Basic " + Buffer.from(secretKey + ":").toString("base64");
+
+    const response = await fetch(
+      `https://api.tosspayments.com/v1/payments/${paymentKey}/cancel`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: encoded,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ cancelReason: reason }),
+      },
+    );
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => ({}));
+      console.error("보상 트랜잭션 실패 — 수동 확인 필요:", {
+        paymentKey,
+        reason,
+        error: errorBody,
+      });
+      return false;
+    }
+
+    console.log("보상 트랜잭션 성공 — 결제 자동 취소:", { paymentKey, reason });
+    return true;
+  } catch (error) {
+    console.error("보상 트랜잭션 예외 — 수동 확인 필요:", {
+      paymentKey,
+      reason,
+      error,
+    });
+    return false;
+  }
+}
+
 export async function confirmPayment(
   data: PaymentConfirmRequest,
   env: "test" | "live" = "test",
@@ -99,8 +158,13 @@ export async function confirmPayment(
       throw new Error(`결제 검증 실패: ${sessionValidation.reason}`);
     }
 
+    // 세션에서 guestInfo와 env 가져오기
+    const session = (sessionValidation as any).session;
+    const guestInfo = data.guestInfo || session?.guestInfo || undefined;
+    const sessionEnv = session?.env || env;
+
     let widgetSecretKey: string | undefined;
-    if (env === "live") {
+    if (sessionEnv === "live") {
       widgetSecretKey = process.env.TOSS_LIVE_SECRET_KEY;
     } else {
       widgetSecretKey = process.env.TOSS_SECRET_KEY;
@@ -139,9 +203,18 @@ export async function confirmPayment(
 
     const result: TossPaymentResponse = await response.json();
 
-    // 3. paymentKey와 orderId 필수 저장 (토스페이먼츠 권장사항)
-    if (data.guestInfo && currentUserId) {
-      // Save reservation info to user.misc for future use
+    // 3. paymentKey를 결제 세션에 저장 (추적용)
+    try {
+      await prisma.paymentSession.update({
+        where: { orderId: data.orderId },
+        data: { paymentKey: result.paymentKey, status: "CONFIRMED" },
+      });
+    } catch (e) {
+      console.error("결제 세션 paymentKey 저장 실패:", e);
+    }
+
+    // 4. 로그인 사용자의 예약 정보 저장
+    if (guestInfo && currentUserId) {
       try {
         const existingUser = await prisma.user.findUnique({
           where: { id: currentUserId },
@@ -153,7 +226,7 @@ export async function confirmPayment(
             : {};
         const newMisc = {
           ...currentMisc,
-          reservationInfo: data.guestInfo,
+          reservationInfo: guestInfo,
         };
         await prisma.user.update({
           where: { id: currentUserId },
@@ -164,17 +237,51 @@ export async function confirmPayment(
       }
     }
 
-    const newPayment = await createPaymentRecord(
-      result,
-      currentUserId,
-      env === ("test" as "test" | "live"),
-      (sessionValidation as any).session?.orderName,
-      data.guestInfo || undefined,
-    );
+    // 5. DB 결제 기록 저장 (실패 시 보상 트랜잭션으로 토스 결제 취소)
+    let newPayment;
+    try {
+      newPayment = await createPaymentRecord(
+        result,
+        currentUserId || undefined,
+        sessionEnv === "test",
+        session?.orderName,
+        guestInfo,
+      );
+    } catch (dbError) {
+      console.error("DB 저장 실패, 토스 결제 자동 취소 시도:", dbError);
+      const cancelled = await cancelTossPayment(
+        result.paymentKey,
+        "DB 저장 실패로 인한 자동 취소",
+        sessionEnv,
+      );
+      if (cancelled) {
+        throw new Error(
+          "결제 처리 중 오류가 발생하여 자동 취소되었습니다. 다시 시도해주세요.",
+        );
+      } else {
+        // 자동 취소도 실패한 경우 — 관리자 수동 확인 필요
+        console.error(
+          "치명적 오류: DB 저장 실패 + 자동 취소 실패. 수동 확인 필요:",
+          {
+            paymentKey: result.paymentKey,
+            orderId: result.orderId,
+            amount: result.totalAmount,
+          },
+        );
+        throw new Error(
+          "결제 처리 중 오류가 발생했습니다. 고객센터로 문의해주세요.",
+        );
+      }
+    }
 
-    await prisma.paymentSession.delete({
-      where: { orderId: data.orderId },
-    });
+    // 6. 결제 세션 정리
+    try {
+      await prisma.paymentSession.delete({
+        where: { orderId: data.orderId },
+      });
+    } catch (e) {
+      console.error("결제 세션 삭제 실패 (무시 가능):", e);
+    }
 
     // 포인트 충전 로직
     if (isEvent && eventText && eventText.startsWith("POINT_CHARGE:")) {
@@ -211,6 +318,14 @@ export async function confirmPayment(
     // 에러 타입에 따른 다른 처리
     if (error instanceof Error && error.message.includes("결제 승인 실패")) {
       // 토스페이먼츠 에러는 그대로 전파
+      throw error;
+    }
+
+    if (error instanceof Error && error.message.includes("자동 취소")) {
+      throw error;
+    }
+
+    if (error instanceof Error && error.message.includes("고객센터")) {
       throw error;
     }
 
@@ -288,10 +403,12 @@ export async function createPaymentRecord(
         merchantUid: paymentData.orderId,
         pgProvider: "tosspayments",
         receiptUrl: paymentData.receipt?.url,
-        userId: userId!,
+        userId: userId || undefined,
         paymentKey: paymentData.paymentKey,
         isTest: isTest,
-        orderName: orderName || "서비스 이용료",
+        orderName: orderName || guestInfo?.name
+          ? `${orderName || "서비스 이용료"} (${guestInfo?.name || "고객"})`
+          : orderName || "서비스 이용료",
         description: descriptionData,
       },
     });
@@ -300,6 +417,7 @@ export async function createPaymentRecord(
       id: payment.id,
       merchantUid: payment.merchantUid,
       amount: payment.amount,
+      userId: userId || "비회원",
     });
 
     return payment;

@@ -43,6 +43,7 @@ export function usePayment() {
       const customerMobilePhone = userInfo?.phone || "";
 
       // Create PaymentSession on the server before requesting payment
+      // guestInfo를 서버에 저장하여 리다이렉트 후에도 안전하게 사용 가능
       try {
         const { createPaymentSession } = await import(
           "@/serverActions/payment/payment-session.actions"
@@ -52,17 +53,14 @@ export function usePayment() {
           orderId,
           amount: data.amount,
           orderName: data.orderName,
+          guestInfo: userInfo || undefined,
+          env: "test",
         });
       } catch (sessionError) {
         console.error("Failed to create payment session:", sessionError);
         alert("결제 세션 생성 중 오류가 발생했습니다.");
         setIsLoading(false);
         return;
-      }
-
-      // Store guest info in sessionStorage to retrieve after redirect
-      if (userInfo) {
-        sessionStorage.setItem("GUEST_PAYMENT_INFO", JSON.stringify(userInfo));
       }
 
       // Construct success/fail URLs

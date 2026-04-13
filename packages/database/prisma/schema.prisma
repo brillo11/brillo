@@ -176,8 +176,8 @@ model Order {
   isTest       Boolean      @default(false)
   orderName    String       @default("서비스 이용료") // 주문명
   description  String? // 결제 설명
-  userId       String
-  user         User         @relation(fields: [userId], references: [id])
+  userId       String?
+  user         User?        @relation(fields: [userId], references: [id])
   refunds      Refund[]
   review       Review?
 
@@ -187,18 +187,23 @@ model Order {
 }
 
 model PaymentSession {
-  id        BigInt   @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  expiresAt DateTime
-  orderId   String   @unique
-  amount    Int
-  orderName String
-  userId    BigInt?
-  status    String   @default("PENDING")
+  id         BigInt   @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime
+  orderId    String   @unique
+  amount     Int
+  orderName  String
+  userId     BigInt?
+  status     String   @default("PENDING")
+  paymentKey String?  // 토스 confirm 후 저장 (추적용)
+  guestInfo  Json?    // 비로그인 사용자 정보 저장
+  env        String   @default("test") // test or live
 
   @@index([orderId])
   @@index([expiresAt])
   @@index([userId])
+  @@index([paymentKey])
+  @@index([status])
 }
 
 model Refund {
