@@ -33,7 +33,7 @@ export async function getRefundInfo(paymentId: bigint) {
     paymentAmount: order.amount,
     daysPassed,
     refundAmount,
-    userName: order.user.name,
+    userName: order.user?.name || (order.description ? JSON.parse(order.description)?.reservationInfo?.name : null) || "비회원",
     orderName: order.orderName,
   };
 }

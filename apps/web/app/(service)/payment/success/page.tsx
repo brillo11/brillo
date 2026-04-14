@@ -31,26 +31,15 @@ function PaymentSuccessContent() {
 
     const processPayment = async () => {
       try {
-        let guestInfo = undefined;
-        const storedInfo = sessionStorage.getItem("GUEST_PAYMENT_INFO");
-        if (storedInfo) {
-          try {
-            guestInfo = JSON.parse(storedInfo);
-            // Clear it so it isn't reused accidentally
-            sessionStorage.removeItem("GUEST_PAYMENT_INFO");
-          } catch (e) {
-            console.error("Failed to parse guest info", e);
-          }
-        }
-
+        // guestInfo는 서버 사이드 PaymentSession에서 자동으로 가져옴
+        // sessionStorage에 의존하지 않으므로 리다이렉트 후에도 안전
         await confirmPayment(
           {
             paymentKey,
             orderId,
             amount: Number(amount),
-            guestInfo,
           },
-          "test", // Always test mode as per requirements
+          "test",
         );
         setStatus("success");
       } catch (error: any) {
