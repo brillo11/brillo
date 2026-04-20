@@ -406,9 +406,10 @@ export async function createPaymentRecord(
         userId: userId || undefined,
         paymentKey: paymentData.paymentKey,
         isTest: isTest,
-        orderName: orderName || guestInfo?.name
-          ? `${orderName || "서비스 이용료"} (${guestInfo?.name || "고객"})`
-          : orderName || "서비스 이용료",
+        orderName:
+          orderName && guestInfo?.name
+            ? `${orderName} (${guestInfo.name})`
+            : orderName || "서비스 이용료",
         description: descriptionData,
       },
     });
@@ -421,7 +422,25 @@ export async function createPaymentRecord(
     });
 
     return payment;
-  } catch (error) {
+  } catch (error: any) {
+    // Unique 제약 위반 → 이미 생성된 레코드 재사용 (중복 confirm 방어)
+    if (error?.code === "P2002") {
+      const existing = await prisma.order.findFirst({
+        where: {
+          OR: [
+            { paymentKey: paymentData.paymentKey },
+            { merchantUid: paymentData.orderId },
+          ],
+        },
+      });
+      if (existing) {
+        console.log("이미 생성된 결제 레코드 재사용:", {
+          id: existing.id,
+          merchantUid: existing.merchantUid,
+        });
+        return existing;
+      }
+    }
     console.error("결제 레코드 생성 오류:", error);
     throw new Error("결제 레코드 생성에 실패했습니다");
   }
@@ -545,6 +564,9 @@ export async function cancelPayment(
 ) {
   try {
     const widgetSecretKey = process.env.TOSS_LIVE_SECRET_KEY;
+    if (!widgetSecretKey) {
+      throw new Error("토스페이먼츠 시크릿 키가 설정되지 않았습니다");
+    }
     const encryptedSecretKey =
       "Basic " + Buffer.from(widgetSecretKey + ":").toString("base64");
 
