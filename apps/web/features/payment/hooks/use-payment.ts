@@ -37,10 +37,16 @@ export function usePayment() {
 
       const orderId = data.orderId || nanoid();
 
+      // 토스 SDK는 customerMobilePhone을 숫자 8~15자로 요구 (하이픈/공백 거부)
+      const sanitizedPhone = (userInfo?.phone || "").replace(/\D/g, "");
+      const sanitizedUserInfo = userInfo
+        ? { ...userInfo, phone: sanitizedPhone }
+        : undefined;
+
       // Determine customer info
       const customerName = userInfo?.name || session?.user?.name || "GUEST";
       const customerEmail = userInfo?.email || session?.user?.email || "";
-      const customerMobilePhone = userInfo?.phone || "";
+      const customerMobilePhone = sanitizedPhone;
 
       // Create PaymentSession on the server before requesting payment
       // guestInfo를 서버에 저장하여 리다이렉트 후에도 안전하게 사용 가능
@@ -48,12 +54,12 @@ export function usePayment() {
         const { createPaymentSession } = await import(
           "@/serverActions/payment/payment-session.actions"
         );
-        
+
         await createPaymentSession({
           orderId,
           amount: data.amount,
           orderName: data.orderName,
-          guestInfo: userInfo || undefined,
+          guestInfo: sanitizedUserInfo,
           env: "test",
         });
       } catch (sessionError) {
