@@ -75,7 +75,8 @@ export function GuestPaymentModal({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setUserInfo((prev) => ({ ...prev, [name]: value }));
+    const nextValue = name === "phone" ? value.replace(/\D/g, "") : value;
+    setUserInfo((prev) => ({ ...prev, [name]: nextValue }));
   };
 
   const handleGenderChange = (value: string | null) => {
@@ -170,7 +171,7 @@ export function GuestPaymentModal({
               name="phone"
               value={userInfo.phone}
               onChange={handleChange}
-              placeholder="010-0000-0000"
+              placeholder="01000000000"
               required
               className="bg-white border-black rounded-none focus-visible:ring-0 focus-visible:border-black h-12"
             />
