@@ -1,9 +1,10 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@repo/ui/components/button";
 import { XCircle } from "lucide-react";
+import { logPaymentEvent } from "@/serverActions/payment/log.actions";
 
 function PaymentFailContent() {
   const searchParams = useSearchParams();
@@ -11,6 +12,25 @@ function PaymentFailContent() {
   const message =
     searchParams.get("message") || "결제가 취소되었거나 실패했습니다.";
   const code = searchParams.get("code");
+  const orderId = searchParams.get("orderId");
+  const logged = useRef(false);
+
+  useEffect(() => {
+    if (logged.current) return;
+    logged.current = true;
+    logPaymentEvent({
+      scope: "fail-page",
+      level: "warn",
+      event: "tossFailRedirect",
+      data: {
+        code,
+        message,
+        orderId,
+        rawSearch:
+          typeof window !== "undefined" ? window.location.search : null,
+      },
+    }).catch(() => {});
+  }, [code, message, orderId]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4">

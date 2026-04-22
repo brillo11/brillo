@@ -5,6 +5,7 @@ import {
   validatePaymentSession,
   completePaymentSession,
 } from "./payment-session.actions";
+import { logPaymentEvent } from "./log.actions";
 import { revalidatePath } from "next/cache";
 import { Order } from "@repo/database";
 import { Refund } from "@repo/database";
@@ -135,6 +136,19 @@ export async function confirmPayment(
   isEvent: boolean = false,
   eventText: string | null = null,
 ) {
+  await logPaymentEvent({
+    scope: "confirm",
+    level: "info",
+    event: "confirm:start",
+    data: {
+      orderId: data.orderId,
+      amount: data.amount,
+      paymentKey: data.paymentKey,
+      env,
+      isEvent,
+    },
+  }).catch(() => {});
+
   try {
     // 0. 서버에서 현재 사용자 세션 가져오기
     let currentUserId: string | undefined = data.userId?.toString();
@@ -145,6 +159,13 @@ export async function confirmPayment(
         currentUserId = userSession?.user?.id;
       } catch (e) {
         console.log("세션 조회 실패 (비로그인 사용자)", e);
+        await logPaymentEvent({
+          scope: "confirm",
+          level: "info",
+          event: "session:lookupFailed",
+          data: { orderId: data.orderId },
+          error: e,
+        }).catch(() => {});
       }
     }
 
@@ -155,6 +176,16 @@ export async function confirmPayment(
     });
 
     if (!sessionValidation.valid) {
+      await logPaymentEvent({
+        scope: "confirm",
+        level: "error",
+        event: "sessionValidation:failed",
+        data: {
+          orderId: data.orderId,
+          amount: data.amount,
+          reason: sessionValidation.reason,
+        },
+      }).catch(() => {});
       throw new Error(`결제 검증 실패: ${sessionValidation.reason}`);
     }
 
@@ -197,6 +228,19 @@ export async function confirmPayment(
       // 토스페이먼츠 에러 응답 처리
       console.log("토스페이먼츠 에러 응답:", response);
       const errorResponse: TossErrorResponse = await response.json();
+      await logPaymentEvent({
+        scope: "confirm",
+        level: "error",
+        event: "tossConfirm:failed",
+        data: {
+          orderId: data.orderId,
+          amount: data.amount,
+          paymentKey: data.paymentKey,
+          httpStatus: response.status,
+          tossCode: errorResponse.code,
+          tossMessage: errorResponse.message,
+        },
+      }).catch(() => {});
       await handleTossPaymentError(errorResponse, data);
       throw new Error(`결제 승인 실패: ${errorResponse.message}`);
     }
@@ -249,6 +293,17 @@ export async function confirmPayment(
       );
     } catch (dbError) {
       console.error("DB 저장 실패, 토스 결제 자동 취소 시도:", dbError);
+      await logPaymentEvent({
+        scope: "confirm",
+        level: "error",
+        event: "createPaymentRecord:failed",
+        data: {
+          orderId: data.orderId,
+          paymentKey: result.paymentKey,
+          amount: result.totalAmount,
+        },
+        error: dbError,
+      }).catch(() => {});
       const cancelled = await cancelTossPayment(
         result.paymentKey,
         "DB 저장 실패로 인한 자동 취소",
@@ -307,6 +362,18 @@ export async function confirmPayment(
     revalidatePath("/admin/payment");
     revalidatePath("/admin/orders");
     revalidatePath("/(service)/mypage/orders");
+    await logPaymentEvent({
+      scope: "confirm",
+      level: "info",
+      event: "confirm:success",
+      data: {
+        orderId: result.orderId,
+        paymentKey: result.paymentKey,
+        amount: result.totalAmount,
+        method: result.method,
+        isGuest: !currentUserId,
+      },
+    }).catch(() => {});
     return {
       success: true,
       payment: result,
@@ -314,6 +381,13 @@ export async function confirmPayment(
     };
   } catch (error) {
     console.error("결제 승인 오류:", error);
+    await logPaymentEvent({
+      scope: "confirm",
+      level: "error",
+      event: "confirm:exception",
+      data: { orderId: data.orderId, paymentKey: data.paymentKey },
+      error,
+    }).catch(() => {});
 
     // 에러 타입에 따른 다른 처리
     if (error instanceof Error && error.message.includes("결제 승인 실패")) {

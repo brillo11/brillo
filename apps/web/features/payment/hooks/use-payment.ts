@@ -5,6 +5,7 @@ import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
 import { useSession } from "@/shared/lib/auth-client";
 import { nanoid } from "nanoid";
 import { GuestUserInfo } from "../components/GuestPaymentModal";
+import { logPaymentEvent } from "@/serverActions/payment/log.actions";
 
 interface PaymentData {
   amount: number;
@@ -27,6 +28,8 @@ export function usePayment() {
     userInfo?: GuestUserInfo,
   ) => {
     setIsLoading(true);
+    const orderId = data.orderId || nanoid();
+    const isGuest = !session?.user;
     try {
       const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
       if (!clientKey) {
@@ -34,8 +37,6 @@ export function usePayment() {
       }
 
       const tossPayments = await loadTossPayments(clientKey);
-
-      const orderId = data.orderId || nanoid();
 
       // 토스 SDK는 customerMobilePhone을 숫자 8~15자로 요구 (하이픈/공백 거부)
       const sanitizedPhone = (userInfo?.phone || "").replace(/\D/g, "");
@@ -47,6 +48,20 @@ export function usePayment() {
       const customerName = userInfo?.name || session?.user?.name || "GUEST";
       const customerEmail = userInfo?.email || session?.user?.email || "";
       const customerMobilePhone = sanitizedPhone;
+
+      await logPaymentEvent({
+        scope: "client-request",
+        level: "info",
+        event: "requestPayment:start",
+        data: {
+          orderId,
+          amount: data.amount,
+          orderName: data.orderName,
+          isGuest,
+          hasUserInfo: !!userInfo,
+          sanitizedPhoneLength: sanitizedPhone.length,
+        },
+      }).catch(() => {});
 
       // Create PaymentSession on the server before requesting payment
       // guestInfo를 서버에 저장하여 리다이렉트 후에도 안전하게 사용 가능
@@ -64,6 +79,13 @@ export function usePayment() {
         });
       } catch (sessionError) {
         console.error("Failed to create payment session:", sessionError);
+        await logPaymentEvent({
+          scope: "client-request",
+          level: "error",
+          event: "createPaymentSession:failed",
+          data: { orderId, amount: data.amount, isGuest },
+          error: sessionError,
+        }).catch(() => {});
         alert("결제 세션 생성 중 오류가 발생했습니다.");
         setIsLoading(false);
         return;
@@ -93,6 +115,21 @@ export function usePayment() {
       });
     } catch (error) {
       console.error("Payment error:", error);
+      const tossError = error as { code?: string; message?: string };
+      await logPaymentEvent({
+        scope: "client-request",
+        level: "error",
+        event: "requestPayment:failed",
+        data: {
+          orderId,
+          amount: data.amount,
+          orderName: data.orderName,
+          isGuest,
+          tossCode: tossError?.code,
+          tossMessage: tossError?.message,
+        },
+        error,
+      }).catch(() => {});
       alert("결제 요청 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);

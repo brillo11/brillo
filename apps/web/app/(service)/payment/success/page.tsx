@@ -3,6 +3,7 @@
 import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { confirmPayment } from "@/serverActions/payment/payment.actions";
+import { logPaymentEvent } from "@/serverActions/payment/log.actions";
 import { Button } from "@repo/ui/components/button";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 
@@ -26,10 +27,29 @@ function PaymentSuccessContent() {
     if (!paymentKey || !orderId || !amount) {
       setStatus("error");
       setErrorMessage("결제 정보가 부족합니다.");
+      logPaymentEvent({
+        scope: "success-page",
+        level: "error",
+        event: "missingQueryParams",
+        data: {
+          hasPaymentKey: !!paymentKey,
+          hasOrderId: !!orderId,
+          hasAmount: !!amount,
+          rawSearch:
+            typeof window !== "undefined" ? window.location.search : null,
+        },
+      }).catch(() => {});
       return;
     }
 
     const processPayment = async () => {
+      logPaymentEvent({
+        scope: "success-page",
+        level: "info",
+        event: "confirmPayment:start",
+        data: { paymentKey, orderId, amount: Number(amount) },
+      }).catch(() => {});
+
       try {
         // guestInfo는 서버 사이드 PaymentSession에서 자동으로 가져옴
         // sessionStorage에 의존하지 않으므로 리다이렉트 후에도 안전
@@ -42,10 +62,23 @@ function PaymentSuccessContent() {
           "test",
         );
         setStatus("success");
+        logPaymentEvent({
+          scope: "success-page",
+          level: "info",
+          event: "confirmPayment:success",
+          data: { paymentKey, orderId, amount: Number(amount) },
+        }).catch(() => {});
       } catch (error: any) {
         console.error("Payment confirmation error:", error);
         setStatus("error");
         setErrorMessage(error.message || "결제 승인 중 오류가 발생했습니다.");
+        logPaymentEvent({
+          scope: "success-page",
+          level: "error",
+          event: "confirmPayment:failed",
+          data: { paymentKey, orderId, amount: Number(amount) },
+          error,
+        }).catch(() => {});
       }
     };
 
