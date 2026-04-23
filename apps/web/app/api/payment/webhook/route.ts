@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@repo/database";
 import { createPaymentRecord } from "@/serverActions/payment/payment.actions";
+import { sendSms } from "@/serverActions/notification/sms.actions";
 
 /**
  * 토스페이먼츠 웹훅 엔드포인트
@@ -142,6 +143,10 @@ async function handlePaymentStatusChanged(data: any) {
       );
 
       console.log("웹훅으로 결제 기록 복구 완료:", { paymentKey, orderId });
+
+      sendSms({
+        body: `[Brillo] 결제 완료(웹훅)\n주문: ${paymentSession?.orderName || paymentData.orderId}\n금액: ${paymentData.totalAmount.toLocaleString()}원${(guestInfo as any)?.name ? `\n예약자: ${(guestInfo as any).name}` : ""}`,
+      }).catch(() => {});
 
       // 결제 세션 정리
       if (paymentSession) {
