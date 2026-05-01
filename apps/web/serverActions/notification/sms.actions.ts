@@ -11,6 +11,30 @@ interface SendSmsResult {
   error?: string;
 }
 
+interface PaymentCompleteSmsInput {
+  name?: string;
+  phone?: string;
+  gender?: string;
+  orderName: string;
+  amount: number;
+}
+
+function formatGender(gender?: string) {
+  if (gender === "male") return "남";
+  if (gender === "female") return "여";
+  return gender || "-";
+}
+
+function buildPaymentCompleteSmsBody(input: PaymentCompleteSmsInput) {
+  return [
+    `이름:${input.name || "-"}`,
+    `전화:${input.phone || "-"}`,
+    `성별:${formatGender(input.gender)}`,
+    `상품:${input.orderName}`,
+    `금액:${input.amount.toLocaleString()}원`,
+  ].join("\n");
+}
+
 export async function sendSms(input: SendSmsInput): Promise<SendSmsResult> {
   const url = process.env.NHN_SMS_URL;
   const appKey = process.env.NHN_SMS_APP_KEY;
@@ -63,4 +87,10 @@ export async function sendSms(input: SendSmsInput): Promise<SendSmsResult> {
       error: error instanceof Error ? error.message : String(error),
     };
   }
+}
+
+export async function sendPaymentCompleteSms(input: PaymentCompleteSmsInput) {
+  return sendSms({
+    body: buildPaymentCompleteSmsBody(input),
+  });
 }

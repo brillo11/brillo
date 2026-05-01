@@ -6,7 +6,7 @@ import {
   completePaymentSession,
 } from "./payment-session.actions";
 import { logPaymentEvent } from "./log.actions";
-import { sendSms } from "@/serverActions/notification/sms.actions";
+import { sendPaymentCompleteSms } from "@/serverActions/notification/sms.actions";
 import { revalidatePath } from "next/cache";
 import { Order } from "@repo/database";
 import { Refund } from "@repo/database";
@@ -376,8 +376,12 @@ export async function confirmPayment(
       },
     }).catch(() => {});
 
-    sendSms({
-      body: `[Brillo] 결제 완료\n주문: ${session?.orderName || result.orderId}\n금액: ${result.totalAmount.toLocaleString()}원${guestInfo?.name ? `\n예약자: ${guestInfo.name}` : ""}`,
+    sendPaymentCompleteSms({
+      name: guestInfo?.name,
+      phone: guestInfo?.phone,
+      gender: guestInfo?.gender,
+      orderName: session?.orderName || result.orderId,
+      amount: result.totalAmount,
     })
       .then((r) => {
         if (!r.success) {
