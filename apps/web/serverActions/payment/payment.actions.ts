@@ -12,6 +12,7 @@ import { Order } from "@repo/database";
 import { Refund } from "@repo/database";
 import { auth } from "@/shared/lib/auth";
 import { headers } from "next/headers";
+import { requireAdmin } from "@/shared/lib/auth-guards";
 
 interface PaymentRequest {
   amount: number;
@@ -715,6 +716,8 @@ export async function cancelOrderByAdmin(
   cancelReason: string = "관리자 결제 취소",
 ) {
   try {
+    await requireAdmin();
+
     // 1. 주문 조회
     const order = await prisma.order.findUnique({
       where: { id: orderId },

@@ -13,9 +13,19 @@ export async function requireAdmin() {
     headers: headersList,
   });
 
-  // 로그인만 확인 (role 검증 제거)
   if (!session || !session.user) {
     redirect(PATH.AUTH_LOGIN);
+  }
+
+  const user = session.user as any;
+  if (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
+    console.warn("🚨 Admin access denied:", {
+      userId: user.id || "unknown",
+      userRole: user.role || "none",
+      timestamp: new Date().toISOString(),
+    });
+
+    redirect("/");
   }
 
   return session;
@@ -84,7 +94,7 @@ export async function checkAdmin() {
     headers: headersList,
   });
   const user = session?.user as any;
-  return user?.role === "ADMIN";
+  return user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
 }
 
 /**

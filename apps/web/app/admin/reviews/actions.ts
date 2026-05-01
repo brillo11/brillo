@@ -2,12 +2,15 @@
 
 import { prisma } from "@repo/database";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/shared/lib/auth-guards";
 
 export async function toggleReviewPublishStatus(
   reviewId: bigint,
   newStatus: boolean,
 ) {
   try {
+    await requireAdmin();
+
     await prisma.review.update({
       where: { id: reviewId },
       data: { isPublished: newStatus },
