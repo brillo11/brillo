@@ -110,12 +110,21 @@ function PaymentSuccessContent() {
                 <br />곧 안내 문자가 발송될 예정입니다.
               </p> */}
             </div>
-            <Button
-              className="w-full bg-black text-white hover:bg-gray-800"
-              onClick={() => router.push("/")}
-            >
-              홈으로 돌아가기
-            </Button>
+            <div className="grid gap-2 w-full">
+              <Button
+                className="w-full bg-black text-white hover:bg-gray-800"
+                onClick={() => router.push("/mypage/orders")}
+              >
+                구매내역 확인
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => router.push("/")}
+              >
+                홈으로 돌아가기
+              </Button>
+            </div>
           </div>
         )}
 

@@ -93,10 +93,14 @@ export default async function AdminOrdersPage() {
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">
-                      {order.user?.name || "알 수 없음"}
+                      {order.userId
+                        ? order.user?.name || "알 수 없음"
+                        : "비회원 주문"}
                     </div>
                     <div className="text-xs text-gray-500">
-                      {order.user?.email || "이메일 없음"}
+                      {order.userId
+                        ? order.user?.email || "이메일 없음"
+                        : "예약자 정보 기준"}
                     </div>
                   </td>
                   <td className="px-4 py-4">

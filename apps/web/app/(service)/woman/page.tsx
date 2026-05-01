@@ -20,7 +20,7 @@ import { GuestPaymentModal } from "@/features/payment/components/GuestPaymentMod
 import { PublicReviewList } from "@/features/payment/components/PublicReviewList";
 
 const SERVICE_PRICES = {
-  "90min": 330000,
+  "80min": 350000,
   "240min": 880000,
   "420min": 1100000,
 };
@@ -72,10 +72,10 @@ const SERVICE_REGULATION = (
 );
 
 const SERVICES = {
-  "90min": {
-    label: "Visual Consulting (90분)",
+  "80min": {
+    label: "Visual Consulting (80분)",
     title: "Visual Consulting",
-    duration: "90분",
+    duration: "80분",
     description: (
       <div className="text-sm leading-relaxed text-black">
         <div className="flex items-start gap-1 font-bold">
@@ -143,7 +143,7 @@ const SERVICES = {
 export default function WomanPage() {
   const [activeTab, setActiveTab] = useState("서비스 소개");
   const [selectedService, setSelectedService] =
-    useState<keyof typeof SERVICES>("90min");
+    useState<keyof typeof SERVICES>("80min");
   const [open, setOpen] = useState(false);
 
   const {

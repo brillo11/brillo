@@ -34,7 +34,7 @@ export const Footer = () => {
           <br />
           소재지: 서울시 강남구 테헤란로 83길 19 4층
           <br />
-          이메일: brillo11@naver.com&nbsp;&nbsp; 전화번호: 070 8095 5688
+          이메일: flannel@brillo.kr&nbsp;&nbsp; 전화번호: 070 8095 5688
         </p>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { auth } from "@/shared/lib/auth";
 import { headers } from "next/headers";
 import { kdayjs } from "@/shared/lib/utils/dayjs";
 import Link from "next/link";
+import { GuestOrderLookup } from "./GuestOrderLookup";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ export default async function MyPageOrders() {
   });
 
   if (!session?.user) {
-    return <div className="font-suit pl-4">로그인이 필요합니다.</div>;
+    return <GuestOrderLookup />;
   }
 
   const orders = await prisma.order.findMany({

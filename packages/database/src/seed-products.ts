@@ -16,12 +16,12 @@ async function main() {
 
   const womanProducts = [
     // {
-    //   name: "Visual Consulting (90분) - Woman",
+    //   name: "Visual Consulting (80분) - Woman",
     //   description:
     //     "데이터 기반 정밀 진단 + 극대화 전략 설계. 피부시술과 성형 포함 맞춤형 Visual Roadmap 제공",
-    //   price: 330000,
+    //   price: 350000,
     //   category: "Woman",
-    //   tags: ["90min", "Consulting", "Visual"],
+    //   tags: ["80min", "Consulting", "Visual"],
     //   featured: true,
     // },
     {
@@ -54,12 +54,12 @@ async function main() {
 
   const manProducts = [
     {
-      name: "Visual Consulting (90분) - Man",
+      name: "Visual Consulting (80분) - Man",
       description:
         "데이터 기반 정밀 진단 + 극대화 전략 설계. 가치와 품격을 표현하는 비주얼 로드맵 작성",
-      price: 330000,
+      price: 350000,
       category: "Man",
-      tags: ["90min", "Consulting", "Visual"],
+      tags: ["80min", "Consulting", "Visual"],
       featured: true,
     },
     {
