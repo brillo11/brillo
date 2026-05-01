@@ -12,7 +12,12 @@
         "KAKAO_CLIENT_SECRET",
         "GOOGLE_CLIENT_ID",
         "GOOGLE_CLIENT_SECRET",
-        "BETTER_AUTH_SECRET"
+        "BETTER_AUTH_SECRET",
+        "NHN_SMS_URL",
+        "NHN_SMS_APP_KEY",
+        "NHN_SMS_SECRET_KEY",
+        "NHN_SMS_SEND_NO",
+        "NHN_SMS_ADMIN_RECIPIENT"
       ],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"]
