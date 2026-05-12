@@ -59,6 +59,13 @@ export function AdminShell({ children }: PropsWithChildren) {
           >
             리뷰 관리
           </Link>
+          <Link
+            href="/admin/blog"
+            className="block px-4 py-2 hover:bg-gray-50 rounded-md"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Blog 관리
+          </Link>
         </nav>
       </aside>
 

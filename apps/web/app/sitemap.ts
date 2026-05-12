@@ -8,6 +8,7 @@ const ROUTES = [
   "/man",
   "/woman",
   "/vip",
+  "/blog",
   "/privacy",
   "/terms",
 ] as const;

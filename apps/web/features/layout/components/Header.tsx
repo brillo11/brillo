@@ -16,6 +16,7 @@ export function Header() {
     { label: "Woman", href: "/woman" },
     { label: "Man", href: "/man" },
     { label: "VIP/Celeb", href: "/vip" },
+    { label: "Blog", href: "/blog" },
     { label: "FAQ", href: "/faq" },
   ];
 
