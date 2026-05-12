@@ -21,6 +21,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: METADATA.TITLE,
   description: METADATA.DESCRIPTION,
+  applicationName: METADATA.COMPANY_NAME,
   alternates: {
     canonical: "/",
   },
@@ -59,9 +60,23 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const websiteStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: METADATA.COMPANY_NAME,
+    alternateName: METADATA.ALTERNATE_NAME,
+    url: getSiteUrl(),
+  };
+
   return (
     <html lang="ko" suppressHydrationWarning>
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteStructuredData),
+          }}
+        />
         <link
           rel="stylesheet"
           as="style"
