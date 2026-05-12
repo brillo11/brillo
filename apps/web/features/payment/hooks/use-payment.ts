@@ -6,6 +6,8 @@ import { useSession } from "@/shared/lib/auth-client";
 import { nanoid } from "nanoid";
 import { GuestUserInfo } from "../components/GuestPaymentModal";
 import { logPaymentEvent } from "@/serverActions/payment/log.actions";
+import { useSetAtom } from "jotai";
+import { loginModalOpenAtom } from "@/features/auth/login-modal-atom";
 
 interface PaymentData {
   amount: number;
@@ -17,6 +19,7 @@ interface PaymentData {
 
 export function usePayment() {
   const { data: session } = useSession();
+  const setIsLoginOpen = useSetAtom(loginModalOpenAtom);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [pendingPayment, setPendingPayment] = useState<PaymentData | null>(
@@ -139,7 +142,14 @@ export function usePayment() {
   };
 
   const requestPayment = (data: PaymentData) => {
-    // Guest or logged-in user - always open modal to confirm info (name, gender, age, etc)
+    if (!session?.user) {
+      setPendingPayment(null);
+      setIsModalOpen(false);
+      setIsLoginOpen(true);
+      return;
+    }
+
+    // Logged-in users confirm reservation info before payment.
     setPendingPayment(data);
     setIsModalOpen(true);
   };
