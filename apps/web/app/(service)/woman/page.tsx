@@ -348,7 +348,7 @@ export default function WomanPage() {
               <button
                 onClick={handlePaypalPurchase}
                 disabled={isLoading}
-                className="h-[44px] w-full flex items-center justify-center gap-2 bg-[#FFC439] hover:bg-[#f0b829] transition-colors disabled:opacity-50"
+                className="h-[44px] w-full flex items-center justify-center gap-2 bg-white hover:bg-gray-50 border border-black transition-colors disabled:opacity-50"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 124 33" width="80" height="22" aria-hidden="true">
                   <path fill="#253B80" d="M46.211 6.749h-6.839c-.468 0-.866.34-.94.803L35.684 24.22c-.055.339.208.643.537.643h3.262c.467 0 .866-.34.94-.803l.895-5.674c.073-.463.472-.803.94-.803h2.163c4.505 0 7.105-2.18 7.784-6.496.307-1.888.013-3.374-.876-4.412-.975-1.132-2.71-1.926-4.038-1.926zm.828 6.405c-.374 2.454-2.249 2.454-4.062 2.454h-1.032l.724-4.583c.044-.282.287-.489.573-.489h.473c1.235 0 2.4 0 3.002.704.36.42.468 1.044.322 1.914z"/>
