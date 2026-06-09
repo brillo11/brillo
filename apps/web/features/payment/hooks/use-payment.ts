@@ -168,7 +168,7 @@ export function usePayment() {
           orderId,
           amount: data.amount,
           orderName: data.orderName,
-          env: "test",
+          env: "live",
         });
       } catch (sessionError) {
         await logPaymentEvent({
