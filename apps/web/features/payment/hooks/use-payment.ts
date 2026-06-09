@@ -17,6 +17,11 @@ interface PaymentData {
   customerEmail?: string;
 }
 
+interface PaypalPaymentData {
+  amount: number;
+  orderName: string;
+}
+
 export function usePayment() {
   const { data: session } = useSession();
   const setIsLoginOpen = useSetAtom(loginModalOpenAtom);
@@ -141,6 +146,92 @@ export function usePayment() {
     }
   };
 
+  const processPaypalPayment = async (data: PaypalPaymentData) => {
+    setIsLoading(true);
+    const orderId = nanoid();
+    try {
+      const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
+      if (!clientKey) throw new Error("TossPayments Client Key가 없습니다");
+
+      await logPaymentEvent({
+        scope: "client-request",
+        level: "info",
+        event: "paypalPayment:start",
+        data: { orderId, amount: data.amount, orderName: data.orderName, currency: "USD" },
+      }).catch(() => {});
+
+      try {
+        const { createPaymentSession } = await import(
+          "@/serverActions/payment/payment-session.actions"
+        );
+        await createPaymentSession({
+          orderId,
+          amount: data.amount,
+          orderName: data.orderName,
+          env: "test",
+        });
+      } catch (sessionError) {
+        await logPaymentEvent({
+          scope: "client-request",
+          level: "error",
+          event: "paypalCreateSession:failed",
+          data: { orderId, amount: data.amount },
+          error: sessionError,
+        }).catch(() => {});
+        alert("결제 세션 생성 중 오류가 발생했습니다.");
+        return;
+      }
+
+      const tossPayments = await loadTossPayments(clientKey);
+      const widgets = tossPayments.widgets({
+        customerKey: session?.user?.id || ANONYMOUS,
+      });
+
+      await widgets.setAmount({ currency: "USD", value: data.amount });
+
+      const tempId = `paypal-${orderId}`;
+      const tempDiv = document.createElement("div");
+      tempDiv.id = tempId;
+      tempDiv.style.cssText =
+        "position:fixed;top:-9999px;left:-9999px;width:300px;height:200px;overflow:hidden";
+      document.body.appendChild(tempDiv);
+
+      try {
+        await widgets.renderPaymentMethods({
+          variantKey: "PAYPAL",
+          selector: `#${tempId}`,
+        });
+
+        const origin = window.location.origin;
+        await widgets.requestPayment({
+          orderId,
+          orderName: data.orderName,
+          successUrl: `${origin}/payment/success`,
+          failUrl: `${origin}/payment/fail`,
+          customerEmail: session?.user?.email || undefined,
+          customerName: session?.user?.name || undefined,
+        });
+      } finally {
+        if (document.body.contains(tempDiv)) {
+          document.body.removeChild(tempDiv);
+        }
+      }
+    } catch (error: any) {
+      if (error?.code === "USER_CANCEL") return;
+      console.error("PayPal 결제 오류:", error);
+      await logPaymentEvent({
+        scope: "client-request",
+        level: "error",
+        event: "paypalPayment:failed",
+        data: { orderId, amount: data.amount, orderName: data.orderName },
+        error,
+      }).catch(() => {});
+      alert("PayPal 결제 요청 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const requestPayment = (data: PaymentData) => {
     if (!session?.user) {
       setPendingPayment(null);
@@ -162,6 +253,7 @@ export function usePayment() {
 
   return {
     requestPayment,
+    processPaypalPayment,
     isModalOpen,
     closeModal: () => setIsModalOpen(false),
     handleGuestSubmit,
