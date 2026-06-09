@@ -325,6 +325,22 @@ export default function ManPage() {
               </button>
             </div>
 
+            <div className="mt-3 w-full">
+  <button
+    type="button"
+    onClick={() => alert("PayPal 결제 연결 준비 중입니다.")}
+    className="w-full h-[48px] flex items-center justify-center border border-black bg-white text-sm hover:bg-gray-50 transition-colors"
+  >
+    <span className="font-bold text-[18px] tracking-[-0.02em]">
+      <span className="text-[#003087]">Pay</span>
+      <span className="text-[#009cde]">Pal</span>
+    </span>
+  </button>
+  <p className="mt-2 text-center text-xs text-gray-500">
+    For international customers · USD payment
+  </p>
+</div>
+            
             <GuestPaymentModal
               isOpen={isModalOpen}
               onClose={closeModal}
