@@ -22,13 +22,13 @@ import { PublicReviewList } from "@/features/payment/components/PublicReviewList
 const SERVICE_PRICES = {
   "80min": 350000,
   "240min": 880000,
-  "420min": 1100000,
+  "420min": 1200000,
 };
 
 const PAYPAL_PRICES_USD = {
   "80min": 250,
   "240min": 600,
-  "420min": 800,
+  "420min": 1000,
 };
 
 const SERVICE_REGULATION = (
@@ -122,9 +122,9 @@ const SERVICES = {
     ),
   },
   "420min": {
-    label: "Total Visual Making (420분)",
+    label: "Total Visual Making (Day 1,2 진행)",
     title: "Total Visual Making",
-    duration: "420분",
+    duration: "Day 1,2 진행",
     description: (
       <div className="text-sm leading-relaxed text-black">
         <div className="flex items-start gap-1">
@@ -359,7 +359,7 @@ export default function WomanPage() {
                   <path fill="#179BD7" d="M116.982 7.074l-2.785 17.731c-.055.339.208.643.537.643h2.84c.468 0 .866-.34.94-.803l2.746-17.422c.055-.339-.208-.643-.537-.643h-3.181c-.287.001-.53.208-.56.494z"/>
                 </svg>
                 <span className="text-[#003087] font-bold text-sm">
-                  로 결제 · ${PAYPAL_PRICES_USD[selectedService]}
+                  ${PAYPAL_PRICES_USD[selectedService]}
                 </span>
               </button>
             </div>

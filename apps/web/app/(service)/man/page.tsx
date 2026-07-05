@@ -22,13 +22,13 @@ import { PublicReviewList } from "@/features/payment/components/PublicReviewList
 const SERVICE_PRICES = {
   "80min": 350000,
   "240min": 770000,
-  "420min": 990000,
+  "420min": 1050000,
 };
 
 const PAYPAL_PRICES_USD = {
   "80min": 250,
   "240min": 550,
-  "420min": 700,
+  "420min": 900,
 };
 
 const SERVICE_REGULATION = (
@@ -355,7 +355,7 @@ export default function ManPage() {
                   <path fill="#179BD7" d="M116.982 7.074l-2.785 17.731c-.055.339.208.643.537.643h2.84c.468 0 .866-.34.94-.803l2.746-17.422c.055-.339-.208-.643-.537-.643h-3.181c-.287.001-.53.208-.56.494z"/>
                 </svg>
                 <span className="text-[#003087] font-bold text-sm">
-                  로 결제 · ${PAYPAL_PRICES_USD[selectedService]}
+                  ${PAYPAL_PRICES_USD[selectedService]}
                 </span>
               </button>
             </div>
