@@ -5,9 +5,10 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 
 async function main() {
-  const connectionString =
-    process.env.DATABASE_URL ||
-    "postgresql://brillo:brillo1212%21%21@pg1101.gabiadb.com:5432/brillo?sslmode=disable";
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error("DATABASE_URL environment variable is not set");
+  }
   const pool = new Pool({ connectionString });
   const adapter = new PrismaPg(pool);
   const prisma = new PrismaClient({ adapter });
