@@ -384,18 +384,6 @@ export default function ManPage() {
           </div>
         </div>
 
-        {/* Reviews */}
-        <div
-          id="reviews"
-          ref={reviewSectionRef}
-          className="w-full max-w-4xl mx-auto mt-24 md:mt-32 scroll-mt-24"
-        >
-          <h2 className="font-playfair font-bold text-black text-2xl mb-8">
-            고객 리뷰
-          </h2>
-          <PublicReviewList orderNamePrefix="Man" />
-        </div>
-
         {/* Consultation Image */}
         <div className="relative w-full max-w-4xl mx-auto mt-36 flex">
           <img
@@ -414,6 +402,18 @@ export default function ManPage() {
         </div>
         <div className="md:mt-[180px] mt-[120px] w-full max-w-4xl mx-auto">
           <ManGalleryCarousel />
+        </div>
+
+        {/* Reviews */}
+        <div
+          id="reviews"
+          ref={reviewSectionRef}
+          className="w-full max-w-4xl mx-auto mt-24 md:mt-32 scroll-mt-24"
+        >
+          <h2 className="font-playfair font-bold text-black text-2xl mb-8">
+            고객 리뷰
+          </h2>
+          <PublicReviewList orderNamePrefix="Man" />
         </div>
       </div>
     </div>

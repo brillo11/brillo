@@ -388,18 +388,6 @@ export default function WomanPage() {
           isLoading={isLoading}
         />
 
-        {/* Reviews */}
-        <div
-          id="reviews"
-          ref={reviewSectionRef}
-          className="w-full max-w-4xl mx-auto mt-24 md:mt-32 scroll-mt-24"
-        >
-          <h2 className="font-playfair font-bold text-black text-2xl mb-8">
-            고객 리뷰
-          </h2>
-          <PublicReviewList orderNamePrefix="Woman" />
-        </div>
-
         {/* Consultation Image */}
         <div className="relative w-full max-w-4xl mx-auto mt-36">
           <img
@@ -416,6 +404,18 @@ export default function WomanPage() {
 
         {/* Before/After Gallery */}
         <WomanGalleryCarousel />
+
+        {/* Reviews */}
+        <div
+          id="reviews"
+          ref={reviewSectionRef}
+          className="w-full max-w-4xl mx-auto mt-24 md:mt-32 scroll-mt-24"
+        >
+          <h2 className="font-playfair font-bold text-black text-2xl mb-8">
+            고객 리뷰
+          </h2>
+          <PublicReviewList orderNamePrefix="Woman" />
+        </div>
       </div>
     </div>
   );
