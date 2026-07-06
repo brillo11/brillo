@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -151,6 +151,19 @@ export default function WomanPage() {
   const [selectedService, setSelectedService] =
     useState<keyof typeof SERVICES>("80min");
   const [open, setOpen] = useState(false);
+  const reviewSectionRef = useRef<HTMLDivElement>(null);
+
+  const handleTabClick = (tab: string) => {
+    setActiveTab(tab);
+    if (tab === "리뷰") {
+      requestAnimationFrame(() => {
+        reviewSectionRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      });
+    }
+  };
 
   const {
     requestPayment,
@@ -290,7 +303,7 @@ export default function WomanPage() {
               {["서비스 소개", "리뷰", "서비스규정"].map((tab) => (
                 <button
                   key={tab}
-                  onClick={() => setActiveTab(tab)}
+                  onClick={() => handleTabClick(tab)}
                   className={`flex-1 pb-3 text-center text-sm transition-colors relative ${
                     activeTab === tab
                       ? "text-black border-b border-black -mb-[1px]"
@@ -310,8 +323,10 @@ export default function WomanPage() {
                 </div>
               )}
               {activeTab === "리뷰" && (
-                <div className="space-y-3">
-                  <PublicReviewList orderNamePrefix="Woman" />
+                <div className="space-y-2">
+                  <p className="text-sm text-black/60">
+                    하단 고객 리뷰 섹션에서 전체 리뷰를 확인하실 수 있습니다.
+                  </p>
                 </div>
               )}
               {activeTab === "서비스규정" && (
@@ -372,6 +387,18 @@ export default function WomanPage() {
           onSubmit={handleGuestSubmit}
           isLoading={isLoading}
         />
+
+        {/* Reviews */}
+        <div
+          id="reviews"
+          ref={reviewSectionRef}
+          className="w-full max-w-4xl mx-auto mt-24 md:mt-32 scroll-mt-24"
+        >
+          <h2 className="font-playfair font-bold text-black text-2xl mb-8">
+            고객 리뷰
+          </h2>
+          <PublicReviewList orderNamePrefix="Woman" />
+        </div>
 
         {/* Consultation Image */}
         <div className="relative w-full max-w-4xl mx-auto mt-36">
