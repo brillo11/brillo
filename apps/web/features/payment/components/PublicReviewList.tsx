@@ -81,7 +81,7 @@ export function PublicReviewList({ orderNamePrefix }: PublicReviewListProps) {
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="flex flex-col gap-0">
         {visibleReviews.map((review) => {
           const normalizedRating = Math.max(1, Math.min(5, review.rating || 5));
           const date = new Date(review.createdAt);
@@ -90,9 +90,9 @@ export function PublicReviewList({ orderNamePrefix }: PublicReviewListProps) {
           return (
             <div
               key={review.id}
-              className="border border-[#d6d6d6] p-5 flex flex-col gap-3"
+              className="border-b border-[#d4d4d4] py-6 first:pt-0 last:border-b-0"
             >
-              <div className="flex items-start justify-between">
+              <div className="flex items-start justify-between mb-3">
                 <div className="flex flex-col gap-1">
                   <div className="flex text-black">
                     {Array.from({ length: 5 }).map((_, i) => (
@@ -115,7 +115,7 @@ export function PublicReviewList({ orderNamePrefix }: PublicReviewListProps) {
                 </span>
               </div>
               {review.orderName && (
-                <div className="text-[12px] font-suit text-[#000000]/50">
+                <div className="text-[12px] font-suit text-[#000000]/50 mb-2">
                   {review.orderName}
                 </div>
               )}
