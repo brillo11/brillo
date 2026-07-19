@@ -10,7 +10,8 @@ import { prisma } from "@repo/database";
 function stripCustomerName(orderName: string): string {
   const groups = orderName.match(/\([^()]*\)/g);
   if (!groups || groups.length < 2) return orderName;
-  const last = groups[groups.length - 1];
+  const last = groups[groups.length - 1] ?? "";
+  if (!last) return orderName;
   const lastIndex = orderName.lastIndexOf(last);
   return (
     orderName.slice(0, lastIndex) + orderName.slice(lastIndex + last.length)
